@@ -9,6 +9,7 @@ from pathlib import Path
 from .artifacts import CorpusStore, rows
 from .config import SourceSpec, language_tag
 from .errors import ValidationError
+from .evidence import parse_annotations
 from .types import Query, SourceUnit
 from .util import json_dumps, object_field
 
@@ -169,7 +170,7 @@ def query_from_row(row: dict, corpus: str) -> Query:
         )
     }
     retained["provenance"] = provenance
-    return Query(
+    query = Query(
         id=query_id,
         corpus=corpus,
         question=required_string(row, "question", label),
@@ -190,9 +191,16 @@ def query_from_row(row: dict, corpus: str) -> Query:
         evidence_all_languages=object_field(
             row.get("evidence_all_languages"), label + " evidence_all_languages"
         ),
+        evidence_alignment_status=object_field(
+            row.get("evidence_alignment_status"), label + " evidence_alignment_status"
+        ),
+        evidence_alignment_contract=row.get("evidence_alignment_contract"),
+        evidence_alignment_eligibility=row.get("evidence_alignment_eligibility"),
         unresolved_sources=unresolved,
         metadata=retained,
     )
+    parse_annotations(query)
+    return query
 
 
 def select_candidates(queries: list[Query], mode: str = "best") -> tuple[list[Query], list[dict]]:
@@ -267,13 +275,21 @@ def apply_evidence_overlay(queries: list[Query], path: Path | None) -> list[Quer
                 raise ValidationError(
                     f"Evidence overlay line {line_no}: missing evidence_all_languages"
                 )
-            overlay[query_id] = object_field(record["evidence_all_languages"], "evidence overlay")
+            overlay[query_id] = {
+                name: object_field(record.get(name), f"evidence overlay {name}")
+                for name in ("evidence_all_languages", "evidence_alignment_status")
+            }
+            for name in ("evidence_alignment_contract", "evidence_alignment_eligibility"):
+                overlay[query_id][name] = record.get(name)
     # An overlay may cover several corpora. Unknown IDs are checked across all
     # configured corpora by the validation stage, not discarded within one adapter.
-    return [
-        replace(q, evidence_all_languages=overlay.get(q.id, q.evidence_all_languages))
-        for q in queries
-    ]
+    result = []
+    for query in queries:
+        # A replacement must not inherit statuses/exclusions for old annotations.
+        updated = replace(query, **overlay[query.id]) if query.id in overlay else query
+        parse_annotations(updated)
+        result.append(updated)
+    return result
 
 
 def verify_chemistry_provenance(

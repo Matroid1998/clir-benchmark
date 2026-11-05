@@ -5,21 +5,21 @@ datasets:
   eurlex:
     qa:
       repo_id: MehdiAstaraki/eurlex-generated-qa
-      revision: 8b5d1bd5604e7ebb7c27bc6d877b6b3ef712a006
+      revision: c924c03d0ac73ee45a3b6910d420fe523e433d2d
     corpus:
       repo_id: MehdiAstaraki/eurlex-generated-qa
       revision: 8b5d1bd5604e7ebb7c27bc6d877b6b3ef712a006
   un:
     qa:
       repo_id: MehdiAstaraki/un-generated-qa
-      revision: 79b190ab68940cfed6236c372cbfe53404339c05
+      revision: 677117c2e82908933821ba68dfd122d273c20be0
     corpus:
       repo_id: MehdiAstaraki/un-generated-qa
       revision: 79b190ab68940cfed6236c372cbfe53404339c05
   chemistry:
     qa:
       repo_id: MehdiAstaraki/chemistry-generated-qa
-      revision: d390d599ef42870bc5fe2349403ba36924546022
+      revision: bb2657593e877d75e747a4602468eb0add634895
     corpus:
       repo_id: BASF-AI/ai4chem-clir-google-patents-within-document-abstract-pairs
       revision: 24c1f894591a5aa6f745ac233d5091fdbc30ad3c
@@ -32,10 +32,12 @@ chunking:
   special_tokens: included
 candidate_mode: best
 settings: [pairwise, mixed]
-# Empty lists discover each corpus's own language coverage.
+# Discover query languages from the selected questions.
 query_languages: []
-target_languages: []
-# Optional JSONL overlay: query_id + evidence_all_languages.
+# Published alignment coverage. All corpus languages remain in corpus artifacts.
+# Use [] to target every corpus language (unannotated settings will block).
+target_languages: [en, de, es, fr, zh]
+# Optional JSONL overlay: query_id + evidence_all_languages (+ alignment fields).
 evidence_file: null
 models: [embeddinggemma, bge-m3, qwen3-0.6B, nomic-v2-moe, granite-278m, LaBSE, SapBERT, e5-large-instruct]
 runtime:

@@ -4,6 +4,7 @@ from collections.abc import Iterator
 
 from .artifacts import CorpusStore
 from .errors import ValidationError
+from .evidence import Annotation, alignment_excluded, parse_annotations
 from .types import Judgment, Match, Query, Setting
 
 
@@ -48,41 +49,20 @@ def build_settings(
     return settings
 
 
-def annotation_records(query: Query, allowed: set[str], store: CorpusStore) -> dict[str, dict]:
-    records = {}
-    for language, entries in query.evidence_all_languages.items():
-        if not isinstance(language, str) or not isinstance(entries, list):
+def annotation_records(
+    query: Query, allowed: set[str], store: CorpusStore
+) -> dict[str, Annotation]:
+    records = parse_annotations(query)
+    for unit_id, annotation in records.items():
+        if unit_id not in allowed:
             raise ValidationError(
-                f"QA {query.id}: evidence_all_languages must map languages to lists of source records"
+                f"QA {query.id}: annotation source {unit_id!r} is not an associated source"
             )
-        for entry in entries:
-            if not isinstance(entry, dict):
-                raise ValidationError(f"QA {query.id}: evidence record must be an object")
-            unit_id = entry.get("source_unit_id")
-            if not isinstance(unit_id, str) or unit_id not in allowed:
-                raise ValidationError(
-                    f"QA {query.id}: annotation source {unit_id!r} is not an associated source"
-                )
-            unit = store.get_source(unit_id)
-            if unit is None or unit.language != language:
-                raise ValidationError(
-                    f"QA {query.id}: annotation language/source mismatch for {unit_id}"
-                )
-            if unit_id in records:
-                raise ValidationError(f"QA {query.id}: duplicate annotation record for {unit_id}")
-            if (
-                "evidence" not in entry
-                or not isinstance(entry["evidence"], list)
-                or any(not isinstance(span, str) for span in entry["evidence"])
-            ):
-                raise ValidationError(
-                    f"QA {query.id}: evidence for {unit_id} must be a list of verbatim strings (possibly empty)"
-                )
-            if entry.get("answer") is not None and not isinstance(entry["answer"], str):
-                raise ValidationError(
-                    f"QA {query.id}: answer for {unit_id} must be a string or null"
-                )
-            records[unit_id] = entry
+        unit = store.get_source(unit_id)
+        if unit is None or unit.language != annotation.language:
+            raise ValidationError(
+                f"QA {query.id}: annotation language/source mismatch for {unit_id}"
+            )
     return records
 
 
@@ -140,7 +120,9 @@ def judge(
             unit.id
             for units in targets.values()
             for unit in units
-            if unit.language != query.context_language and unit.id not in annotations
+            if unit.language != query.context_language
+            and not (unit.id in annotations and annotations[unit.id].supplied)
+            and not alignment_excluded(query, unit.language)
         }
     )
     if missing:
@@ -157,23 +139,27 @@ def judge(
         group_matches = []
         found_in_source = False
         for unit in units:
-            spans = [("answer", query.answer), ("evidence", query.evidence)]
-            entry = annotations.get(unit.id, {})
-            spans.extend(
-                (f"evidence_all_languages.{unit.language}.evidence[{index}]", span)
-                for index, span in enumerate(entry.get("evidence", []))
-            )
-            spans.append(
-                (f"evidence_all_languages.{unit.language}.answer", entry.get("answer") or "")
-            )
+            spans = [("answer", query.answer, {}), ("evidence", query.evidence, {})]
+            if unit.id in annotations:
+                spans.extend(annotations[unit.id].spans)
             chunks = store.chunks(unit)
-            for field, span in spans:
+            for field, span, annotation in spans:
                 for start, end in occurrences(unit.text, span):
                     found_in_source = True
                     for chunk in chunks:
                         if chunk.start <= start and end <= chunk.end:
                             group_matches.append(
-                                Match(query.id, chunk.id, group, unit.id, field, span, start, end)
+                                Match(
+                                    query.id,
+                                    chunk.id,
+                                    group,
+                                    unit.id,
+                                    field,
+                                    span,
+                                    start,
+                                    end,
+                                    annotation,
+                                )
                             )
         if not group_matches:
             unsupported.append(
@@ -182,6 +168,12 @@ def judge(
                     "reason": "span_crosses_chunk_boundaries"
                     if found_in_source
                     else "no_exact_span",
+                    "alignment_status": {
+                        unit.id: annotations[unit.id].statuses
+                        for unit in units
+                        if unit.id in annotations and annotations[unit.id].statuses
+                    },
+                    "alignment_eligibility": query.evidence_alignment_eligibility,
                 }
             )
         matches.extend(group_matches)

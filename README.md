@@ -28,8 +28,9 @@ uv run clir-benchmark --config configs/benchmark.yaml validate --inputs
 ```
 
 `validate` checks configuration/model definitions without downloading models.
-`--inputs` additionally reads QA exports, verifies candidate selection, and checks
-evidence-overlay QA IDs. Source/span validation happens during preparation.
+`--inputs` additionally reads QA exports, validates multilingual annotation shapes
+and overlays, and verifies candidate selection. Source associations and literal
+span matching are checked during relevance preparation.
 
 `HF_TOKEN` is read from the environment or configured `.env` file. Only that
 variable is consumed; unrelated API keys are not loaded. `.env`, data, vectors,
@@ -68,8 +69,14 @@ nor patent-family relationships create positives. Original pair rows are saved.
 UN generation blocks remain provenance only. Every corpus unit is retained,
 regardless of QA selection or eligibility. Empty sources remain single empty chunks.
 
-All revisions must be full commit SHAs. Update `qa.revision` to consume a future
-QA release; retain `corpus.revision` if source documents are unchanged. A source
+All revisions must be full commit SHAs. The default QA pins include the published
+`cross_language_evidence_terra_v1` annotations from
+[EUR-Lex](https://huggingface.co/datasets/MehdiAstaraki/eurlex-generated-qa/tree/c924c03d0ac73ee45a3b6910d420fe523e433d2d),
+[UN](https://huggingface.co/datasets/MehdiAstaraki/un-generated-qa/tree/677117c2e82908933821ba68dfd122d273c20be0), and
+[chemistry](https://huggingface.co/datasets/MehdiAstaraki/chemistry-generated-qa/tree/bb2657593e877d75e747a4602468eb0add634895).
+The corpus files are unchanged, so their pins and chunk caches are preserved.
+Update `qa.revision` for later QA releases; retain `corpus.revision` if source
+documents are unchanged. A source
 can instead specify `local_dir`, with the same `data/<configuration>/*.parquet`
 layout or `data/train-*.parquet` for BASF. Local file hashes are recorded.
 
@@ -113,34 +120,75 @@ scores. Chemistry candidate selection validates. Strict `best` mode stops on
 these groups as specified; it never silently drops them or switches to `all`.
 Correct the selection/grading metadata before preparing these best-mode cohorts,
 or deliberately choose the supported all-candidates experiment. The local
-`artifacts/input-validation.json` report lists affected QA IDs and task identities.
+`artifacts/input-validation-latest.json` report lists affected QA IDs and task
+identities from the updated exports. All 10,691 exported QAs pass annotation-shape
+validation; this does not assert that every QA has support in every setting.
 
-The future QA field has this structure:
+The published QA field contains individual, source-specific spans:
 
 ```json
 {
+  "evidence_alignment_contract": "cross_language_evidence_terra_v1",
+  "evidence_alignment_eligibility": "eligible",
   "evidence_all_languages": {
     "fr": [
       {
         "source_unit_id": "exact corpus unit ID",
-        "evidence": ["A complete verbatim supporting span."],
-        "answer": "An optional complete verbatim answer."
+        "language": null,
+        "text": "A complete verbatim supporting span.",
+        "origin": "cross_language_alignment",
+        "anchor_id": "source-anchor",
+        "alignment_id": "alignment-id",
+        "validation_status": "pending_review",
+        "match_status": "exact"
       }
     ]
   }
 }
 ```
 
-Provide one record per source-language unit, with alternative evidence spans.
-Separate indispensable articles need source-specific records. `answer` may be
-omitted or null; `evidence` must be a list, including `[]` for an explicitly
-annotated source with no evidence span. Duplicate records, language/ID mismatches,
-and unassociated sources are errors.
+Each `text` is checked independently; several spans may refer to the same unit.
+The language key is authoritative when a record's `language` is null, and must
+agree with the corpus unit. Separate indispensable articles need source-specific
+records. Alignment flags never establish relevance: spans marked `pending_review`
+are accepted only when the literal substring and chunk-containment checks pass.
+The original span record, including anchor IDs, origin, validation status, and
+generation provenance, is preserved in each match's `annotation_json`.
+
+`evidence_alignment_status` uses the same language-keyed lists with source IDs
+and `status` values. `not_found`, `uncertain`, and `invalid` are supplied outcomes
+with no qualifying span. Their reasons remain diagnostics, never searchable
+evidence. `matched`/`source_exact` without a span, unknown statuses, and bare empty
+language lists do not establish that annotation is complete. Missing annotations
+block an affected setting; a source with no version in that language is separately
+reported as unavailable.
+
+Under this published contract, `no_exact_source_passage` and
+`quarantined_source_language` are completed alignment exclusions. For language keys
+present in both annotation mappings they supply no translated spans. They are
+recorded as provenance and do **not** suppress independently qualifying raw
+answers or evidence. Other eligibility values do not imply completion.
+
+The release covers **en, de, es, fr, zh**, now the default target languages.
+All available corpus languages are still prepared and cached. Configure additional
+targets when their annotations are available, or use `target_languages: []` to
+request every corpus language and report missing annotations. The convenience
+fields `evidence_en`, `evidence_fr`, etc. are not used because they lack source IDs.
+
+The original overlay format remains supported: one record per source-language
+unit with `source_unit_id`, an `evidence` list, and an optional string `answer`.
+An explicitly supplied `evidence: []` record can establish annotation completion
+without a positive span. Duplicate aggregate records, language/ID mismatches,
+and unassociated sources remain validation errors.
 
 Alternatively, set `evidence_file: ../annotations/evidence.jsonl`. Each line has
 `query_id` (or `_id`) and the complete `evidence_all_languages` mapping for that
-QA. It replaces that QA's multilingual mapping but preserves raw answer/evidence.
-An overlay may span configured corpora; `validate --inputs` checks its QA IDs.
+QA, in either supported format. Native overlays may also provide
+`evidence_alignment_status`, `evidence_alignment_contract`, and
+`evidence_alignment_eligibility`. An overlay replaces all four annotation fields
+together (omitted alignment fields are cleared) and preserves raw answer/evidence.
+An overlay may span configured corpora; `validate --inputs` checks its QA IDs
+and annotation shapes.
 
 Original-context-language sources use raw answer/evidence without redundant
 multilingual records. Other associated language versions require annotations.
@@ -250,6 +298,10 @@ must be explicitly removed before rebuilding. Document cache keys use the
 content-based corpus fingerprint; query keys use selected IDs, languages, and
 question text. Evidence and qrels are excluded. Encoder settings, model revisions,
 prefixes, and dependency versions participate in cache identity.
+
+Relevance schema version 2 preserves native alignment fields in `queries.parquet`
+and span provenance in `matches.parquet`. Its cache key is separate from older
+relevance artifacts; corpus and embedding cache identities remain unchanged.
 
 Manifests record revision pins, configuration hashes, token accounting, execution
 device/precision, versions, and timings. No train/dev/test split or fine-tuning is

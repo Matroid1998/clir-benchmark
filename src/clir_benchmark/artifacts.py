@@ -64,6 +64,9 @@ QUERY_SCHEMA = pa.schema(
             "persona",
             "task_id",
             "evidence_all_languages_json",
+            "evidence_alignment_status_json",
+            "evidence_alignment_eligibility",
+            "evidence_alignment_contract",
             "metadata_json",
         )
     ]
@@ -90,6 +93,7 @@ MATCH_SCHEMA = pa.schema(
             "source_unit_id",
             "field",
             "span",
+            "annotation_json",
         )
     ]
     + [("start", pa.int64()), ("end", pa.int64())]
@@ -157,7 +161,7 @@ def source_record(unit: SourceUnit) -> dict:
 
 def query_record(query: Query) -> dict:
     row = asdict(query)
-    for name in ("metadata", "evidence_all_languages"):
+    for name in ("metadata", "evidence_all_languages", "evidence_alignment_status"):
         row[name + "_json"] = json_dumps(row.pop(name))
     return row
 
@@ -165,8 +169,8 @@ def query_record(query: Query) -> dict:
 def read_queries(path: Path) -> list[Query]:
     result = []
     for row in rows(path):
-        for name in ("metadata", "evidence_all_languages"):
-            row[name] = object_field(row.pop(name + "_json"), name)
+        for name in ("metadata", "evidence_all_languages", "evidence_alignment_status"):
+            row[name] = object_field(row.pop(name + "_json", None), name)
         row["involved_source_unit_ids"] = tuple(row["involved_source_unit_ids"])
         result.append(Query(**row))
     return result

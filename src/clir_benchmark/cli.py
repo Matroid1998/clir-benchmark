@@ -5,7 +5,7 @@ import json
 import sys
 
 from . import __version__
-from .adapters import DatasetReader, query_from_row, select_candidates
+from .adapters import DatasetReader, apply_evidence_overlay, query_from_row, select_candidates
 from .config import load_config
 from .encoders import load_registry
 from .errors import ValidationError
@@ -81,6 +81,7 @@ def main(argv: list[str] | None = None) -> int:
                 for corpus, dataset in config.datasets.items():
                     reader = DatasetReader(dataset.qa, hf_token(config.env_file))
                     queries = [query_from_row(row, corpus) for row in reader.read("qas")]
+                    queries = apply_evidence_overlay(queries, config.evidence_file)
                     selected, _ = select_candidates(queries, config.candidate_mode)
                     ids.update(q.id for q in queries)
                     counts[corpus] = {

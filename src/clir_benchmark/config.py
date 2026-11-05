@@ -121,7 +121,7 @@ class Config:
     def relevance_key(self, corpus: str) -> str:
         return digest(
             {
-                "schema": 1,
+                "schema": 2,
                 "corpus_key": self.corpus_key(corpus),
                 "qa": self.datasets[corpus].qa.identity(),
                 "candidate_mode": self.candidate_mode,

@@ -216,7 +216,9 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
                             if judgment.status != "eligible":
                                 continue
                             for match in judgment.matches:
-                                match_sink.append({"setting_id": setting.id, **asdict(match)})
+                                record = asdict(match)
+                                record["annotation_json"] = json_dumps(record.pop("annotation"))
+                                match_sink.append({"setting_id": setting.id, **record})
                             for chunk_id, groups in sorted(judgment.relevant.items()):
                                 writer.writerow([judgment.query_id, 0, chunk_id, 1])
                                 for group in sorted(groups):
@@ -234,7 +236,7 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
             write_json(
                 temporary / "manifest.json",
                 {
-                    "schema": 1,
+                    "schema": 2,
                     "corpus": corpus,
                     "config_hash": config.relevance_key(corpus),
                     "corpus_fingerprint": read_json(corpus_dir / "manifest.json")[
@@ -245,6 +247,12 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
                     "input_query_count": len(queries),
                     "selected_query_count": len(selected),
                     "candidate_mode": config.candidate_mode,
+                    "alignment_contracts": dict(
+                        Counter(q.evidence_alignment_contract or "unspecified" for q in selected)
+                    ),
+                    "alignment_eligibility": dict(
+                        Counter(q.evidence_alignment_eligibility or "unspecified" for q in selected)
+                    ),
                     "blocked_settings": [
                         name for name, value in status.items() if value["status"] == "blocked"
                     ],

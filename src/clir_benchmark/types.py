@@ -54,6 +54,9 @@ class Query:
     evidence_all_languages: dict = field(default_factory=dict)
     unresolved_sources: bool = False
     metadata: dict = field(default_factory=dict)
+    evidence_alignment_status: dict = field(default_factory=dict)
+    evidence_alignment_eligibility: str | None = None
+    evidence_alignment_contract: str | None = None
 
     @property
     def required_units(self) -> tuple[str, ...]:
@@ -79,6 +82,7 @@ class Match:
     span: str
     start: int
     end: int
+    annotation: dict = field(default_factory=dict)
 
 
 @dataclass

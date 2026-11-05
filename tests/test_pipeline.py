@@ -9,11 +9,12 @@ import pytest
 import yaml
 from conftest import FixtureEncoder
 
-from clir_benchmark.artifacts import rows
+from clir_benchmark.artifacts import read_queries, rows
 from clir_benchmark.chunking import Chunker
 from clir_benchmark.cli import main
 from clir_benchmark.config import load_config
 from clir_benchmark.errors import ValidationError
+from clir_benchmark.evidence import ALIGNMENT_CONTRACT
 from clir_benchmark.pipeline import (
     embed,
     embedding_path,
@@ -251,3 +252,79 @@ def test_conflicting_duplicate_source_rejected(tmp_path, tokenizer):
     with pytest.raises(ValidationError, match="Conflicting"):
         prepare_corpus(config, "eurlex", chunker=Chunker(tokenizer, config.chunking))
     assert not config.corpus_dir("eurlex").exists()
+
+
+def test_published_annotation_structs_prepare_and_preserve_provenance(tmp_path, tokenizer):
+    config, config_path = fixture_config(tmp_path)
+    dataset = tmp_path / "dataset"
+    qas = list(rows(dataset / "data/qas/train-00000.parquet"))
+    for row in qas:
+        dropped = row["_id"] == "qdrop"
+        row["evidence_all_languages"] = {
+            "en": [],
+            "fr": []
+            if dropped
+            else [
+                {
+                    "source_unit_id": "a:fr",
+                    "language": None,
+                    "text": "preuve",
+                    "anchor_id": "original-anchor",
+                    "origin": "cross_language_alignment",
+                    "validation_status": "pending_review",
+                    "match_status": "exact",
+                }
+            ],
+        }
+        row["evidence_alignment_status"] = {
+            "en": [],
+            "fr": [
+                {
+                    "source_unit_id": "a:fr",
+                    "status": "not_found" if dropped else "matched",
+                    "reason": "no supporting passage" if dropped else None,
+                }
+            ],
+        }
+        row["evidence_alignment_contract"] = ALIGNMENT_CONTRACT
+        row["evidence_alignment_eligibility"] = "eligible"
+    write_rows(dataset, "qas", qas)
+    assert main(["--config", str(config_path), "validate", "--inputs"]) == 0
+    corpus_path = prepare_corpus(config, "eurlex", chunker=Chunker(tokenizer, config.chunking))
+    relevance_path = prepare_relevance(config, "eurlex")
+    manifest = read_json(relevance_path / "manifest.json")
+    assert manifest["schema"] == 2
+    assert not manifest["blocked_settings"]
+    assert manifest["alignment_contracts"] == {ALIGNMENT_CONTRACT: 2}
+    retained = {q.id: q for q in read_queries(relevance_path / "queries.parquet")}
+    assert retained["qbest"].evidence_alignment_status == qas[0]["evidence_alignment_status"]
+    positives = [
+        m for m in rows(relevance_path / "matches.parquet") if m["setting_id"] == "eurlex__en__fr"
+    ]
+    assert len(positives) == 1
+    assert positives[0]["query_id"] == "qbest"
+    provenance = json.loads(positives[0]["annotation_json"])
+    assert provenance["anchor_id"] == "original-anchor"
+    assert provenance["validation_status"] == "pending_review"
+    assert {r["query_id"] for r in rows(relevance_path / "qrels.parquet")} == {"qbest"}
+    # Replacement native annotations affect relevance only, including statuses.
+    overlay = tmp_path / "native.jsonl"
+    overlay.write_text(
+        json.dumps(
+            {
+                "query_id": "qbest",
+                "evidence_all_languages": {"fr": []},
+                "evidence_alignment_status": {
+                    "fr": [{"source_unit_id": "a:fr", "status": "uncertain"}]
+                },
+            }
+        )
+    )
+    updated = replace(config, evidence_file=overlay)
+    assert prepare_corpus(updated, "eurlex") == corpus_path
+    updated_path = prepare_relevance(updated, "eurlex")
+    assert updated_path != relevance_path
+    assert not [
+        r for r in rows(updated_path / "qrels.parquet") if r["setting_id"] == "eurlex__en__fr"
+    ]
+    assert read_json(corpus_path / "manifest.json")["source_count"] == 3
