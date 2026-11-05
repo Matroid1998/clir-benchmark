@@ -1,0 +1,112 @@
+from __future__ import annotations
+
+from collections.abc import Iterator
+
+import numpy as np
+
+from .errors import ValidationError
+
+
+class DenseIndex:
+    """Keep corpus metadata once while scoring query batches against a memory map."""
+
+    def __init__(self, vectors: np.ndarray, ids: list[str], languages: list[str]):
+        if vectors.ndim != 2 or len(vectors) != len(ids) or len(ids) != len(languages):
+            raise ValidationError("Document embedding metadata length/shape mismatch")
+        if len(ids) != len(set(ids)):
+            raise ValidationError("Duplicate document embedding IDs")
+        self.vectors = vectors
+        self.ids = np.asarray(ids)
+        self.languages = np.asarray(languages)
+
+    def search(
+        self,
+        queries: np.ndarray,
+        target_languages: tuple[str, ...],
+        *,
+        k: int = 100,
+        query_batch_size: int = 16,
+        corpus_block_size: int = 8192,
+    ) -> Iterator[list[tuple[str, float]]]:
+        yield from _search(
+            queries,
+            self.vectors,
+            self.ids,
+            self.languages,
+            target_languages,
+            k=k,
+            query_batch_size=query_batch_size,
+            corpus_block_size=corpus_block_size,
+        )
+
+
+def exact_topk(
+    query_vectors: np.ndarray,
+    document_vectors: np.ndarray,
+    document_ids: list[str],
+    document_languages: list[str],
+    target_languages: tuple[str, ...],
+    *,
+    k: int = 100,
+    query_batch_size: int = 16,
+    corpus_block_size: int = 8192,
+) -> Iterator[list[tuple[str, float]]]:
+    """Exact cosine ranking of normalized vectors; bounded score-matrix memory.
+
+    Lexicographic chunk-ID ties are resolved before each pruning operation, so
+    ties at a block/top-k boundary are deterministic, not just presentation ties.
+    """
+    index = DenseIndex(document_vectors, document_ids, document_languages)
+    yield from index.search(
+        query_vectors,
+        target_languages,
+        k=k,
+        query_batch_size=query_batch_size,
+        corpus_block_size=corpus_block_size,
+    )
+
+
+def _search(
+    query_vectors: np.ndarray,
+    document_vectors: np.ndarray,
+    ids: np.ndarray,
+    languages: np.ndarray,
+    target_languages: tuple[str, ...],
+    *,
+    k: int,
+    query_batch_size: int,
+    corpus_block_size: int,
+) -> Iterator[list[tuple[str, float]]]:
+    if query_vectors.ndim != 2 or query_vectors.shape[1] != document_vectors.shape[1]:
+        raise ValidationError("Query/document vectors must be matrices with matching dimensions")
+    if min(k, query_batch_size, corpus_block_size) < 1:
+        raise ValidationError("Retrieval k and batch/block sizes must be positive")
+    for query_start in range(0, len(query_vectors), query_batch_size):
+        queries = np.asarray(
+            query_vectors[query_start : query_start + query_batch_size], dtype=np.float32
+        )
+        if not np.isfinite(queries).all():
+            raise ValidationError("Query embeddings contain nonfinite values")
+        best_ids = [np.array([], dtype=ids.dtype) for _ in queries]
+        best_scores = [np.array([], dtype=np.float32) for _ in queries]
+        for start in range(0, len(document_vectors), corpus_block_size):
+            stop = min(start + corpus_block_size, len(document_vectors))
+            mask = np.isin(languages[start:stop], target_languages)
+            if not mask.any():
+                continue
+            vectors = np.asarray(document_vectors[start:stop][mask], dtype=np.float32)
+            if not np.isfinite(vectors).all():
+                raise ValidationError("Document embeddings contain nonfinite values")
+            block_ids = ids[start:stop][mask]
+            scores = queries @ vectors.T
+            for index, score_row in enumerate(scores):
+                order = np.lexsort((block_ids, -score_row))[:k]
+                candidates = np.concatenate((best_ids[index], block_ids[order]))
+                candidate_scores = np.concatenate((best_scores[index], score_row[order]))
+                keep = np.lexsort((candidates, -candidate_scores))[:k]
+                best_ids[index], best_scores[index] = candidates[keep], candidate_scores[keep]
+        for selected_ids, selected_scores in zip(best_ids, best_scores, strict=True):
+            yield [
+                (str(chunk_id), float(score))
+                for chunk_id, score in zip(selected_ids, selected_scores, strict=True)
+            ]

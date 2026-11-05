@@ -1,0 +1,56 @@
+embeddinggemma:
+  repo_id: google/embeddinggemma-300m
+  revision: 57c266a740f537b4dc058e1b0cda161fd15afa75
+  dimension: 768
+  max_length: 2048
+  pooling: mean+dense+dense+normalize
+  query_prefix: 'task: search result | query: '
+  document_prefix: 'title: none | text: '
+bge-m3:
+  repo_id: BAAI/bge-m3
+  revision: 5617a9f61b028005a4858fdac845db406aefb181
+  dimension: 1024
+  max_length: 8192
+  pooling: cls
+qwen3-0.6B:
+  repo_id: Qwen/Qwen3-Embedding-0.6B
+  revision: 97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3
+  dimension: 1024
+  max_length: 32768
+  pooling: last_token
+  query_prefix: "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:"
+nomic-v2-moe:
+  repo_id: nomic-ai/nomic-embed-text-v2-moe
+  revision: 1066b6599d099fbb93dfcb64f9c37a7c9e503e85
+  dimension: 768
+  max_length: 512
+  pooling: mean
+  query_prefix: 'search_query: '
+  document_prefix: 'search_document: '
+  trust_remote_code: true
+granite-278m:
+  repo_id: ibm-granite/granite-embedding-278m-multilingual
+  revision: a9cb5338491faf32b73dd17b714a31821c021bbf
+  dimension: 768
+  max_length: 512
+  pooling: cls
+LaBSE:
+  repo_id: sentence-transformers/LaBSE
+  revision: 836121a0533e5664b21c7aacc5d22951f2b8b25b
+  dimension: 768
+  max_length: 256
+  pooling: cls+dense+normalize
+SapBERT:
+  repo_id: cambridgeltl/SapBERT-UMLS-2020AB-all-lang-from-XLMR
+  revision: 47b6bd041ba61311584bb2494edfda5c7d9b719f
+  dimension: 768
+  max_length: 512
+  pooling: cls
+  backend: transformers_cls
+e5-large-instruct:
+  repo_id: intfloat/multilingual-e5-large-instruct
+  revision: 274baa43b0e13e37fafa6428dbc7938e62e5c439
+  dimension: 1024
+  max_length: 512
+  pooling: mean
+  query_prefix: "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: "

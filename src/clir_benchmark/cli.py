@@ -1,0 +1,147 @@
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+
+from . import __version__
+from .adapters import DatasetReader, query_from_row, select_candidates
+from .config import load_config
+from .encoders import load_registry
+from .errors import ValidationError
+from .pipeline import embed, evaluate, prepare_corpus, prepare_relevance, retrieve
+from .util import hf_token, read_json
+
+
+def parser() -> argparse.ArgumentParser:
+    result = argparse.ArgumentParser(
+        description="Static CLIR benchmark. Preparation never runs retrieval or evaluation."
+    )
+    result.add_argument("--version", action="version", version=__version__)
+    result.add_argument(
+        "--config",
+        default="configs/benchmark.yaml",
+        help="YAML configuration; relative paths resolve beside this file",
+    )
+    sub = result.add_subparsers(dest="command", required=True)
+    validate = sub.add_parser(
+        "validate",
+        help="Validate configuration; optionally inspect QA inputs without running models",
+    )
+    validate.add_argument(
+        "--inputs",
+        action="store_true",
+        help="Read QA exports and validate candidate selection and overlay IDs",
+    )
+    sub.add_parser("list-models", help="Print the resolved model registry without loading models")
+    for name in ("prepare-corpus", "prepare-relevance", "embed", "retrieve", "evaluate"):
+        command = sub.add_parser(name)
+        command.add_argument(
+            "--corpus",
+            action="append",
+            choices=["eurlex", "un", "chemistry"],
+            help="Repeat to select corpora; default: configured corpora",
+        )
+        if name in {"embed", "retrieve", "evaluate"}:
+            command.add_argument(
+                "--model",
+                action="append",
+                help="Repeat to select model aliases; default: configured models",
+            )
+        if name == "embed":
+            command.add_argument("--kind", choices=["document", "query", "both"], default="both")
+    return result
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parser().parse_args(argv)
+    try:
+        config = load_config(args.config)
+        registry = load_registry(config.model_registry)
+        requested_models = getattr(args, "model", None) or config.models
+        for alias in requested_models:
+            if alias not in registry:
+                raise ValidationError(f"Unknown model alias: {alias}")
+        if args.command == "list-models":
+            from dataclasses import asdict
+
+            print(json.dumps({name: asdict(spec) for name, spec in registry.items()}, indent=2))
+            return 0
+        if args.command == "validate":
+            info = {
+                "status": "valid",
+                "corpora": list(config.datasets),
+                "models": list(config.models),
+                "candidate_mode": config.candidate_mode,
+                "evaluation_executed": False,
+            }
+            if args.inputs:
+                ids = set()
+                counts = {}
+                for corpus, dataset in config.datasets.items():
+                    reader = DatasetReader(dataset.qa, hf_token(config.env_file))
+                    queries = [query_from_row(row, corpus) for row in reader.read("qas")]
+                    selected, _ = select_candidates(queries, config.candidate_mode)
+                    ids.update(q.id for q in queries)
+                    counts[corpus] = {
+                        "input_queries": len(queries),
+                        "selected_queries": len(selected),
+                    }
+                if config.evidence_file:
+                    seen = set()
+                    with config.evidence_file.open(encoding="utf-8") as handle:
+                        for line in handle:
+                            if not line.strip():
+                                continue
+                            record = json.loads(line)
+                            query_id = record.get("query_id", record.get("_id"))
+                            if query_id not in ids or query_id in seen:
+                                raise ValidationError(
+                                    f"Unknown or duplicate QA ID in evidence overlay: {query_id}"
+                                )
+                            seen.add(query_id)
+                info["inputs"] = counts
+            print(json.dumps(info, indent=2))
+            return 0
+        corpora = args.corpus or list(config.datasets)
+        blocked = False
+        for corpus in corpora:
+            if corpus not in config.datasets:
+                raise ValidationError(f"Corpus {corpus} is not configured")
+            if args.command == "prepare-corpus":
+                print(prepare_corpus(config, corpus))
+            elif args.command == "prepare-relevance":
+                path = prepare_relevance(config, corpus)
+                print(path)
+                missing = read_json(path / "manifest.json")["blocked_settings"]
+                if missing:
+                    blocked = True
+                    print(
+                        f"{corpus}: {len(missing)} settings blocked by missing multilingual annotations; see settings.json and eligibility.parquet",
+                        file=sys.stderr,
+                    )
+            else:
+                for alias in requested_models:
+                    if args.command == "embed":
+                        print(
+                            json.dumps(
+                                {
+                                    kind: str(path)
+                                    for kind, path in embed(
+                                        config, corpus, alias, kind=args.kind
+                                    ).items()
+                                }
+                            )
+                        )
+                    elif args.command == "retrieve":
+                        print(retrieve(config, corpus, alias))
+                    else:
+                        print(evaluate(config, corpus, alias))
+        return 2 if blocked else 0
+    except (ValidationError, OSError, json.JSONDecodeError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
