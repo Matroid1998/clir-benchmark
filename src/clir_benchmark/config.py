@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -91,6 +92,50 @@ class RuntimeConfig:
 
 
 @dataclass(frozen=True)
+class BM25Config:
+    k1: float = 1.2
+    b: float = 0.75
+    analyzer: str = "unicode-words-cjk-v1"
+
+    def __post_init__(self) -> None:
+        for name, value in (("k1", self.k1), ("b", self.b)):
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+            ):
+                raise ValidationError(f"bm25.{name} must be a finite number")
+        if self.k1 < 0 or not 0 <= self.b <= 1:
+            raise ValidationError("BM25 requires k1 >= 0 and 0 <= b <= 1")
+        if self.analyzer != "unicode-words-cjk-v1":
+            raise ValidationError("Unsupported BM25 analyzer; use unicode-words-cjk-v1")
+
+
+@dataclass(frozen=True)
+class HybridConfig:
+    candidate_k: int = 1000
+    rank_constant: int = 60
+    dense_weight: float = 1.0
+    bm25_weight: float = 1.0
+
+    def __post_init__(self) -> None:
+        for name, value, minimum in (
+            ("candidate_k", self.candidate_k, 100),
+            ("rank_constant", self.rank_constant, 0),
+        ):
+            if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+                raise ValidationError(f"hybrid.{name} must be an integer >= {minimum}")
+        for name, value in (("dense_weight", self.dense_weight), ("bm25_weight", self.bm25_weight)):
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+                or value <= 0
+            ):
+                raise ValidationError(f"hybrid.{name} must be a positive finite number")
+
+
+@dataclass(frozen=True)
 class Config:
     output_dir: Path
     datasets: dict[str, DatasetSpec]
@@ -104,6 +149,9 @@ class Config:
     evidence_file: Path | None = None
     model_registry: Path | None = None
     env_file: Path | None = None
+    baselines: tuple[str, ...] = ("dense",)
+    bm25: BM25Config = field(default_factory=BM25Config)
+    hybrid: HybridConfig = field(default_factory=HybridConfig)
 
     def corpus_key(self, corpus: str) -> str:
         return digest(
@@ -179,7 +227,7 @@ def load_config(path: str | Path) -> Config:
         if name in raw:
             raw[name] = resolved(raw[name])
     raw["output_dir"] = resolved(raw.get("output_dir", "artifacts"))
-    for name in ("settings", "query_languages", "target_languages", "models"):
+    for name in ("settings", "query_languages", "target_languages", "models", "baselines"):
         if name in raw:
             if not isinstance(raw[name], list):
                 raise ValidationError(f"{name} must be a list")
@@ -189,6 +237,8 @@ def load_config(path: str | Path) -> Config:
             datasets=datasets,
             chunking=ChunkingConfig(**raw.pop("chunking", {})),
             runtime=RuntimeConfig(**raw.pop("runtime", {})),
+            bm25=BM25Config(**raw.pop("bm25", {})),
+            hybrid=HybridConfig(**raw.pop("hybrid", {})),
             **raw,
         )
     except (TypeError, KeyError) as exc:
@@ -201,4 +251,10 @@ def load_config(path: str | Path) -> Config:
         language_tag(value)
     if not config.models or any(not isinstance(name, str) or not name for name in config.models):
         raise ValidationError("models must contain at least one nonempty alias")
+    if not config.baselines or any(
+        value not in ("dense", "bm25", "hybrid") for value in config.baselines
+    ):
+        raise ValidationError("baselines must contain dense, bm25, and/or hybrid")
+    if len(set(config.baselines)) != len(config.baselines):
+        raise ValidationError("baselines cannot contain duplicates")
     return config

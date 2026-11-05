@@ -9,6 +9,7 @@ from .adapters import DatasetReader, apply_evidence_overlay, query_from_row, sel
 from .config import load_config
 from .encoders import load_registry
 from .errors import ValidationError
+from .lexical import prepare_bm25
 from .pipeline import embed, evaluate, prepare_corpus, prepare_relevance, retrieve
 from .util import hf_token, read_json
 
@@ -34,7 +35,14 @@ def parser() -> argparse.ArgumentParser:
         help="Read QA exports and validate candidate selection and overlay IDs",
     )
     sub.add_parser("list-models", help="Print the resolved model registry without loading models")
-    for name in ("prepare-corpus", "prepare-relevance", "embed", "retrieve", "evaluate"):
+    for name in (
+        "prepare-corpus",
+        "prepare-relevance",
+        "index-bm25",
+        "embed",
+        "retrieve",
+        "evaluate",
+    ):
         command = sub.add_parser(name)
         command.add_argument(
             "--corpus",
@@ -50,6 +58,13 @@ def parser() -> argparse.ArgumentParser:
             )
         if name == "embed":
             command.add_argument("--kind", choices=["document", "query", "both"], default="both")
+        if name in {"retrieve", "evaluate"}:
+            command.add_argument(
+                "--baseline",
+                action="append",
+                choices=["dense", "bm25", "hybrid"],
+                help="Repeat to select baselines; default: configured baselines (dense)",
+            )
     return result
 
 
@@ -59,6 +74,9 @@ def main(argv: list[str] | None = None) -> int:
         config = load_config(args.config)
         registry = load_registry(config.model_registry)
         requested_models = getattr(args, "model", None) or config.models
+        baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
+        if args.command in {"retrieve", "evaluate"} and baselines == ("bm25",) and args.model:
+            raise ValidationError("--model applies to dense/hybrid retrieval; omit it for BM25")
         for alias in requested_models:
             if alias not in registry:
                 raise ValidationError(f"Unknown model alias: {alias}")
@@ -73,6 +91,7 @@ def main(argv: list[str] | None = None) -> int:
                 "corpora": list(config.datasets),
                 "models": list(config.models),
                 "candidate_mode": config.candidate_mode,
+                "baselines": list(config.baselines),
                 "evaluation_executed": False,
             }
             if args.inputs:
@@ -121,23 +140,25 @@ def main(argv: list[str] | None = None) -> int:
                         f"{corpus}: {len(missing)} settings blocked by missing multilingual annotations; see settings.json and eligibility.parquet",
                         file=sys.stderr,
                     )
-            else:
+            elif args.command == "index-bm25":
+                print(prepare_bm25(config, corpus))
+            elif args.command == "embed":
                 for alias in requested_models:
-                    if args.command == "embed":
-                        print(
-                            json.dumps(
-                                {
-                                    kind: str(path)
-                                    for kind, path in embed(
-                                        config, corpus, alias, kind=args.kind
-                                    ).items()
-                                }
-                            )
+                    print(
+                        json.dumps(
+                            {
+                                kind: str(path)
+                                for kind, path in embed(
+                                    config, corpus, alias, kind=args.kind
+                                ).items()
+                            }
                         )
-                    elif args.command == "retrieve":
-                        print(retrieve(config, corpus, alias))
-                    else:
-                        print(evaluate(config, corpus, alias))
+                    )
+            else:
+                for baseline in baselines:
+                    for alias in (None,) if baseline == "bm25" else requested_models:
+                        operation = retrieve if args.command == "retrieve" else evaluate
+                        print(operation(config, corpus, alias, baseline=baseline))
         return 2 if blocked else 0
     except (ValidationError, OSError, json.JSONDecodeError) as exc:
         print(f"Error: {exc}", file=sys.stderr)

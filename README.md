@@ -1,8 +1,8 @@
 # CLIR benchmark
 
-A Python package for reproducible, span-grounded dense retrieval over EUR-Lex,
-UN documents, and chemistry patent abstracts. It prepares one fixed chunk corpus
-and relevance judgments shared by every embedding baseline.
+A Python package for reproducible, span-grounded dense, BM25, and hybrid retrieval
+over EUR-Lex, UN documents, and chemistry patent abstracts. It prepares one fixed
+chunk corpus and relevance judgments shared by every baseline.
 
 Preparation, embedding, retrieval, and scoring are separate CLI commands. Nothing
 runs a benchmark automatically. Tests use synthetic corpora and lightweight
@@ -235,6 +235,97 @@ prepares only query vectors. The default is `both`. Repeat `--model` or omit it
 for the configured list. Only ready settings are retrieved/scored, with blocked
 settings recorded in manifests.
 
+### BM25 and hybrid retrieval
+
+After `prepare-corpus` and `prepare-relevance`, run BM25 without an embedding
+model or model downloads:
+
+```bash
+uv run clir-benchmark index-bm25 --corpus eurlex
+uv run clir-benchmark retrieve --corpus eurlex --baseline bm25
+uv run clir-benchmark evaluate --corpus eurlex --baseline bm25
+```
+
+`index-bm25` builds a reusable SQLite inverted index over **every** prepared chunk,
+including distractors and documents whose QAs were dropped. Indexing needs only
+the corpus artifacts and can precede relevance preparation. Posting aggregation
+and sorting can spill to disk; the implementation does not construct an in-memory
+query-by-corpus score matrix. No new service or optional model dependency is needed.
+
+BM25 defaults to `k1=1.2`, `b=0.75`, with positive IDF
+`log(1 + (N - df + 0.5) / (df + 0.5))` and term contribution
+`idf * tf * (k1 + 1) / (tf + k1 * (1 - b + b * length / avgdl))`.
+These parameter defaults and the IDF convention follow
+[Lucene's BM25 documentation](https://lucene.apache.org/core/7_4_0/core/org/apache/lucene/search/similarities/BM25Similarity.html).
+This implementation uses exact token counts and float64 arithmetic rather than
+Lucene's encoded length norms. Statistics are computed over **all chunks in the
+setting's target-language pool**, including empty chunks. Mixed settings use
+pooled statistics across their target languages. Repeated query terms count once.
+
+The `unicode-words-cjk-v1` analyzer applies NFC, Unicode case folding, then NFC;
+groups Unicode letters/numbers and attached combining marks into words; and
+uses individual Han and Japanese kana letters as tokens. Other characters act
+as separators. It has no stop list, stemmer, tag removal, or query translation.
+The analyzer and Unicode database version are recorded. Lexical analysis affects
+retrieval only: stored source text, chunk offsets, and exact relevance matching
+remain unchanged. This is an untranslated lexical CLIR baseline. Only chunks
+with lexical matches are returned, up to 100; zero-overlap queries have empty
+rankings and remain in evaluation with zero retrieval metrics.
+
+Hybrid retrieval combines BM25 with **any existing dense checkpoint**, reusing its
+cached document/query embeddings:
+
+```bash
+# Skip embedding if the selected model's vectors are already cached.
+uv run clir-benchmark embed --corpus eurlex --model bge-m3
+uv run clir-benchmark retrieve --corpus eurlex --baseline hybrid --model bge-m3
+uv run clir-benchmark evaluate --corpus eurlex --baseline hybrid --model bge-m3
+```
+
+Prepare the BM25 index first. Hybrid retrieval independently searches the same
+language-filtered full corpus with both branches. It takes up to 1,000 candidates
+from each, fuses their union with weighted reciprocal rank fusion (RRF), and
+returns the top 100. Its score is the sum of
+`branch_weight / (rank_constant + one_based_branch_rank)` over branches containing
+the chunk; an absent chunk contributes zero. Defaults are equal weights and
+`rank_constant=60`, following the
+[original RRF formulation](https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf).
+Raw cosine and BM25 score scales do not enter fusion. Empty BM25 rankings leave
+the dense ranking as the sole contributor. Chunk IDs break score ties in each
+branch and the fused ranking. Fusion operates on the truncated candidate lists,
+not hypothetical ranks below `candidate_k`.
+
+The YAML configuration records these experiment choices:
+
+```yaml
+baselines: [dense, bm25, hybrid]
+bm25:
+  k1: 1.2
+  b: 0.75
+  analyzer: unicode-words-cjk-v1
+hybrid:
+  candidate_k: 1000  # Per branch, at least 100.
+  rank_constant: 60
+  dense_weight: 1.0
+  bm25_weight: 1.0
+```
+
+The shipped default remains `baselines: [dense]`, preserving existing commands.
+Repeated `--baseline` flags override that list. Dense and hybrid run once per
+selected `--model`; BM25 runs once per corpus and takes no model argument when
+selected alone. BM25 parameters and fusion weights/depth have separate run cache
+identities. Changing them does not change chunks, QAs, qrels, or embedding caches;
+changing BM25 scores also reuses the lexical index. Evidence and candidate
+selection never enter its index key.
+
+Each baseline produces the same Parquet/TREC runs and JSON/CSV metrics in separate
+run/report directories, labeled with baseline and dense model (if applicable).
+All eligibility and multi-source metrics apply unchanged. BM25 consumes full
+query/chunk text and has no truncation audit; hybrid reports the existing
+truncation/support-exposure audit explicitly for its **dense component**.
+
+### Dense encoders
+
 [`models.yaml`](src/clir_benchmark/models.yaml) pins all eight checkpoints, full
 dimensions, input limits, pooling descriptions, and exact prefixes. Published
 SentenceTransformer module pipelines are retained, including LaBSE's dense layer
@@ -289,6 +380,7 @@ are never combined. Empty/blocked settings retain counts/status without scores.
 | `corpus/<corpus>/<input hash>/` | Sources/chunks Parquet, indexed SQLite lookup, original chemistry pair rows, manifest |
 | `relevance/<corpus>/<config hash>/` | Selected queries, selection audit, eligibility reasons, qrels/matches Parquet, standard qrels TSV, settings/manifest |
 | `embeddings/<kind>/<cache key>/` | Float32 `vectors.npy`, ordered IDs/truncation audits Parquet, manifest |
+| `lexical/<corpus>/<index hash>/` | SQLite postings, exact lengths and language/term statistics, analyzer manifest |
 | `runs/<corpus>/<run hash>/` | Ranked Parquet/TREC output and manifest |
 | `reports/<corpus>/<run hash>/` | JSON report/per-query data, per-query/per-setting CSV |
 
@@ -306,7 +398,7 @@ relevance artifacts; corpus and embedding cache identities remain unchanged.
 Manifests record revision pins, configuration hashes, token accounting, execution
 device/precision, versions, and timings. No train/dev/test split or fine-tuning is
 introduced; upstream `train` is a storage convention. Answer generation,
-reranking, hybrid retrieval, and additional QA quality filtering are excluded.
+reranking, model fine-tuning, and additional QA quality filtering are excluded.
 
 ## Tests
 
@@ -322,3 +414,6 @@ Offline tests cover exact slicing, selection, literal matching, multilingual and
 multi-source eligibility, chemistry provenance/pairs, full-corpus search,
 deterministic ranking, metrics, caches, truncation, and the CLI. Real model quality
 and performance require later explicit benchmark runs.
+BM25 tests compare against independent brute-force scores, including filtered and
+mixed language pools; hybrid tests check RRF scores, candidate depth, empty
+branches, cache independence, and end-to-end synthetic runs without model loads.

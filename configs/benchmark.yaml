@@ -40,6 +40,17 @@ target_languages: [en, de, es, fr, zh]
 # Optional JSONL overlay: query_id + evidence_all_languages (+ alignment fields).
 evidence_file: null
 models: [embeddinggemma, bge-m3, qwen3-0.6B, nomic-v2-moe, granite-278m, LaBSE, SapBERT, e5-large-instruct]
+# retrieve/evaluate defaults; override with repeated --baseline flags.
+baselines: [dense]
+bm25:
+  k1: 1.2
+  b: 0.75
+  analyzer: unicode-words-cjk-v1
+hybrid:
+  candidate_k: 1000
+  rank_constant: 60
+  dense_weight: 1.0
+  bm25_weight: 1.0
 runtime:
   device: auto
   dtype: float32

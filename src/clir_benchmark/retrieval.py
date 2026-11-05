@@ -4,7 +4,30 @@ from collections.abc import Iterator
 
 import numpy as np
 
+from .config import HybridConfig
 from .errors import ValidationError
+
+
+def reciprocal_rank_fusion(
+    dense: list[tuple[str, float]],
+    bm25: list[tuple[str, float]],
+    config: HybridConfig | None = None,
+    *,
+    k: int = 100,
+) -> list[tuple[str, float]]:
+    """Fuse truncated candidate lists; absent documents contribute zero."""
+    config = config or HybridConfig()
+    if isinstance(k, bool) or not isinstance(k, int) or k < 1:
+        raise ValidationError("Fusion k must be a positive integer")
+    scores: dict[str, float] = {}
+    for ranking, weight in ((dense, config.dense_weight), (bm25, config.bm25_weight)):
+        seen = set()
+        for rank, (chunk_id, _) in enumerate(ranking[: config.candidate_k], 1):
+            if chunk_id in seen:
+                raise ValidationError(f"Duplicate chunk ID in fusion branch: {chunk_id}")
+            seen.add(chunk_id)
+            scores[chunk_id] = scores.get(chunk_id, 0.0) + weight / (config.rank_constant + rank)
+    return sorted(scores.items(), key=lambda item: (-item[1], item[0]))[:k]
 
 
 class DenseIndex:

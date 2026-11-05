@@ -5,6 +5,7 @@ import hashlib
 import time
 from collections import Counter, defaultdict
 from collections.abc import Callable
+from contextlib import ExitStack
 from dataclasses import asdict
 from pathlib import Path
 
@@ -44,9 +45,10 @@ from .embedding import (
 )
 from .encoders import Encoder, HuggingFaceEncoder, ModelSpec, load_registry
 from .errors import ValidationError
+from .lexical import BM25Index, bm25_path, bm25_scoring
 from .metrics import aggregate, score_query
 from .relevance import build_settings, judge
-from .retrieval import DenseIndex
+from .retrieval import DenseIndex, reciprocal_rank_fusion
 from .util import (
     digest,
     hf_token,
@@ -337,7 +339,27 @@ def embed(
     return result
 
 
-def run_path(config: Config, corpus: str, spec: ModelSpec) -> Path:
+def run_path(
+    config: Config, corpus: str, spec: ModelSpec | None = None, *, baseline: str = "dense"
+) -> Path:
+    if baseline not in {"dense", "bm25", "hybrid"}:
+        raise ValidationError(f"Unknown retrieval baseline: {baseline}")
+    if baseline != "bm25" and spec is None:
+        raise ValidationError(f"{baseline} retrieval requires a dense model")
+    if baseline != "dense":
+        identity = {
+            "schema": 1,
+            "baseline": baseline,
+            "relevance": config.relevance_key(corpus),
+            "index": str(bm25_path(config, corpus)),
+            "bm25": bm25_scoring(config.bm25),
+            "top_k": 100,
+        }
+        if baseline == "hybrid":
+            identity["dense"] = str(run_path(config, corpus, spec))
+            identity["fusion"] = {"method": "rrf", **asdict(config.hybrid)}
+        return config.output_dir / "runs" / corpus / digest(identity)
+    # Preserve existing dense-run identities when adding lexical baselines.
     identity = {
         "schema": 1,
         "relevance": config.relevance_key(corpus),
@@ -351,25 +373,28 @@ def run_path(config: Config, corpus: str, spec: ModelSpec) -> Path:
     return config.output_dir / "runs" / corpus / digest(identity)
 
 
-def retrieve(config: Config, corpus: str, alias: str) -> Path:
-    spec = model_spec(config, alias)
-    destination = run_path(config, corpus, spec)
+def retrieval_spec(config: Config, alias: str | None, baseline: str) -> ModelSpec | None:
+    if baseline not in {"dense", "bm25", "hybrid"}:
+        raise ValidationError(f"Unknown retrieval baseline: {baseline}")
+    if baseline == "bm25":
+        if alias is not None:
+            raise ValidationError("BM25 does not use a dense model; omit the model alias")
+        return None
+    if alias is None:
+        raise ValidationError(f"{baseline} requires a dense model alias")
+    return model_spec(config, alias)
+
+
+def retrieve(
+    config: Config, corpus: str, alias: str | None = None, *, baseline: str = "dense"
+) -> Path:
+    spec = retrieval_spec(config, alias, baseline)
+    destination = run_path(config, corpus, spec, baseline=baseline)
     if destination.exists():
         read_json(destination / "manifest.json")
         return destination
     relevance_dir = config.relevance_dir(corpus)
     settings = read_json(relevance_dir / "settings.json")
-    documents, doc_rows, doc_manifest = load_embeddings(
-        embedding_path(config, corpus, spec, "document"), ["id", "language"]
-    )
-    queries, query_rows, query_manifest = load_embeddings(
-        embedding_path(config, corpus, spec, "query"), ["id"]
-    )
-    index = DenseIndex(
-        documents, [row["id"] for row in doc_rows], [row["language"] for row in doc_rows]
-    )
-    del doc_rows
-    query_index = {row["id"]: index for index, row in enumerate(query_rows)}
     eligible = defaultdict(list)
     for row in rows(relevance_dir / "eligibility.parquet"):
         if row["status"] == "eligible" and settings[row["setting_id"]]["status"] == "ready":
@@ -379,27 +404,79 @@ def retrieve(config: Config, corpus: str, alias: str) -> Path:
             "No ready retrieval settings; supply the missing multilingual annotations first"
         )
     started = time.perf_counter()
-    with new_directory(destination) as temporary:
+    with ExitStack() as resources:
+        index = None
+        lexical = None
+        query_index = {}
+        query_texts = {}
+        if spec is not None:
+            documents, doc_rows, _ = load_embeddings(
+                embedding_path(config, corpus, spec, "document"), ["id", "language"]
+            )
+            query_vectors, query_rows, _ = load_embeddings(
+                embedding_path(config, corpus, spec, "query"), ["id"]
+            )
+            index = DenseIndex(
+                documents, [row["id"] for row in doc_rows], [row["language"] for row in doc_rows]
+            )
+            del doc_rows
+            query_index = {row["id"]: index for index, row in enumerate(query_rows)}
+        if baseline in {"bm25", "hybrid"}:
+            lexical = resources.enter_context(BM25Index(bm25_path(config, corpus), config.bm25))
+            query_texts = {
+                row["id"]: row["question"]
+                for row in rows(relevance_dir / "queries.parquet", ["id", "question"])
+            }
+        tag = "bm25" if baseline == "bm25" else f"hybrid-{alias}" if baseline == "hybrid" else alias
+        candidate_k = config.hybrid.candidate_k if baseline == "hybrid" else 100
+        temporary = resources.enter_context(new_directory(destination))
         with ParquetSink(temporary / "run.parquet", RUN_SCHEMA) as sink:
             for setting_id, info in settings.items():
                 if info["status"] != "ready":
                     continue
                 ids = sorted(eligible[setting_id])
-                if set(ids) - query_index.keys():
+                if index is not None and set(ids) - query_index.keys():
                     raise ValidationError(f"Missing query embeddings for {setting_id}")
+                if lexical is not None and set(ids) - query_texts.keys():
+                    raise ValidationError(f"Missing query text for {setting_id}")
                 with (temporary / f"{setting_id}.trec").open("w", encoding="utf-8") as handle:
                     # Select queries in bounded batches; never copy the entire
                     # query matrix just to filter a language setting.
                     for start in range(0, len(ids), config.runtime.query_batch_size):
                         batch_ids = ids[start : start + config.runtime.query_batch_size]
-                        vectors = queries[[query_index[query_id] for query_id in batch_ids]]
-                        results = index.search(
-                            vectors,
-                            tuple(info["target_languages"]),
-                            query_batch_size=config.runtime.query_batch_size,
-                            corpus_block_size=config.runtime.corpus_block_size,
+                        languages = tuple(info["target_languages"])
+                        dense_results = (
+                            index.search(
+                                query_vectors[[query_index[query_id] for query_id in batch_ids]],
+                                languages,
+                                k=candidate_k,
+                                query_batch_size=config.runtime.query_batch_size,
+                                corpus_block_size=config.runtime.corpus_block_size,
+                            )
+                            if index is not None
+                            else ([] for _ in batch_ids)
                         )
-                        for query_id, ranking in zip(batch_ids, results, strict=True):
+                        lexical_results = (
+                            lexical.search(
+                                (query_texts[query_id] for query_id in batch_ids),
+                                languages,
+                                k=candidate_k,
+                            )
+                            if lexical is not None
+                            else ([] for _ in batch_ids)
+                        )
+                        for query_id, dense_ranking, lexical_ranking in zip(
+                            batch_ids, dense_results, lexical_results, strict=True
+                        ):
+                            ranking = (
+                                reciprocal_rank_fusion(
+                                    dense_ranking, lexical_ranking, config.hybrid
+                                )
+                                if baseline == "hybrid"
+                                else lexical_ranking
+                                if baseline == "bm25"
+                                else dense_ranking
+                            )
                             for rank, (chunk_id, score) in enumerate(ranking, 1):
                                 sink.append(
                                     {
@@ -411,20 +488,40 @@ def retrieve(config: Config, corpus: str, alias: str) -> Path:
                                     }
                                 )
                                 handle.write(
-                                    f"{query_id}\tQ0\t{chunk_id}\t{rank}\t{score:.9g}\t{alias}\n"
+                                    f"{query_id}\tQ0\t{chunk_id}\t{rank}\t{score:.17g}\t{tag}\n"
                                 )
         write_json(
             temporary / "manifest.json",
             {
-                "schema": 1,
+                "schema": 2,
                 "corpus": corpus,
-                "model": asdict(spec),
+                "baseline": baseline,
+                "run_name": tag,
+                "model": asdict(spec) if spec is not None else None,
                 "relevance_hash": config.relevance_key(corpus),
-                "corpus_fingerprint": doc_manifest["input_fingerprint"],
-                "query_fingerprint": query_manifest["input_fingerprint"],
+                "corpus_fingerprint": read_json(config.corpus_dir(corpus) / "manifest.json")[
+                    "corpus_fingerprint"
+                ],
+                "query_fingerprint": read_json(relevance_dir / "manifest.json")[
+                    "query_fingerprint"
+                ],
                 "settings": settings,
                 "top_k": 100,
-                "similarity": "cosine_float32",
+                "similarity": "rrf"
+                if baseline == "hybrid"
+                else "bm25_float64"
+                if baseline == "bm25"
+                else "cosine_float32",
+                "bm25": bm25_scoring(config.bm25) if lexical is not None else None,
+                "lexical_index": {
+                    "path": str(bm25_path(config, corpus)),
+                    "manifest": lexical.manifest,
+                }
+                if lexical is not None
+                else None,
+                "fusion": {"method": "rrf", **asdict(config.hybrid)}
+                if baseline == "hybrid"
+                else None,
                 "tie_break": "chunk_id_ascending",
                 "runtime": asdict(config.runtime),
                 "seconds": time.perf_counter() - started,
@@ -434,9 +531,11 @@ def retrieve(config: Config, corpus: str, alias: str) -> Path:
     return destination
 
 
-def evaluate(config: Config, corpus: str, alias: str) -> Path:
-    spec = model_spec(config, alias)
-    run_dir = run_path(config, corpus, spec)
+def evaluate(
+    config: Config, corpus: str, alias: str | None = None, *, baseline: str = "dense"
+) -> Path:
+    spec = retrieval_spec(config, alias, baseline)
+    run_dir = run_path(config, corpus, spec, baseline=baseline)
     if not (run_dir / "manifest.json").is_file():
         raise ValidationError(
             f"Retrieval run does not exist: {run_dir}. Run retrieve explicitly first."
@@ -470,6 +569,8 @@ def evaluate(config: Config, corpus: str, alias: str) -> Path:
         per_query.append(
             {
                 "query_id": query.id,
+                "baseline": baseline,
+                "model": alias,
                 "corpus": corpus,
                 "regime": setting["kind"],
                 "setting_id": setting["id"],
@@ -482,28 +583,39 @@ def evaluate(config: Config, corpus: str, alias: str) -> Path:
                 "metrics": scores,
             }
         )
-    document_path = embedding_path(config, corpus, spec, "document")
-    document_manifest = read_json(document_path / "manifest.json")
-    positive_ids = {row["chunk_id"] for row in rows(relevance_dir / "qrels.parquet", ["chunk_id"])}
-    document_rows = [
-        row for row in rows(document_path / "rows.parquet") if row["id"] in positive_ids
-    ]
-    query_manifest = read_json(embedding_path(config, corpus, spec, "query") / "manifest.json")
-    report = {
-        "schema": 1,
-        "corpus": corpus,
-        "model": alias,
-        "run": read_json(run_dir / "manifest.json"),
-        "settings": settings,
-        "candidate_selection": read_json(relevance_dir / "manifest.json"),
-        "metrics": aggregate(per_query),
-        "truncation": {
+    truncation = {
+        "applicable": False,
+        "reason": "BM25 uses full chunk and query text; no input truncation",
+    }
+    if spec is not None:
+        document_path = embedding_path(config, corpus, spec, "document")
+        document_manifest = read_json(document_path / "manifest.json")
+        positive_ids = {
+            row["chunk_id"] for row in rows(relevance_dir / "qrels.parquet", ["chunk_id"])
+        }
+        document_rows = [
+            row for row in rows(document_path / "rows.parquet") if row["id"] in positive_ids
+        ]
+        query_manifest = read_json(embedding_path(config, corpus, spec, "query") / "manifest.json")
+        truncation = {
+            "applicable": True,
+            "scope": "dense_component" if baseline == "hybrid" else "dense",
             "documents": document_manifest["truncation"],
             "queries": query_manifest["truncation"],
             "support_exposure": support_exposure(
                 rows(relevance_dir / "matches.parquet"), document_rows
             ),
-        },
+        }
+    report = {
+        "schema": 2,
+        "corpus": corpus,
+        "baseline": baseline,
+        "model": alias,
+        "run": read_json(run_dir / "manifest.json"),
+        "settings": settings,
+        "candidate_selection": read_json(relevance_dir / "manifest.json"),
+        "metrics": aggregate(per_query),
+        "truncation": truncation,
         "versions": versions(),
     }
     with new_directory(destination) as temporary:
@@ -521,7 +633,12 @@ def evaluate(config: Config, corpus: str, alias: str) -> Path:
             writer.writeheader()
             writer.writerows(flattened)
         setting_rows = [
-            {**{key: value for key, value in row.items() if key != "metrics"}, **row["metrics"]}
+            {
+                "baseline": baseline,
+                "model": alias,
+                **{key: value for key, value in row.items() if key != "metrics"},
+                **row["metrics"],
+            }
             for row in report["metrics"]["setting"]
         ]
         with (temporary / "settings.csv").open("w", encoding="utf-8", newline="") as handle:
