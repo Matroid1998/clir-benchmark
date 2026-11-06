@@ -1,0 +1,6 @@
+Source language: {source_language}
+Target language: {target_language}
+
+<query>
+{query}
+</query>

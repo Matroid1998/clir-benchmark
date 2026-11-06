@@ -1,6 +1,6 @@
 # CLIR benchmark
 
-A Python package for reproducible, span-grounded dense, BM25, and hybrid retrieval
+A Python package for reproducible, span-grounded dense, BM25, hybrid, and translate-then-retrieve baselines
 over EUR-Lex, UN documents, and chemistry patent abstracts. It prepares one fixed
 chunk corpus and relevance judgments shared by every baseline.
 
@@ -32,8 +32,10 @@ uv run clir-benchmark --config configs/benchmark.yaml validate --inputs
 and overlays, and verifies candidate selection. Source associations and literal
 span matching are checked during relevance preparation.
 
-`HF_TOKEN` is read from the environment or configured `.env` file. Only that
-variable is consumed; unrelated API keys are not loaded. `.env`, data, vectors,
+`HF_TOKEN` is read from the environment or configured `.env` file. The explicit
+`translate` command also reads the single variable named by
+`translation.api_key_env` (default `TRANSLATION_API_KEY`); unrelated API keys are
+not loaded into the process environment. `.env`, data, vectors,
 and reports are ignored by Git. The token must have access to BASF and any gated
 model being used.
 
@@ -235,6 +237,120 @@ prepares only query vectors. The default is `both`. Repeat `--model` or omit it
 for the configured list. Only ready settings are retrieved/scored, with blocked
 settings recorded in manifests.
 
+### Translate then retrieve
+
+The `translate-dense`, `translate-bm25`, and `translate-hybrid` baselines run each
+translated query language **separately**, using the same query IDs, eligible
+cohorts, full document pools, and qrels as the corresponding untranslated baseline.
+For example, an English query translated into French is evaluated both against
+each configured pairwise document pool and against the mixed pool. Translation
+language and document-pool language are separate experiment dimensions. Rankings
+from different translated languages are never fused. Hybrid still fuses its dense
+and BM25 branches for one query translation.
+
+Translation languages come from `target_languages` (currently en, de, es, fr, zh),
+or all corpus languages when that list is empty. Only queries eligible in at least
+one ready setting are translated. Queries already in the requested language are
+copied exactly as an `identity` control with zero API calls, tokens, and cost.
+Blocked settings remain blocked; translation does not create evidence or change
+relevance judgments.
+
+The supplied prompts are stored in
+[`chemistry.txt`](src/clir_benchmark/prompts/chemistry.txt) and
+[`law.txt`](src/clir_benchmark/prompts/law.txt), with the shared
+[`query.txt`](src/clir_benchmark/prompts/query.txt) template. EUR-Lex and UN use the
+law prompt. Only the original query and source/target language tags enter the
+request: no answers, supporting passages, or document metadata. The prompts'
+wording is preserved, with the pasted Markdown escapes removed.
+
+The model and provider are deliberately unset. Before running live translation,
+set `translation.model`, the full `translation.endpoint` URL, and your provider's
+USD token prices in `configs/benchmark.yaml`. The adapter accepts the
+[Chat Completions request and response format](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create).
+For example, the OpenAI endpoint is `https://api.openai.com/v1/chat/completions`;
+an alternative provider must implement that protocol. Credentials come from
+`TRANSLATION_API_KEY`, or the environment variable you select with `api_key_env`.
+Set `api_key_env: null` for an unauthenticated local endpoint. No new dependency
+is needed; request-cache locking uses POSIX file locks.
+
+`response_format: json_schema` requests exactly one `translation` string. Use
+`json_object` or `text` if the selected endpoint does not support JSON schema;
+all modes still enforce the same JSON contract locally. `request_options` allows
+model-specific `temperature`, `top_p`, `seed`, `max_completion_tokens`, `max_tokens`,
+and `reasoning_effort`. None are forced by default. Choose a stable model snapshot
+when available and record suitable generation options for your experiment.
+
+After corpus and relevance preparation, this example compares French translation
+against untranslated BM25:
+
+```bash
+# Only this command makes translation API calls.
+uv run clir-benchmark translate --corpus chemistry --translation-language fr
+uv run clir-benchmark index-bm25 --corpus chemistry
+uv run clir-benchmark retrieve --corpus chemistry --baseline bm25
+uv run clir-benchmark retrieve --corpus chemistry --baseline translate-bm25 --translation-language fr
+uv run clir-benchmark compare-translations --corpus chemistry --baseline bm25 --translation-language fr
+```
+
+`compare-translations` evaluates the existing runs and writes `report.json`,
+`per_query.json`, and `settings.csv` under `artifacts/comparisons`. It reports
+absolute metric deltas (translated minus original), mean translation cost, and
+timing components on exactly matched query/setting cohorts. It never translates,
+loads an encoder, or executes retrieval. To score a translated run alone, use
+`evaluate --baseline translate-bm25 --translation-language fr`.
+
+Dense and hybrid reuse existing document vectors and encode translations as
+queries with the selected retrieval model's normal query adapter:
+
+```bash
+uv run clir-benchmark embed --corpus chemistry --model bge-m3
+uv run clir-benchmark embed --corpus chemistry --model bge-m3 --kind query --translation-language fr
+uv run clir-benchmark retrieve --corpus chemistry --model bge-m3 --baseline dense
+uv run clir-benchmark retrieve --corpus chemistry --model bge-m3 --baseline translate-dense --translation-language fr
+uv run clir-benchmark compare-translations --corpus chemistry --model bge-m3 --baseline dense --translation-language fr
+```
+
+For hybrid, prepare the BM25 index and replace `dense`/`translate-dense` with
+`hybrid`/`translate-hybrid`. Repeat `--translation-language` to select multiple
+independent variants. Omitting it from `translate`, `compare-translations`, or a
+`translate-*` retrieval/evaluation runs all configured target languages. For
+`embed`, omission continues to mean original queries; supply each desired
+translation language explicitly. Ordinary commands and `baselines: [dense]`
+retain their existing behavior. No preparation, embedding, retrieval, or scoring
+command implicitly calls the translation API.
+
+Each request is cached by query ID, query text, source/target languages, exact
+prompts, endpoint, model, and request options. The cache is shared across retrieval
+models and baselines. The request and raw response (including reported model and
+usage), elapsed time, and each attempt's status are retained under
+`artifacts/translation_requests`; credentials are excluded. Completed translation
+sets publish immutable query Parquet files and manifests. Changing prices can
+recompute cost estimates using cached responses without calling the API again.
+
+Malformed JSON, extra or duplicate keys, blank translations, refusals, truncation,
+and transport failures stop translation without substituting the original query.
+Successful requests survive an interrupted batch. Failed or interrupted requests
+require an explicit `translate --retry-failed`; retries preserve prior attempts
+and include their known usage and time in accounting. Concurrent processes cannot
+issue the same cached request simultaneously.
+
+Cost uses reported input/output token counts and configured USD rates per million
+tokens, including a cached-input rate when supplied. Without that rate, all input
+tokens are charged at the regular configured input rate. Unknown usage or prices
+produce `null`, not a free request. Summaries count each query once per translation
+language; do not add costs across settings or retrievers that reuse those requests.
+These are API cost estimates; local embedding and retrieval compute are not priced.
+
+Latency reports retain the original API-call duration even when translations are
+reused. Retrieval timing measures search and fusion, excluding index loading and
+result writing, and divides each batch's time among its queries. Query encoding
+time is the cached embedding build wall time divided by its input count. The
+comparison adds these **offline component measurements**; it does not claim a
+measured online end-to-end latency. Historical retrieval runs without timings
+remain usable for quality comparison and show `null` latency; use a fresh output
+directory to measure those runs. Keep runtime, device, and batch sizes consistent
+when comparing timings.
+
 ### BM25 and hybrid retrieval
 
 After `prepare-corpus` and `prepare-relevance`, run BM25 without an embedding
@@ -379,12 +495,16 @@ are never combined. Empty/blocked settings retain counts/status without scores.
 | --- | --- |
 | `corpus/<corpus>/<input hash>/` | Sources/chunks Parquet, indexed SQLite lookup, original chemistry pair rows, manifest |
 | `relevance/<corpus>/<config hash>/` | Selected queries, selection audit, eligibility reasons, qrels/matches Parquet, standard qrels TSV, settings/manifest |
+| `translation_requests/` | Resumable request/response and attempt audits, shared across retrieval models |
+| `translations/<corpus>/<language>/<hash>/` | Translated query Parquet, exact prompts/configuration, usage/cost/latency manifest |
 | `embeddings/<kind>/<cache key>/` | Float32 `vectors.npy`, ordered IDs/truncation audits Parquet, manifest |
 | `lexical/<corpus>/<index hash>/` | SQLite postings, exact lengths and language/term statistics, analyzer manifest |
-| `runs/<corpus>/<run hash>/` | Ranked Parquet/TREC output and manifest |
+| `runs/<corpus>/<run hash>/` | Ranked Parquet/TREC output, batch-amortized query timings, manifest |
 | `reports/<corpus>/<run hash>/` | JSON report/per-query data, per-query/per-setting CSV |
+| `comparisons/<corpus>/<hash>/` | Matched original/translated metric deltas, costs and timing components in JSON/CSV |
 
-Stages publish immutable directories only after completion. Compatible completed
+Completed stages publish immutable directories only after completion; individual
+translation request audits are updated as attempts finish. Compatible completed
 stages are reused; changed settings produce new artifacts. Corrupt artifacts
 must be explicitly removed before rebuilding. Document cache keys use the
 content-based corpus fingerprint; query keys use selected IDs, languages, and

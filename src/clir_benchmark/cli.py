@@ -6,11 +6,13 @@ import sys
 
 from . import __version__
 from .adapters import DatasetReader, apply_evidence_overlay, query_from_row, select_candidates
-from .config import load_config
+from .comparison import compare_translations
+from .config import BASELINES, load_config
 from .encoders import load_registry
 from .errors import ValidationError
 from .lexical import prepare_bm25
 from .pipeline import embed, evaluate, prepare_corpus, prepare_relevance, retrieve
+from .translation import prepare_translations, translation_languages
 from .util import hf_token, read_json
 
 
@@ -42,6 +44,8 @@ def parser() -> argparse.ArgumentParser:
         "embed",
         "retrieve",
         "evaluate",
+        "translate",
+        "compare-translations",
     ):
         command = sub.add_parser(name)
         command.add_argument(
@@ -50,7 +54,7 @@ def parser() -> argparse.ArgumentParser:
             choices=["eurlex", "un", "chemistry"],
             help="Repeat to select corpora; default: configured corpora",
         )
-        if name in {"embed", "retrieve", "evaluate"}:
+        if name in {"embed", "retrieve", "evaluate", "compare-translations"}:
             command.add_argument(
                 "--model",
                 action="append",
@@ -58,11 +62,25 @@ def parser() -> argparse.ArgumentParser:
             )
         if name == "embed":
             command.add_argument("--kind", choices=["document", "query", "both"], default="both")
-        if name in {"retrieve", "evaluate"}:
+        if name in {"translate", "embed", "retrieve", "evaluate", "compare-translations"}:
+            command.add_argument(
+                "--translation-language",
+                action="append",
+                help="Repeat to select independent translated-query variants; translate and translate-* baselines default to all configured target languages",
+            )
+        if name == "translate":
+            command.add_argument(
+                "--retry-failed",
+                action="store_true",
+                help="Explicitly retry failed/interrupted requests; retains previous attempts for accounting",
+            )
+        if name in {"retrieve", "evaluate", "compare-translations"}:
             command.add_argument(
                 "--baseline",
                 action="append",
-                choices=["dense", "bm25", "hybrid"],
+                choices=list(BASELINES)
+                if name != "compare-translations"
+                else ["dense", "bm25", "hybrid"],
                 help="Repeat to select baselines; default: configured baselines (dense)",
             )
     return result
@@ -75,8 +93,27 @@ def main(argv: list[str] | None = None) -> int:
         registry = load_registry(config.model_registry)
         requested_models = getattr(args, "model", None) or config.models
         baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
-        if args.command in {"retrieve", "evaluate"} and baselines == ("bm25",) and args.model:
+        if args.command == "compare-translations":
+            baselines = tuple(
+                dict.fromkeys(value.removeprefix("translate-") for value in baselines)
+            )
+        if (
+            args.command in {"retrieve", "evaluate", "compare-translations"}
+            and all(value.removeprefix("translate-") == "bm25" for value in baselines)
+            and args.model
+        ):
             raise ValidationError("--model applies to dense/hybrid retrieval; omit it for BM25")
+        selected_languages = getattr(args, "translation_language", None)
+        if (
+            args.command in {"retrieve", "evaluate"}
+            and selected_languages
+            and not any(value.startswith("translate-") for value in baselines)
+        ):
+            raise ValidationError("--translation-language requires a translate-* baseline")
+        if args.command == "embed" and selected_languages and args.kind == "document":
+            raise ValidationError(
+                "--translation-language applies to query embeddings; use --kind query or both"
+            )
         for alias in requested_models:
             if alias not in registry:
                 raise ValidationError(f"Unknown model alias: {alias}")
@@ -142,23 +179,71 @@ def main(argv: list[str] | None = None) -> int:
                     )
             elif args.command == "index-bm25":
                 print(prepare_bm25(config, corpus))
-            elif args.command == "embed":
-                for alias in requested_models:
+            elif args.command == "translate":
+                for language in dict.fromkeys(
+                    selected_languages or translation_languages(config, corpus)
+                ):
                     print(
-                        json.dumps(
-                            {
-                                kind: str(path)
-                                for kind, path in embed(
-                                    config, corpus, alias, kind=args.kind
-                                ).items()
-                            }
+                        prepare_translations(
+                            config, corpus, language, retry_failed=args.retry_failed
                         )
                     )
-            else:
+            elif args.command == "compare-translations":
                 for baseline in baselines:
                     for alias in (None,) if baseline == "bm25" else requested_models:
+                        print(
+                            compare_translations(
+                                config,
+                                corpus,
+                                alias,
+                                baseline=baseline,
+                                languages=tuple(
+                                    dict.fromkeys(
+                                        selected_languages or translation_languages(config, corpus)
+                                    )
+                                ),
+                            )
+                        )
+            elif args.command == "embed":
+                for alias in requested_models:
+                    for language in dict.fromkeys(selected_languages or [None]):
+                        print(
+                            json.dumps(
+                                {
+                                    kind: str(path)
+                                    for kind, path in embed(
+                                        config,
+                                        corpus,
+                                        alias,
+                                        kind=args.kind,
+                                        translation_language=language,
+                                    ).items()
+                                }
+                            )
+                        )
+            else:
+                for baseline in baselines:
+                    for alias in (
+                        (None,)
+                        if baseline.removeprefix("translate-") == "bm25"
+                        else requested_models
+                    ):
                         operation = retrieve if args.command == "retrieve" else evaluate
-                        print(operation(config, corpus, alias, baseline=baseline))
+                        if baseline.startswith("translate-"):
+                            for language in dict.fromkeys(
+                                selected_languages or translation_languages(config, corpus)
+                            ):
+                                print(
+                                    operation(
+                                        config,
+                                        corpus,
+                                        alias,
+                                        baseline=baseline,
+                                        translation_language=language,
+                                    )
+                                )
+                        else:
+                            print(operation(config, corpus, alias, baseline=baseline))
         return 2 if blocked else 0
     except (ValidationError, OSError, json.JSONDecodeError) as exc:
         print(f"Error: {exc}", file=sys.stderr)

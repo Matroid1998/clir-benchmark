@@ -36,7 +36,7 @@ from .artifacts import (
     source_record,
 )
 from .chunking import Chunker, load_tokenizer
-from .config import Config
+from .config import BASELINES, Config
 from .embedding import (
     embedding_key,
     encode_records,
@@ -49,6 +49,7 @@ from .lexical import BM25Index, bm25_path, bm25_scoring
 from .metrics import aggregate, score_query
 from .relevance import build_settings, judge
 from .retrieval import DenseIndex, reciprocal_rank_fusion
+from .translation import load_translations, translation_summary
 from .util import (
     digest,
     hf_token,
@@ -275,7 +276,22 @@ def model_spec(config: Config, alias: str) -> ModelSpec:
     return registry[alias]
 
 
-def embedding_path(config: Config, corpus: str, spec: ModelSpec, kind: str) -> Path:
+def embedding_path(
+    config: Config,
+    corpus: str,
+    spec: ModelSpec,
+    kind: str,
+    *,
+    translation_language: str | None = None,
+) -> Path:
+    if kind == "query" and translation_language is not None:
+        _, _, manifest = load_translations(config, corpus, translation_language)
+        return (
+            config.output_dir
+            / "embeddings"
+            / kind
+            / embedding_key(manifest["query_fingerprint"], kind, spec, config.runtime)
+        )
     directory = config.corpus_dir(corpus) if kind == "document" else config.relevance_dir(corpus)
     if not (directory / "manifest.json").is_file():
         raise ValidationError(
@@ -298,13 +314,16 @@ def embed(
     *,
     kind: str = "both",
     encoder_factory: Callable = HuggingFaceEncoder,
+    translation_language: str | None = None,
 ) -> dict[str, Path]:
     spec = model_spec(config, alias)
     result = {}
     encoder: Encoder | None = None
     kinds = ("document", "query") if kind == "both" else (kind,)
     for input_kind in kinds:
-        destination = embedding_path(config, corpus, spec, input_kind)
+        destination = embedding_path(
+            config, corpus, spec, input_kind, translation_language=translation_language
+        )
         if destination.exists():
             load_embeddings(destination, ["id"])
             result[input_kind] = destination
@@ -317,6 +336,12 @@ def embed(
 
             def factory(directory=source_dir):
                 return rows(directory / "chunks.parquet")
+        elif translation_language is not None:
+            _, translated, manifest = load_translations(config, corpus, translation_language)
+            count, fingerprint = manifest["query_count"], manifest["query_fingerprint"]
+
+            def factory(records=translated):
+                return iter(records)
         else:
             source_dir = config.relevance_dir(corpus)
             manifest = read_json(source_dir / "manifest.json")
@@ -340,10 +365,39 @@ def embed(
 
 
 def run_path(
-    config: Config, corpus: str, spec: ModelSpec | None = None, *, baseline: str = "dense"
+    config: Config,
+    corpus: str,
+    spec: ModelSpec | None = None,
+    *,
+    baseline: str = "dense",
+    translation_language: str | None = None,
 ) -> Path:
-    if baseline not in {"dense", "bm25", "hybrid"}:
+    if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
+    if baseline.startswith("translate-"):
+        if translation_language is None:
+            raise ValidationError(f"{baseline} requires a translation_language")
+        path, _, manifest = load_translations(config, corpus, translation_language)
+        identity = {
+            "schema": 1,
+            "baseline": baseline,
+            "translation_language": translation_language,
+            "translations": str(path),
+            "query_fingerprint": manifest["query_fingerprint"],
+            "original_run": str(
+                run_path(config, corpus, spec, baseline=baseline.removeprefix("translate-"))
+            ),
+            "query_embeddings": str(
+                embedding_path(
+                    config, corpus, spec, "query", translation_language=translation_language
+                )
+            )
+            if spec
+            else None,
+        }
+        return config.output_dir / "runs" / corpus / digest(identity)
+    if translation_language is not None:
+        raise ValidationError("translation_language requires a translate-* baseline")
     if baseline != "bm25" and spec is None:
         raise ValidationError(f"{baseline} retrieval requires a dense model")
     if baseline != "dense":
@@ -374,9 +428,9 @@ def run_path(
 
 
 def retrieval_spec(config: Config, alias: str | None, baseline: str) -> ModelSpec | None:
-    if baseline not in {"dense", "bm25", "hybrid"}:
+    if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
-    if baseline == "bm25":
+    if baseline.removeprefix("translate-") == "bm25":
         if alias is not None:
             raise ValidationError("BM25 does not use a dense model; omit the model alias")
         return None
@@ -386,10 +440,17 @@ def retrieval_spec(config: Config, alias: str | None, baseline: str) -> ModelSpe
 
 
 def retrieve(
-    config: Config, corpus: str, alias: str | None = None, *, baseline: str = "dense"
+    config: Config,
+    corpus: str,
+    alias: str | None = None,
+    *,
+    baseline: str = "dense",
+    translation_language: str | None = None,
 ) -> Path:
     spec = retrieval_spec(config, alias, baseline)
-    destination = run_path(config, corpus, spec, baseline=baseline)
+    destination = run_path(
+        config, corpus, spec, baseline=baseline, translation_language=translation_language
+    )
     if destination.exists():
         read_json(destination / "manifest.json")
         return destination
@@ -404,6 +465,13 @@ def retrieve(
             "No ready retrieval settings; supply the missing multilingual annotations first"
         )
     started = time.perf_counter()
+    backend = baseline.removeprefix("translate-")
+    translated = None
+    translation_manifest = None
+    if translation_language is not None:
+        _, translated, translation_manifest = load_translations(
+            config, corpus, translation_language
+        )
     with ExitStack() as resources:
         index = None
         lexical = None
@@ -414,23 +482,40 @@ def retrieve(
                 embedding_path(config, corpus, spec, "document"), ["id", "language"]
             )
             query_vectors, query_rows, _ = load_embeddings(
-                embedding_path(config, corpus, spec, "query"), ["id"]
+                embedding_path(
+                    config, corpus, spec, "query", translation_language=translation_language
+                ),
+                ["id"],
             )
             index = DenseIndex(
                 documents, [row["id"] for row in doc_rows], [row["language"] for row in doc_rows]
             )
             del doc_rows
             query_index = {row["id"]: index for index, row in enumerate(query_rows)}
-        if baseline in {"bm25", "hybrid"}:
+        if backend in {"bm25", "hybrid"}:
             lexical = resources.enter_context(BM25Index(bm25_path(config, corpus), config.bm25))
             query_texts = {
                 row["id"]: row["question"]
                 for row in rows(relevance_dir / "queries.parquet", ["id", "question"])
             }
-        tag = "bm25" if baseline == "bm25" else f"hybrid-{alias}" if baseline == "hybrid" else alias
-        candidate_k = config.hybrid.candidate_k if baseline == "hybrid" else 100
+            if translated is not None:
+                query_texts = {row["id"]: row["text"] for row in translated}
+        tag = "bm25" if backend == "bm25" else f"hybrid-{alias}" if backend == "hybrid" else alias
+        if translation_language is not None:
+            tag = f"translate-{translation_language}-{tag}"
+        candidate_k = config.hybrid.candidate_k if backend == "hybrid" else 100
         temporary = resources.enter_context(new_directory(destination))
-        with ParquetSink(temporary / "run.parquet", RUN_SCHEMA) as sink:
+        timing_schema = pa.schema(
+            [
+                ("setting_id", pa.string()),
+                ("query_id", pa.string()),
+                ("retrieval_seconds_amortized", pa.float64()),
+            ]
+        )
+        with (
+            ParquetSink(temporary / "run.parquet", RUN_SCHEMA) as sink,
+            ParquetSink(temporary / "timings.parquet", timing_schema) as timing_sink,
+        ):
             for setting_id, info in settings.items():
                 if info["status"] != "ready":
                     continue
@@ -445,6 +530,7 @@ def retrieve(
                     for start in range(0, len(ids), config.runtime.query_batch_size):
                         batch_ids = ids[start : start + config.runtime.query_batch_size]
                         languages = tuple(info["target_languages"])
+                        batch_started = time.perf_counter()
                         dense_results = (
                             index.search(
                                 query_vectors[[query_index[query_id] for query_id in batch_ids]],
@@ -465,6 +551,7 @@ def retrieve(
                             if lexical is not None
                             else ([] for _ in batch_ids)
                         )
+                        batch_rankings = []
                         for query_id, dense_ranking, lexical_ranking in zip(
                             batch_ids, dense_results, lexical_results, strict=True
                         ):
@@ -472,10 +559,20 @@ def retrieve(
                                 reciprocal_rank_fusion(
                                     dense_ranking, lexical_ranking, config.hybrid
                                 )
-                                if baseline == "hybrid"
+                                if backend == "hybrid"
                                 else lexical_ranking
-                                if baseline == "bm25"
+                                if backend == "bm25"
                                 else dense_ranking
+                            )
+                            batch_rankings.append((query_id, ranking))
+                        batch_seconds = time.perf_counter() - batch_started
+                        for query_id, ranking in batch_rankings:
+                            timing_sink.append(
+                                {
+                                    "setting_id": setting_id,
+                                    "query_id": query_id,
+                                    "retrieval_seconds_amortized": batch_seconds / len(batch_ids),
+                                }
                             )
                             for rank, (chunk_id, score) in enumerate(ranking, 1):
                                 sink.append(
@@ -496,6 +593,9 @@ def retrieve(
                 "schema": 2,
                 "corpus": corpus,
                 "baseline": baseline,
+                "translation_language": translation_language,
+                "translation": translation_manifest,
+                "timing_contract": "search and fusion wall time per batch divided by batch size; excludes model/index loading and result serialization",
                 "run_name": tag,
                 "model": asdict(spec) if spec is not None else None,
                 "relevance_hash": config.relevance_key(corpus),
@@ -508,9 +608,9 @@ def retrieve(
                 "settings": settings,
                 "top_k": 100,
                 "similarity": "rrf"
-                if baseline == "hybrid"
+                if backend == "hybrid"
                 else "bm25_float64"
-                if baseline == "bm25"
+                if backend == "bm25"
                 else "cosine_float32",
                 "bm25": bm25_scoring(config.bm25) if lexical is not None else None,
                 "lexical_index": {
@@ -520,7 +620,7 @@ def retrieve(
                 if lexical is not None
                 else None,
                 "fusion": {"method": "rrf", **asdict(config.hybrid)}
-                if baseline == "hybrid"
+                if backend == "hybrid"
                 else None,
                 "tie_break": "chunk_id_ascending",
                 "runtime": asdict(config.runtime),
@@ -532,10 +632,17 @@ def retrieve(
 
 
 def evaluate(
-    config: Config, corpus: str, alias: str | None = None, *, baseline: str = "dense"
+    config: Config,
+    corpus: str,
+    alias: str | None = None,
+    *,
+    baseline: str = "dense",
+    translation_language: str | None = None,
 ) -> Path:
     spec = retrieval_spec(config, alias, baseline)
-    run_dir = run_path(config, corpus, spec, baseline=baseline)
+    run_dir = run_path(
+        config, corpus, spec, baseline=baseline, translation_language=translation_language
+    )
     if not (run_dir / "manifest.json").is_file():
         raise ValidationError(
             f"Retrieval run does not exist: {run_dir}. Run retrieve explicitly first."
@@ -547,6 +654,27 @@ def evaluate(
     relevance_dir = config.relevance_dir(corpus)
     settings = read_json(relevance_dir / "settings.json")
     queries = {query.id: query for query in read_queries(relevance_dir / "queries.parquet")}
+    translated = {}
+    if translation_language is not None:
+        _, translated_rows, _ = load_translations(config, corpus, translation_language)
+        translated = {row["id"]: row for row in translated_rows}
+    timings = (
+        {
+            (row["setting_id"], row["query_id"]): row["retrieval_seconds_amortized"]
+            for row in rows(run_dir / "timings.parquet")
+        }
+        if (run_dir / "timings.parquet").is_file()
+        else {}
+    )
+    query_encoding_seconds = 0.0
+    if spec is not None:
+        query_manifest = read_json(
+            embedding_path(config, corpus, spec, "query", translation_language=translation_language)
+            / "manifest.json"
+        )
+        query_encoding_seconds = (
+            query_manifest["seconds"] / query_manifest["rows"] if query_manifest["rows"] else 0.0
+        )
     qrels = defaultdict(lambda: defaultdict(set))
     for row in rows(relevance_dir / "qrels.parquet"):
         qrels[(row["setting_id"], row["query_id"])][row["chunk_id"]].add(row["required_source_id"])
@@ -570,6 +698,16 @@ def evaluate(
             {
                 "query_id": query.id,
                 "baseline": baseline,
+                "translation_language": translation_language,
+                "translation_status": translated[query.id]["status"] if translated else "original",
+                "translation_seconds": translated[query.id]["translation_seconds"]
+                if translated
+                else 0.0,
+                "translation_cost_usd": translated[query.id]["estimated_cost_usd"]
+                if translated
+                else 0.0,
+                "retrieval_seconds_amortized": timings.get(key),
+                "query_encoding_seconds_amortized": query_encoding_seconds,
                 "model": alias,
                 "corpus": corpus,
                 "regime": setting["kind"],
@@ -596,10 +734,11 @@ def evaluate(
         document_rows = [
             row for row in rows(document_path / "rows.parquet") if row["id"] in positive_ids
         ]
-        query_manifest = read_json(embedding_path(config, corpus, spec, "query") / "manifest.json")
         truncation = {
             "applicable": True,
-            "scope": "dense_component" if baseline == "hybrid" else "dense",
+            "scope": "dense_component"
+            if baseline.removeprefix("translate-") == "hybrid"
+            else "dense",
             "documents": document_manifest["truncation"],
             "queries": query_manifest["truncation"],
             "support_exposure": support_exposure(
@@ -610,6 +749,11 @@ def evaluate(
         "schema": 2,
         "corpus": corpus,
         "baseline": baseline,
+        "translation_language": translation_language,
+        "translation_summary": translation_summary(list(translated.values()))
+        if translated
+        else None,
+        "timing_notes": "Translation time includes all recorded API attempts, even on cache reuse. Retrieval time is amortized over each batch. Query encoding time is the cached embedding build wall time divided by its row count. These are offline component measurements, not measured online end-to-end latency.",
         "model": alias,
         "run": read_json(run_dir / "manifest.json"),
         "settings": settings,

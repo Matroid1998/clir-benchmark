@@ -42,6 +42,19 @@ evidence_file: null
 models: [embeddinggemma, bge-m3, qwen3-0.6B, nomic-v2-moe, granite-278m, LaBSE, SapBERT, e5-large-instruct]
 # retrieve/evaluate defaults; override with repeated --baseline flags.
 baselines: [dense]
+# Explicitly choose an endpoint and model before running `translate`.
+# endpoint is the complete Chat Completions URL, not the API base URL.
+translation:
+  endpoint: null
+  model: null
+  api_key_env: TRANSLATION_API_KEY
+  response_format: json_schema  # Also supports json_object or text, with strict local validation.
+  request_options: {}  # Model-specific temperature, reasoning_effort, max_completion_tokens, etc.
+  timeout_seconds: 120
+  # Set your provider's USD rates; missing rates/usage produce null costs, never zero.
+  input_usd_per_million: null
+  cached_input_usd_per_million: null
+  output_usd_per_million: null
 bm25:
   k1: 1.2
   b: 0.75
