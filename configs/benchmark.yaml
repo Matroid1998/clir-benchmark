@@ -84,6 +84,17 @@ adore:
   input_usd_per_million: null
   cached_input_usd_per_million: null
   output_usd_per_million: null
+# Add rerank-<baseline> entries (e.g. rerank-dense, rerank-bm25, rerank-adore-dense).
+# Only the explicit `rerank` command loads this local reranker; inputs are saved runs.
+reranker:
+  repo_id: Qwen/Qwen3-Reranker-0.6B
+  revision: e61197ed45024b0ed8a2d74b80b4d909f1255473
+  candidate_k: 100  # 1-100; compare against the same candidate prefix of the parent run.
+  max_length: 8192  # Total pair tokens including the fixed scoring wrapper; maximum 32768.
+  batch_size: 8
+  device: auto
+  dtype: float32
+  instruction: Given a web search query, retrieve relevant passages that answer the query
 bm25:
   k1: 1.2
   b: 0.75

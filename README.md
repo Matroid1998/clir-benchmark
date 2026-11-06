@@ -1,10 +1,10 @@
 # CLIR benchmark
 
-A Python package for reproducible, span-grounded dense, BM25, hybrid, translate-then-retrieve, HyDE, and ADORE baselines
+A Python package for reproducible, span-grounded dense, BM25, hybrid, translate-then-retrieve, HyDE, ADORE, and Qwen3-reranked baselines
 over EUR-Lex, UN documents, and chemistry patent abstracts. It prepares one fixed
 chunk corpus and relevance judgments shared by every baseline.
 
-Preparation, generation, embedding, retrieval, and scoring are separate CLI commands. Nothing
+Preparation, generation, embedding, retrieval, reranking, and scoring are separate CLI commands. Nothing
 runs a benchmark automatically. ADORE's explicit `run-adore` command coordinates
 generation, query embedding, and retrieval stages within its feedback loop.
 Tests use synthetic corpora and lightweight
@@ -549,6 +549,90 @@ totals include all rounds and original cached work. Control timings are
 batch-amortized, so component-time deltas are estimates, not measured end-to-end
 latency. Local embedding/retrieval compute remains unpriced.
 
+### Qwen3-Reranker-0.6B
+
+Enable a reranked variant by prefixing any existing baseline with `rerank-` in
+`baselines` or a repeated `--baseline` option: for example, `rerank-dense`,
+`rerank-bm25`, `rerank-hybrid`, `rerank-translate-dense`, `rerank-hyde-dense`, or
+`rerank-adore-dense`. All translated and ADORE backends are supported. Omission
+disables reranking; the shipped default remains `[dense]`. Original runs remain
+available as controls, and neither validation nor scoring loads the reranker.
+
+The model is
+[`Qwen/Qwen3-Reranker-0.6B`](https://huggingface.co/Qwen/Qwen3-Reranker-0.6B),
+pinned to revision `e61197ed45024b0ed8a2d74b80b4d909f1255473`.
+The adapter follows the model card's Transformers scoring recipe: format an
+instruction/query/document input with its fixed chat prefix and assistant suffix,
+then normalize the final-position **yes/no logits** to obtain a relevance score.
+It performs no answer generation. The default instruction is the official English
+retrieval instruction; the query and document retain their original text.
+
+Reranking is a separate stage over **saved parent-run candidates**, not a new
+full-corpus search. By default, it reranks the parent's first 100 chunks and returns
+those candidates in descending reranker-score order, with deterministic tie
+handling. `reranker.candidate_k` or `--rerank-candidates N` selects a smaller prefix
+from 1 through 100. It never inserts unseen chunks, expands the candidate set, or
+fuses languages or retrieval runs. An empty parent ranking stays empty.
+
+All variants score each document against the **original question**, including
+translated-query, HyDE, and ADORE parents. Translation language, HyDE language,
+and ADORE round settings still identify the separate candidate-generation runs.
+The reranker never receives gold answers, evidence spans, or relevance labels.
+This lets us measure whether the same cross-language candidates are ordered better
+for the original information need.
+
+Install local model dependencies with `uv sync --extra models`. The `reranker`
+configuration has independent `device`, `dtype`, `batch_size`, `max_length`, and
+`instruction` settings; `--model` continues to select the **parent dense retriever**.
+Defaults are device `auto`, float32, eight pairs per batch, and 8,192 total tokens
+per pair. The token limit includes the fixed prefix/suffix. Body text is truncated
+on the right while preserving the scoring suffix; padding is on the left.
+Token counts, truncation, and retained query/document character ranges are audited.
+The model's maximum supported limit is 32,768; corpus chunking and qrels do not
+change when adjusting this limit.
+
+After preparing the corpus/relevance and the original dense run:
+
+```bash
+uv run clir-benchmark embed --corpus chemistry --model bge-m3
+uv run clir-benchmark retrieve --corpus chemistry --model bge-m3 --baseline dense
+# Only rerank loads and executes Qwen3-Reranker-0.6B.
+uv run clir-benchmark rerank --corpus chemistry --model bge-m3 --baseline rerank-dense
+uv run clir-benchmark evaluate --corpus chemistry --model bge-m3 --baseline rerank-dense
+uv run clir-benchmark compare-rerank --corpus chemistry --model bge-m3 --baseline rerank-dense
+```
+
+For BM25, prepare `index-bm25` and the `bm25` run, then select `rerank-bm25` with
+no `--model` option. For hybrid, prepare its index, embeddings, and `hybrid` run
+before selecting `rerank-hybrid`. For ADORE, run `run-adore` first, then select
+the corresponding `rerank-adore-*` variant; use the same `--adore-rounds` value.
+For translated and HyDE runs, repeat `--translation-language` or `--hyde-language`
+to select independent parent variants. Reranking never runs these parent stages
+or makes generation API calls implicitly.
+
+Only selected `rerank-*` modes run under `rerank`. The `retrieve` command with a
+reranked baseline only locates a completed artifact; it directs you to `rerank`
+when one is missing. `evaluate` and `compare-rerank` read saved outputs. Use the
+same candidate limit in all three commands when overriding the configuration.
+For example, `--rerank-candidates 20` selects a distinct 20-candidate experiment.
+
+`compare-rerank` reports deltas against the **same candidate prefix in the parent's
+original order**. It also retains full-parent metrics so candidate truncation can
+be distinguished from reranking. All comparisons use identical query/setting
+cohorts and qrels, including queries with no retrieved candidates. The reranker
+can improve ordering but cannot recover relevant documents missing from the
+selected candidate set.
+
+Run identities include the parent artifacts, candidate count, reranker checkpoint,
+instruction, token limit, runtime, and scoring method. Compatible pair scores are
+cached across settings and parents, while each result remains separate. Original
+timings survive cache reuse and invocation audits distinguish newly performed work.
+Reranking latency is measured and batch-amortized per pair; model initialization
+is recorded separately. Pipeline component totals retain the parent's generation,
+encoding, and retrieval overheads and add reranking time. These component sums
+are not measured end-to-end latency. Local compute prices and total monetary
+costs remain unknown (`null`); existing parent API-cost accounting is preserved.
+
 ### BM25 and hybrid retrieval
 
 After `prepare-corpus` and `prepare-relevance`, run BM25 without an embedding
@@ -703,11 +787,13 @@ are never combined. Empty/blocked settings retain counts/status without scores.
 | `adore_invocations/` | ADORE invocation work, cache reuse, and failure accounting |
 | `adore_searches/<hash>/` | Cached rankings and original search timings per expansion and document pool |
 | `embeddings/adore/<hash>/` | Expanded-query vectors and query-adapter truncation audits |
+| `reranking_pairs/<hash>/` | Reusable Qwen3 pair scores, original batch timings, and token/character audits |
+| `reranking_invocations/` | New reranking work, model initialization time, and score reuse per invocation |
 | `embeddings/<kind>/<cache key>/` | Float32 `vectors.npy`, ordered IDs/truncation audits Parquet, manifest |
 | `lexical/<corpus>/<index hash>/` | SQLite postings, exact lengths and language/term statistics, analyzer manifest |
-| `runs/<corpus>/<run hash>/` | Ranked Parquet/TREC output, batch-amortized query timings, manifest |
+| `runs/<corpus>/<run hash>/` | Ranked Parquet/TREC output, timings, manifest; reranked runs also preserve candidate ranks and pair audits |
 | `reports/<corpus>/<run hash>/` | JSON report/per-query data, per-query/per-setting CSV |
-| `comparisons/<corpus>/<hash>/` | Matched translation, HyDE, or ADORE/control metric deltas, costs and timing components in JSON/CSV |
+| `comparisons/<corpus>/<hash>/` | Matched translation, HyDE, ADORE, or reranking/control metric deltas, costs and timing components in JSON/CSV |
 
 Completed stages publish immutable directories only after completion; individual
 translation request audits are updated as attempts finish. Compatible completed
@@ -723,8 +809,9 @@ relevance artifacts; corpus and embedding cache identities remain unchanged.
 
 Manifests record revision pins, configuration hashes, token accounting, execution
 device/precision, versions, and timings. No train/dev/test split or fine-tuning is
-introduced; upstream `train` is a storage convention. Answer generation,
-reranking, model fine-tuning, and additional QA quality filtering are excluded.
+introduced; upstream `train` is a storage convention. User-facing answer generation,
+model fine-tuning, and additional QA quality filtering are excluded. Reranking is
+available only through the explicitly selected Qwen3 stage described above.
 
 ## Tests
 
@@ -747,3 +834,6 @@ ADORE tests cover same-language expansion contracts, the three-round ceiling,
 adaptive stopping, final-round rankings, shared artifact reuse, matched control
 comparisons, and accounting for cached, failed, and retried calls. They use fake
 generation clients and encoders; they do not measure live retrieval quality.
+Reranker tests use synthetic logits, tokenizers, and candidate runs to verify the
+yes/no scoring contract, suffix-preserving truncation, candidate membership,
+independent modes, cache reuse, timing accounting, and matched control metrics.

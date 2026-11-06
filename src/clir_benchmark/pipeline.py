@@ -406,6 +406,17 @@ def run_path(
 ) -> Path:
     if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
+    if baseline.startswith("rerank-"):
+        from .rerank_pipeline import rerank_run_path
+
+        return rerank_run_path(
+            config,
+            corpus,
+            spec,
+            baseline=baseline,
+            translation_language=translation_language,
+            hyde_language=hyde_language,
+        )
     if baseline.startswith("adore-"):
         from .adore_pipeline import adore_run_path
 
@@ -496,7 +507,7 @@ def run_path(
 def retrieval_spec(config: Config, alias: str | None, baseline: str) -> ModelSpec | None:
     if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
-    if baseline.removeprefix("translate-").removeprefix("adore-") == "bm25":
+    if baseline.removeprefix("rerank-").removeprefix("translate-").removeprefix("adore-") == "bm25":
         if alias is not None:
             raise ValidationError("BM25 does not use a dense model; omit the model alias")
         return None
@@ -523,6 +534,11 @@ def retrieve(
         translation_language=translation_language,
         hyde_language=hyde_language,
     )
+    if baseline.startswith("rerank-"):
+        from .rerank_pipeline import load_rerank_run
+
+        load_rerank_run(destination)
+        return destination
     if baseline.startswith("adore-"):
         from .adore_pipeline import load_adore_run
 
@@ -737,6 +753,17 @@ def evaluate(
     translation_language: str | None = None,
     hyde_language: str | None = None,
 ) -> Path:
+    if baseline.startswith("rerank-"):
+        from .rerank_pipeline import evaluate_rerank
+
+        return evaluate_rerank(
+            config,
+            corpus,
+            alias,
+            baseline=baseline,
+            translation_language=translation_language,
+            hyde_language=hyde_language,
+        )
     if baseline.startswith("adore-"):
         from .adore_pipeline import evaluate_adore
 

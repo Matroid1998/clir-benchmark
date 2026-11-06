@@ -13,7 +13,7 @@ from .errors import ValidationError
 from .util import digest, file_digest
 
 BGE_REVISION = "5617a9f61b028005a4858fdac845db406aefb181"
-BASELINES = (
+RETRIEVAL_BASELINES = (
     "dense",
     "bm25",
     "hybrid",
@@ -25,6 +25,10 @@ BASELINES = (
     "adore-dense",
     "adore-hybrid",
 )
+RERANK_BASELINES = tuple(f"rerank-{baseline}" for baseline in RETRIEVAL_BASELINES)
+BASELINES = RETRIEVAL_BASELINES + RERANK_BASELINES
+
+QWEN3_RERANKER_REVISION = "e61197ed45024b0ed8a2d74b80b4d909f1255473"
 
 
 def pinned(revision: str, label: str) -> None:
@@ -279,6 +283,43 @@ class ADOREConfig(GenerationConfig):
 
 
 @dataclass(frozen=True)
+class RerankerConfig:
+    repo_id: str = "Qwen/Qwen3-Reranker-0.6B"
+    revision: str = QWEN3_RERANKER_REVISION
+    candidate_k: int = 100
+    max_length: int = 8192
+    batch_size: int = 8
+    device: str = "auto"
+    dtype: str = "float32"
+    instruction: str = "Given a web search query, retrieve relevant passages that answer the query"
+
+    def __post_init__(self) -> None:
+        if self.repo_id != "Qwen/Qwen3-Reranker-0.6B":
+            raise ValidationError("reranker.repo_id must be Qwen/Qwen3-Reranker-0.6B")
+        pinned(self.revision, "reranker")
+        for name, minimum, maximum in (
+            ("candidate_k", 1, 100),
+            ("max_length", 128, 32768),
+            ("batch_size", 1, None),
+        ):
+            value = getattr(self, name)
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, int)
+                or value < minimum
+                or (maximum is not None and value > maximum)
+            ):
+                bounds = f"between {minimum} and {maximum}" if maximum else f">= {minimum}"
+                raise ValidationError(f"reranker.{name} must be an integer {bounds}")
+        if self.dtype not in {"float32", "bfloat16", "float16"}:
+            raise ValidationError("reranker.dtype must be float32, bfloat16, or float16")
+        if not isinstance(self.device, str) or not self.device.strip():
+            raise ValidationError("reranker.device must be a nonempty device name")
+        if not isinstance(self.instruction, str) or not self.instruction.strip():
+            raise ValidationError("reranker.instruction must be nonempty")
+
+
+@dataclass(frozen=True)
 class Config:
     output_dir: Path
     datasets: dict[str, DatasetSpec]
@@ -298,6 +339,7 @@ class Config:
     translation: TranslationConfig = field(default_factory=TranslationConfig)
     hyde: HyDEConfig = field(default_factory=HyDEConfig)
     adore: ADOREConfig = field(default_factory=ADOREConfig)
+    reranker: RerankerConfig = field(default_factory=RerankerConfig)
 
     def corpus_key(self, corpus: str) -> str:
         return digest(
@@ -388,6 +430,7 @@ def load_config(path: str | Path) -> Config:
             translation=TranslationConfig(**raw.pop("translation", {})),
             hyde=HyDEConfig(**raw.pop("hyde", {})),
             adore=ADOREConfig(**raw.pop("adore", {})),
+            reranker=RerankerConfig(**raw.pop("reranker", {})),
             **raw,
         )
     except (TypeError, KeyError) as exc:

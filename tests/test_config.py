@@ -4,7 +4,7 @@ import pytest
 import yaml
 
 from clir_benchmark.cli import main
-from clir_benchmark.config import ChunkingConfig, SourceSpec, load_config
+from clir_benchmark.config import ChunkingConfig, RerankerConfig, SourceSpec, load_config
 from clir_benchmark.errors import ValidationError
 
 
@@ -31,6 +31,41 @@ def test_dataset_structure_error_is_actionable(tmp_path):
 def test_default_config_never_loads_encoder(capsys):
     assert main(["--config", "configs/benchmark.yaml", "list-models"]) == 0
     assert "SapBERT" in capsys.readouterr().out
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        {"revision": "main"},
+        {"repo_id": "Qwen/Qwen3-Embedding-0.6B"},
+        {"candidate_k": 0},
+        {"candidate_k": 101},
+        {"candidate_k": True},
+        {"max_length": 32769},
+        {"max_length": 64},
+        {"batch_size": 0},
+        {"dtype": "int8"},
+        {"device": ""},
+        {"instruction": " "},
+    ],
+)
+def test_reranker_invalid_model_or_budget_rejected(options):
+    with pytest.raises(ValidationError):
+        RerankerConfig(**options)
+
+
+def test_reranker_choices_preserve_shared_preparation_identity():
+    config = load_config("configs/benchmark.yaml")
+    assert config.baselines == ("dense",)
+    assert config.reranker.repo_id == "Qwen/Qwen3-Reranker-0.6B"
+    changed = replace(
+        config,
+        baselines=("bm25", "rerank-bm25", "rerank-adore-dense"),
+        reranker=replace(config.reranker, candidate_k=20, batch_size=4),
+    )
+    for corpus in config.datasets:
+        assert changed.corpus_key(corpus) == config.corpus_key(corpus)
+        assert changed.relevance_key(corpus) == config.relevance_key(corpus)
 
 
 def test_alignment_release_keeps_original_corpus_cache_keys():

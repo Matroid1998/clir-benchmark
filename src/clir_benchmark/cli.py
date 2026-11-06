@@ -9,14 +9,19 @@ from . import __version__
 from .adapters import DatasetReader, apply_evidence_overlay, query_from_row, select_candidates
 from .adore_pipeline import run_adore
 from .comparison import compare_adore, compare_hyde, compare_translations
-from .config import BASELINES, language_tag, load_config
+from .config import BASELINES, RERANK_BASELINES, language_tag, load_config
 from .encoders import load_registry
 from .errors import ValidationError
 from .hyde import hyde_languages, prepare_hyde
 from .lexical import prepare_bm25
 from .pipeline import embed, evaluate, prepare_corpus, prepare_relevance, retrieve
+from .rerank_pipeline import compare_rerank, rerank
 from .translation import prepare_translations, translation_languages
 from .util import hf_token, read_json
+
+
+def retrieval_backend(baseline: str) -> str:
+    return baseline.removeprefix("rerank-").removeprefix("translate-").removeprefix("adore-")
 
 
 def parser() -> argparse.ArgumentParser:
@@ -53,6 +58,8 @@ def parser() -> argparse.ArgumentParser:
         "compare-hyde",
         "run-adore",
         "compare-adore",
+        "rerank",
+        "compare-rerank",
     ):
         command = sub.add_parser(name)
         command.add_argument(
@@ -69,6 +76,8 @@ def parser() -> argparse.ArgumentParser:
             "compare-hyde",
             "run-adore",
             "compare-adore",
+            "rerank",
+            "compare-rerank",
         }:
             command.add_argument(
                 "--model",
@@ -77,13 +86,29 @@ def parser() -> argparse.ArgumentParser:
             )
         if name == "embed":
             command.add_argument("--kind", choices=["document", "query", "both"], default="both")
-        if name in {"translate", "embed", "retrieve", "evaluate", "compare-translations"}:
+        if name in {
+            "translate",
+            "embed",
+            "retrieve",
+            "evaluate",
+            "compare-translations",
+            "rerank",
+            "compare-rerank",
+        }:
             command.add_argument(
                 "--translation-language",
                 action="append",
                 help="Repeat to select independent translated-query variants; translate and translate-* baselines default to all configured target languages",
             )
-        if name in {"generate-hyde", "embed", "retrieve", "evaluate", "compare-hyde"}:
+        if name in {
+            "generate-hyde",
+            "embed",
+            "retrieve",
+            "evaluate",
+            "compare-hyde",
+            "rerank",
+            "compare-rerank",
+        }:
             command.add_argument(
                 "--hyde-language",
                 action="append",
@@ -102,23 +127,48 @@ def parser() -> argparse.ArgumentParser:
                 action="store_true",
                 help="Explicitly retry failed/interrupted requests; retains previous attempts for accounting",
             )
-        if name in {"run-adore", "compare-adore", "retrieve", "evaluate"}:
+        if name in {
+            "run-adore",
+            "compare-adore",
+            "retrieve",
+            "evaluate",
+            "rerank",
+            "compare-rerank",
+        }:
             command.add_argument(
                 "--adore-rounds",
                 type=int,
                 choices=[1, 2, 3],
                 help="Maximum expansion rounds for ADORE (default: adore.max_rounds, at most 3)",
             )
-        if name in {"retrieve", "evaluate", "compare-translations", "run-adore", "compare-adore"}:
+        if name in {"rerank", "compare-rerank", "retrieve", "evaluate"}:
+            command.add_argument(
+                "--rerank-candidates",
+                type=int,
+                help="Rerank the first N saved candidates (1-100; default: reranker.candidate_k)",
+            )
+        if name in {
+            "retrieve",
+            "evaluate",
+            "compare-translations",
+            "run-adore",
+            "compare-adore",
+            "rerank",
+            "compare-rerank",
+        }:
             command.add_argument(
                 "--baseline",
                 action="append",
-                choices=["dense", "bm25", "hybrid"]
+                choices=list(RERANK_BASELINES)
+                if name in {"rerank", "compare-rerank"}
+                else ["dense", "bm25", "hybrid"]
                 if name == "compare-translations"
                 else [value for value in BASELINES if value.startswith("adore-")]
                 if name in {"run-adore", "compare-adore"}
                 else list(BASELINES),
-                help="Repeat to select ADORE baselines; defaults to configured adore-* entries; at least one must be selected"
+                help="Repeat to select reranked baselines; defaults to configured rerank-* entries; at least one must be selected"
+                if name in {"rerank", "compare-rerank"}
+                else "Repeat to select ADORE baselines; defaults to configured adore-* entries; at least one must be selected"
                 if name in {"run-adore", "compare-adore"}
                 else "Repeat to select baselines; default: configured baselines (dense)",
             )
@@ -131,6 +181,19 @@ def main(argv: list[str] | None = None) -> int:
         config = load_config(args.config)
         requested_models = getattr(args, "model", None) or config.models
         baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
+        if args.command in {"rerank", "compare-rerank"}:
+            baselines = tuple(value for value in baselines if value in RERANK_BASELINES)
+            if not baselines:
+                raise ValidationError(
+                    "Select a reranked baseline with --baseline rerank-dense, rerank-bm25, etc., or enable it in baselines"
+                )
+        rerank_candidates = getattr(args, "rerank_candidates", None)
+        if rerank_candidates is not None:
+            if not any(value in RERANK_BASELINES for value in baselines):
+                raise ValidationError("--rerank-candidates requires a rerank-* baseline")
+            config = replace(
+                config, reranker=replace(config.reranker, candidate_k=rerank_candidates)
+            )
         if args.command in {"run-adore", "compare-adore"}:
             baselines = tuple(value for value in baselines if value.startswith("adore-"))
             if not baselines:
@@ -139,7 +202,7 @@ def main(argv: list[str] | None = None) -> int:
                 )
         adore_rounds = getattr(args, "adore_rounds", None)
         if adore_rounds is not None:
-            if not any(value.startswith("adore-") for value in baselines):
+            if not any(value.removeprefix("rerank-").startswith("adore-") for value in baselines):
                 raise ValidationError("--adore-rounds requires an adore-* baseline")
             config = replace(config, adore=replace(config.adore, max_rounds=adore_rounds))
         if args.command == "compare-translations":
@@ -147,7 +210,7 @@ def main(argv: list[str] | None = None) -> int:
                 dict.fromkeys(
                     value.removeprefix("translate-")
                     for value in baselines
-                    if value != "hyde-dense" and not value.startswith("adore-")
+                    if value != "hyde-dense" and not value.startswith(("adore-", "rerank-"))
                 )
             ) or ("dense",)
         if args.command in {
@@ -156,15 +219,22 @@ def main(argv: list[str] | None = None) -> int:
             "retrieve",
             "evaluate",
             "compare-translations",
+            "rerank",
+            "compare-rerank",
         }:
             config = replace(config, baselines=baselines)
         if (
             args.command
-            in {"retrieve", "evaluate", "compare-translations", "run-adore", "compare-adore"}
-            and all(
-                value.removeprefix("translate-").removeprefix("adore-") == "bm25"
-                for value in baselines
-            )
+            in {
+                "retrieve",
+                "evaluate",
+                "compare-translations",
+                "run-adore",
+                "compare-adore",
+                "rerank",
+                "compare-rerank",
+            }
+            and all(retrieval_backend(value) == "bm25" for value in baselines)
             and args.model
         ):
             raise ValidationError("--model applies to dense/hybrid retrieval; omit it for BM25")
@@ -173,9 +243,9 @@ def main(argv: list[str] | None = None) -> int:
         for language in selected_hyde_languages or ():
             language_tag(language, "HyDE output language")
         if (
-            args.command in {"retrieve", "evaluate"}
+            args.command in {"retrieve", "evaluate", "rerank", "compare-rerank"}
             and selected_hyde_languages
-            and "hyde-dense" not in baselines
+            and not any(value.removeprefix("rerank-") == "hyde-dense" for value in baselines)
         ):
             raise ValidationError("--hyde-language requires the hyde-dense baseline")
         if args.command == "embed" and selected_hyde_languages:
@@ -188,9 +258,11 @@ def main(argv: list[str] | None = None) -> int:
                     "--hyde-language applies to query-side passages; use --kind query or both"
                 )
         if (
-            args.command in {"retrieve", "evaluate"}
+            args.command in {"retrieve", "evaluate", "rerank", "compare-rerank"}
             and selected_languages
-            and not any(value.startswith("translate-") for value in baselines)
+            and not any(
+                value.removeprefix("rerank-").startswith("translate-") for value in baselines
+            )
         ):
             raise ValidationError("--translation-language requires a translate-* baseline")
         if args.command == "embed" and selected_languages and args.kind == "document":
@@ -203,9 +275,9 @@ def main(argv: list[str] | None = None) -> int:
             "retrieve",
             "evaluate",
             "compare-translations",
-        } or any(
-            value.removeprefix("translate-").removeprefix("adore-") != "bm25" for value in baselines
-        )
+            "rerank",
+            "compare-rerank",
+        } or any(retrieval_backend(value) != "bm25" for value in baselines)
         registry = load_registry(config.model_registry) if needs_model else {}
         for alias in requested_models if needs_model else ():
             if alias not in registry:
@@ -358,12 +430,16 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 for baseline in baselines:
                     for alias in (
-                        (None,)
-                        if baseline.removeprefix("translate-").removeprefix("adore-") == "bm25"
-                        else requested_models
+                        (None,) if retrieval_backend(baseline) == "bm25" else requested_models
                     ):
-                        operation = retrieve if args.command == "retrieve" else evaluate
-                        if baseline == "hyde-dense":
+                        operation = {
+                            "retrieve": retrieve,
+                            "evaluate": evaluate,
+                            "rerank": rerank,
+                            "compare-rerank": compare_rerank,
+                        }[args.command]
+                        parent_baseline = baseline.removeprefix("rerank-")
+                        if parent_baseline == "hyde-dense":
                             for language in dict.fromkeys(
                                 selected_hyde_languages or hyde_languages(config, corpus)
                             ):
@@ -376,7 +452,7 @@ def main(argv: list[str] | None = None) -> int:
                                         hyde_language=language,
                                     )
                                 )
-                        elif baseline.startswith("translate-"):
+                        elif parent_baseline.startswith("translate-"):
                             for language in dict.fromkeys(
                                 selected_languages or translation_languages(config, corpus)
                             ):
