@@ -157,6 +157,166 @@ def _difference(value: float | None, control: float | None) -> float | None:
     return value - control if value is not None and control is not None else None
 
 
+def compare_adore(
+    config: Config,
+    corpus: str,
+    alias: str | None = None,
+    *,
+    baseline: str = "adore-bm25",
+) -> Path:
+    """Compare saved ADORE results to the same untranslated retriever, without live work."""
+    if baseline not in {"adore-bm25", "adore-dense", "adore-hybrid"}:
+        raise ValidationError("compare-adore requires an adore-* baseline")
+    control = baseline.removeprefix("adore-")
+    variant_dir = evaluate(config, corpus, alias, baseline=baseline)
+    control_dir = evaluate(config, corpus, alias, baseline=control)
+    variant_report = read_json(variant_dir / "report.json")
+    control_report = read_json(control_dir / "report.json")
+
+    def cohort(directory):
+        records = read_json(directory / "per_query.json")
+        indexed = {(row["setting_id"], row["query_id"]): row for row in records}
+        if len(records) != len(indexed):
+            raise ValidationError("Duplicate query/setting in ADORE comparison cohort")
+        return indexed
+
+    variants, originals = cohort(variant_dir), cohort(control_dir)
+    if variants.keys() != originals.keys():
+        raise ValidationError("ADORE and control evaluation cohorts differ; cannot compare")
+    for name in (
+        "relevance_hash",
+        "corpus_fingerprint",
+        "query_fingerprint",
+        "model",
+        "top_k",
+        "bm25",
+    ):
+        if variant_report["run"][name] != control_report["run"][name]:
+            raise ValidationError(f"ADORE and control {name} differ; cannot compare")
+    if control == "hybrid":
+        control_fusion = {
+            key: value for key, value in control_report["run"]["fusion"].items() if key != "method"
+        }
+        if variant_report["run"]["fusion"] != control_fusion:
+            raise ValidationError("ADORE and control fusion settings differ; cannot compare")
+    grouped = defaultdict(list)
+    query_rows = []
+    for key, variant in variants.items():
+        original = originals[key]
+        for name in ("query_language", "target_languages", "source_count", "regime"):
+            if variant[name] != original[name]:
+                raise ValidationError(f"ADORE and control {name} differ for {key}")
+        if variant["metrics"].keys() != original["metrics"].keys():
+            raise ValidationError("ADORE and control metric definitions differ")
+        original_total = nullable_sum(
+            original.get(name)
+            for name in ("query_encoding_seconds_amortized", "retrieval_seconds_amortized")
+        )
+        row = {
+            "baseline": baseline,
+            "control": control,
+            "model": alias,
+            "generation_model": variant_report["generation_model"],
+            "setting_id": key[0],
+            "query_id": key[1],
+            "query_language": variant["query_language"],
+            "target_languages": variant["target_languages"],
+            "rounds": variant["rounds"],
+            "stop_reason": variant["stop_reason"],
+            "adore_generation_cost_usd": variant["generation_cost_usd"],
+            "control_generation_cost_usd": 0.0,
+            "added_generation_cost_usd": variant["generation_cost_usd"],
+            "adore_generation_seconds": variant["generation_seconds"],
+            "adore_query_encoding_seconds": variant["query_encoding_seconds"],
+            "adore_retrieval_seconds": variant["retrieval_seconds"],
+            "control_encoding_seconds_amortized": original.get("query_encoding_seconds_amortized"),
+            "control_retrieval_seconds_amortized": original.get("retrieval_seconds_amortized"),
+            "adore_component_seconds": variant["component_seconds"],
+            "control_component_seconds": original_total,
+            "added_component_seconds": _difference(variant["component_seconds"], original_total),
+            "adore_metrics": variant["metrics"],
+            "control_metrics": original["metrics"],
+            "metric_deltas": {
+                name: value - original["metrics"][name]
+                for name, value in variant["metrics"].items()
+            },
+        }
+        query_rows.append(row)
+        grouped[key[0]].append(row)
+    summaries = []
+    for members in grouped.values():
+        summary = {
+            name: members[0][name]
+            for name in (
+                "baseline",
+                "control",
+                "model",
+                "generation_model",
+                "setting_id",
+                "query_language",
+                "target_languages",
+            )
+        }
+        summary["query_count"] = len(members)
+        summary["mean_rounds"] = sum(row["rounds"] for row in members) / len(members)
+        for name in members[0]:
+            if name.endswith(("cost_usd", "seconds", "seconds_amortized")):
+                total = nullable_sum(row[name] for row in members)
+                summary[f"mean_{name}"] = total / len(members) if total is not None else None
+        for prefix in ("adore_metrics", "control_metrics", "metric_deltas"):
+            for name in members[0][prefix]:
+                summary[f"{prefix}.{name}"] = sum(row[prefix][name] for row in members) / len(
+                    members
+                )
+        summaries.append(summary)
+    report = {
+        "schema": 1,
+        "corpus": corpus,
+        "baseline": baseline,
+        "control": control,
+        "model": alias,
+        "generation_model": variant_report["generation_model"],
+        "adore_report": str(variant_dir),
+        "control_report": str(control_dir),
+        "adore_summary": variant_report["adore_summary"],
+        "settings": summaries,
+        "notes": [
+            "All metric deltas are ADORE minus the same untranslated retriever on identical query/setting cohorts, corpus, and relevance judgments.",
+            "Costs cover expansion and relevance-assessment API attempts, including failures and retries. Local embedding and retrieval compute are unpriced. Missing usage or prices remain null.",
+            "adore_summary counts each API request once across settings. Per-query costs describe standalone pipeline work and must not be summed to bill shared requests across settings, round caps, or retrievers.",
+            "ADORE component seconds sum original API-attempt times, expanded-query embedding build times, and round retrieval times. Control encoding and retrieval times are batch-amortized. Their difference is a component estimate, not measured end-to-end latency.",
+        ],
+    }
+    destination = (
+        config.output_dir
+        / "comparisons"
+        / corpus
+        / digest({"report": report, "queries": query_rows})
+    )
+    if destination.exists():
+        return destination
+    with new_directory(destination) as temporary:
+        write_json(temporary / "report.json", report)
+        write_json(temporary / "per_query.json", query_rows)
+        for filename, records in (("settings.csv", summaries), ("per_query.csv", query_rows)):
+            flattened = []
+            for record in records:
+                flat = {}
+                for key, value in record.items():
+                    if isinstance(value, dict):
+                        flat.update({f"{key}.{name}": metric for name, metric in value.items()})
+                    else:
+                        flat[key] = value
+                flattened.append(flat)
+            with (temporary / filename).open("w", encoding="utf-8", newline="") as handle:
+                writer = csv.DictWriter(
+                    handle, fieldnames=list(flattened[0]) if flattened else ["setting_id"]
+                )
+                writer.writeheader()
+                writer.writerows(flattened)
+    return destination
+
+
 def compare_hyde(
     config: Config,
     corpus: str,

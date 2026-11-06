@@ -68,6 +68,22 @@ hyde:
   input_usd_per_million: null
   cached_input_usd_per_million: null
   output_usd_per_million: null
+# Opt in with adore-bm25, adore-dense, or adore-hybrid in baselines/--baseline.
+# Only run-adore executes expansion, assessment, and iterative retrieval.
+adore:
+  endpoint: null
+  model: null
+  api_key_env: ADORE_API_KEY
+  max_rounds: 3  # Hard maximum: 3; allowed values are 1, 2, 3.
+  passages_per_round: 5
+  feedback_k: 10
+  # Expansion always stays in the original question_language; no language override.
+  response_format: json_schema
+  request_options: {}
+  timeout_seconds: 120
+  input_usd_per_million: null
+  cached_input_usd_per_million: null
+  output_usd_per_million: null
 bm25:
   k1: 1.2
   b: 0.75

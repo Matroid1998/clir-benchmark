@@ -1,11 +1,13 @@
 # CLIR benchmark
 
-A Python package for reproducible, span-grounded dense, BM25, hybrid, translate-then-retrieve, and HyDE baselines
+A Python package for reproducible, span-grounded dense, BM25, hybrid, translate-then-retrieve, HyDE, and ADORE baselines
 over EUR-Lex, UN documents, and chemistry patent abstracts. It prepares one fixed
 chunk corpus and relevance judgments shared by every baseline.
 
 Preparation, generation, embedding, retrieval, and scoring are separate CLI commands. Nothing
-runs a benchmark automatically. Tests use synthetic corpora and lightweight
+runs a benchmark automatically. ADORE's explicit `run-adore` command coordinates
+generation, query embedding, and retrieval stages within its feedback loop.
+Tests use synthetic corpora and lightweight
 encoders; the tokenizer integration test downloads only BGE-M3 tokenizer files.
 
 ## Install and inspect
@@ -35,7 +37,8 @@ span matching are checked during relevance preparation.
 `HF_TOKEN` is read from the environment or configured `.env` file. The explicit
 `translate` command also reads the single variable named by
 `translation.api_key_env` (default `TRANSLATION_API_KEY`); `generate-hyde` reads
-`hyde.api_key_env` (default `HYDE_API_KEY`). Unrelated API keys are
+`hyde.api_key_env` (default `HYDE_API_KEY`); `run-adore` reads
+`adore.api_key_env` (default `ADORE_API_KEY`). Unrelated API keys are
 not loaded into the process environment. `.env`, data, vectors,
 and reports are ignored by Git. The token must have access to BASF and any gated
 model being used.
@@ -452,6 +455,100 @@ the original generation totals and the work performed when that artifact was bui
 Summaries count a request once per output language: do not add reused costs across
 retrieval models, settings, or comparison controls.
 
+### ADORE: iterative retrieval with relevance feedback
+
+Enable **`adore-bm25`**, **`adore-dense`**, or **`adore-hybrid`** through the
+`baselines` configuration or repeated `--baseline` flags. Omit them to disable
+ADORE; the shipped default remains `[dense]`. Disabled ADORE requires no endpoint,
+credentials, generation calls, or additional model loads. Each mode uses the
+same corpus, eligible queries, relevance judgments, and retrieval settings as
+its corresponding untranslated control.
+
+This is a CLIR adaptation of
+[ADORE](https://arxiv.org/abs/2606.13905). The loop generates five pseudo-passages
+by default, retrieves with the original query plus those passages, grades newly
+seen top-10 chunks from 0 to 3 against the **original question**, and feeds the
+accumulated graded chunks into the next expansion. Only actual retrieved text is
+used as feedback; gold answers, evidence annotations, and relevance labels are
+never sent to the LLM. The LLM's grades guide retrieval and do not replace qrels.
+Expansion and assessment use the same explicitly configured model.
+
+**Every expansion stays in the original `question_language`**, including when
+the retrieved chunks are in other languages. Prompts require feedback vocabulary
+to be expressed in the query language. Structured outputs must declare that exact
+language tag; mismatches and invalid shapes fail the request. This validates the
+declared language and prompt contract, not the natural language of every token:
+there is no automatic language-identification model. Stored passages and prompts
+remain available for auditing. ADORE has no output-language override or translation
+stage, and never fuses query languages.
+
+**At most three expansion rounds are allowed, counting the first expansion.**
+`adore.max_rounds` defaults to `3` and accepts only `1`, `2`, or `3`.
+`--adore-rounds` overrides it for `run-adore`, `retrieve`, `evaluate`, and
+`compare-adore`; use the same value when accessing a saved variant. Smaller caps
+provide one- and two-round comparisons. Early stopping can shorten the loop when
+the full feedback window is graded maximally relevant or the top document IDs
+are unchanged on two successive comparisons with the previous round. Each run
+records the actual rounds and stopping reason.
+
+The returned top 100 come from the **last expanded query**. Earlier rankings are
+saved in traces but are not fused or reranked by the LLM. Every round replaces the
+previous expansion while preserving the original query. Unlike the paper's
+length-weighted query repetition, this adaptation includes the original query
+once; the existing BM25 analyzer counts repeated query terms only once. Dense
+and hybrid modes apply the retriever's normal **query adapter**, normalization,
+and truncation to the expanded query. They reuse the control's document vectors.
+
+Configure `adore.endpoint` (the complete Chat Completions URL), `adore.model`, and
+USD token prices before live execution. They remain unset by default and are
+independent of translation and HyDE. `adore.passages_per_round` and
+`adore.feedback_k` configure expansion count and assessment depth; these choices
+participate in artifact identity.
+
+After corpus and relevance preparation, compare ADORE with BM25:
+
+```bash
+uv run clir-benchmark index-bm25 --corpus chemistry
+uv run clir-benchmark retrieve --corpus chemistry --baseline bm25
+# This explicit command makes expansion/assessment API calls and runs retrieval.
+uv run clir-benchmark run-adore --corpus chemistry --baseline adore-bm25
+uv run clir-benchmark evaluate --corpus chemistry --baseline adore-bm25
+uv run clir-benchmark compare-adore --corpus chemistry --baseline adore-bm25
+```
+
+For dense retrieval, prepare document embeddings explicitly first. Original-query
+embeddings are needed for the control; the ADORE command creates or reuses its own
+expanded-query embeddings during the loop:
+
+```bash
+uv run clir-benchmark embed --corpus chemistry --model bge-m3
+uv run clir-benchmark retrieve --corpus chemistry --baseline dense --model bge-m3
+uv run clir-benchmark run-adore --corpus chemistry --baseline adore-dense --model bge-m3
+uv run clir-benchmark compare-adore --corpus chemistry --baseline adore-dense --model bge-m3
+```
+
+For hybrid, prepare the BM25 index as well and select `hybrid` / `adore-hybrid`.
+Repeated baseline/model options select independent experiments. `run-adore` only
+executes selected ADORE modes; it never prepares missing corpus/index/document
+artifacts. `retrieve --baseline adore-*` only checks and returns an existing run.
+`evaluate` and `compare-adore` score saved results without API calls or model loads.
+The comparison reports per-query and per-setting metrics and deltas against the
+same untranslated retriever, rejecting mismatched cohorts or artifact identities.
+
+Request caches reuse compatible expansions and judgments, including shared first
+expansions across settings and retrievers. Later feedback depends on the selected
+retriever and document pool. Run identities distinguish all parameters and model
+identities. Completed runs preserve original costs/timings; invocation audits
+record new work and cache reuse. Invalid, failed, and interrupted requests require
+an explicit `run-adore --retry-failed`, retaining previous attempts in accounting.
+
+Costs include expansion and assessment calls, token usage, and configured prices;
+missing usage/prices remain `null`. Summaries deduplicate shared request keys;
+per-setting costs must not be summed as a bill for reused work. Component timing
+totals include all rounds and original cached work. Control timings are
+batch-amortized, so component-time deltas are estimates, not measured end-to-end
+latency. Local embedding/retrieval compute remains unpriced.
+
 ### BM25 and hybrid retrieval
 
 After `prepare-corpus` and `prepare-relevance`, run BM25 without an embedding
@@ -602,11 +699,15 @@ are never combined. Empty/blocked settings retain counts/status without scores.
 | `hyde_invocations/` | Actual new generation work and cache reuse for each invocation |
 | `hyde/<corpus>/<language>/<hash>/` | Hypothetical passages Parquet, prompts/configuration, usage/cost/latency manifest |
 | `embeddings/hyde/<cache key>/` | Hypothetical-passage vectors keyed by original query IDs, document-adapter audits |
+| `adore_requests/` | Resumable expansion/assessment requests and all attempt audits |
+| `adore_invocations/` | ADORE invocation work, cache reuse, and failure accounting |
+| `adore_searches/<hash>/` | Cached rankings and original search timings per expansion and document pool |
+| `embeddings/adore/<hash>/` | Expanded-query vectors and query-adapter truncation audits |
 | `embeddings/<kind>/<cache key>/` | Float32 `vectors.npy`, ordered IDs/truncation audits Parquet, manifest |
 | `lexical/<corpus>/<index hash>/` | SQLite postings, exact lengths and language/term statistics, analyzer manifest |
 | `runs/<corpus>/<run hash>/` | Ranked Parquet/TREC output, batch-amortized query timings, manifest |
 | `reports/<corpus>/<run hash>/` | JSON report/per-query data, per-query/per-setting CSV |
-| `comparisons/<corpus>/<hash>/` | Matched translation or HyDE/control metric deltas, costs and timing components in JSON/CSV |
+| `comparisons/<corpus>/<hash>/` | Matched translation, HyDE, or ADORE/control metric deltas, costs and timing components in JSON/CSV |
 
 Completed stages publish immutable directories only after completion; individual
 translation request audits are updated as attempts finish. Compatible completed
@@ -642,3 +743,7 @@ and performance require later explicit benchmark runs.
 BM25 tests compare against independent brute-force scores, including filtered and
 mixed language pools; hybrid tests check RRF scores, candidate depth, empty
 branches, cache independence, and end-to-end synthetic runs without model loads.
+ADORE tests cover same-language expansion contracts, the three-round ceiling,
+adaptive stopping, final-round rankings, shared artifact reuse, matched control
+comparisons, and accounting for cached, failed, and retried calls. They use fake
+generation clients and encoders; they do not measure live retrieval quality.

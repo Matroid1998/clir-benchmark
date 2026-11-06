@@ -406,6 +406,14 @@ def run_path(
 ) -> Path:
     if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
+    if baseline.startswith("adore-"):
+        from .adore_pipeline import adore_run_path
+
+        if translation_language is not None or hyde_language is not None:
+            raise ValidationError(
+                "ADORE preserves the original query language; no language overrides"
+            )
+        return adore_run_path(config, corpus, spec, baseline=baseline)
     if baseline == "hyde-dense":
         if hyde_language is None or translation_language is not None:
             raise ValidationError("hyde-dense requires hyde_language and no translation_language")
@@ -488,7 +496,7 @@ def run_path(
 def retrieval_spec(config: Config, alias: str | None, baseline: str) -> ModelSpec | None:
     if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
-    if baseline.removeprefix("translate-") == "bm25":
+    if baseline.removeprefix("translate-").removeprefix("adore-") == "bm25":
         if alias is not None:
             raise ValidationError("BM25 does not use a dense model; omit the model alias")
         return None
@@ -515,6 +523,11 @@ def retrieve(
         translation_language=translation_language,
         hyde_language=hyde_language,
     )
+    if baseline.startswith("adore-"):
+        from .adore_pipeline import load_adore_run
+
+        load_adore_run(destination)
+        return destination
     if destination.exists():
         read_json(destination / "manifest.json")
         return destination
@@ -724,6 +737,14 @@ def evaluate(
     translation_language: str | None = None,
     hyde_language: str | None = None,
 ) -> Path:
+    if baseline.startswith("adore-"):
+        from .adore_pipeline import evaluate_adore
+
+        if translation_language is not None or hyde_language is not None:
+            raise ValidationError(
+                "ADORE preserves the original query language; no language overrides"
+            )
+        return evaluate_adore(config, corpus, alias, baseline=baseline)
     spec = retrieval_spec(config, alias, baseline)
     run_dir = run_path(
         config,

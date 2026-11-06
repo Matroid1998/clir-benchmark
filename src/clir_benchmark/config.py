@@ -21,6 +21,9 @@ BASELINES = (
     "translate-bm25",
     "translate-hybrid",
     "hyde-dense",
+    "adore-bm25",
+    "adore-dense",
+    "adore-hybrid",
 )
 
 
@@ -254,6 +257,28 @@ class HyDEConfig(GenerationConfig):
 
 
 @dataclass(frozen=True)
+class ADOREConfig(GenerationConfig):
+    section: ClassVar[str] = "adore"
+    api_key_env: str | None = "ADORE_API_KEY"
+    max_rounds: int = 3
+    passages_per_round: int = 5
+    feedback_k: int = 10
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        for name, maximum in (("max_rounds", 3), ("passages_per_round", None), ("feedback_k", 100)):
+            value = getattr(self, name)
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, int)
+                or value < 1
+                or (maximum is not None and value > maximum)
+            ):
+                bounds = f"between 1 and {maximum}" if maximum is not None else ">= 1"
+                raise ValidationError(f"adore.{name} must be an integer {bounds}")
+
+
+@dataclass(frozen=True)
 class Config:
     output_dir: Path
     datasets: dict[str, DatasetSpec]
@@ -272,6 +297,7 @@ class Config:
     hybrid: HybridConfig = field(default_factory=HybridConfig)
     translation: TranslationConfig = field(default_factory=TranslationConfig)
     hyde: HyDEConfig = field(default_factory=HyDEConfig)
+    adore: ADOREConfig = field(default_factory=ADOREConfig)
 
     def corpus_key(self, corpus: str) -> str:
         return digest(
@@ -361,6 +387,7 @@ def load_config(path: str | Path) -> Config:
             hybrid=HybridConfig(**raw.pop("hybrid", {})),
             translation=TranslationConfig(**raw.pop("translation", {})),
             hyde=HyDEConfig(**raw.pop("hyde", {})),
+            adore=ADOREConfig(**raw.pop("adore", {})),
             **raw,
         )
     except (TypeError, KeyError) as exc:

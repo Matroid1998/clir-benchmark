@@ -3,10 +3,12 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import replace
 
 from . import __version__
 from .adapters import DatasetReader, apply_evidence_overlay, query_from_row, select_candidates
-from .comparison import compare_hyde, compare_translations
+from .adore_pipeline import run_adore
+from .comparison import compare_adore, compare_hyde, compare_translations
 from .config import BASELINES, language_tag, load_config
 from .encoders import load_registry
 from .errors import ValidationError
@@ -49,6 +51,8 @@ def parser() -> argparse.ArgumentParser:
         "compare-translations",
         "generate-hyde",
         "compare-hyde",
+        "run-adore",
+        "compare-adore",
     ):
         command = sub.add_parser(name)
         command.add_argument(
@@ -57,7 +61,15 @@ def parser() -> argparse.ArgumentParser:
             choices=["eurlex", "un", "chemistry"],
             help="Repeat to select corpora; default: configured corpora",
         )
-        if name in {"embed", "retrieve", "evaluate", "compare-translations", "compare-hyde"}:
+        if name in {
+            "embed",
+            "retrieve",
+            "evaluate",
+            "compare-translations",
+            "compare-hyde",
+            "run-adore",
+            "compare-adore",
+        }:
             command.add_argument(
                 "--model",
                 action="append",
@@ -84,20 +96,31 @@ def parser() -> argparse.ArgumentParser:
                 choices=["dense", "translate-dense"],
                 help="Existing control run to compare against; repeat for both (default: dense)",
             )
-        if name in {"translate", "generate-hyde"}:
+        if name in {"translate", "generate-hyde", "run-adore"}:
             command.add_argument(
                 "--retry-failed",
                 action="store_true",
                 help="Explicitly retry failed/interrupted requests; retains previous attempts for accounting",
             )
-        if name in {"retrieve", "evaluate", "compare-translations"}:
+        if name in {"run-adore", "compare-adore", "retrieve", "evaluate"}:
+            command.add_argument(
+                "--adore-rounds",
+                type=int,
+                choices=[1, 2, 3],
+                help="Maximum expansion rounds for ADORE (default: adore.max_rounds, at most 3)",
+            )
+        if name in {"retrieve", "evaluate", "compare-translations", "run-adore", "compare-adore"}:
             command.add_argument(
                 "--baseline",
                 action="append",
-                choices=list(BASELINES)
-                if name != "compare-translations"
-                else ["dense", "bm25", "hybrid"],
-                help="Repeat to select baselines; default: configured baselines (dense)",
+                choices=["dense", "bm25", "hybrid"]
+                if name == "compare-translations"
+                else [value for value in BASELINES if value.startswith("adore-")]
+                if name in {"run-adore", "compare-adore"}
+                else list(BASELINES),
+                help="Repeat to select ADORE baselines; defaults to configured adore-* entries; at least one must be selected"
+                if name in {"run-adore", "compare-adore"}
+                else "Repeat to select baselines; default: configured baselines (dense)",
             )
     return result
 
@@ -106,18 +129,42 @@ def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     try:
         config = load_config(args.config)
-        registry = load_registry(config.model_registry)
         requested_models = getattr(args, "model", None) or config.models
         baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
+        if args.command in {"run-adore", "compare-adore"}:
+            baselines = tuple(value for value in baselines if value.startswith("adore-"))
+            if not baselines:
+                raise ValidationError(
+                    "Select an ADORE baseline with --baseline adore-bm25, adore-dense, or adore-hybrid, or enable it in baselines"
+                )
+        adore_rounds = getattr(args, "adore_rounds", None)
+        if adore_rounds is not None:
+            if not any(value.startswith("adore-") for value in baselines):
+                raise ValidationError("--adore-rounds requires an adore-* baseline")
+            config = replace(config, adore=replace(config.adore, max_rounds=adore_rounds))
         if args.command == "compare-translations":
             baselines = tuple(
                 dict.fromkeys(
-                    value.removeprefix("translate-") for value in baselines if value != "hyde-dense"
+                    value.removeprefix("translate-")
+                    for value in baselines
+                    if value != "hyde-dense" and not value.startswith("adore-")
                 )
             ) or ("dense",)
+        if args.command in {
+            "run-adore",
+            "compare-adore",
+            "retrieve",
+            "evaluate",
+            "compare-translations",
+        }:
+            config = replace(config, baselines=baselines)
         if (
-            args.command in {"retrieve", "evaluate", "compare-translations"}
-            and all(value.removeprefix("translate-") == "bm25" for value in baselines)
+            args.command
+            in {"retrieve", "evaluate", "compare-translations", "run-adore", "compare-adore"}
+            and all(
+                value.removeprefix("translate-").removeprefix("adore-") == "bm25"
+                for value in baselines
+            )
             and args.model
         ):
             raise ValidationError("--model applies to dense/hybrid retrieval; omit it for BM25")
@@ -150,7 +197,17 @@ def main(argv: list[str] | None = None) -> int:
             raise ValidationError(
                 "--translation-language applies to query embeddings; use --kind query or both"
             )
-        for alias in requested_models:
+        needs_model = args.command not in {
+            "run-adore",
+            "compare-adore",
+            "retrieve",
+            "evaluate",
+            "compare-translations",
+        } or any(
+            value.removeprefix("translate-").removeprefix("adore-") != "bm25" for value in baselines
+        )
+        registry = load_registry(config.model_registry) if needs_model else {}
+        for alias in requested_models if needs_model else ():
             if alias not in registry:
                 raise ValidationError(f"Unknown model alias: {alias}")
         if args.command == "list-models":
@@ -215,6 +272,21 @@ def main(argv: list[str] | None = None) -> int:
                     )
             elif args.command == "index-bm25":
                 print(prepare_bm25(config, corpus))
+            elif args.command in {"run-adore", "compare-adore"}:
+                for baseline in baselines:
+                    for alias in (None,) if baseline == "adore-bm25" else requested_models:
+                        if args.command == "run-adore":
+                            print(
+                                run_adore(
+                                    config,
+                                    corpus,
+                                    alias,
+                                    baseline=baseline,
+                                    retry_failed=args.retry_failed,
+                                )
+                            )
+                        else:
+                            print(compare_adore(config, corpus, alias, baseline=baseline))
             elif args.command == "translate":
                 for language in dict.fromkeys(
                     selected_languages or translation_languages(config, corpus)
@@ -287,7 +359,7 @@ def main(argv: list[str] | None = None) -> int:
                 for baseline in baselines:
                     for alias in (
                         (None,)
-                        if baseline.removeprefix("translate-") == "bm25"
+                        if baseline.removeprefix("translate-").removeprefix("adore-") == "bm25"
                         else requested_models
                     ):
                         operation = retrieve if args.command == "retrieve" else evaluate
