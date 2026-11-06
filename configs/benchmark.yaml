@@ -55,6 +55,19 @@ translation:
   input_usd_per_million: null
   cached_input_usd_per_million: null
   output_usd_per_million: null
+# Enable retrieval with baselines: [hyde-dense] or --baseline hyde-dense.
+# Only the explicit generate-hyde command makes generation calls.
+hyde:
+  endpoint: null
+  model: null
+  api_key_env: HYDE_API_KEY
+  output_languages: []  # Defaults to target_languages, then discovered corpus languages.
+  response_format: json_schema
+  request_options: {}
+  timeout_seconds: 120
+  input_usd_per_million: null
+  cached_input_usd_per_million: null
+  output_usd_per_million: null
 bm25:
   k1: 1.2
   b: 0.75

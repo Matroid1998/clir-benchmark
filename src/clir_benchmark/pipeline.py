@@ -45,6 +45,7 @@ from .embedding import (
 )
 from .encoders import Encoder, HuggingFaceEncoder, ModelSpec, load_registry
 from .errors import ValidationError
+from .hyde import load_hyde
 from .lexical import BM25Index, bm25_path, bm25_scoring
 from .metrics import aggregate, score_query
 from .relevance import build_settings, judge
@@ -283,7 +284,18 @@ def embedding_path(
     kind: str,
     *,
     translation_language: str | None = None,
+    hyde_language: str | None = None,
 ) -> Path:
+    if translation_language is not None and hyde_language is not None:
+        raise ValidationError("Choose either translation_language or hyde_language for embedding")
+    if kind == "query" and hyde_language is not None:
+        _, _, manifest = load_hyde(config, corpus, hyde_language)
+        return (
+            config.output_dir
+            / "embeddings"
+            / "hyde"
+            / embedding_key(manifest["passage_fingerprint"], "document", spec, config.runtime)
+        )
     if kind == "query" and translation_language is not None:
         _, _, manifest = load_translations(config, corpus, translation_language)
         return (
@@ -315,14 +327,26 @@ def embed(
     kind: str = "both",
     encoder_factory: Callable = HuggingFaceEncoder,
     translation_language: str | None = None,
+    hyde_language: str | None = None,
 ) -> dict[str, Path]:
+    if translation_language is not None and hyde_language is not None:
+        raise ValidationError("Choose either translation_language or hyde_language for embedding")
+    if kind == "document" and hyde_language is not None:
+        raise ValidationError(
+            "hyde_language applies to query-side passages; use kind=query or both"
+        )
     spec = model_spec(config, alias)
     result = {}
     encoder: Encoder | None = None
     kinds = ("document", "query") if kind == "both" else (kind,)
     for input_kind in kinds:
         destination = embedding_path(
-            config, corpus, spec, input_kind, translation_language=translation_language
+            config,
+            corpus,
+            spec,
+            input_kind,
+            translation_language=translation_language,
+            hyde_language=hyde_language,
         )
         if destination.exists():
             load_embeddings(destination, ["id"])
@@ -336,6 +360,12 @@ def embed(
 
             def factory(directory=source_dir):
                 return rows(directory / "chunks.parquet")
+        elif hyde_language is not None:
+            _, passages, manifest = load_hyde(config, corpus, hyde_language)
+            count, fingerprint = manifest["query_count"], manifest["passage_fingerprint"]
+
+            def factory(records=passages):
+                return iter(records)
         elif translation_language is not None:
             _, translated, manifest = load_translations(config, corpus, translation_language)
             count, fingerprint = manifest["query_count"], manifest["query_fingerprint"]
@@ -357,8 +387,9 @@ def embed(
                         "language": row["question_language"],
                     }
 
+        encoder_kind = "document" if hyde_language is not None else input_kind
         encode_records(
-            destination, factory, count, encoder, input_kind, config.runtime, fingerprint
+            destination, factory, count, encoder, encoder_kind, config.runtime, fingerprint
         )
         result[input_kind] = destination
     return result
@@ -371,9 +402,36 @@ def run_path(
     *,
     baseline: str = "dense",
     translation_language: str | None = None,
+    hyde_language: str | None = None,
 ) -> Path:
     if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
+    if baseline == "hyde-dense":
+        if hyde_language is None or translation_language is not None:
+            raise ValidationError("hyde-dense requires hyde_language and no translation_language")
+        if spec is None:
+            raise ValidationError("hyde-dense requires a dense model")
+        path, _, manifest = load_hyde(config, corpus, hyde_language)
+        identity = {
+            "schema": 1,
+            "baseline": baseline,
+            "output_language": hyde_language,
+            "relevance": config.relevance_key(corpus),
+            "passages": str(path),
+            "passage_fingerprint": manifest["passage_fingerprint"],
+            "documents": str(embedding_path(config, corpus, spec, "document")),
+            "queries": str(
+                embedding_path(config, corpus, spec, "query", hyde_language=hyde_language)
+            ),
+            "encoder_kind": "document",
+            "retrieval": "exact_cosine",
+            "top_k": 100,
+            "query_batch_size": config.runtime.query_batch_size,
+            "corpus_block_size": config.runtime.corpus_block_size,
+        }
+        return config.output_dir / "runs" / corpus / digest(identity)
+    if hyde_language is not None:
+        raise ValidationError("hyde_language requires the hyde-dense baseline")
     if baseline.startswith("translate-"):
         if translation_language is None:
             raise ValidationError(f"{baseline} requires a translation_language")
@@ -446,10 +504,16 @@ def retrieve(
     *,
     baseline: str = "dense",
     translation_language: str | None = None,
+    hyde_language: str | None = None,
 ) -> Path:
     spec = retrieval_spec(config, alias, baseline)
     destination = run_path(
-        config, corpus, spec, baseline=baseline, translation_language=translation_language
+        config,
+        corpus,
+        spec,
+        baseline=baseline,
+        translation_language=translation_language,
+        hyde_language=hyde_language,
     )
     if destination.exists():
         read_json(destination / "manifest.json")
@@ -468,6 +532,9 @@ def retrieve(
     backend = baseline.removeprefix("translate-")
     translated = None
     translation_manifest = None
+    hyde_manifest = None
+    if hyde_language is not None:
+        _, _, hyde_manifest = load_hyde(config, corpus, hyde_language)
     if translation_language is not None:
         _, translated, translation_manifest = load_translations(
             config, corpus, translation_language
@@ -483,7 +550,12 @@ def retrieve(
             )
             query_vectors, query_rows, _ = load_embeddings(
                 embedding_path(
-                    config, corpus, spec, "query", translation_language=translation_language
+                    config,
+                    corpus,
+                    spec,
+                    "query",
+                    translation_language=translation_language,
+                    hyde_language=hyde_language,
                 ),
                 ["id"],
             )
@@ -503,6 +575,8 @@ def retrieve(
         tag = "bm25" if backend == "bm25" else f"hybrid-{alias}" if backend == "hybrid" else alias
         if translation_language is not None:
             tag = f"translate-{translation_language}-{tag}"
+        if hyde_language is not None:
+            tag = f"hyde-{hyde_language}-{tag}"
         candidate_k = config.hybrid.candidate_k if backend == "hybrid" else 100
         temporary = resources.enter_context(new_directory(destination))
         timing_schema = pa.schema(
@@ -595,6 +669,16 @@ def retrieve(
                 "baseline": baseline,
                 "translation_language": translation_language,
                 "translation": translation_manifest,
+                **(
+                    {
+                        "output_language": hyde_language,
+                        "hyde": hyde_manifest,
+                        "search_vector_source": "hypothetical_document",
+                        "search_encoder_kind": "document",
+                    }
+                    if hyde_manifest is not None
+                    else {}
+                ),
                 "timing_contract": "search and fusion wall time per batch divided by batch size; excludes model/index loading and result serialization",
                 "run_name": tag,
                 "model": asdict(spec) if spec is not None else None,
@@ -638,10 +722,16 @@ def evaluate(
     *,
     baseline: str = "dense",
     translation_language: str | None = None,
+    hyde_language: str | None = None,
 ) -> Path:
     spec = retrieval_spec(config, alias, baseline)
     run_dir = run_path(
-        config, corpus, spec, baseline=baseline, translation_language=translation_language
+        config,
+        corpus,
+        spec,
+        baseline=baseline,
+        translation_language=translation_language,
+        hyde_language=hyde_language,
     )
     if not (run_dir / "manifest.json").is_file():
         raise ValidationError(
@@ -655,6 +745,11 @@ def evaluate(
     settings = read_json(relevance_dir / "settings.json")
     queries = {query.id: query for query in read_queries(relevance_dir / "queries.parquet")}
     translated = {}
+    hypothetical = {}
+    hyde_manifest = None
+    if hyde_language is not None:
+        _, passage_rows, hyde_manifest = load_hyde(config, corpus, hyde_language)
+        hypothetical = {row["id"]: row for row in passage_rows}
     if translation_language is not None:
         _, translated_rows, _ = load_translations(config, corpus, translation_language)
         translated = {row["id"]: row for row in translated_rows}
@@ -669,7 +764,14 @@ def evaluate(
     query_encoding_seconds = 0.0
     if spec is not None:
         query_manifest = read_json(
-            embedding_path(config, corpus, spec, "query", translation_language=translation_language)
+            embedding_path(
+                config,
+                corpus,
+                spec,
+                "query",
+                translation_language=translation_language,
+                hyde_language=hyde_language,
+            )
             / "manifest.json"
         )
         query_encoding_seconds = (
@@ -708,6 +810,22 @@ def evaluate(
                 else 0.0,
                 "retrieval_seconds_amortized": timings.get(key),
                 "query_encoding_seconds_amortized": query_encoding_seconds,
+                **(
+                    {
+                        "output_language": hyde_language,
+                        "generation_model": hyde_manifest["configuration"]["model"],
+                        "generation_seconds": hypothetical[query.id]["generation_seconds"],
+                        "generation_cost_usd": hypothetical[query.id]["estimated_cost_usd"],
+                        "generation_attempts": hypothetical[query.id]["attempts"],
+                        "generation_request_key": hypothetical[query.id]["request_key"],
+                        **{
+                            f"generation_{name}": hypothetical[query.id][name]
+                            for name in ("input_tokens", "cached_input_tokens", "output_tokens")
+                        },
+                    }
+                    if hypothetical
+                    else {}
+                ),
                 "model": alias,
                 "corpus": corpus,
                 "regime": setting["kind"],
@@ -745,6 +863,9 @@ def evaluate(
                 rows(relevance_dir / "matches.parquet"), document_rows
             ),
         }
+        if hypothetical:
+            truncation["hypothetical_documents"] = truncation.pop("queries")
+            truncation["search_encoder_kind"] = "document"
     report = {
         "schema": 2,
         "corpus": corpus,
@@ -753,6 +874,16 @@ def evaluate(
         "translation_summary": translation_summary(list(translated.values()))
         if translated
         else None,
+        **(
+            {
+                "output_language": hyde_language,
+                "generation_model": hyde_manifest["configuration"]["model"],
+                "hyde_summary": hyde_manifest["summary"],
+                "generation_timing_notes": "HyDE generation time includes all recorded attempts even on cache reuse. Hypothetical-passage encoding uses the document adapter; its offline build time is amortized over inputs. Costs are API estimates; local encoding and retrieval compute are unpriced.",
+            }
+            if hypothetical
+            else {}
+        ),
         "timing_notes": "Translation time includes all recorded API attempts, even on cache reuse. Retrieval time is amortized over each batch. Query encoding time is the cached embedding build wall time divided by its row count. These are offline component measurements, not measured online end-to-end latency.",
         "model": alias,
         "run": read_json(run_dir / "manifest.json"),
@@ -780,6 +911,14 @@ def evaluate(
             {
                 "baseline": baseline,
                 "model": alias,
+                **(
+                    {
+                        "output_language": hyde_language,
+                        "generation_model": hyde_manifest["configuration"]["model"],
+                    }
+                    if hypothetical
+                    else {}
+                ),
                 **{key: value for key, value in row.items() if key != "metrics"},
                 **row["metrics"],
             }

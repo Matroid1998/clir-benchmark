@@ -6,10 +6,11 @@ import sys
 
 from . import __version__
 from .adapters import DatasetReader, apply_evidence_overlay, query_from_row, select_candidates
-from .comparison import compare_translations
-from .config import BASELINES, load_config
+from .comparison import compare_hyde, compare_translations
+from .config import BASELINES, language_tag, load_config
 from .encoders import load_registry
 from .errors import ValidationError
+from .hyde import hyde_languages, prepare_hyde
 from .lexical import prepare_bm25
 from .pipeline import embed, evaluate, prepare_corpus, prepare_relevance, retrieve
 from .translation import prepare_translations, translation_languages
@@ -46,6 +47,8 @@ def parser() -> argparse.ArgumentParser:
         "evaluate",
         "translate",
         "compare-translations",
+        "generate-hyde",
+        "compare-hyde",
     ):
         command = sub.add_parser(name)
         command.add_argument(
@@ -54,7 +57,7 @@ def parser() -> argparse.ArgumentParser:
             choices=["eurlex", "un", "chemistry"],
             help="Repeat to select corpora; default: configured corpora",
         )
-        if name in {"embed", "retrieve", "evaluate", "compare-translations"}:
+        if name in {"embed", "retrieve", "evaluate", "compare-translations", "compare-hyde"}:
             command.add_argument(
                 "--model",
                 action="append",
@@ -68,7 +71,20 @@ def parser() -> argparse.ArgumentParser:
                 action="append",
                 help="Repeat to select independent translated-query variants; translate and translate-* baselines default to all configured target languages",
             )
-        if name == "translate":
+        if name in {"generate-hyde", "embed", "retrieve", "evaluate", "compare-hyde"}:
+            command.add_argument(
+                "--hyde-language",
+                action="append",
+                help="Repeat to select independent HyDE output languages; defaults to hyde.output_languages or target languages for HyDE commands/baselines",
+            )
+        if name == "compare-hyde":
+            command.add_argument(
+                "--control",
+                action="append",
+                choices=["dense", "translate-dense"],
+                help="Existing control run to compare against; repeat for both (default: dense)",
+            )
+        if name in {"translate", "generate-hyde"}:
             command.add_argument(
                 "--retry-failed",
                 action="store_true",
@@ -95,8 +111,10 @@ def main(argv: list[str] | None = None) -> int:
         baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
         if args.command == "compare-translations":
             baselines = tuple(
-                dict.fromkeys(value.removeprefix("translate-") for value in baselines)
-            )
+                dict.fromkeys(
+                    value.removeprefix("translate-") for value in baselines if value != "hyde-dense"
+                )
+            ) or ("dense",)
         if (
             args.command in {"retrieve", "evaluate", "compare-translations"}
             and all(value.removeprefix("translate-") == "bm25" for value in baselines)
@@ -104,6 +122,24 @@ def main(argv: list[str] | None = None) -> int:
         ):
             raise ValidationError("--model applies to dense/hybrid retrieval; omit it for BM25")
         selected_languages = getattr(args, "translation_language", None)
+        selected_hyde_languages = getattr(args, "hyde_language", None)
+        for language in selected_hyde_languages or ():
+            language_tag(language, "HyDE output language")
+        if (
+            args.command in {"retrieve", "evaluate"}
+            and selected_hyde_languages
+            and "hyde-dense" not in baselines
+        ):
+            raise ValidationError("--hyde-language requires the hyde-dense baseline")
+        if args.command == "embed" and selected_hyde_languages:
+            if selected_languages:
+                raise ValidationError(
+                    "Choose either --translation-language or --hyde-language for embed"
+                )
+            if args.kind == "document":
+                raise ValidationError(
+                    "--hyde-language applies to query-side passages; use --kind query or both"
+                )
         if (
             args.command in {"retrieve", "evaluate"}
             and selected_languages
@@ -188,6 +224,26 @@ def main(argv: list[str] | None = None) -> int:
                             config, corpus, language, retry_failed=args.retry_failed
                         )
                     )
+            elif args.command == "generate-hyde":
+                for language in dict.fromkeys(
+                    selected_hyde_languages or hyde_languages(config, corpus)
+                ):
+                    print(prepare_hyde(config, corpus, language, retry_failed=args.retry_failed))
+            elif args.command == "compare-hyde":
+                for alias in requested_models:
+                    print(
+                        compare_hyde(
+                            config,
+                            corpus,
+                            alias,
+                            languages=tuple(
+                                dict.fromkeys(
+                                    selected_hyde_languages or hyde_languages(config, corpus)
+                                )
+                            ),
+                            controls=tuple(dict.fromkeys(args.control or ["dense"])),
+                        )
+                    )
             elif args.command == "compare-translations":
                 for baseline in baselines:
                     for alias in (None,) if baseline == "bm25" else requested_models:
@@ -206,7 +262,9 @@ def main(argv: list[str] | None = None) -> int:
                         )
             elif args.command == "embed":
                 for alias in requested_models:
-                    for language in dict.fromkeys(selected_languages or [None]):
+                    for language in dict.fromkeys(
+                        selected_hyde_languages or selected_languages or [None]
+                    ):
                         print(
                             json.dumps(
                                 {
@@ -216,7 +274,11 @@ def main(argv: list[str] | None = None) -> int:
                                         corpus,
                                         alias,
                                         kind=args.kind,
-                                        translation_language=language,
+                                        **(
+                                            {"hyde_language": language}
+                                            if selected_hyde_languages
+                                            else {"translation_language": language}
+                                        ),
                                     ).items()
                                 }
                             )
@@ -229,7 +291,20 @@ def main(argv: list[str] | None = None) -> int:
                         else requested_models
                     ):
                         operation = retrieve if args.command == "retrieve" else evaluate
-                        if baseline.startswith("translate-"):
+                        if baseline == "hyde-dense":
+                            for language in dict.fromkeys(
+                                selected_hyde_languages or hyde_languages(config, corpus)
+                            ):
+                                print(
+                                    operation(
+                                        config,
+                                        corpus,
+                                        alias,
+                                        baseline=baseline,
+                                        hyde_language=language,
+                                    )
+                                )
+                        elif baseline.startswith("translate-"):
                             for language in dict.fromkeys(
                                 selected_languages or translation_languages(config, corpus)
                             ):

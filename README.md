@@ -1,10 +1,10 @@
 # CLIR benchmark
 
-A Python package for reproducible, span-grounded dense, BM25, hybrid, and translate-then-retrieve baselines
+A Python package for reproducible, span-grounded dense, BM25, hybrid, translate-then-retrieve, and HyDE baselines
 over EUR-Lex, UN documents, and chemistry patent abstracts. It prepares one fixed
 chunk corpus and relevance judgments shared by every baseline.
 
-Preparation, embedding, retrieval, and scoring are separate CLI commands. Nothing
+Preparation, generation, embedding, retrieval, and scoring are separate CLI commands. Nothing
 runs a benchmark automatically. Tests use synthetic corpora and lightweight
 encoders; the tokenizer integration test downloads only BGE-M3 tokenizer files.
 
@@ -34,7 +34,8 @@ span matching are checked during relevance preparation.
 
 `HF_TOKEN` is read from the environment or configured `.env` file. The explicit
 `translate` command also reads the single variable named by
-`translation.api_key_env` (default `TRANSLATION_API_KEY`); unrelated API keys are
+`translation.api_key_env` (default `TRANSLATION_API_KEY`); `generate-hyde` reads
+`hyde.api_key_env` (default `HYDE_API_KEY`). Unrelated API keys are
 not loaded into the process environment. `.env`, data, vectors,
 and reports are ignored by Git. The token must have access to BASF and any gated
 model being used.
@@ -351,6 +352,106 @@ remain usable for quality comparison and show `null` latency; use a fresh output
 directory to measure those runs. Keep runtime, device, and batch sizes consistent
 when comparing timings.
 
+### HyDE: hypothetical document embeddings
+
+Enable **`hyde-dense`** with `--baseline hyde-dense` or include it in the YAML
+`baselines` list. Omit it to disable it. The shipped default stays `[dense]`;
+disabled HyDE requires no credentials, API calls, or model loading. This baseline
+generates one hypothetical passage per eligible query and output language, encodes
+the passage with the selected retrieval model's **document adapter**, and searches
+the existing real-document vectors. Document prefixes, normalization, and input
+limits are exactly those used for corpus documents. Passages remain whole inputs,
+subject to the encoder's normal truncation, with their own truncation audit.
+This follows the document-to-document retrieval approach in the
+[HyDE paper](https://aclanthology.org/2023.acl-long.99.pdf), using one passage per
+query/language in this experiment. It does not average the original query into
+the passage vector, combine output languages, or run BM25/hybrid HyDE variants.
+
+The supplied system prompts are packaged unchanged as
+[`hyde_chemistry.txt`](src/clir_benchmark/prompts/hyde_chemistry.txt) and
+[`hyde_law.txt`](src/clir_benchmark/prompts/hyde_law.txt), with the shared
+[`hyde_query.txt`](src/clir_benchmark/prompts/hyde_query.txt) template. EUR-Lex and
+UN use the law prompt with their respective `collection` value. The request
+contains only the collection, original query, source language, and output language;
+it never receives answers, supporting passages, retrieved documents, or tools.
+Generation is direct in the requested language, including when source and output
+languages match. There is no same-language identity shortcut or translation step.
+
+Output languages are independent of document-pool languages. Resolve them from
+repeated `--hyde-language` overrides, then `hyde.output_languages`, then
+`target_languages`, then discovered corpus languages. Explicit output languages
+can be any valid language tag, including a language absent from the corpus.
+Each language produces a separate run on the original eligible query IDs and
+ready settings, with the same document pools and qrels as the control.
+
+Set the independent `hyde.endpoint`, `hyde.model`, and USD token prices in
+`configs/benchmark.yaml` before live generation. Endpoint/model remain unset by
+default; they do not inherit translation's choices. The endpoint uses the same
+Chat Completions protocol and `response_format`/`request_options` controls as
+translation. Credentials come from `HYDE_API_KEY` or the chosen `hyde.api_key_env`;
+use `api_key_env: null` for an unauthenticated local endpoint.
+
+After corpus/relevance preparation, generate and retrieve a French variant:
+
+```bash
+# Only generate-hyde makes HyDE generation API calls.
+uv run clir-benchmark generate-hyde --corpus chemistry --hyde-language fr
+uv run clir-benchmark embed --corpus chemistry --model bge-m3 --hyde-language fr
+uv run clir-benchmark retrieve --corpus chemistry --model bge-m3 --baseline hyde-dense --hyde-language fr
+uv run clir-benchmark evaluate --corpus chemistry --model bge-m3 --baseline hyde-dense --hyde-language fr
+```
+
+`embed --kind query --hyde-language fr` builds only hypothetical-passage vectors;
+the default `--kind both` also builds or reuses corpus vectors. Omitting both
+language selectors from `embed` continues to encode original queries, even if
+HyDE baselines are configured. Repeat `--hyde-language` to embed multiple variants.
+Translation and HyDE selectors cannot be combined within one embedding invocation.
+For generation, retrieval, evaluation, and comparison, omitted HyDE language
+flags use the configuration/default language resolution described above.
+
+To compare with both controls, first prepare their runs explicitly:
+
+```bash
+uv run clir-benchmark embed --corpus chemistry --model bge-m3
+uv run clir-benchmark retrieve --corpus chemistry --model bge-m3 --baseline dense
+uv run clir-benchmark translate --corpus chemistry --translation-language fr
+uv run clir-benchmark embed --corpus chemistry --model bge-m3 --kind query --translation-language fr
+uv run clir-benchmark retrieve --corpus chemistry --model bge-m3 --baseline translate-dense --translation-language fr
+uv run clir-benchmark compare-hyde --corpus chemistry --model bge-m3 --hyde-language fr --control dense --control translate-dense
+```
+
+`compare-hyde` defaults to the `dense` control. The optional `translate-dense`
+control uses the same language and retrieval model as HyDE, and requires that
+translation variant to be prepared within the existing translation language set.
+Comparison only evaluates existing runs; it never generates, embeds, or retrieves.
+Reports under `artifacts/comparisons` include per-query JSON and per-setting CSV
+with absolute retrieval-metric deltas, generation-cost deltas, and timing-component
+deltas. All differences are **HyDE minus the selected control**. For translation
+controls, translation cost and time are subtracted, rather than treating all HyDE
+generation overhead as additional. Missing usage, prices, or timings remain `null`.
+Costs cover generation APIs only; local embedding and retrieval compute are unpriced.
+Generation duration plus amortized passage/query encoding and retrieval timings
+are offline component totals, not measured online end-to-end latency.
+
+Hypothetical passages and their vectors have separate artifact namespaces from
+translations, original queries, and corpus documents. The shared request runner
+preserves translation's existing request keys and artifact identities. HyDE request
+keys include collection, query identity/text, source/output languages, prompts,
+endpoint, model, and generation options. Cached passages are reusable across
+retrieval models; repricing reuses reported usage without generating again.
+
+HyDE strictly requires one nonempty `hypothetical_document` JSON string. Duplicate
+or extra keys, refusals, truncation, and invalid output stop the stage without
+substituting the original query. Resume failed/interrupted requests explicitly
+with `generate-hyde --retry-failed`; all prior attempts remain in accounting.
+Sentence count and language quality follow the prompts, without heuristic rewriting.
+
+Each invocation writes an audit under `artifacts/hyde_invocations`, including
+zero-new-work cache hits and failed/interrupted attempts. Passage manifests retain
+the original generation totals and the work performed when that artifact was built.
+Summaries count a request once per output language: do not add reused costs across
+retrieval models, settings, or comparison controls.
+
 ### BM25 and hybrid retrieval
 
 After `prepare-corpus` and `prepare-relevance`, run BM25 without an embedding
@@ -497,11 +598,15 @@ are never combined. Empty/blocked settings retain counts/status without scores.
 | `relevance/<corpus>/<config hash>/` | Selected queries, selection audit, eligibility reasons, qrels/matches Parquet, standard qrels TSV, settings/manifest |
 | `translation_requests/` | Resumable request/response and attempt audits, shared across retrieval models |
 | `translations/<corpus>/<language>/<hash>/` | Translated query Parquet, exact prompts/configuration, usage/cost/latency manifest |
+| `hyde_requests/` | Resumable HyDE request/response and attempt audits |
+| `hyde_invocations/` | Actual new generation work and cache reuse for each invocation |
+| `hyde/<corpus>/<language>/<hash>/` | Hypothetical passages Parquet, prompts/configuration, usage/cost/latency manifest |
+| `embeddings/hyde/<cache key>/` | Hypothetical-passage vectors keyed by original query IDs, document-adapter audits |
 | `embeddings/<kind>/<cache key>/` | Float32 `vectors.npy`, ordered IDs/truncation audits Parquet, manifest |
 | `lexical/<corpus>/<index hash>/` | SQLite postings, exact lengths and language/term statistics, analyzer manifest |
 | `runs/<corpus>/<run hash>/` | Ranked Parquet/TREC output, batch-amortized query timings, manifest |
 | `reports/<corpus>/<run hash>/` | JSON report/per-query data, per-query/per-setting CSV |
-| `comparisons/<corpus>/<hash>/` | Matched original/translated metric deltas, costs and timing components in JSON/CSV |
+| `comparisons/<corpus>/<hash>/` | Matched translation or HyDE/control metric deltas, costs and timing components in JSON/CSV |
 
 Completed stages publish immutable directories only after completion; individual
 translation request audits are updated as attempts finish. Compatible completed

@@ -4,6 +4,7 @@ import math
 import re
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from typing import ClassVar
 from urllib.parse import urlsplit
 
 import yaml
@@ -12,7 +13,15 @@ from .errors import ValidationError
 from .util import digest, file_digest
 
 BGE_REVISION = "5617a9f61b028005a4858fdac845db406aefb181"
-BASELINES = ("dense", "bm25", "hybrid", "translate-dense", "translate-bm25", "translate-hybrid")
+BASELINES = (
+    "dense",
+    "bm25",
+    "hybrid",
+    "translate-dense",
+    "translate-bm25",
+    "translate-hybrid",
+    "hyde-dense",
+)
 
 
 def pinned(revision: str, label: str) -> None:
@@ -138,10 +147,11 @@ class HybridConfig:
 
 
 @dataclass(frozen=True)
-class TranslationConfig:
+class GenerationConfig:
+    section: ClassVar[str] = "generation"
     model: str | None = None
     endpoint: str | None = None
-    api_key_env: str | None = "TRANSLATION_API_KEY"
+    api_key_env: str | None = None
     response_format: str = "json_schema"
     request_options: dict = field(default_factory=dict)
     timeout_seconds: float = 120
@@ -151,14 +161,16 @@ class TranslationConfig:
 
     def __post_init__(self) -> None:
         if self.model is not None and (not isinstance(self.model, str) or not self.model.strip()):
-            raise ValidationError("translation.model must be a nonempty model ID or null")
+            raise ValidationError(f"{self.section}.model must be a nonempty model ID or null")
         if self.endpoint is not None:
             if not isinstance(self.endpoint, str):
-                raise ValidationError("translation.endpoint must be a URL or null")
+                raise ValidationError(f"{self.section}.endpoint must be a URL or null")
             try:
                 url = urlsplit(self.endpoint)
             except ValueError as exc:
-                raise ValidationError("translation.endpoint must be a valid HTTP(S) URL") from exc
+                raise ValidationError(
+                    f"{self.section}.endpoint must be a valid HTTP(S) URL"
+                ) from exc
             if (
                 url.scheme not in {"https", "http"}
                 or not url.hostname
@@ -168,18 +180,18 @@ class TranslationConfig:
                 or url.fragment
             ):
                 raise ValidationError(
-                    "translation.endpoint must be an HTTP(S) URL without credentials, query, or fragment"
+                    f"{self.section}.endpoint must be an HTTP(S) URL without credentials, query, or fragment"
                 )
         if self.api_key_env is not None and (
             not isinstance(self.api_key_env, str)
             or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", self.api_key_env)
         ):
             raise ValidationError(
-                "translation.api_key_env must be an environment variable name or null"
+                f"{self.section}.api_key_env must be an environment variable name or null"
             )
         if self.response_format not in {"json_schema", "json_object", "text"}:
             raise ValidationError(
-                "translation.response_format must be json_schema, json_object, or text"
+                f"{self.section}.response_format must be json_schema, json_object, or text"
             )
         allowed = {
             "temperature",
@@ -190,12 +202,12 @@ class TranslationConfig:
             "reasoning_effort",
         }
         if not isinstance(self.request_options, dict) or self.request_options.keys() - allowed:
-            raise ValidationError(f"translation.request_options allows only {sorted(allowed)}")
+            raise ValidationError(f"{self.section}.request_options allows only {sorted(allowed)}")
         try:
             digest(self.request_options)
         except (TypeError, ValueError) as exc:
             raise ValidationError(
-                "translation.request_options must contain finite JSON values"
+                f"{self.section}.request_options must contain finite JSON values"
             ) from exc
         for name in (
             "timeout_seconds",
@@ -214,8 +226,31 @@ class TranslationConfig:
                 or (name == "timeout_seconds" and value == 0)
             ):
                 raise ValidationError(
-                    f"translation.{name} must be a finite nonnegative number (timeout > 0)"
+                    f"{self.section}.{name} must be a finite nonnegative number (timeout > 0)"
                 )
+
+
+@dataclass(frozen=True)
+class TranslationConfig(GenerationConfig):
+    section: ClassVar[str] = "translation"
+    api_key_env: str | None = "TRANSLATION_API_KEY"
+
+
+@dataclass(frozen=True)
+class HyDEConfig(GenerationConfig):
+    section: ClassVar[str] = "hyde"
+    api_key_env: str | None = "HYDE_API_KEY"
+    output_languages: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if not isinstance(self.output_languages, (list, tuple)):
+            raise ValidationError("hyde.output_languages must be a list of language tags")
+        for language in self.output_languages:
+            language_tag(language, "HyDE output language")
+        if len(set(self.output_languages)) != len(self.output_languages):
+            raise ValidationError("hyde.output_languages cannot contain duplicates")
+        object.__setattr__(self, "output_languages", tuple(self.output_languages))
 
 
 @dataclass(frozen=True)
@@ -236,6 +271,7 @@ class Config:
     bm25: BM25Config = field(default_factory=BM25Config)
     hybrid: HybridConfig = field(default_factory=HybridConfig)
     translation: TranslationConfig = field(default_factory=TranslationConfig)
+    hyde: HyDEConfig = field(default_factory=HyDEConfig)
 
     def corpus_key(self, corpus: str) -> str:
         return digest(
@@ -324,6 +360,7 @@ def load_config(path: str | Path) -> Config:
             bm25=BM25Config(**raw.pop("bm25", {})),
             hybrid=HybridConfig(**raw.pop("hybrid", {})),
             translation=TranslationConfig(**raw.pop("translation", {})),
+            hyde=HyDEConfig(**raw.pop("hyde", {})),
             **raw,
         )
     except (TypeError, KeyError) as exc:

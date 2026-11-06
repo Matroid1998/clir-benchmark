@@ -1,0 +1,7 @@
+collection: {collection}
+source_language: {source_language}
+output_language: {output_language}
+
+<query>
+{query}
+</query>
