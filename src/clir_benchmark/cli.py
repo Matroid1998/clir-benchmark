@@ -45,6 +45,32 @@ def parser() -> argparse.ArgumentParser:
         help="Read QA exports and validate candidate selection and overlay IDs",
     )
     sub.add_parser("list-models", help="Print the resolved model registry without loading models")
+    subset = sub.add_parser(
+        "prepare-subset",
+        help="Prepare a deterministic small local dataset; no model inference or paid calls",
+    )
+    subset.add_argument("--corpus", required=True, choices=["eurlex", "un"])
+    subset.add_argument("--max-questions", type=int, default=2)
+    subset.add_argument("--max-sources", type=int, default=12)
+    subset.add_argument("--seed", type=int, default=0)
+    subset.add_argument("--destination", type=str)
+    smoke = sub.add_parser(
+        "smoke",
+        help="Explicitly run selected baselines and their dependencies on a tiny prepared subset (may make paid calls)",
+    )
+    smoke.add_argument("--corpus", required=True, choices=["eurlex", "un", "chemistry"])
+    smoke.add_argument(
+        "--model", action="append", help="One embedding model alias; default: configured model"
+    )
+    smoke.add_argument("--baseline", action="append", choices=list(BASELINES))
+    smoke.add_argument("--translation-language", action="append")
+    smoke.add_argument("--hyde-language", action="append")
+    smoke.add_argument("--retry-failed", action="store_true")
+    smoke.add_argument("--max-queries", type=int, default=5)
+    smoke.add_argument("--max-sources", type=int, default=40)
+    smoke.add_argument("--max-chunks", type=int, default=200)
+    smoke.add_argument("--adore-rounds", type=int, choices=[1, 2, 3])
+    smoke.add_argument("--rerank-candidates", type=int)
     for name in (
         "prepare-corpus",
         "prepare-relevance",
@@ -181,6 +207,23 @@ def main(argv: list[str] | None = None) -> int:
         config = load_config(args.config)
         requested_models = getattr(args, "model", None) or config.models
         baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
+        if args.command == "prepare-subset":
+            from pathlib import Path
+
+            from .subset import prepare_subset
+
+            print(
+                prepare_subset(
+                    config,
+                    args.corpus,
+                    max_questions=args.max_questions,
+                    max_sources=args.max_sources,
+                    seed=args.seed,
+                    destination=Path(args.destination).resolve() if args.destination else None,
+                )
+                / "config.yaml"
+            )
+            return 0
         if args.command in {"rerank", "compare-rerank"}:
             baselines = tuple(value for value in baselines if value in RERANK_BASELINES)
             if not baselines:
@@ -213,6 +256,30 @@ def main(argv: list[str] | None = None) -> int:
                     if value != "hyde-dense" and not value.startswith(("adore-", "rerank-"))
                 )
             ) or ("dense",)
+        if args.command == "smoke":
+            from .smoke import run_smoke
+
+            config = replace(config, baselines=baselines)
+            needs_encoder = any(retrieval_backend(value) != "bm25" for value in baselines)
+            if needs_encoder and len(requested_models) != 1:
+                raise ValidationError(
+                    "smoke requires exactly one --model or one configured embedding model"
+                )
+            directory = run_smoke(
+                config,
+                args.corpus,
+                requested_models[0] if needs_encoder else None,
+                translation_languages=tuple(args.translation_language)
+                if args.translation_language
+                else None,
+                hyde_languages=tuple(args.hyde_language) if args.hyde_language else None,
+                retry_failed=args.retry_failed,
+                max_queries=args.max_queries,
+                max_sources=args.max_sources,
+                max_chunks=args.max_chunks,
+            )
+            print(directory / "status.json")
+            return 0 if read_json(directory / "status.json")["status"] == "success" else 2
         if args.command in {
             "run-adore",
             "compare-adore",

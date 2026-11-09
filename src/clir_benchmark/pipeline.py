@@ -49,6 +49,7 @@ from .hyde import load_hyde
 from .lexical import BM25Index, bm25_path, bm25_scoring
 from .metrics import aggregate, score_query
 from .relevance import build_settings, judge
+from .results import export_result
 from .retrieval import DenseIndex, reciprocal_rank_fusion
 from .translation import load_translations, translation_summary
 from .util import (
@@ -788,7 +789,7 @@ def evaluate(
     destination = config.output_dir / "reports" / corpus / run_dir.name
     if destination.exists():
         read_json(destination / "report.json")
-        return destination
+        return export_result(config, corpus, run_dir, destination)
     relevance_dir = config.relevance_dir(corpus)
     settings = read_json(relevance_dir / "settings.json")
     queries = {query.id: query for query in read_queries(relevance_dir / "queries.parquet")}
@@ -981,4 +982,4 @@ def evaluate(
             )
             writer.writeheader()
             writer.writerows(setting_rows)
-    return destination
+    return export_result(config, corpus, run_dir, destination)

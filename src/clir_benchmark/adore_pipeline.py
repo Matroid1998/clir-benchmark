@@ -19,6 +19,7 @@ from .errors import ValidationError
 from .generation import nullable_sum
 from .lexical import BM25Index, bm25_path, bm25_scoring
 from .metrics import aggregate, score_query
+from .results import export_result
 from .retrieval import DenseIndex, reciprocal_rank_fusion
 from .util import digest, file_digest, hf_token, new_directory, read_json, versions, write_json
 
@@ -504,7 +505,7 @@ def evaluate_adore(config: Config, corpus: str, alias=None, *, baseline="adore-b
     destination = config.output_dir / "reports" / corpus / run_dir.name
     if destination.exists():
         read_json(destination / "report.json")
-        return destination
+        return export_result(config, corpus, run_dir, destination)
     relevance_dir = config.relevance_dir(corpus)
     settings = read_json(relevance_dir / "settings.json")
     queries = {query.id: query for query in read_queries(relevance_dir / "queries.parquet")}
@@ -630,7 +631,7 @@ def evaluate_adore(config: Config, corpus: str, alias=None, *, baseline="adore-b
             setting_rows,
             ["corpus", "regime", "setting_id", "query_count"],
         )
-    return destination
+    return export_result(config, corpus, run_dir, destination)
 
 
 def _write_csv(path, records, empty_fields):

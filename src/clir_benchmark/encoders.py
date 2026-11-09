@@ -202,6 +202,9 @@ class HuggingFaceEncoder:
         self.model.eval()
         self.metadata = {
             "model": asdict(spec),
+            "parameter_count": sum(parameter.numel() for parameter in self.model.parameters())
+            if hasattr(self.model, "parameters")
+            else None,
             "device": self.device,
             "dtype": runtime.dtype,
             "truncation_side": "right",

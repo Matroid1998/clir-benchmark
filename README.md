@@ -45,6 +45,64 @@ model being used.
 
 ## Prepare sources and chunks
 
+### Small laptop smoke test
+
+[`configs/laptop-smoke.yaml`](configs/laptop-smoke.yaml) selects all 20 baselines
+with the pinned `minilm-l6` encoder
+([all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2),
+22,713,216 parameters, 384 dimensions). It uses CPU inference, small batches,
+English/French retrieval settings, GPT-6 Luna for translation/HyDE/ADORE, and the
+Qwen3 reranker with three candidates and a 512-token pair budget. ADORE retains
+the original query language and allows at most three expansion rounds, with one
+passage and two feedback documents per round. The ordinary benchmark defaults
+remain unchanged. MiniLM is English-trained; this intentionally small experiment
+checks execution and artifacts, not representative multilingual effectiveness.
+
+On a Linux CPU laptop, install the model dependencies without CUDA wheels:
+
+```bash
+uv sync --extra test
+uv pip install --python .venv/bin/python --torch-backend cpu -e '.[models,test]'
+
+# No generation or embedding inference: select two eligible questions and
+# at most 12 source units, preserving required documents and adding distractors.
+.venv/bin/clir-benchmark --config configs/laptop-smoke.yaml prepare-subset \
+  --corpus eurlex --max-questions 2 --max-sources 12 --seed 0 \
+  --destination artifacts/laptop-smoke/subset
+
+# Explicit live execution, including paid calls using OPENAI_API_KEY from .env.
+OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 .venv/bin/clir-benchmark \
+  --config artifacts/laptop-smoke/subset/config.yaml smoke --corpus eurlex
+```
+
+Subset preparation supports EUR-Lex and UN. It freezes exact upstream QA/corpus
+rows, complete candidate groups, source associations, selection/rejection reasons,
+revision pins, and file hashes. It retains questions eligible in every selected
+setting. Initial preparation may download the original corpus shards to find
+those sources; only the bounded subset is embedded or searched. The smoke runner
+requires local inputs and checks question/source/chunk limits before inference.
+The generated configuration writes results under the subset's `artifacts/`.
+
+All 20 baseline selections yield 28 runs because translation and HyDE are tested
+separately in English and French. Use repeated `--baseline` flags to select fewer,
+for example `smoke --corpus eurlex --baseline dense --baseline bm25`. Only selected
+modes and required rerank parents execute. Shared generation, embeddings, and
+indexes are reused; comparisons execute when their matching controls are present.
+A failed stage blocks its dependents while independent controls continue.
+The printed `smoke_invocations/<id>/status.json` records every outcome, dependency,
+resolved configuration, current invocation timing, errors, and result locations.
+The command exits nonzero unless all requested work succeeds. Rerun the same
+command to reuse completed work; use `--retry-failed` explicitly to retry failed
+generation requests while retaining their previous attempts and costs.
+
+GPT-6 Luna's configured Standard rates are $0.10 input, $0.01 cached input, and
+$0.50 output per million tokens, verified against the
+[official OpenAI model documentation](https://developers.openai.com/api/docs/models/gpt-6-luna).
+Recorded provider responses retain the actual returned model ID and token usage.
+These are API cost estimates; local compute prices remain unknown.
+
+### Full corpus preparation
+
 ```bash
 uv run clir-benchmark prepare-corpus --corpus eurlex
 uv run clir-benchmark prepare-relevance --corpus eurlex
@@ -724,7 +782,7 @@ truncation/support-exposure audit explicitly for its **dense component**.
 
 ### Dense encoders
 
-[`models.yaml`](src/clir_benchmark/models.yaml) pins all eight checkpoints, full
+[`models.yaml`](src/clir_benchmark/models.yaml) pins all nine checkpoints, full
 dimensions, input limits, pooling descriptions, and exact prefixes. Published
 SentenceTransformer module pipelines are retained, including LaBSE's dense layer
 and EmbeddingGemma's projections. SapBERT uses an explicit CLS adapter. BGE-M3
@@ -792,8 +850,32 @@ are never combined. Empty/blocked settings retain counts/status without scores.
 | `embeddings/<kind>/<cache key>/` | Float32 `vectors.npy`, ordered IDs/truncation audits Parquet, manifest |
 | `lexical/<corpus>/<index hash>/` | SQLite postings, exact lengths and language/term statistics, analyzer manifest |
 | `runs/<corpus>/<run hash>/` | Ranked Parquet/TREC output, timings, manifest; reranked runs also preserve candidate ranks and pair audits |
-| `reports/<corpus>/<run hash>/` | JSON report/per-query data, per-query/per-setting CSV |
+| `reports/<corpus>/<run hash>/` | JSON report/per-query data, per-query/per-setting CSV, MTEB-style JSON and analysis inventory |
+| `reports/<corpus>/<run hash>/analysis/` | Joined ranked documents with exact text, query, language, source offsets, rank, score, and relevance |
+| `input_snapshots/` | Shared immutable copies of local raw inputs and subset provenance |
+| `mteb/<model>/<revision>/experiments/<baseline and run hash>/` | MTEB-style custom-task metrics, isolated by all run parameters |
+| `smoke_invocations/` | Execution journal with every selected baseline, stage outcome, cache reuse, runtime environment, and result paths |
 | `comparisons/<corpus>/<hash>/` | Matched translation, HyDE, ADORE, or reranking/control metric deltas, costs and timing components in JSON/CSV |
+
+Every `evaluate` call exports `mteb.json` beside its detailed report and into the
+model/revision hierarchy above. This follows the
+[MTEB TaskResult layout](https://github.com/embeddings-benchmark/mteb/blob/main/mteb/results/task_result.py):
+`task_name`, effective `dataset_revision`, and `scores.test` containing one record
+per retrieval setting with `hf_subset`, `languages`, `main_score`, `ndcg_at_10`,
+`mrr_at_10`, `recall_at_*`, and the benchmark's source-coverage metrics. Scores
+remain on the 0–1 scale and `main_score` is nDCG@10. These are custom CLIR tasks;
+MTEB itself is not run, so `mteb_version`, total evaluation time, and emissions
+remain `null`. No incompatible scores or language variants overwrite each other.
+
+**Retain the entire output directory for analysis.** Each report's
+`analysis_manifest.json` inventories its dependencies with relative paths and
+SHA-256 checksums: source/query/evidence snapshots, qrels and eligibility,
+embeddings and truncation audits, ranked documents, exact generation prompts and
+raw responses, all failed/retried attempts, reranker candidate scores, and original
+cost/timing records. `evaluation_configs/` preserves resolved configurations for
+each scoring/export invocation. Shared artifacts are stored once; references do
+not imply additional cost. Cached reports receive missing analysis exports on an
+offline `evaluate` call, without rerunning retrieval, inference, or generation.
 
 Completed stages publish immutable directories only after completion; individual
 translation request audits are updated as attempts finish. Compatible completed

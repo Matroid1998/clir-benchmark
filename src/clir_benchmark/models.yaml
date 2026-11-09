@@ -1,3 +1,9 @@
+minilm-l6:
+  repo_id: sentence-transformers/all-MiniLM-L6-v2
+  revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+  dimension: 384
+  max_length: 256
+  pooling: mean+normalize
 embeddinggemma:
   repo_id: google/embeddinggemma-300m
   revision: 57c266a740f537b4dc058e1b0cda161fd15afa75

@@ -16,13 +16,15 @@ from clir_benchmark.util import json_dumps
 
 def test_all_models_are_pinned_and_prompts_are_explicit():
     registry = load_registry()
-    assert len(registry) == 8
+    assert len(registry) == 9
     assert all(len(spec.revision) == 40 for spec in registry.values())
     assert registry["SapBERT"].backend == "transformers_cls"
     assert registry["LaBSE"].max_length == 256
     assert registry["nomic-v2-moe"].document_prefix == "search_document: "
     assert registry["embeddinggemma"].document_prefix == "title: none | text: "
     assert registry["bge-m3"].query_prefix == ""
+    assert registry["minilm-l6"].dimension == 384
+    assert registry["minilm-l6"].max_length == 256
 
 
 def test_audit_includes_prompt_and_special_tokens(tokenizer):

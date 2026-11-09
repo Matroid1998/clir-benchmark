@@ -18,6 +18,7 @@ from .errors import ValidationError
 from .generation import nullable_sum
 from .metrics import aggregate, score_query
 from .reranking import Qwen3Reranker, scoring_identity
+from .results import export_result
 from .util import (
     digest,
     file_digest,
@@ -590,7 +591,7 @@ def evaluate_rerank(
             read_json(destination / "per_query.json")
         ):
             raise ValidationError("Corrupt cached reranking evaluation rows")
-        return destination
+        return export_result(config, corpus, run_dir, destination)
     parent_rankings, rankings = _rankings(Path(manifest["parent_run"])), _rankings(run_dir)
     qrels = defaultdict(lambda: defaultdict(set))
     for row in rows(config.relevance_dir(corpus) / "qrels.parquet"):
@@ -697,7 +698,7 @@ def evaluate_rerank(
         write_json(temporary / "per_query.json", records)
         _csv(temporary / "per_query.csv", records)
         _csv(temporary / "settings.csv", report["metrics"]["setting"])
-    return destination
+    return export_result(config, corpus, run_dir, destination)
 
 
 def compare_rerank(

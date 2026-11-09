@@ -1,0 +1,84 @@
+version: 1
+output_dir: ../artifacts/laptop-smoke
+env_file: ../.env
+datasets:
+  eurlex:
+    qa:
+      repo_id: MehdiAstaraki/eurlex-generated-qa
+      revision: c924c03d0ac73ee45a3b6910d420fe523e433d2d
+    corpus:
+      repo_id: MehdiAstaraki/eurlex-generated-qa
+      revision: 8b5d1bd5604e7ebb7c27bc6d877b6b3ef712a006
+candidate_mode: best
+settings: [pairwise, mixed]
+query_languages: [en, fr]
+target_languages: [en, fr]
+models: [minilm-l6]
+baselines:
+  - dense
+  - bm25
+  - hybrid
+  - translate-dense
+  - translate-bm25
+  - translate-hybrid
+  - hyde-dense
+  - adore-bm25
+  - adore-dense
+  - adore-hybrid
+  - rerank-dense
+  - rerank-bm25
+  - rerank-hybrid
+  - rerank-translate-dense
+  - rerank-translate-bm25
+  - rerank-translate-hybrid
+  - rerank-hyde-dense
+  - rerank-adore-bm25
+  - rerank-adore-dense
+  - rerank-adore-hybrid
+runtime:
+  device: cpu
+  dtype: float32
+  batch_size: 4
+  query_batch_size: 2
+  corpus_block_size: 64
+translation:
+  endpoint: https://api.openai.com/v1/chat/completions
+  model: gpt-6-luna
+  api_key_env: OPENAI_API_KEY
+  response_format: json_schema
+  request_options: {reasoning_effort: low, max_completion_tokens: 2048}
+  input_usd_per_million: 0.10
+  cached_input_usd_per_million: 0.01
+  output_usd_per_million: 0.50
+hyde:
+  endpoint: https://api.openai.com/v1/chat/completions
+  model: gpt-6-luna
+  api_key_env: OPENAI_API_KEY
+  output_languages: [en, fr]
+  response_format: json_schema
+  request_options: {reasoning_effort: low, max_completion_tokens: 2048}
+  input_usd_per_million: 0.10
+  cached_input_usd_per_million: 0.01
+  output_usd_per_million: 0.50
+adore:
+  endpoint: https://api.openai.com/v1/chat/completions
+  model: gpt-6-luna
+  api_key_env: OPENAI_API_KEY
+  max_rounds: 3
+  passages_per_round: 1
+  feedback_k: 2
+  response_format: json_schema
+  request_options: {reasoning_effort: low, max_completion_tokens: 2048}
+  input_usd_per_million: 0.10
+  cached_input_usd_per_million: 0.01
+  output_usd_per_million: 0.50
+reranker:
+  repo_id: Qwen/Qwen3-Reranker-0.6B
+  revision: e61197ed45024b0ed8a2d74b80b4d909f1255473
+  candidate_k: 3
+  max_length: 512
+  batch_size: 1
+  device: cpu
+  dtype: float32
+hybrid:
+  candidate_k: 100
