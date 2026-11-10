@@ -19,6 +19,7 @@ import sys
 import time
 import traceback
 import uuid
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -46,7 +47,7 @@ def _label(value: str) -> str:
 
 @dataclass(frozen=True)
 class JobResources:
-    cpus: int = 12
+    cpus: int = 1
     memory: str = "96G"
     walltime: str = "12:00:00"
     gpus: str | None = None
@@ -76,7 +77,9 @@ def write_plan(
     account: str,
     gpu_account: str | None = None,
     prepare_resources: JobResources | None = None,
+    bm25_resources: JobResources | None = None,
     model_resources: JobResources | None = None,
+    model_resources_by_alias: Mapping[str, JobResources] | None = None,
     score_resources: JobResources | None = None,
     split_embedding: bool = False,
     allow_blocked_settings: bool = False,
@@ -87,6 +90,8 @@ def write_plan(
     preparation/index jobs, three BM25 jobs and 24 dense/hybrid model jobs.
     ``split_embedding`` creates separate GPU embedding and CPU scoring jobs,
     releasing accelerators before NumPy/SQLite retrieval and result export.
+    Each stage defaults to one CPU. Resource overrides are independent of
+    baseline selection and artifact identities; BM25 has its own resource request.
     """
     if not config.baselines or set(config.baselines) - ORIGINAL_BASELINES:
         raise ValidationError("Cluster plans support only dense, bm25 and hybrid baselines")
@@ -96,7 +101,21 @@ def write_plan(
         raise ValidationError("Invalid Slurm account")
     if len(set(config.models)) != len(config.models):
         raise ValidationError("Cluster model aliases must be unique")
+    model_resources_by_alias = dict(model_resources_by_alias or {})
+    if any(
+        not isinstance(alias, str) or not isinstance(resources, JobResources)
+        for alias, resources in model_resources_by_alias.items()
+    ):
+        raise ValidationError(
+            "Per-model resources require model alias keys and JobResources values"
+        )
+    unknown_aliases = set(model_resources_by_alias) - set(config.models)
+    if unknown_aliases:
+        raise ValidationError(
+            "Unknown resource model aliases: " + ", ".join(sorted(unknown_aliases))
+        )
     prepare_resources = prepare_resources or JobResources()
+    bm25_resources = bm25_resources or JobResources()
     model_resources = model_resources or JobResources(gpus="h100:1")
     score_resources = score_resources or JobResources()
     destination = Path(destination)
@@ -185,7 +204,7 @@ def write_plan(
     }
     for corpus in config.datasets:
         if "bm25" in config.baselines:
-            add("bm25", corpus, None, (preparation[corpus],), score_resources)
+            add("bm25", corpus, None, (preparation[corpus],), bm25_resources)
         if not ({"dense", "hybrid"} & set(config.baselines)):
             continue
         for alias in config.models:
@@ -194,7 +213,7 @@ def write_plan(
                 corpus,
                 alias,
                 (preparation[corpus],),
-                model_resources,
+                model_resources_by_alias.get(alias, model_resources),
             )
             if split_embedding:
                 add("score", corpus, alias, (embedding,), score_resources)
@@ -266,6 +285,16 @@ def run_job(
                 "SLURM_MEM_PER_NODE",
                 "SLURM_JOB_GPUS",
                 "CUDA_VISIBLE_DEVICES",
+            )
+            if name in os.environ
+        },
+        "thread_environment": {
+            name: os.environ[name]
+            for name in (
+                "OMP_NUM_THREADS",
+                "MKL_NUM_THREADS",
+                "OPENBLAS_NUM_THREADS",
+                "TOKENIZERS_PARALLELISM",
             )
             if name in os.environ
         },
@@ -467,6 +496,9 @@ def retry_jobs(
     labels: list[str] | tuple[str, ...],
     *,
     walltime: str | None = None,
+    cpus: int | None = None,
+    gpus: str | None = None,
+    memory: str | None = None,
     reason: str | None = None,
     runner=subprocess.run,
 ) -> Path:
@@ -482,6 +514,12 @@ def retry_jobs(
         raise ValidationError("Select at least one job label to retry")
     if walltime is not None and not re.fullmatch(r"(?:\d+-)?\d{1,3}:[0-5]\d:[0-5]\d", walltime):
         raise ValidationError("Retry walltime must use [days-]hours:minutes:seconds")
+    if cpus is not None:
+        JobResources(cpus=cpus)
+    if gpus is not None:
+        JobResources(gpus=gpus)
+    if memory is not None:
+        JobResources(memory=memory)
     lock = submission_path.with_suffix(".lock").open("a")
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -500,6 +538,8 @@ def retry_jobs(
                 "Unknown retry job labels: " + ", ".join(sorted(set(labels) - by_label.keys()))
             )
         selected = [by_label[label] for label in labels]
+        if gpus is not None and not any(job["resources"].get("gpus") for job in selected):
+            raise ValidationError("A GPU override requires at least one selected GPU job")
         if any(
             job["status"] != "submitted" or not re.fullmatch(r"\d+", job.get("job_id") or "")
             for job in selected
@@ -629,6 +669,9 @@ def retry_jobs(
             "labels": labels,
             "submission_order": order,
             "walltime_override": walltime,
+            "cpus_override": cpus,
+            "gpus_override": gpus,
+            "memory_override": memory,
             "old_accounting": accounting,
             "dependency_verification": dependency_verification,
             "old_status_snapshot": prior_status,
@@ -670,6 +713,13 @@ def retry_jobs(
                 command = ["sbatch", "--parsable"]
                 if walltime:
                     command.append("--time=" + walltime)
+                if cpus is not None:
+                    command.append("--cpus-per-task=" + str(cpus))
+                if memory is not None:
+                    command.append("--mem=" + memory)
+                gpu_override = gpus if job["resources"].get("gpus") else None
+                if gpu_override is not None:
+                    command.append("--gpus=" + gpu_override)
                 parents = [
                     by_label[parent]["job_id"]
                     for parent in job["dependencies"]
@@ -680,7 +730,14 @@ def retry_jobs(
                 command.append(job["script"])
                 attempt = {"label": label, "status": "submitting", "command": command}
                 retry["jobs"].append(attempt)
-                job.update(status="retry_submitting", command=command, walltime_override=walltime)
+                job.update(
+                    status="retry_submitting",
+                    command=command,
+                    walltime_override=walltime,
+                    cpus_override=cpus,
+                    gpus_override=gpu_override,
+                    memory_override=memory,
+                )
                 job["dependency_verification"] = {
                     parent: dependency_verification[parent]
                     for parent in job["dependencies"]
@@ -874,6 +931,9 @@ def main(argv=None) -> int:
     retry.add_argument("--submission", type=Path, required=True)
     retry.add_argument("--label", action="append", required=True)
     retry.add_argument("--time", dest="walltime")
+    retry.add_argument("--cpus", type=int, help="Override CPUs per task for the selected retries")
+    retry.add_argument("--gpus", help="Override GPU requests for selected GPU jobs only")
+    retry.add_argument("--memory", help="Override host memory for the selected retries, e.g. 16G")
     retry.add_argument("--reason")
     status = sub.add_parser(
         "status", help="Read scheduler status and accounting; never changes jobs"
@@ -884,7 +944,13 @@ def main(argv=None) -> int:
     try:
         if args.command == "retry":
             path = retry_jobs(
-                args.submission, args.label, walltime=args.walltime, reason=args.reason
+                args.submission,
+                args.label,
+                walltime=args.walltime,
+                cpus=args.cpus,
+                gpus=args.gpus,
+                memory=args.memory,
+                reason=args.reason,
             )
             print(path)
             return 0 if read_json(path)["status"] == "submitted" else 2

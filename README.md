@@ -113,6 +113,32 @@ Exact dense search uses NumPy on CPU, so splitting releases GPUs before scoring.
 CPU scoring uses the same encoder configuration as its embedding dependency,
 preserving vector cache identity without loading an encoder.
 
+Every job defaults to **one CPU**, including GPU embedding and dense scoring.
+Preparation and BM25 use serial loops; embedding sends sequential batches to
+the GPU. Dense scoring can use threaded matrix multiplication, but that alone
+does not justify extra CPUs for its complete retrieval/evaluation job. Increase
+a stage's request only when profiling shows a useful improvement across that
+stage. `write_plan()` accepts independent `JobResources` through
+`prepare_resources`, `bm25_resources`, `model_resources`, and `score_resources`;
+for example, `score_resources=JobResources(cpus=2)` affects dense/hybrid scoring
+without increasing BM25's allocation. These scheduler settings do not change
+the selected modes, query cohort, model settings, or embedding cache identities.
+The generated scripts set OpenMP, MKL, and OpenBLAS thread limits from the actual
+`SLURM_CPUS_PER_TASK` allocation and disable tokenizer parallelism. Job journals
+retain those thread settings together with Slurm allocation metadata. Existing
+submitted plans remain the original request record; record any later scheduler
+changes separately instead of regenerating the submitted plan.
+
+GPU requests can vary by encoder: pass
+`model_resources_by_alias={"LaBSE": JobResources(gpus="nvidia_h100_80gb_hbm3_1g.10gb:1")}`
+to `write_plan()` to request that MIG profile for LaBSE jobs. Each mapping entry
+replaces the complete `model_resources` request for that configured alias;
+other aliases retain the shared request, which defaults to `h100:1`.
+Unknown aliases are rejected, and resource overrides never enable disabled
+baselines or add encoders. Choose a MIG profile after measuring model memory
+and throughput with the intended batch size and inputs; changing the GPU
+allocation does not change batch size, precision, or cache identities.
+
 Use `candidate_mode: all` for every generated question candidate; all selected
 questions are embedded. Retrieval metrics still require eligible query/setting
 pairs. Keep `eligibility.parquet`, settings, and generator breakdowns to audit
@@ -142,8 +168,24 @@ and rerunning a completed submission reuses those IDs. Incomplete submissions
 require inspecting the scheduler before retrying, preventing duplicate jobs.
 After fixing a failed job, explicitly select it and any cancelled dependents with
 `python -m clir_benchmark.cluster retry --submission /remote/run/submission.json
---label <job-label> --label <dependent-label> --reason "repair description"`.
-Optional `--time 03:00:00` overrides the new jobs' walltime. Retries verify that
+--label <job-label> --label <dependent-label> --cpus 1 --reason "repair description"`.
+Optional `--time 03:00:00` overrides the new jobs' walltime. `--cpus 1` explicitly
+overrides CPUs per task, including when the original script requested more.
+Optional `--gpus nvidia_h100_80gb_hbm3_1g.10gb:1` overrides the GPU request only
+for selected jobs that originally requested GPUs; CPU dependents retain their
+CPU-only allocation. Selecting only CPU jobs with `--gpus` is rejected.
+`--memory 16G` overrides host RAM for all selected retries. For example, after
+profiling confirms a model fits the chosen MIG profile and host memory:
+
+```bash
+python -m clir_benchmark.cluster retry --submission /remote/run/submission.json \
+  --label clir-embed-un-LaBSE --cpus 1 --memory 16G \
+  --gpus nvidia_h100_80gb_hbm3_1g.10gb:1 --reason "Resource profile verified"
+```
+
+Omitting these options retains the original script's requests. The overrides
+are journaled separately without rewriting original scripts or allocations.
+Retries verify that
 old jobs are terminal, preserve their IDs and scheduler accounting, and connect
 children to the new parent IDs. Already completed dependencies are verified
 without referencing job IDs Slurm may have purged. Running or ambiguous jobs
