@@ -11,6 +11,13 @@ from .translation import nullable_sum
 from .util import digest, new_directory, read_json, write_json
 
 
+def _label_document_comparison(config: Config, report: dict, query_rows: list[dict]) -> None:
+    if config.retrieval_unit == "document":
+        report.update(retrieval_unit="document", document_identity="source_unit_id")
+        for row in [*report["settings"], *query_rows]:
+            row["retrieval_unit"] = "document"
+
+
 def compare_translations(
     config: Config,
     corpus: str,
@@ -25,6 +32,7 @@ def compare_translations(
             "compare-translations takes an untranslated baseline: dense, bm25, or hybrid"
         )
     original_dir = evaluate(config, corpus, alias, baseline=baseline)
+    original_report = read_json(original_dir / "report.json")
     original = {
         (row["setting_id"], row["query_id"]): row
         for row in read_json(original_dir / "per_query.json")
@@ -45,6 +53,13 @@ def compare_translations(
                 "Original and translated evaluation cohorts differ; cannot compare"
             )
         report = read_json(translated_dir / "report.json")
+        for name in ("relevance_hash", "corpus_fingerprint", "query_fingerprint", "model"):
+            if original_report["run"].get(name) != report["run"].get(name):
+                raise ValidationError(f"Original and translated {name} differ; cannot compare")
+        if original_report["run"].get("retrieval_unit", "chunk") != report["run"].get(
+            "retrieval_unit", "chunk"
+        ):
+            raise ValidationError("Original and translated retrieval units differ; cannot compare")
         provenance.append(
             {
                 "translation_language": language,
@@ -133,6 +148,7 @@ def compare_translations(
             "Existing historical runs without timing instrumentation yield null timing comparisons; use a fresh output directory to measure them.",
         ],
     }
+    _label_document_comparison(config, report, query_rows)
     destination = (
         config.output_dir
         / "comparisons"
@@ -358,6 +374,10 @@ def compare_hyde(
             for name in ("relevance_hash", "corpus_fingerprint", "query_fingerprint", "model"):
                 if variant_report["run"][name] != control_report["run"][name]:
                     raise ValidationError(f"HyDE and control {name} differ; cannot compare")
+            if variant_report["run"].get("retrieval_unit", "chunk") != control_report["run"].get(
+                "retrieval_unit", "chunk"
+            ):
+                raise ValidationError("HyDE and control retrieval units differ; cannot compare")
             language_info["controls"].append(
                 {
                     "baseline": control,
@@ -471,6 +491,7 @@ def compare_hyde(
             "Component seconds sum original recorded generation attempts, amortized offline encoding build time and amortized retrieval batch time. They are not measured online end-to-end latency; historical runs without timings yield null comparisons.",
         ],
     }
+    _label_document_comparison(config, report, query_rows)
     destination = (
         config.output_dir
         / "comparisons"

@@ -100,3 +100,18 @@ class Judgment:
         for match in self.matches:
             result.setdefault(match.chunk_id, set()).add(match.required_source_id)
         return result
+
+
+@dataclass
+class DocumentJudgment:
+    """Known source-document relevance, without requiring a supporting text span."""
+
+    query_id: str
+    status: str
+    reason: str
+    detail: dict
+    required_source_ids: list[str]
+    relevant: dict[str, set[str]] = field(default_factory=dict)
+    # Keep the preparation interface shared with span judgments, but never
+    # manufacture matches for provenance-only document relevance.
+    matches: list[Match] = field(default_factory=list)

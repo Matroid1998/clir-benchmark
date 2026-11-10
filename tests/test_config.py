@@ -4,7 +4,14 @@ import pytest
 import yaml
 
 from clir_benchmark.cli import main
-from clir_benchmark.config import ChunkingConfig, RerankerConfig, SourceSpec, load_config
+from clir_benchmark.config import (
+    CandidateSelectionConfig,
+    ChunkingConfig,
+    RerankerConfig,
+    SourceSpec,
+    load_config,
+    validate_retrieval_baselines,
+)
 from clir_benchmark.errors import ValidationError
 
 
@@ -95,3 +102,99 @@ def test_alignment_release_keeps_original_corpus_cache_keys():
         )
         assert previous.corpus_key(name) == config.corpus_key(name)
         assert previous.relevance_key(name) != config.relevance_key(name)
+
+
+@pytest.mark.parametrize(
+    "options",
+    [
+        {"seed": True},
+        {"seed": "42"},
+        {"seed": 2.5},
+        {"preferred_generators": "model"},
+        {"preferred_generators": [""]},
+        {"preferred_generators": ["same", "same"]},
+    ],
+)
+def test_invalid_document_selection_policy(options):
+    with pytest.raises(ValidationError, match="candidate_selection"):
+        CandidateSelectionConfig(**options)
+
+
+def test_selection_tier_order_is_not_significant():
+    assert CandidateSelectionConfig(preferred_generators=["a", "b"]) == CandidateSelectionConfig(
+        preferred_generators=["b", "a"]
+    )
+
+
+def test_new_selection_and_document_mode_preserve_legacy_cache_identities():
+    from clir_benchmark.util import digest
+
+    original = load_config("configs/benchmark.yaml")
+    for mode in ("best", "all"):
+        config = replace(original, candidate_mode=mode)
+        for corpus in config.datasets:
+            legacy_identity = {
+                "schema": 2,
+                "corpus_key": config.corpus_key(corpus),
+                "qa": config.datasets[corpus].qa.identity(),
+                "candidate_mode": mode,
+                "settings": config.settings,
+                "query_languages": config.query_languages,
+                "target_languages": config.target_languages,
+                "evidence": None,
+            }
+            assert config.relevance_key(corpus) == digest(legacy_identity)
+            inactive_policy = replace(config, candidate_selection=CandidateSelectionConfig(seed=7))
+            assert inactive_policy.relevance_key(corpus) == config.relevance_key(corpus)
+    selected = replace(original, candidate_mode="best-per-document")
+    changed_seed = replace(selected, candidate_selection=CandidateSelectionConfig(seed=7))
+    documents = replace(selected, retrieval_unit="document")
+    for corpus in original.datasets:
+        assert (
+            len({c.relevance_key(corpus) for c in (original, selected, changed_seed, documents)})
+            == 4
+        )
+        assert (
+            len({c.corpus_key(corpus) for c in (original, selected, changed_seed, documents)}) == 1
+        )
+
+
+def test_document_baseline_validation_happens_after_explicit_override(tmp_path, monkeypatch):
+    raw = yaml.safe_load(open("configs/benchmark.yaml"))
+    raw.update(retrieval_unit="document", baselines=["bm25"])
+    path = tmp_path / "document.yaml"
+    path.write_text(yaml.safe_dump(raw))
+    config = load_config(path)
+    with pytest.raises(ValidationError, match="supports only"):
+        validate_retrieval_baselines(config)
+    validate_retrieval_baselines(config, ("dense", "translate-dense", "hyde-dense"))
+    monkeypatch.setattr("clir_benchmark.cli.retrieve", lambda *args, **kwargs: tmp_path)
+    assert main(["--config", str(path), "retrieve", "--corpus", "un", "--baseline", "dense"]) == 0
+    assert main(["--config", str(path), "retrieve", "--corpus", "un"]) == 2
+
+
+@pytest.mark.parametrize("before", [False, True])
+def test_document_selection_cli_validation_reads_sources_without_preparing_artifacts(
+    tmp_path, capsys, before
+):
+    import json
+
+    from test_pipeline import fixture_config
+
+    config, path = fixture_config(tmp_path)
+    flags = [
+        "--candidate-mode",
+        "best-per-document",
+        "--selection-seed",
+        "42",
+        "--retrieval-unit",
+        "document",
+    ]
+    command = [*flags, "validate", "--inputs"] if before else ["validate", "--inputs", *flags]
+    assert main(["--config", str(path), *command]) == 0
+    result = json.loads(capsys.readouterr().out)
+    assert result["candidate_mode"] == "best-per-document"
+    assert result["retrieval_unit"] == "document"
+    assert result["inputs"]["eurlex"]["selected_queries"] == 1
+    assert result["inputs"]["eurlex"]["canonical_documents"] == 1
+    assert not config.output_dir.exists()

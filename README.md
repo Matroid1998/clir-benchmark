@@ -526,6 +526,109 @@ remain usable for quality comparison and show `null` latency; use a fresh output
 directory to measure those runs. Keep runtime, device, and batch sizes consistent
 when comparing timings.
 
+### One selected question per document
+
+[`configs/selected-document.yaml`](configs/selected-document.yaml) is an opt-in
+experiment using `candidate_mode: best-per-document`, `retrieval_unit: document`,
+and `baselines: [dense, translate-dense, hyde-dense]`. It keeps all eight embedding
+models and all three corpora, reusing the Fir campaign's prepared corpus and
+document vectors. The original all-question and chunk retrieval experiments keep
+their existing identities and behavior.
+
+Selection pools every available generated question for a canonical source document
+across generators and language versions. It chooses the largest numeric
+`total_score`, ignoring the per-generator `is_best` flag. Among questions tied for
+that score, the preferred generators are one equal-priority group:
+`anthropic/claude-haiku-5.5`, `gpt-5.6-luna`, and `qwen/qwen3.8-27b`. A lower-scoring
+preferred generator never displaces a higher-scoring question. Remaining ties use
+a reproducible per-document random choice with seed `42`. Missing scores are
+excluded and recorded; an entirely unscored document has no winner. The policy is
+configured through `candidate_selection.seed` and
+`candidate_selection.preferred_generators`, with CLI overrides through
+`--candidate-mode` and `--selection-seed`.
+
+For the pinned inputs, the selection contains **638 questions**: 197 Chemistry,
+194 EUR-Lex, and 247 UN, with **2,809 eligible query/setting pairs**. The original
+question languages remain English, German, Spanish, French, or Chinese according
+to the selected question; selection does not balance languages. The selection
+audit retains candidate IDs, scores, generators, languages, exclusions, tie pools,
+and the chosen winner. Original question IDs, text, and provenance are preserved.
+The selection directory also retains `input_queries.parquet`, `input_qas.jsonl`,
+and `input_source_qrels.jsonl`, including rejected candidates and their original
+grader/provenance fields, for analysis without re-downloading the QA exports.
+
+Document retrieval ranks language-specific source documents by the maximum score
+of their constituent chunks. Repeated hits from the same document occupy one
+rank; the supporting chunk remains available in the detailed result. Relevance
+and metrics use the same document unit, with the same selected question cohort and
+document pools for the original dense, translated dense, and HyDE runs. Selection
+and retrieval units are independent configuration choices: the new question
+selection can also be used with chunk retrieval, and document retrieval can use
+the existing `all` or `best` candidate modes.
+Use `--retrieval-unit document` to override the retrieval unit from the CLI.
+Document relevance uses known source associations, with canonical legal language
+variants and directly accepted chemistry translation pairs; exact answer/evidence
+spans are not required. Unavailable target-language versions still exclude the
+affected query/setting. MTEB task names have a `_Document` suffix, and comparison
+reports and CSVs explicitly label the retrieval unit.
+
+The experiment explicitly selects English, German, Spanish, French, and Chinese
+as separate translation and HyDE output languages, using the existing
+`gpt-6-luna` generation configuration. These output languages do not replace the
+original query-language metadata or change the document pool. Translations use
+the query encoder adapter; HyDE passages use the document adapter. Same-language
+translation reuses the original text without an API call, while HyDE still
+generates a hypothetical passage. Each generation artifact is shared by all
+eight embedding models. Remove a baseline from `baselines` or use repeated
+`--baseline` arguments to choose a subset; disabled generation methods require no
+credentials and make no calls.
+
+Validation and planning are offline:
+
+```bash
+uv run clir-benchmark --config configs/selected-document.yaml validate
+```
+
+Live generation and Fir submission remain separate explicit run actions; the
+configuration does not launch them. Future Fir execution also needs its own API
+credential/connectivity setup. No API secrets belong in the configuration, saved
+reports, or synchronized campaign directory.
+
+For scheduling, `clir_benchmark.cluster.write_plan` selects a document graph when
+`retrieval_unit` is `document`: prepare the selected relevance artifacts, generate
+each enabled method once per corpus/output language, encode queries once per
+model/corpus, then perform CPU retrieval, evaluation, and matching comparisons.
+Each model/corpus must have an explicit `document_embedding_dependencies` entry:
+an existing Slurm embedding job ID, or `None` to check the completed compatible
+cache. The planner checks manifests and file presence without loading models or
+vectors. The scorer verifies the cache again before retrieval. Existing document
+jobs are recorded as external dependencies and are never resubmitted by this
+graph; completed dependencies are verified through accounting before submission.
+
+The plan always separates GPU query encoding from CPU scoring and never rebuilds
+the corpus or schedules BM25 for this experiment. `generation_resources` controls
+the API stages independently of `prepare_resources`, model resources, and
+`score_resources`; each defaults to one CPU. Keep the same artifact root and exact
+embedding runtime/model/version identity as the reused vectors. On Fir this means
+CUDA, float32, batch size 32, query batch size 32, and corpus block size 16384.
+Changing resource allocations such as GPU slices does not change embedding
+identity, but the hardware is retained in job journals for timing analysis.
+Before a future live launch, check a conservative memory bound for the generated
+HyDE passage lengths; the earlier document-embedding probes do not validate every
+possible generated input length.
+
+Evaluation writes per-query metrics, complete rankings and source references,
+selection and configuration audits, token usage, configured-price cost estimates,
+failed/retried generation attempts, and MTEB-compatible metrics. Comparisons use
+matching query/setting cohorts and retain original generation costs when reused.
+Unknown prices or measurements remain unknown; component timings are not claimed
+to be measured online end-to-end latency. Retain and synchronize the entire
+shared artifact root together with the new campaign's configuration, scripts,
+submission records, and stage journals.
+Within one scoring process, unchanged artifact hashes are reused after checking
+file identity, size, and nanosecond modification/change times. This avoids
+re-reading the full shared corpus and vectors for every comparison export.
+
 ### HyDE: hypothetical document embeddings
 
 Enable **`hyde-dense`** with `--baseline hyde-dense` or include it in the YAML

@@ -53,6 +53,10 @@ def test_subset_reuses_validated_cache_without_reads(tmp_path, tokenizer, monkey
         lambda *args: pytest.fail("cached subset read upstream input"),
     )
     assert prepare_subset(config, "eurlex", **kwargs) == subset
+    inactive_policy = replace(
+        config, candidate_selection=replace(config.candidate_selection, seed=999)
+    )
+    assert prepare_subset(inactive_policy, "eurlex", **kwargs) == subset
     (subset / "selection.json").write_text("{}")
     with pytest.raises(ValidationError, match="artifact changed"):
         prepare_subset(config, "eurlex", **kwargs)
@@ -161,3 +165,87 @@ def test_subset_deduplicates_distractors_with_different_provenance(tmp_path, tok
     assert manifest["upstream_source_count"] == 4
     assert manifest["source_count"] == 3
     assert manifest["distractor_count"] == 1
+
+
+def test_document_subset_selects_globally_and_retains_candidates_and_unannotated_versions(
+    tmp_path, tokenizer
+):
+    config, _ = fixture_config(tmp_path, annotations=False)
+    qas = pq.read_table(tmp_path / "dataset/data/qas/train-00000.parquet").to_pylist()
+    for row in qas:
+        if row["_id"] == "qdrop":
+            row.update(
+                total_score=32.0,
+                source_unit_id="a:fr",
+                involved_source_unit_ids=["a:fr"],
+                question_language="fr",
+                context_language="fr",
+                generator_model_id="other-generator",
+                evidence_all_languages="{}",
+            )
+    write_rows(tmp_path / "dataset", "qas", qas)
+    config = replace(
+        config,
+        candidate_mode="best-per-document",
+        retrieval_unit="document",
+        target_languages=("en", "fr", "zh"),
+    )
+    subset = prepare_subset(
+        config,
+        "eurlex",
+        max_questions=1,
+        max_sources=3,
+        chunker=Chunker(tokenizer, config.chunking),
+    )
+    audit = read_json(subset / "selection.json")
+    assert audit["selected_query_ids"] == ["qdrop"]
+    assert audit["retained_candidate_ids"] == ["qbest", "qdrop", "qlow"]
+    assert {"a:en", "a:fr"} <= set(audit["selected_source_ids"])
+    assert audit["candidate_groups"][0]["candidate_count"] == 3
+    assert audit["eligible_settings"]["qdrop"] == [
+        "eurlex__fr__en",
+        "eurlex__fr__fr",
+        "eurlex__fr__mixed",
+    ]
+    subset_config = load_config(subset / "config.yaml")
+    prepare_corpus(subset_config, "eurlex", chunker=Chunker(tokenizer, config.chunking))
+    relevance = prepare_relevance(subset_config, "eurlex")
+    assert read_json(relevance / "manifest.json")["selected_query_count"] == 1
+    assert {row["query_id"] for row in rows(relevance / "qrels.parquet")} == {"qdrop"}
+    assert {row["document_id"] for row in rows(relevance / "qrels.parquet")} == {"a:en", "a:fr"}
+
+
+def test_document_subset_preserves_random_winner_when_prepared_again(tmp_path, tokenizer):
+    config, _ = fixture_config(tmp_path, annotations=False)
+    config = replace(config, candidate_mode="best-per-document", retrieval_unit="document")
+    subset = prepare_subset(
+        config,
+        "eurlex",
+        max_questions=1,
+        max_sources=3,
+        chunker=Chunker(tokenizer, config.chunking),
+    )
+    audit = read_json(subset / "selection.json")
+    subset_config = load_config(subset / "config.yaml")
+    prepare_corpus(subset_config, "eurlex", chunker=Chunker(tokenizer, config.chunking))
+    relevance = prepare_relevance(subset_config, "eurlex")
+    assert read_json(relevance / "selection.json")[0]["selected_ids"] == audit["selected_query_ids"]
+    assert audit["candidate_groups"][0] == read_json(relevance / "selection.json")[0]
+
+
+def test_document_retrieval_subset_without_new_selection_keeps_legacy_best_groups(
+    tmp_path, tokenizer
+):
+    config, _ = fixture_config(tmp_path, annotations=False)
+    config = replace(config, retrieval_unit="document")
+    subset = prepare_subset(
+        config,
+        "eurlex",
+        max_questions=1,
+        max_sources=3,
+        chunker=Chunker(tokenizer, config.chunking),
+    )
+    audit = read_json(subset / "selection.json")
+    assert len(audit["selected_query_ids"]) == 1
+    assert {"a:en", "a:fr"} <= set(audit["selected_source_ids"])
+    assert all("task_id" in row for row in audit["candidate_groups"])

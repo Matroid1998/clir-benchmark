@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import fnmatch
+import hashlib
+import json
 import math
-from collections.abc import Iterator
+import random
+from collections import Counter
+from collections.abc import Iterator, Mapping
 from dataclasses import replace
 from pathlib import Path
 
 from .artifacts import CorpusStore, rows
-from .config import SourceSpec, language_tag
+from .config import CandidateSelectionConfig, SourceSpec, language_tag
 from .errors import ValidationError
 from .evidence import parse_annotations
 from .types import Query, SourceUnit
@@ -203,7 +207,137 @@ def query_from_row(row: dict, corpus: str) -> Query:
     return query
 
 
-def select_candidates(queries: list[Query], mode: str = "best") -> tuple[list[Query], list[dict]]:
+def canonical_source_ids(
+    reader: DatasetReader, corpus: str, source_unit_ids: set[str]
+) -> dict[str, str]:
+    """Read document identities without preparing chunks or loading a model."""
+    result = {}
+    configuration = "default" if corpus == "chemistry" else "corpus"
+    for row in reader.read(configuration):
+        units = (
+            chemistry_pair(row, reader.spec)[0]
+            if corpus == "chemistry"
+            else [legal_unit(row, corpus)]
+        )
+        for unit in units:
+            if unit.id not in source_unit_ids:
+                continue
+            previous = result.setdefault(unit.id, unit.source_id)
+            if previous != unit.source_id:
+                raise ValidationError(f"Conflicting canonical source identity for {unit.id}")
+    return result
+
+
+def _select_per_document(
+    queries: list[Query], source_ids: Mapping[str, str] | None, policy: CandidateSelectionConfig
+) -> tuple[list[Query], list[dict]]:
+    if source_ids is None:
+        raise ValidationError("best-per-document requires canonical source IDs from the corpus")
+    groups: dict[tuple[str, str], list[Query]] = {}
+    ids = set()
+    for query in queries:
+        if query.id in ids:
+            raise ValidationError(f"Duplicate QA ID: {query.id}")
+        ids.add(query.id)
+        source_id = source_ids.get(query.source_unit_id)
+        if not isinstance(source_id, str) or not source_id:
+            raise ValidationError(
+                f"QA {query.id}: missing canonical source mapping for {query.source_unit_id}"
+            )
+        if query.total_score is not None and (
+            isinstance(query.total_score, bool)
+            or not isinstance(query.total_score, (int, float))
+            or not math.isfinite(query.total_score)
+        ):
+            raise ValidationError(f"QA {query.id}: grader total_score must be finite and numeric")
+        groups.setdefault((query.corpus, source_id), []).append(query)
+
+    selected, audit = [], []
+    preferred = set(policy.preferred_generators)
+    for (corpus, source_id), candidates in sorted(groups.items()):
+        candidates.sort(key=lambda query: query.id)
+        scored = [query for query in candidates if query.total_score is not None]
+        maximum = max(query.total_score for query in scored) if scored else None
+        tied = [query for query in scored if query.total_score == maximum]
+        preferred_tied = [query for query in tied if query.generator_model_id in preferred]
+        pool = preferred_tied or tied
+        group_seed = int(
+            hashlib.sha256(
+                json.dumps(
+                    [policy.seed, corpus, source_id], ensure_ascii=False, separators=(",", ":")
+                ).encode()
+            ).hexdigest(),
+            16,
+        )
+        winner = random.Random(group_seed).choice(pool) if pool else None
+        if winner is not None:
+            selected.append(winner)
+        details = []
+        for query in candidates:
+            disposition = (
+                "missing_score"
+                if query.total_score is None
+                else "below_maximum"
+                if query.total_score != maximum
+                else "selected"
+                if query == winner
+                else "not_preferred_tie"
+                if preferred_tied and query.generator_model_id not in preferred
+                else "tie_not_selected"
+            )
+            details.append(
+                {
+                    "query_id": query.id,
+                    "source_unit_id": query.source_unit_id,
+                    "canonical_source_id": source_id,
+                    "generator_model_id": query.generator_model_id,
+                    "question_language": query.question_language,
+                    "total_score": query.total_score,
+                    "disposition": disposition,
+                }
+            )
+        audit.append(
+            {
+                "schema": 1,
+                "corpus": corpus,
+                "canonical_source_id": source_id,
+                "candidate_count": len(candidates),
+                "scored_candidate_count": len(scored),
+                "excluded_missing_score_count": len(candidates) - len(scored),
+                "selected_ids": [winner.id] if winner else [],
+                "selected_language": winner.question_language if winner else None,
+                "selected_generator": winner.generator_model_id if winner else None,
+                "method": "maximum_score_preferred_tier_seeded_random",
+                "status": "selected" if winner else "excluded_no_scored_candidates",
+                "maximum_score": maximum,
+                "maximum_score_ids": [query.id for query in tied],
+                "preferred_tied_ids": [query.id for query in preferred_tied],
+                "random_pool_ids": [query.id for query in pool],
+                "selection_seed": policy.seed,
+                "group_seed": group_seed,
+                "random_algorithm": "python.random.Random.choice(sorted_query_ids)-v1",
+                "preferred_generators": list(policy.preferred_generators),
+                "language_counts": dict(
+                    sorted(Counter(query.question_language for query in candidates).items())
+                ),
+                "generator_counts": dict(
+                    sorted(Counter(query.generator_model_id for query in candidates).items())
+                ),
+                "candidates": details,
+            }
+        )
+    return sorted(selected, key=lambda query: query.id), audit
+
+
+def select_candidates(
+    queries: list[Query],
+    mode: str = "best",
+    *,
+    source_ids: Mapping[str, str] | None = None,
+    policy: CandidateSelectionConfig | None = None,
+) -> tuple[list[Query], list[dict]]:
+    if mode == "best-per-document":
+        return _select_per_document(queries, source_ids, policy or CandidateSelectionConfig())
     if mode not in {"all", "best"}:
         raise ValidationError(f"Unknown candidate mode: {mode}")
     groups: dict[tuple, list[Query]] = {}

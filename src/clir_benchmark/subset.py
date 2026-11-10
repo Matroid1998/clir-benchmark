@@ -20,6 +20,7 @@ import yaml
 from .adapters import (
     DatasetReader,
     apply_evidence_overlay,
+    canonical_source_ids,
     legal_unit,
     query_from_row,
     select_candidates,
@@ -29,7 +30,7 @@ from .chunking import Chunker, load_tokenizer
 from .config import Config
 from .errors import ValidationError
 from .evidence import parse_annotations
-from .relevance import build_settings, judge
+from .relevance import build_settings, judge, judge_documents
 from .util import digest, file_digest, hf_token, new_directory, read_json, versions, write_json
 
 
@@ -60,7 +61,8 @@ def prepare_subset(
 ) -> Path:
     """Save exact upstream rows, an auditable selection, and a runnable config.
 
-    Questions must be eligible in every requested setting. Required and annotated
+    Chunk questions must be eligible in every requested setting; document questions
+    need an available indexed source in at least one setting. Required and annotated
     sources are retained even outside the target language pool. In ``best`` mode,
     complete candidate groups accompany each winner, preserving the selection
     algorithm. Invalid *unselected* upstream groups are explicitly listed in the
@@ -77,6 +79,11 @@ def prepare_subset(
     if isinstance(seed, bool) or not isinstance(seed, int):
         raise ValidationError("seed must be an integer")
     resolved = _plain(asdict(config))
+    identity_config = dict(resolved)
+    if config.candidate_mode != "best-per-document":
+        identity_config.pop("candidate_selection")
+    if config.retrieval_unit == "chunk":
+        identity_config.pop("retrieval_unit")
     identity = {
         "schema": 1,
         "method": "eligible-question-hash-order-with-referenced-sources-v1",
@@ -84,7 +91,7 @@ def prepare_subset(
         "max_questions": max_questions,
         "max_sources": max_sources,
         "seed": seed,
-        "config": resolved,
+        "config": identity_config,
         "source_identities": {
             kind: getattr(config.datasets[corpus], kind).identity() for kind in ("qa", "corpus")
         },
@@ -113,30 +120,65 @@ def prepare_subset(
     raw_by_id = {row["_id"]: row for row in raw_queries}
     if len(raw_by_id) != len(raw_queries):
         raise ValidationError("Duplicate QA IDs in subset input")
+    source_reader = DatasetReader(config.datasets[corpus].corpus, token)
+    document_selection = config.candidate_mode == "best-per-document"
+    document_retrieval = config.retrieval_unit == "document"
+    source_ids = (
+        canonical_source_ids(
+            source_reader, corpus, {unit for query in queries for unit in query.required_units}
+        )
+        if document_selection or document_retrieval
+        else {}
+    )
     groups = defaultdict(list)
     for query in queries:
         groups[query.task_id].append(query)
     candidates, selection_audit, rejected_groups = [], [], []
-    for task_id, group in sorted(groups.items()):
-        try:
-            winners, audit = select_candidates(group, config.candidate_mode)
-        except ValidationError as exc:
-            rejected_groups.append({"task_id": task_id, "reason": str(exc)})
-            continue
-        candidates.extend(
+    if document_selection:
+        winners, selection_audit = select_candidates(
+            queries, config.candidate_mode, source_ids=source_ids, policy=config.candidate_selection
+        )
+        candidates = [
             query
             for query in winners
             if not config.query_languages or query.question_language in config.query_languages
-        )
-        selection_audit.extend(audit)
+        ]
+        rejected_groups = [
+            {"canonical_source_id": row["canonical_source_id"], "reason": row["status"]}
+            for row in selection_audit
+            if not row["selected_ids"]
+        ]
+    else:
+        for task_id, group in sorted(groups.items()):
+            try:
+                winners, audit = select_candidates(group, config.candidate_mode)
+            except ValidationError as exc:
+                rejected_groups.append({"task_id": task_id, "reason": str(exc)})
+                continue
+            candidates.extend(
+                query
+                for query in winners
+                if not config.query_languages or query.question_language in config.query_languages
+            )
+            selection_audit.extend(audit)
     candidates.sort(key=lambda query: (digest([seed, query.id]), query.id))
     if not candidates:
         raise ValidationError("No valid candidate groups match the subset query languages")
     needed_ids = {
         unit_id
         for query in candidates
-        for unit_id in (*query.required_units, *parse_annotations(query))
+        for unit_id in (
+            *query.required_units,
+            *([] if document_retrieval else parse_annotations(query)),
+        )
     }
+    candidate_source_units = defaultdict(set)
+    if document_selection:
+        for query in queries:
+            candidate_source_units[source_ids[query.source_unit_id]].add(query.source_unit_id)
+        for query in candidates:
+            needed_ids.update(candidate_source_units[source_ids[query.source_unit_id]])
+    needed_canonical = {source_ids[unit_id] for unit_id in needed_ids if unit_id in source_ids}
     source_qrels = list(reader.read("source_qrels"))
     associations = defaultdict(set)
     for row in source_qrels:
@@ -145,7 +187,6 @@ def prepare_subset(
     raw_sources, reservoir = {}, []
     reservoir_rows = {}
     upstream_languages = Counter()
-    source_reader = DatasetReader(config.datasets[corpus].corpus, token)
     # The bounded reservoir avoids retaining the full original corpus in RAM or
     # preparing its chunks. A few extra candidates allow exclusion of positives.
     reservoir_size = max_sources * 4
@@ -155,7 +196,11 @@ def prepare_subset(
         source_id = row.get("_id")
         language = row.get("language")
         upstream_languages[language] += 1
-        if source_id in needed_ids:
+        if source_id in needed_ids or (
+            (document_selection or document_retrieval)
+            and row.get("source_id") in needed_canonical
+            and (not config.target_languages or language in config.target_languages)
+        ):
             previous = raw_sources.get(source_id)
             if previous is not None and any(
                 previous.get(name) != row.get(name) for name in ("source_id", "language", "text")
@@ -187,13 +232,18 @@ def prepare_subset(
     config.output_dir.mkdir(parents=True, exist_ok=True)
     selected, selected_sources, skipped = [], set(), []
     selected_settings = {}
+    judge_query = judge_documents if document_retrieval else judge
     with TemporaryDirectory(prefix=".subset-selection-", dir=config.output_dir) as temporary:
         with CorpusStore(Path(temporary) / "sources.sqlite", create=True) as store:
             for row in raw_sources.values():
                 store.add_source(legal_unit(row, corpus))
             chunked = set()
             for query in candidates:
-                required = set(query.required_units) | set(parse_annotations(query))
+                required = set(query.required_units)
+                if not document_retrieval:
+                    required.update(parse_annotations(query))
+                if document_selection:
+                    required.update(candidate_source_units[source_ids[query.source_unit_id]])
                 if required - raw_sources.keys():
                     skipped.append({"query_id": query.id, "reason": "missing_required_source"})
                     continue
@@ -218,7 +268,7 @@ def prepare_subset(
                 judgments = [
                     (
                         setting,
-                        judge(query, setting, store, associations[query.id] & required),
+                        judge_query(query, setting, store, associations[query.id] & required),
                     )
                     for setting in settings
                 ]
@@ -227,14 +277,16 @@ def prepare_subset(
                     for setting, result in judgments
                     if result.status != "eligible"
                 ]
-                if failures:
+                if failures and (not document_retrieval or len(failures) == len(judgments)):
                     skipped.append(
                         {"query_id": query.id, "reason": "ineligible", "settings": failures}
                     )
                     continue
                 selected.append(query)
                 selected_sources.update(required)
-                selected_settings[query.id] = [setting.id for setting in settings]
+                selected_settings[query.id] = [
+                    setting.id for setting, result in judgments if result.status == "eligible"
+                ]
                 if len(selected) == max_questions:
                     break
             if len(selected) != max_questions:
@@ -264,15 +316,20 @@ def prepare_subset(
                 for setting in build_settings(
                     corpus, [query.question_language], targets, config.settings
                 ):
-                    judge(query, setting, store, associations[query.id] & selected_sources)
+                    judge_query(query, setting, store, associations[query.id] & selected_sources)
 
     chosen_ids = {query.id for query in selected}
     chosen_tasks = {query.task_id for query in selected}
+    chosen_documents = (
+        {source_ids[query.source_unit_id] for query in selected} if document_selection else set()
+    )
     retained_queries = [
         query
         for query in queries
         if (
-            query.task_id in chosen_tasks
+            source_ids[query.source_unit_id] in chosen_documents
+            if document_selection
+            else query.task_id in chosen_tasks
             if config.candidate_mode == "best"
             else query.id in chosen_ids
         )
@@ -338,7 +395,13 @@ def prepare_subset(
                 "distractor_source_ids": distractor_ids,
                 "eligible_settings": selected_settings,
                 "candidate_groups": [
-                    row for row in selection_audit if row["task_id"] in chosen_tasks
+                    row
+                    for row in selection_audit
+                    if (
+                        row["canonical_source_id"] in chosen_documents
+                        if document_selection
+                        else row["task_id"] in chosen_tasks
+                    )
                 ],
                 "rejected_upstream_groups": rejected_groups,
                 "skipped_candidates": skipped,
@@ -356,7 +419,9 @@ def prepare_subset(
             {
                 "identity": identity,
                 "purpose": "execution smoke test; not representative retrieval effectiveness",
-                "selection_policy": "seeded hash order; every selected winner eligible in every requested setting; retain exact source and QA rows",
+                "selection_policy": "seeded hash order; every selected winner eligible in at least one available document setting; retain exact source and QA rows"
+                if document_retrieval
+                else "seeded hash order; every selected winner eligible in every requested setting; retain exact source and QA rows",
                 "association_policy": "source_qrels restricted to retained corpus; original rows retained in selection.json",
                 "question_count": len(selected),
                 "retained_candidate_count": len(retained_queries),

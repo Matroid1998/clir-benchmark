@@ -1,0 +1,134 @@
+# Opt-in document experiment. Preparation and validation make no paid calls.
+# The shared artifact root reuses the completed Fir corpus and document vectors.
+# Runtime and installed package versions must match the cached embedding manifests.
+# Live generation and Fir submission are separate explicit future actions.
+version: 1
+output_dir: ../artifacts/fir-20261109-all-questions/artifacts
+env_file: ../.env
+datasets:
+  eurlex:
+    qa:
+      repo_id: MehdiAstaraki/eurlex-generated-qa
+      revision: c924c03d0ac73ee45a3b6910d420fe523e433d2d
+    corpus:
+      repo_id: MehdiAstaraki/eurlex-generated-qa
+      revision: 8b5d1bd5604e7ebb7c27bc6d877b6b3ef712a006
+  un:
+    qa:
+      repo_id: MehdiAstaraki/un-generated-qa
+      revision: 677117c2e82908933821ba68dfd122d273c20be0
+    corpus:
+      repo_id: MehdiAstaraki/un-generated-qa
+      revision: 79b190ab68940cfed6236c372cbfe53404339c05
+  chemistry:
+    qa:
+      repo_id: MehdiAstaraki/chemistry-generated-qa
+      revision: bb2657593e877d75e747a4602468eb0add634895
+    corpus:
+      repo_id: BASF-AI/ai4chem-clir-google-patents-within-document-abstract-pairs
+      revision: 24c1f894591a5aa6f745ac233d5091fdbc30ad3c
+chunking:
+  tokenizer_id: BAAI/bge-m3
+  revision: 5617a9f61b028005a4858fdac845db406aefb181
+  max_tokens: 512
+  overlap_tokens: 64
+  boundary_policy: source-token-windows-v1
+  special_tokens: included
+candidate_mode: best-per-document
+settings:
+- pairwise
+- mixed
+query_languages: []
+target_languages:
+- en
+- de
+- es
+- fr
+- zh
+evidence_file: null
+models:
+- embeddinggemma
+- bge-m3
+- qwen3-0.6B
+- nomic-v2-moe
+- granite-278m
+- LaBSE
+- SapBERT
+- e5-large-instruct
+baselines:
+- dense
+- translate-dense
+- hyde-dense
+translation:
+  endpoint: https://api.openai.com/v1/chat/completions
+  model: gpt-6-luna
+  api_key_env: OPENAI_API_KEY
+  response_format: json_schema
+  request_options:
+    reasoning_effort: low
+    max_completion_tokens: 2048
+  input_usd_per_million: 0.1
+  cached_input_usd_per_million: 0.01
+  output_usd_per_million: 0.5
+hyde:
+  endpoint: https://api.openai.com/v1/chat/completions
+  model: gpt-6-luna
+  api_key_env: OPENAI_API_KEY
+  output_languages:
+  - en
+  - de
+  - es
+  - fr
+  - zh
+  response_format: json_schema
+  request_options:
+    reasoning_effort: low
+    max_completion_tokens: 2048
+  input_usd_per_million: 0.1
+  cached_input_usd_per_million: 0.01
+  output_usd_per_million: 0.5
+adore:
+  endpoint: null
+  model: null
+  api_key_env: ADORE_API_KEY
+  max_rounds: 3
+  passages_per_round: 5
+  feedback_k: 10
+  response_format: json_schema
+  request_options: {}
+  timeout_seconds: 120
+  input_usd_per_million: null
+  cached_input_usd_per_million: null
+  output_usd_per_million: null
+reranker:
+  repo_id: Qwen/Qwen3-Reranker-0.6B
+  revision: e61197ed45024b0ed8a2d74b80b4d909f1255473
+  candidate_k: 100
+  max_length: 8192
+  batch_size: 8
+  device: auto
+  dtype: float32
+  instruction: Given a web search query, retrieve relevant passages that answer the
+    query
+bm25:
+  k1: 1.2
+  b: 0.75
+  analyzer: unicode-words-cjk-v1
+hybrid:
+  candidate_k: 1000
+  rank_constant: 60
+  dense_weight: 1.0
+  bm25_weight: 1.0
+runtime:
+  device: cuda
+  dtype: float32
+  batch_size: 32
+  query_batch_size: 32
+  corpus_block_size: 16384
+candidate_selection:
+  seed: 42
+  preferred_generators:
+  - anthropic/claude-haiku-5.5
+  - gpt-5.6-luna
+  - qwen/qwen3.8-27b
+retrieval_unit: document

@@ -154,6 +154,294 @@ def test_unknown_model_resource_alias_fails_before_plan_writes(tmp_path):
     assert not (tmp_path / "plan").exists()
 
 
+def document_plan(
+    tmp_path, *, baselines=("dense", "translate-dense", "hyde-dense"), dependencies=None
+):
+    config = replace(
+        load_config("configs/selected-document.yaml"),
+        output_dir=tmp_path / "artifacts",
+        models=("bge-m3", "LaBSE"),
+        target_languages=("en", "fr"),
+        baselines=baselines,
+    )
+    config = replace(
+        config,
+        datasets={"eurlex": config.datasets["eurlex"]},
+        hyde=replace(config.hyde, output_languages=("en", "fr")),
+    )
+    write_json(config.corpus_dir("eurlex") / "manifest.json", {"languages": {"en": 2, "fr": 2}})
+    path = write_plan(
+        config,
+        tmp_path / "plan",
+        remote_project="/remote/project",
+        remote_directory=str(tmp_path / "remote"),
+        remote_cpu_config="/remote/cpu.yaml",
+        remote_model_config="/remote/models.yaml",
+        python="/remote/python",
+        environment="/remote/env.sh",
+        account="def-example_cpu",
+        gpu_account="def-example_gpu",
+        document_embedding_dependencies=dependencies
+        if dependencies is not None
+        else {("eurlex", "bge-m3"): "499", ("eurlex", "LaBSE"): "500"},
+    )
+    return path, config
+
+
+def test_document_plan_shares_generation_and_reuses_existing_document_jobs(tmp_path):
+    path, _ = document_plan(tmp_path)
+    data = read_json(path)
+    assert data["retrieval_unit"] == "document"
+    assert len(data["jobs"]) == 9
+    by_kind = {}
+    for job in data["jobs"]:
+        by_kind.setdefault(job["kind"], []).append(job)
+    assert set(by_kind) == {"prepare-selected", "translate", "hyde", "query-embed", "variant-score"}
+    assert len(by_kind["translate"]) == len(by_kind["hyde"]) == 2
+    generation = {job["label"] for kind in ("translate", "hyde") for job in by_kind[kind]}
+    for job in by_kind["query-embed"]:
+        assert set(job["dependencies"]) == generation | {"clir-prepare-selected-eurlex"}
+        assert job["external_dependencies"] == []
+    for job in by_kind["variant-score"]:
+        assert job["dependencies"] == [f"clir-query-embed-eurlex-{job['model']}"]
+        assert len(job["external_dependencies"]) == 1
+        assert job["resources"]["gpus"] is None
+        assert job["configuration"] == "/remote/models.yaml"
+    assert all(job["model"] is None for kind in ("translate", "hyde") for job in by_kind[kind])
+
+
+@pytest.mark.parametrize(
+    "baselines,disabled",
+    [
+        (("dense",), {"translate", "hyde"}),
+        (("hyde-dense",), {"translate"}),
+        (("translate-dense",), {"hyde"}),
+    ],
+)
+def test_document_planning_does_not_require_disabled_generation_configuration(
+    tmp_path, monkeypatch, baselines, disabled
+):
+    monkeypatch.setattr(
+        "clir_benchmark.generation.ChatCompletionsClient.__init__",
+        lambda *a, **k: pytest.fail("Planning loaded an API client"),
+    )
+    path, _ = document_plan(tmp_path, baselines=baselines)
+    jobs = read_json(path)["jobs"]
+    assert not ({job["kind"] for job in jobs} & disabled)
+    assert not any(job["kind"] in {"prepare", "embed", "bm25", "model", "score"} for job in jobs)
+
+
+def test_document_plan_requires_explicit_cache_or_dependency_before_writing(tmp_path):
+    with pytest.raises(ValidationError, match="require document_embedding_dependencies"):
+        document_plan(tmp_path, dependencies={})
+    assert not (tmp_path / "plan").exists()
+
+
+def test_document_plan_verifies_completed_cache_without_loading_vectors(tmp_path, monkeypatch):
+    from clir_benchmark import cluster
+
+    calls = []
+    monkeypatch.setattr(
+        cluster,
+        "_document_embedding_readiness",
+        lambda config, corpus, alias: (
+            calls.append((corpus, alias)) or {"path": "cached", "manifest_sha256": "hash"}
+        ),
+    )
+    path, _ = document_plan(
+        tmp_path, dependencies={("eurlex", "bge-m3"): None, ("eurlex", "LaBSE"): "500"}
+    )
+    assert calls == [("eurlex", "bge-m3")]
+    jobs = read_json(path)["jobs"]
+    assert (
+        next(j for j in jobs if j["kind"] == "variant-score" and j["model"] == "bge-m3")[
+            "external_dependencies"
+        ]
+        == []
+    )
+
+
+def test_document_cache_readiness_checks_files_without_reading_vector_contents(
+    tmp_path, monkeypatch
+):
+    from clir_benchmark.cluster import _document_embedding_readiness
+
+    path, config = document_plan(tmp_path)
+    cached = path.parent / "cached"
+    write_json(cached / "manifest.json", {"rows": 4, "dimension": 3})
+    (cached / "vectors.npy").write_text("not opened by plan validation")
+    (cached / "rows.parquet").write_text("not opened by plan validation")
+    monkeypatch.setattr("clir_benchmark.pipeline.embedding_path", lambda *a, **k: cached)
+    monkeypatch.setattr(
+        "clir_benchmark.embedding.load_embeddings",
+        lambda *a, **k: pytest.fail("Read vector matrix"),
+    )
+    assert _document_embedding_readiness(config, "eurlex", "bge-m3")["rows"] == 4
+    (cached / "vectors.npy").unlink()
+    with pytest.raises(ValidationError, match="Document embeddings are not ready"):
+        _document_embedding_readiness(config, "eurlex", "bge-m3")
+
+
+@pytest.mark.parametrize(
+    "kind,baseline,method",
+    [
+        ("translate", "translate-dense", "clir_benchmark.translation.prepare_translations"),
+        ("hyde", "hyde-dense", "clir_benchmark.hyde.prepare_hyde"),
+    ],
+)
+def test_explicit_generation_stage_runs_only_requested_method_and_language(
+    tmp_path, monkeypatch, kind, baseline, method
+):
+    _, config = document_plan(tmp_path, baselines=(baseline,))
+    calls = []
+    monkeypatch.setattr(
+        "clir_benchmark.pipeline.embed", lambda *a, **k: pytest.fail("Generation encoded queries")
+    )
+    monkeypatch.setattr(
+        "clir_benchmark.pipeline.retrieve",
+        lambda *a, **k: pytest.fail("Generation retrieved documents"),
+    )
+    monkeypatch.setattr(
+        method, lambda cfg, corpus, lang, **options: calls.append((corpus, lang, options))
+    )
+    journal = run_job(
+        config,
+        "eurlex",
+        kind,
+        language="fr",
+        retry_failed=True,
+        journal_directory=tmp_path / "journals",
+    )
+    assert calls == [("eurlex", "fr", {"retry_failed": True})]
+    assert read_json(journal)["retry_failed"] is True
+
+
+def test_document_query_embeddings_never_build_documents_or_disabled_modes(tmp_path, monkeypatch):
+    _, config = document_plan(tmp_path, baselines=("hyde-dense",))
+    calls = []
+    monkeypatch.setattr("clir_benchmark.pipeline.embed", lambda *a, **k: calls.append(k))
+    monkeypatch.setattr(
+        "clir_benchmark.hyde.prepare_hyde",
+        lambda *a, **k: pytest.fail("Embedding generated passages"),
+    )
+    monkeypatch.setattr(
+        "clir_benchmark.translation.prepare_translations",
+        lambda *a, **k: pytest.fail("Embedding translated queries"),
+    )
+    run_job(
+        config, "eurlex", "query-embed", alias="bge-m3", journal_directory=tmp_path / "journals"
+    )
+    assert calls == [
+        {"kind": "query", "hyde_language": "en"},
+        {"kind": "query", "hyde_language": "fr"},
+    ]
+    with pytest.raises(ValidationError, match="disabled"):
+        run_job(
+            config, "eurlex", "translate", language="en", journal_directory=tmp_path / "disabled"
+        )
+    assert not (tmp_path / "disabled").exists()
+
+
+def test_document_preparation_never_rebuilds_corpus_or_index(tmp_path, monkeypatch):
+    _, config = document_plan(tmp_path)
+    relevance = tmp_path / "relevance"
+    write_json(relevance / "manifest.json", {"blocked_settings": []})
+    monkeypatch.setattr(
+        "clir_benchmark.pipeline.prepare_corpus", lambda *a, **k: pytest.fail("Rebuilt corpus")
+    )
+    monkeypatch.setattr(
+        "clir_benchmark.lexical.prepare_bm25", lambda *a, **k: pytest.fail("Built BM25")
+    )
+    monkeypatch.setattr("clir_benchmark.pipeline.prepare_relevance", lambda *a, **k: relevance)
+    journal = run_job(config, "eurlex", "prepare-selected", journal_directory=tmp_path / "journals")
+    assert [row["stage"] for row in read_json(journal)["stages"]] == ["prepare-relevance"]
+
+
+def test_document_scoring_compares_matching_enabled_controls_without_generation(
+    tmp_path, monkeypatch
+):
+    _, config = document_plan(tmp_path)
+    calls = []
+    monkeypatch.setattr(
+        "clir_benchmark.cluster._document_embedding_readiness", lambda *a: {"path": "cache"}
+    )
+    monkeypatch.setattr(
+        "clir_benchmark.pipeline.embed", lambda *a, **k: pytest.fail("Scoring encoded queries")
+    )
+    monkeypatch.setattr(
+        "clir_benchmark.hyde.prepare_hyde",
+        lambda *a, **k: pytest.fail("Scoring generated passages"),
+    )
+    monkeypatch.setattr(
+        "clir_benchmark.translation.prepare_translations",
+        lambda *a, **k: pytest.fail("Scoring translated queries"),
+    )
+    for name in ("retrieve", "evaluate"):
+        monkeypatch.setattr(
+            f"clir_benchmark.pipeline.{name}", lambda *a, op=name, **k: calls.append((op, k))
+        )
+    for name in ("compare_translations", "compare_hyde"):
+        monkeypatch.setattr(
+            f"clir_benchmark.comparison.{name}", lambda *a, op=name, **k: calls.append((op, k))
+        )
+    run_job(
+        config, "eurlex", "variant-score", alias="bge-m3", journal_directory=tmp_path / "journals"
+    )
+    retrieval = [value for name, value in calls if name == "retrieve"]
+    assert retrieval == [
+        {"baseline": "dense"},
+        {"baseline": "translate-dense", "translation_language": "en"},
+        {"baseline": "translate-dense", "translation_language": "fr"},
+        {"baseline": "hyde-dense", "hyde_language": "en"},
+        {"baseline": "hyde-dense", "hyde_language": "fr"},
+    ]
+    assert [value for name, value in calls if name == "compare_hyde"] == [
+        {"languages": ("en",), "controls": ("dense", "translate-dense")},
+        {"languages": ("fr",), "controls": ("dense", "translate-dense")},
+    ]
+
+
+def test_document_submit_verifies_external_jobs_and_never_resubmits_them(tmp_path):
+    path, _ = document_plan(tmp_path)
+    counter = iter(range(1000, 1100))
+    submitted_commands = []
+
+    def runner(command, **kwargs):
+        if command[0] == "sacct":
+            return SimpleNamespace(
+                returncode=0, stdout="499|RUNNING|0:0\n500|COMPLETED|0:0\n", stderr=""
+            )
+        if command[0] == "squeue":
+            return SimpleNamespace(returncode=0, stdout="499|RUNNING\n", stderr="")
+        submitted_commands.append(command)
+        return SimpleNamespace(returncode=0, stdout=str(next(counter)), stderr="")
+
+    result = read_json(submit_plan(path, runner=runner))
+    assert len(submitted_commands) == 9
+    score_jobs = [j for j in result["jobs"] if j["kind"] == "variant-score"]
+    for job in score_jobs:
+        dependency = next(arg for arg in job["command"] if arg.startswith("--dependency="))
+        assert dependency.endswith(":499") == (job["model"] == "bge-m3")
+        assert "500" not in dependency
+    assert result["external_dependency_verification"]["500"]["action"] == "already_completed"
+
+
+def test_failed_external_document_job_blocks_submission_before_any_sbatch(tmp_path):
+    path, _ = document_plan(tmp_path)
+
+    def runner(command, **kwargs):
+        assert command[0] in {"sacct", "squeue"}
+        return SimpleNamespace(
+            returncode=0,
+            stdout="499|FAILED|1:0\n500|COMPLETED|0:0\n" if command[0] == "sacct" else "",
+            stderr="",
+        )
+
+    with pytest.raises(ValidationError, match="External document job 499 is FAILED"):
+        submit_plan(path, runner=runner)
+    assert not (path.parent / "submission.json").exists()
+
+
 @pytest.mark.parametrize("baselines,count", [(("bm25",), 6), (("dense",), 27)])
 def test_disabled_modes_have_no_jobs(tmp_path, baselines, count):
     path, _ = plan(tmp_path, baselines=baselines)
@@ -444,6 +732,32 @@ def test_retry_preserves_attempt_accounting_and_updates_only_selected_ids(tmp_pa
         retry["dependency_verification"]["clir-prepare-chemistry"]["action"] == "already_completed"
     )
     assert updated["plan_sha256"] == original["plan_sha256"]
+
+
+def test_retry_retains_active_external_dependencies_without_submitting_their_jobs(tmp_path):
+    submitted, _, labels, selected = retry_fixture(tmp_path)
+    data = read_json(submitted)
+    next(job for job in data["jobs"] if job["label"] == labels[0])["external_dependencies"] = [
+        "777"
+    ]
+    write_json(submitted, data)
+    commands = []
+    base_runner = retry_runner(selected, commands)
+
+    def runner(command, **kwargs):
+        if command[0] == "sacct" and command[-1] == "JobIDRaw,State,ExitCode":
+            return SimpleNamespace(returncode=0, stdout="777|RUNNING|0:0\n", stderr="")
+        if command[0] == "squeue":
+            return SimpleNamespace(returncode=0, stdout="777|RUNNING\n", stderr="")
+        return base_runner(command, **kwargs)
+
+    retry = read_json(retry_jobs(submitted, labels, runner=runner))
+    assert retry["external_dependency_verification"]["777"]["action"] == "afterok"
+    assert len(retry["jobs"]) == 2
+    scored = next(job for job in retry["jobs"] if job["label"] == labels[0])
+    assert next(arg for arg in scored["command"] if arg.startswith("--dependency=")).endswith(
+        ":777"
+    )
 
 
 def test_retry_uses_original_script_cpu_request_unless_explicitly_overridden(tmp_path):

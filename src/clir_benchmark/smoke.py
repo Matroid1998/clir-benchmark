@@ -15,7 +15,7 @@ from pathlib import Path
 
 from .adore_pipeline import adore_run_path, run_adore
 from .comparison import compare_adore, compare_hyde, compare_translations
-from .config import BASELINES, Config, language_tag
+from .config import BASELINES, Config, language_tag, validate_retrieval_baselines
 from .errors import ValidationError
 from .hyde import hyde_languages as default_hyde_languages
 from .hyde import hyde_path, prepare_hyde
@@ -84,6 +84,7 @@ def run_smoke(
     baselines = tuple(dict.fromkeys(config.baselines))
     if not baselines or set(baselines) - set(BASELINES):
         raise ValidationError("Smoke execution requires a nonempty valid baseline selection")
+    validate_retrieval_baselines(config, baselines)
     if corpus not in config.datasets:
         raise ValidationError(f"Corpus {corpus} is not configured")
     for name, value in (

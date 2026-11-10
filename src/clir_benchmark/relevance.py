@@ -5,7 +5,7 @@ from collections.abc import Iterator
 from .artifacts import CorpusStore
 from .errors import ValidationError
 from .evidence import Annotation, alignment_excluded, parse_annotations
-from .types import Judgment, Match, Query, Setting
+from .types import DocumentJudgment, Judgment, Match, Query, Setting
 
 
 def occurrences(text: str, span: str) -> Iterator[tuple[int, int]]:
@@ -187,3 +187,70 @@ def judge(
             matches,
         )
     return Judgment(query.id, "eligible", "complete_source_support", {}, required, matches)
+
+
+def judge_documents(
+    query: Query, setting: Setting, store: CorpusStore, source_associations: set[str] | None = None
+) -> DocumentJudgment:
+    """Label source language versions from provenance, without inspecting evidence.
+
+    Legal variants share a canonical source; chemistry variants are restricted
+    to the original source and its directly accepted translation pairs. Each
+    variant is a separate relevant document, while required-source groups keep
+    source-recall metrics independent of the number of available translations.
+    """
+    required = list(query.required_units)
+    if query.unresolved_sources:
+        return DocumentJudgment(query.id, "dropped", "unresolved_source_involvement", {}, required)
+    groups = {}
+    canonical_groups = {}
+    for unit_id in required:
+        unit = store.get_source(unit_id)
+        if unit is None:
+            return DocumentJudgment(
+                query.id, "dropped", "missing_source_unit", {"source_unit_id": unit_id}, required
+            )
+        canonical = (unit.corpus, unit.source_id)
+        if canonical in canonical_groups:
+            first_group = canonical_groups[canonical]
+            if unit_id not in groups[first_group]:
+                raise ValidationError(
+                    f"QA {query.id}: involved language versions are not directly associated: {first_group}, {unit_id}"
+                )
+            continue
+        canonical_groups[canonical] = unit_id
+        groups[unit_id] = store.variants(unit)
+    required = list(groups)
+    allowed = set().union(*map(set, groups.values()))
+    unexpected = (source_associations or set()) - allowed
+    if unexpected:
+        raise ValidationError(
+            f"QA {query.id}: source_qrels contains unsupported associations: {sorted(unexpected)}"
+        )
+    relevant: dict[str, set[str]] = {}
+    for group, variants in groups.items():
+        targets = [
+            unit_id
+            for unit_id in variants
+            if store.get_source(unit_id).language in setting.target_languages
+        ]
+        if not targets:
+            return DocumentJudgment(
+                query.id,
+                "dropped",
+                "unavailable_language_version",
+                {"required_source_id": group, "target_languages": setting.target_languages},
+                required,
+            )
+        indexed = [unit_id for unit_id in targets if store.has_chunks(unit_id)]
+        if not indexed:
+            return DocumentJudgment(
+                query.id,
+                "dropped",
+                "missing_indexed_document",
+                {"required_source_id": group, "source_unit_ids": sorted(targets)},
+                required,
+            )
+        for document_id in sorted(indexed):
+            relevant.setdefault(document_id, set()).add(group)
+    return DocumentJudgment(query.id, "eligible", "known_source_document", {}, required, relevant)

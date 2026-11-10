@@ -82,6 +82,13 @@ QREL_SCHEMA = pa.schema(
     [(name, pa.string()) for name in ("setting_id", "query_id", "chunk_id", "required_source_id")]
     + [("relevance", pa.int64())]
 )
+DOCUMENT_QREL_SCHEMA = pa.schema(
+    [
+        (name, pa.string())
+        for name in ("setting_id", "query_id", "document_id", "required_source_id")
+    ]
+    + [("relevance", pa.int64())]
+)
 MATCH_SCHEMA = pa.schema(
     [
         (name, pa.string())
@@ -104,6 +111,10 @@ ELIGIBILITY_SCHEMA = pa.schema(
 )
 RUN_SCHEMA = pa.schema(
     [(name, pa.string()) for name in ("setting_id", "query_id", "chunk_id")]
+    + [("rank", pa.int64()), ("score", pa.float64())]
+)
+DOCUMENT_RUN_SCHEMA = pa.schema(
+    [(name, pa.string()) for name in ("setting_id", "query_id", "document_id", "winning_chunk_id")]
     + [("rank", pa.int64()), ("score", pa.float64())]
 )
 EMBED_ROW_SCHEMA = pa.schema(
@@ -269,6 +280,14 @@ class CorpusStore:
                 (unit.id,),
             )
         ]
+
+    def has_chunks(self, source_unit_id: str) -> bool:
+        return (
+            self.db.execute(
+                "SELECT 1 FROM chunks WHERE source_unit_id=? LIMIT 1", (source_unit_id,)
+            ).fetchone()
+            is not None
+        )
 
     def chunk(self, chunk_id: str) -> dict | None:
         found = self.db.execute("SELECT record FROM chunks WHERE id=?", (chunk_id,)).fetchone()

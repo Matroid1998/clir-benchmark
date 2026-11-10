@@ -22,6 +22,8 @@ from .adapters import (
 )
 from .artifacts import (
     CHUNK_SCHEMA,
+    DOCUMENT_QREL_SCHEMA,
+    DOCUMENT_RUN_SCHEMA,
     ELIGIBILITY_SCHEMA,
     MATCH_SCHEMA,
     QREL_SCHEMA,
@@ -36,7 +38,7 @@ from .artifacts import (
     source_record,
 )
 from .chunking import Chunker, load_tokenizer
-from .config import BASELINES, Config
+from .config import BASELINES, Config, validate_retrieval_baselines
 from .embedding import (
     embedding_key,
     encode_records,
@@ -48,7 +50,7 @@ from .errors import ValidationError
 from .hyde import load_hyde
 from .lexical import BM25Index, bm25_path, bm25_scoring
 from .metrics import aggregate, score_query
-from .relevance import build_settings, judge
+from .relevance import build_settings, judge, judge_documents
 from .results import export_result
 from .retrieval import DenseIndex, reciprocal_rank_fusion
 from .translation import load_translations, translation_summary
@@ -152,12 +154,34 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
     with CorpusStore(corpus_dir / "lookup.sqlite") as store:
         if corpus == "chemistry":
             verify_chemistry_provenance(reader, store, config.datasets[corpus].corpus)
-        queries = [query_from_row(row, corpus) for row in reader.read("qas")]
+        raw_queries = reader.read("qas")
+        if config.candidate_mode == "best-per-document":
+            raw_queries = list(raw_queries)
+        queries = [query_from_row(row, corpus) for row in raw_queries]
         queries = apply_evidence_overlay(queries, config.evidence_file)
-        selected, selection_audit = select_candidates(queries, config.candidate_mode)
+        source_ids = None
+        if config.candidate_mode == "best-per-document":
+            source_ids = {}
+            for unit_id in {query.source_unit_id for query in queries}:
+                unit = store.get_source(unit_id)
+                if unit is None:
+                    raise ValidationError(f"Missing canonical document mapping for {unit_id}")
+                source_ids[unit_id] = unit.source_id
+        selected, selection_audit = select_candidates(
+            queries,
+            config.candidate_mode,
+            source_ids=source_ids,
+            policy=config.candidate_selection,
+        )
+        document_mode = config.retrieval_unit == "document"
+        judge_query = judge_documents if document_mode else judge
+        result_id = "document_id" if document_mode else "chunk_id"
         associations = defaultdict(set)
         known_query_ids = {query.id for query in queries}
-        for row in reader.read("source_qrels"):
+        raw_associations = reader.read("source_qrels")
+        if config.candidate_mode == "best-per-document":
+            raw_associations = list(raw_associations)
+        for row in raw_associations:
             if row.get("query_id") not in known_query_ids:
                 raise ValidationError(f"source_qrels references unknown QA: {row.get('query_id')}")
             if row.get("score", 0) > 0:
@@ -168,13 +192,29 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
         targets = sorted(set(config.target_languages) or set(store.languages()))
         settings = build_settings(corpus, query_languages, targets, config.settings)
         with new_directory(destination) as temporary:
+            if config.candidate_mode == "best-per-document":
+                with ParquetSink(temporary / "input_queries.parquet", QUERY_SCHEMA) as sink:
+                    for query in queries:
+                        sink.append(query_record(query))
+                # Retain raw grader/provenance fields as well as normalized query
+                # records, including candidates rejected before evaluation.
+                for name, records in (
+                    ("input_qas.jsonl", raw_queries),
+                    ("input_source_qrels.jsonl", raw_associations),
+                ):
+                    with (temporary / name).open("w", encoding="utf-8") as handle:
+                        for record in records:
+                            handle.write(json_dumps(record) + "\n")
             with ParquetSink(temporary / "queries.parquet", QUERY_SCHEMA) as sink:
                 for query in selected:
                     sink.append(query_record(query))
             write_json(temporary / "selection.json", selection_audit)
             status = {}
             with (
-                ParquetSink(temporary / "qrels.parquet", QREL_SCHEMA) as qrel_sink,
+                ParquetSink(
+                    temporary / "qrels.parquet",
+                    DOCUMENT_QREL_SCHEMA if document_mode else QREL_SCHEMA,
+                ) as qrel_sink,
                 ParquetSink(temporary / "matches.parquet", MATCH_SCHEMA) as match_sink,
                 ParquetSink(
                     temporary / "eligibility.parquet", ELIGIBILITY_SCHEMA
@@ -187,7 +227,7 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
                     for query in selected:
                         if query.question_language != setting.query_language:
                             continue
-                        judgment = judge(query, setting, store, associations[query.id])
+                        judgment = judge_query(query, setting, store, associations[query.id])
                         judgments.append(judgment)
                         counts[judgment.status] += 1
                         reasons[judgment.reason] += 1
@@ -231,7 +271,7 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
                                         {
                                             "setting_id": setting.id,
                                             "query_id": judgment.query_id,
-                                            "chunk_id": chunk_id,
+                                            result_id: chunk_id,
                                             "required_source_id": group,
                                             "relevance": 1,
                                         }
@@ -252,6 +292,23 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
                     "input_query_count": len(queries),
                     "selected_query_count": len(selected),
                     "candidate_mode": config.candidate_mode,
+                    **(
+                        {"candidate_selection": asdict(config.candidate_selection)}
+                        if config.candidate_mode == "best-per-document"
+                        else {}
+                    ),
+                    **(
+                        {
+                            "retrieval_unit": "document",
+                            "document_identity": "source_unit_id",
+                            "relevance_basis": "known_source_associations",
+                        }
+                        if document_mode
+                        else {}
+                    ),
+                    "selected_query_languages": dict(
+                        sorted(Counter(q.question_language for q in selected).items())
+                    ),
                     "alignment_contracts": dict(
                         Counter(q.evidence_alignment_contract or "unspecified" for q in selected)
                     ),
@@ -405,6 +462,7 @@ def run_path(
     translation_language: str | None = None,
     hyde_language: str | None = None,
 ) -> Path:
+    validate_retrieval_baselines(config, (baseline,))
     if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
     if baseline.startswith("rerank-"):
@@ -506,6 +564,7 @@ def run_path(
 
 
 def retrieval_spec(config: Config, alias: str | None, baseline: str) -> ModelSpec | None:
+    validate_retrieval_baselines(config, (baseline,))
     if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
     if baseline.removeprefix("rerank-").removeprefix("translate-").removeprefix("adore-") == "bm25":
@@ -559,6 +618,7 @@ def retrieve(
             "No ready retrieval settings; supply the missing multilingual annotations first"
         )
     started = time.perf_counter()
+    document_mode = config.retrieval_unit == "document"
     backend = baseline.removeprefix("translate-")
     translated = None
     translation_manifest = None
@@ -576,7 +636,8 @@ def retrieve(
         query_texts = {}
         if spec is not None:
             documents, doc_rows, _ = load_embeddings(
-                embedding_path(config, corpus, spec, "document"), ["id", "language"]
+                embedding_path(config, corpus, spec, "document"),
+                ["id", "language", "source_unit_id"] if document_mode else ["id", "language"],
             )
             query_vectors, query_rows, _ = load_embeddings(
                 embedding_path(
@@ -590,7 +651,14 @@ def retrieve(
                 ["id"],
             )
             index = DenseIndex(
-                documents, [row["id"] for row in doc_rows], [row["language"] for row in doc_rows]
+                documents,
+                [row["id"] for row in doc_rows],
+                [row["language"] for row in doc_rows],
+                **(
+                    {"document_ids": [row["source_unit_id"] for row in doc_rows]}
+                    if document_mode
+                    else {}
+                ),
             )
             del doc_rows
             query_index = {row["id"]: index for index, row in enumerate(query_rows)}
@@ -607,6 +675,8 @@ def retrieve(
             tag = f"translate-{translation_language}-{tag}"
         if hyde_language is not None:
             tag = f"hyde-{hyde_language}-{tag}"
+        if document_mode:
+            tag = f"document-{tag}"
         candidate_k = config.hybrid.candidate_k if backend == "hybrid" else 100
         temporary = resources.enter_context(new_directory(destination))
         timing_schema = pa.schema(
@@ -617,7 +687,9 @@ def retrieve(
             ]
         )
         with (
-            ParquetSink(temporary / "run.parquet", RUN_SCHEMA) as sink,
+            ParquetSink(
+                temporary / "run.parquet", DOCUMENT_RUN_SCHEMA if document_mode else RUN_SCHEMA
+            ) as sink,
             ParquetSink(temporary / "timings.parquet", timing_schema) as timing_sink,
         ):
             for setting_id, info in settings.items():
@@ -636,7 +708,7 @@ def retrieve(
                         languages = tuple(info["target_languages"])
                         batch_started = time.perf_counter()
                         dense_results = (
-                            index.search(
+                            (index.search_documents if document_mode else index.search)(
                                 query_vectors[[query_index[query_id] for query_id in batch_ids]],
                                 languages,
                                 k=candidate_k,
@@ -678,18 +750,27 @@ def retrieve(
                                     "retrieval_seconds_amortized": batch_seconds / len(batch_ids),
                                 }
                             )
-                            for rank, (chunk_id, score) in enumerate(ranking, 1):
+                            for rank, item in enumerate(ranking, 1):
+                                if document_mode:
+                                    result_id, winning_chunk_id, score = item
+                                    identity = {
+                                        "document_id": result_id,
+                                        "winning_chunk_id": winning_chunk_id,
+                                    }
+                                else:
+                                    result_id, score = item
+                                    identity = {"chunk_id": result_id}
                                 sink.append(
                                     {
                                         "setting_id": setting_id,
                                         "query_id": query_id,
-                                        "chunk_id": chunk_id,
+                                        **identity,
                                         "rank": rank,
                                         "score": score,
                                     }
                                 )
                                 handle.write(
-                                    f"{query_id}\tQ0\t{chunk_id}\t{rank}\t{score:.17g}\t{tag}\n"
+                                    f"{query_id}\tQ0\t{result_id}\t{rank}\t{score:.17g}\t{tag}\n"
                                 )
         write_json(
             temporary / "manifest.json",
@@ -697,6 +778,16 @@ def retrieve(
                 "schema": 2,
                 "corpus": corpus,
                 "baseline": baseline,
+                **(
+                    {
+                        "retrieval_unit": "document",
+                        "document_identity": "source_unit_id",
+                        "document_scoring": "maximum_chunk_similarity_before_top_k",
+                        "tie_breaking": "document_id_then_winning_chunk_id",
+                    }
+                    if document_mode
+                    else {}
+                ),
                 "translation_language": translation_language,
                 "translation": translation_manifest,
                 **(
@@ -736,7 +827,9 @@ def retrieve(
                 "fusion": {"method": "rrf", **asdict(config.hybrid)}
                 if backend == "hybrid"
                 else None,
-                "tie_break": "chunk_id_ascending",
+                "tie_break": "document_id_then_winning_chunk_id_ascending"
+                if document_mode
+                else "chunk_id_ascending",
                 "runtime": asdict(config.runtime),
                 "seconds": time.perf_counter() - started,
                 "versions": versions(),
@@ -754,6 +847,7 @@ def evaluate(
     translation_language: str | None = None,
     hyde_language: str | None = None,
 ) -> Path:
+    validate_retrieval_baselines(config, (baseline,))
     if baseline.startswith("rerank-"):
         from .rerank_pipeline import evaluate_rerank
 
@@ -791,6 +885,8 @@ def evaluate(
         read_json(destination / "report.json")
         return export_result(config, corpus, run_dir, destination)
     relevance_dir = config.relevance_dir(corpus)
+    document_mode = config.retrieval_unit == "document"
+    result_id = "document_id" if document_mode else "chunk_id"
     settings = read_json(relevance_dir / "settings.json")
     queries = {query.id: query for query in read_queries(relevance_dir / "queries.parquet")}
     translated = {}
@@ -828,10 +924,10 @@ def evaluate(
         )
     qrels = defaultdict(lambda: defaultdict(set))
     for row in rows(relevance_dir / "qrels.parquet"):
-        qrels[(row["setting_id"], row["query_id"])][row["chunk_id"]].add(row["required_source_id"])
+        qrels[(row["setting_id"], row["query_id"])][row[result_id]].add(row["required_source_id"])
     rankings = defaultdict(list)
     for row in rows(run_dir / "run.parquet"):
-        rankings[(row["setting_id"], row["query_id"])].append((row["rank"], row["chunk_id"]))
+        rankings[(row["setting_id"], row["query_id"])].append((row["rank"], row[result_id]))
     per_query = []
     for row in rows(relevance_dir / "eligibility.parquet"):
         setting = settings[row["setting_id"]]
@@ -849,6 +945,7 @@ def evaluate(
             {
                 "query_id": query.id,
                 "baseline": baseline,
+                **({"retrieval_unit": "document"} if document_mode else {}),
                 "translation_language": translation_language,
                 "translation_status": translated[query.id]["status"] if translated else "original",
                 "translation_seconds": translated[query.id]["translation_seconds"]
@@ -895,12 +992,19 @@ def evaluate(
     if spec is not None:
         document_path = embedding_path(config, corpus, spec, "document")
         document_manifest = read_json(document_path / "manifest.json")
-        positive_ids = {
-            row["chunk_id"] for row in rows(relevance_dir / "qrels.parquet", ["chunk_id"])
-        }
-        document_rows = [
-            row for row in rows(document_path / "rows.parquet") if row["id"] in positive_ids
-        ]
+        if document_mode:
+            exposure = {
+                "applicable": False,
+                "reason": "Document relevance uses known sources, not exact evidence spans",
+            }
+        else:
+            positive_ids = {
+                row["chunk_id"] for row in rows(relevance_dir / "qrels.parquet", ["chunk_id"])
+            }
+            document_rows = [
+                row for row in rows(document_path / "rows.parquet") if row["id"] in positive_ids
+            ]
+            exposure = support_exposure(rows(relevance_dir / "matches.parquet"), document_rows)
         truncation = {
             "applicable": True,
             "scope": "dense_component"
@@ -908,9 +1012,7 @@ def evaluate(
             else "dense",
             "documents": document_manifest["truncation"],
             "queries": query_manifest["truncation"],
-            "support_exposure": support_exposure(
-                rows(relevance_dir / "matches.parquet"), document_rows
-            ),
+            "support_exposure": exposure,
         }
         if hypothetical:
             truncation["hypothetical_documents"] = truncation.pop("queries")
@@ -919,6 +1021,15 @@ def evaluate(
         "schema": 2,
         "corpus": corpus,
         "baseline": baseline,
+        **(
+            {
+                "retrieval_unit": "document",
+                "document_identity": "source_unit_id",
+                "relevance_basis": "known_source_associations",
+            }
+            if document_mode
+            else {}
+        ),
         "translation_language": translation_language,
         "translation_summary": translation_summary(list(translated.values()))
         if translated

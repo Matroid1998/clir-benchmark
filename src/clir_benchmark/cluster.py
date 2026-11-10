@@ -1,4 +1,4 @@
-"""Explicit Slurm job planning and execution for the original retrieval baselines.
+"""Explicit Slurm job planning and execution for independently selected baselines.
 
 Plan creation is offline. Submission is intentionally separate: the resulting
 dependency graph can be submitted without an artificial concurrency throttle.
@@ -29,6 +29,42 @@ from .errors import ValidationError
 from .util import file_digest, read_json, versions, write_json
 
 ORIGINAL_BASELINES = {"dense", "bm25", "hybrid"}
+DOCUMENT_BASELINES = {"dense", "translate-dense", "hyde-dense"}
+DOCUMENT_JOB_KINDS = {"prepare-selected", "translate", "hyde", "query-embed", "variant-score"}
+
+
+def _document_campaign(config: Config) -> bool:
+    return getattr(config, "retrieval_unit", "chunk") == "document"
+
+
+def _variant_languages(config: Config, corpus: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    from .hyde import hyde_languages
+    from .translation import translation_languages
+
+    return (
+        translation_languages(config, corpus) if "translate-dense" in config.baselines else (),
+        hyde_languages(config, corpus) if "hyde-dense" in config.baselines else (),
+    )
+
+
+def _document_embedding_readiness(config: Config, corpus: str, alias: str) -> dict:
+    """Check the exact compatible cache without reading vectors or loading a model."""
+    from .pipeline import embedding_path, model_spec
+
+    path = embedding_path(config, corpus, model_spec(config, alias), "document")
+    required = ("manifest.json", "vectors.npy", "rows.parquet")
+    if any(not (path / name).is_file() for name in required):
+        raise ValidationError(
+            f"Document embeddings are not ready for {corpus}/{alias}: {path}. "
+            "Provide its existing Slurm embedding job ID; this campaign never rebuilds the corpus."
+        )
+    manifest = read_json(path / "manifest.json")
+    return {
+        "path": str(path),
+        "manifest_sha256": file_digest(path / "manifest.json"),
+        "rows": manifest["rows"],
+        "dimension": manifest["dimension"],
+    }
 
 
 def _plain(value):
@@ -81,6 +117,8 @@ def write_plan(
     model_resources: JobResources | None = None,
     model_resources_by_alias: Mapping[str, JobResources] | None = None,
     score_resources: JobResources | None = None,
+    generation_resources: JobResources | None = None,
+    document_embedding_dependencies: Mapping[tuple[str, str], str | None] | None = None,
     split_embedding: bool = False,
     allow_blocked_settings: bool = False,
 ) -> Path:
@@ -93,8 +131,13 @@ def write_plan(
     Each stage defaults to one CPU. Resource overrides are independent of
     baseline selection and artifact identities; BM25 has its own resource request.
     """
-    if not config.baselines or set(config.baselines) - ORIGINAL_BASELINES:
-        raise ValidationError("Cluster plans support only dense, bm25 and hybrid baselines")
+    document_campaign = _document_campaign(config)
+    allowed = DOCUMENT_BASELINES if document_campaign else ORIGINAL_BASELINES
+    if not config.baselines or set(config.baselines) - allowed:
+        raise ValidationError(
+            "Document cluster plans support only dense, translate-dense and hyde-dense; "
+            "chunk plans support only dense, bm25 and hybrid"
+        )
     if not re.fullmatch(r"[A-Za-z0-9_-]+", account) or (
         gpu_account is not None and not re.fullmatch(r"[A-Za-z0-9_-]+", gpu_account)
     ):
@@ -118,6 +161,38 @@ def write_plan(
     bm25_resources = bm25_resources or JobResources()
     model_resources = model_resources or JobResources(gpus="h100:1")
     score_resources = score_resources or JobResources()
+    generation_resources = generation_resources or JobResources(memory="4G", walltime="1-00:00:00")
+    document_inputs = []
+    languages = {}
+    if document_campaign:
+        pairs = {(corpus, alias) for corpus in config.datasets for alias in config.models}
+        if document_embedding_dependencies is None or set(document_embedding_dependencies) != pairs:
+            raise ValidationError(
+                "Document plans require document_embedding_dependencies for every (corpus, model): "
+                "an existing Slurm job ID or None to verify a completed compatible cache"
+            )
+        for corpus in config.datasets:
+            if not (config.corpus_dir(corpus) / "manifest.json").is_file():
+                raise ValidationError(f"Prepared corpus is required for document plan: {corpus}")
+            languages[corpus] = _variant_languages(config, corpus)
+            for alias in config.models:
+                job_id = document_embedding_dependencies[(corpus, alias)]
+                if job_id is not None and (
+                    not isinstance(job_id, str) or not re.fullmatch(r"[1-9]\d*", job_id)
+                ):
+                    raise ValidationError(f"Invalid existing document embedding job: {job_id!r}")
+                document_inputs.append(
+                    {
+                        "corpus": corpus,
+                        "model": alias,
+                        "job_id": job_id,
+                        "cache": _document_embedding_readiness(config, corpus, alias)
+                        if job_id is None
+                        else None,
+                    }
+                )
+    elif document_embedding_dependencies is not None:
+        raise ValidationError("document_embedding_dependencies applies only to document retrieval")
     destination = Path(destination)
     destination.mkdir(parents=True, exist_ok=True)
     scripts = destination / "scripts"
@@ -126,8 +201,10 @@ def write_plan(
     jobs = []
     labels = set()
 
-    def add(kind, corpus, alias, dependencies, resources):
-        label = "clir-" + "-".join(_label(value) for value in (kind, corpus, alias) if value)
+    def add(kind, corpus, alias, dependencies, resources, *, language=None, external=()):
+        label = "clir-" + "-".join(
+            _label(value) for value in (kind, corpus, alias, language) if value
+        )
         if label in labels:
             raise ValidationError("Model aliases produce colliding Slurm job names")
         labels.add(label)
@@ -148,6 +225,8 @@ def write_plan(
         ]
         if alias:
             command += ["--model", alias]
+        if language:
+            command += ["--language", language]
         if allow_blocked_settings:
             command += ["--allow-blocked-settings"]
         directives = {
@@ -195,14 +274,59 @@ def write_plan(
                 "configuration": configuration,
             }
         )
+        if document_campaign:
+            jobs[-1].update(output_language=language, external_dependencies=list(external))
         return label
 
     # Every preparation job is submitted before any dependent job; all corpus
     # graphs are independent and no array concurrency limit is imposed.
     preparation = {
-        corpus: add("prepare", corpus, None, (), prepare_resources) for corpus in config.datasets
+        corpus: add(
+            "prepare-selected" if document_campaign else "prepare",
+            corpus,
+            None,
+            (),
+            prepare_resources,
+        )
+        for corpus in config.datasets
     }
     for corpus in config.datasets:
+        if document_campaign:
+            generation = []
+            translation_languages, hyde_languages = languages[corpus]
+            for kind, selected_languages in (
+                ("translate", translation_languages),
+                ("hyde", hyde_languages),
+            ):
+                for language in selected_languages:
+                    generation.append(
+                        add(
+                            kind,
+                            corpus,
+                            None,
+                            (preparation[corpus],),
+                            generation_resources,
+                            language=language,
+                        )
+                    )
+            for alias in config.models:
+                embedding = add(
+                    "query-embed",
+                    corpus,
+                    alias,
+                    (preparation[corpus], *generation),
+                    model_resources_by_alias.get(alias, model_resources),
+                )
+                parent = document_embedding_dependencies[(corpus, alias)]
+                add(
+                    "variant-score",
+                    corpus,
+                    alias,
+                    (embedding,),
+                    score_resources,
+                    external=(parent,) if parent else (),
+                )
+            continue
         if "bm25" in config.baselines:
             add("bm25", corpus, None, (preparation[corpus],), bm25_resources)
         if not ({"dense", "hybrid"} & set(config.baselines)):
@@ -235,6 +359,17 @@ def write_plan(
         "submission_notes": "Create remote_directory/logs before sbatch. Submit topologically with --dependency=afterok:<ids>, recording every returned job ID. Job submission is separate from plan creation.",
         "jobs": jobs,
     }
+    if document_campaign:
+        plan.update(
+            retrieval_unit="document",
+            document_embeddings=document_inputs,
+            output_languages={
+                corpus: {"translation": list(values[0]), "hyde": list(values[1])}
+                for corpus, values in languages.items()
+            },
+            split_embedding=True,
+            preparation_notes="Reuse prepared corpus and compatible document vectors; prepare only the selected relevance cohort. Existing document jobs are external dependencies, never resubmitted.",
+        )
     write_json(destination / "plan.json", plan)
     return destination / "plan.json"
 
@@ -245,6 +380,8 @@ def run_job(
     kind: str,
     *,
     alias: str | None = None,
+    language: str | None = None,
+    retry_failed: bool = False,
     journal_directory: Path,
     allow_blocked_settings: bool = False,
 ) -> Path:
@@ -252,16 +389,37 @@ def run_job(
     from .lexical import prepare_bm25
     from .pipeline import embed, evaluate, prepare_corpus, prepare_relevance, retrieve
 
-    if kind not in {"prepare", "bm25", "model", "embed", "score"}:
+    document_campaign = _document_campaign(config)
+    allowed_kinds = (
+        DOCUMENT_JOB_KINDS if document_campaign else {"prepare", "bm25", "model", "embed", "score"}
+    )
+    if kind not in allowed_kinds:
         raise ValidationError(f"Unknown cluster job kind: {kind}")
     if corpus not in config.datasets:
         raise ValidationError(f"Corpus is not configured: {corpus}")
-    if set(config.baselines) - ORIGINAL_BASELINES:
-        raise ValidationError("Cluster execution supports only dense, bm25 and hybrid")
-    if kind in {"model", "embed", "score"} and alias not in config.models:
+    allowed_baselines = DOCUMENT_BASELINES if document_campaign else ORIGINAL_BASELINES
+    if not config.baselines or set(config.baselines) - allowed_baselines:
+        raise ValidationError("Unsupported baselines for the selected cluster retrieval unit")
+    if (
+        kind in {"model", "embed", "score", "query-embed", "variant-score"}
+        and alias not in config.models
+    ):
         raise ValidationError("Model job requires a configured model alias")
     if kind == "bm25" and "bm25" not in config.baselines:
         raise ValidationError("BM25 baseline is disabled")
+    translated_languages, hypothetical_languages = (
+        _variant_languages(config, corpus) if document_campaign else ((), ())
+    )
+    if kind in {"translate", "hyde"}:
+        selected_languages = translated_languages if kind == "translate" else hypothetical_languages
+        if language not in selected_languages:
+            raise ValidationError(
+                f"{kind} is disabled or its output language is not selected: {language}"
+            )
+    elif language is not None:
+        raise ValidationError("A single --language applies only to translate or hyde jobs")
+    if retry_failed and kind not in {"translate", "hyde"}:
+        raise ValidationError("--retry-failed applies only to generation jobs")
     journal_directory = Path(journal_directory)
     journal_directory.mkdir(parents=True, exist_ok=True)
     job_id = os.environ.get("SLURM_JOB_ID", "manual")
@@ -301,6 +459,9 @@ def run_job(
         "kind": kind,
         "corpus": corpus,
         "model": alias,
+        **(
+            {"output_language": language, "retry_failed": retry_failed} if document_campaign else {}
+        ),
         "configuration": _plain(asdict(config)),
         "versions": versions(),
         "stages": [],
@@ -353,7 +514,91 @@ def run_job(
 
     save()
     try:
-        if kind == "prepare":
+        if kind == "prepare-selected":
+            if not (config.corpus_dir(corpus) / "manifest.json").is_file():
+                raise ValidationError(
+                    "Prepare the shared corpus before selected-document execution"
+                )
+            stage("prepare-relevance", relevance)
+        elif kind == "translate":
+            from .translation import prepare_translations
+
+            stage(
+                f"translate-{language}",
+                lambda: prepare_translations(config, corpus, language, retry_failed=retry_failed),
+            )
+        elif kind == "hyde":
+            from .hyde import prepare_hyde
+
+            stage(
+                f"generate-hyde-{language}",
+                lambda: prepare_hyde(config, corpus, language, retry_failed=retry_failed),
+            )
+        elif kind == "query-embed":
+            if "dense" in config.baselines:
+                stage("embed-original-query", lambda: embed(config, corpus, alias, kind="query"))
+            for output in translated_languages:
+                stage(
+                    f"embed-translation-{output}",
+                    lambda lang=output: embed(
+                        config, corpus, alias, kind="query", translation_language=lang
+                    ),
+                )
+            for output in hypothetical_languages:
+                stage(
+                    f"embed-hyde-{output}",
+                    lambda lang=output: embed(
+                        config, corpus, alias, kind="query", hyde_language=lang
+                    ),
+                )
+        elif kind == "variant-score":
+            from .comparison import compare_hyde, compare_translations
+
+            journal["document_embeddings"] = stage(
+                "verify-document-embeddings",
+                lambda: _document_embedding_readiness(config, corpus, alias),
+            )
+            variants = [("dense", {})] if "dense" in config.baselines else []
+            variants += [
+                ("translate-dense", {"translation_language": value})
+                for value in translated_languages
+            ]
+            variants += [
+                ("hyde-dense", {"hyde_language": value}) for value in hypothetical_languages
+            ]
+            for baseline, options in variants:
+                suffix = next(iter(options.values()), "original")
+                stage(
+                    f"retrieve-{baseline}-{suffix}",
+                    lambda b=baseline, opts=options: retrieve(
+                        config, corpus, alias, baseline=b, **opts
+                    ),
+                )
+                stage(
+                    f"evaluate-{baseline}-{suffix}",
+                    lambda b=baseline, opts=options: evaluate(
+                        config, corpus, alias, baseline=b, **opts
+                    ),
+                )
+            if translated_languages and "dense" in config.baselines:
+                stage(
+                    "compare-translations",
+                    lambda: compare_translations(
+                        config, corpus, alias, baseline="dense", languages=translated_languages
+                    ),
+                )
+            for output in hypothetical_languages:
+                controls = (["dense"] if "dense" in config.baselines else []) + (
+                    ["translate-dense"] if output in translated_languages else []
+                )
+                if controls:
+                    stage(
+                        f"compare-hyde-{output}",
+                        lambda lang=output, selected=tuple(controls): compare_hyde(
+                            config, corpus, alias, languages=(lang,), controls=selected
+                        ),
+                    )
+        elif kind == "prepare":
             stage("prepare-corpus", lambda: prepare_corpus(config, corpus))
             stage("prepare-relevance", relevance)
             if {"bm25", "hybrid"} & set(config.baselines):
@@ -385,6 +630,62 @@ def run_job(
     return journal_path
 
 
+def _verify_external_dependencies(job_ids, runner) -> dict:
+    """Resolve existing document jobs without submitting or modifying them."""
+    ids = sorted(set(job_ids))
+    if not ids:
+        return {}
+    if any(not isinstance(value, str) or not re.fullmatch(r"[1-9]\d*", value) for value in ids):
+        raise ValidationError("Invalid external Slurm dependency ID")
+    response = runner(
+        [
+            "sacct",
+            "-X",
+            "--noheader",
+            "--parsable2",
+            "--jobs",
+            ",".join(ids),
+            "--format",
+            "JobIDRaw,State,ExitCode",
+        ],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if response.returncode:
+        raise ValidationError("Cannot verify external document jobs: " + response.stderr)
+    states = {}
+    for line in response.stdout.splitlines():
+        values = line.split("|")
+        if len(values) == 3 and values[0] in ids:
+            states[values[0]] = {
+                "state": values[1].split(" ")[0].rstrip("+"),
+                "exit_code": values[2],
+            }
+    queue = runner(
+        ["squeue", "--noheader", "--user", getpass.getuser(), "--format=%i|%T"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if queue.returncode:
+        raise ValidationError("Cannot verify external document queue: " + queue.stderr)
+    active = dict(line.split("|", 1) for line in queue.stdout.splitlines() if "|" in line)
+    result = {}
+    for job_id in ids:
+        record = states.get(job_id, {"state": active.get(job_id, "UNKNOWN"), "exit_code": None})
+        if job_id not in active and record["state"] == "COMPLETED" and record["exit_code"] == "0:0":
+            action = "already_completed"
+        elif active.get(job_id) in {"PENDING", "RUNNING", "CONFIGURING", "COMPLETING", "SUSPENDED"}:
+            action = "afterok"
+        else:
+            raise ValidationError(
+                f"External document job {job_id} is {record['state']}; verify or replace its dependency explicitly"
+            )
+        result[job_id] = {**record, "action": action}
+    return result
+
+
 def submit_plan(plan_path: Path, *, workers: int = 8, runner=subprocess.run) -> Path:
     """Submit independent jobs concurrently, recording IDs before the next wave.
 
@@ -413,6 +714,9 @@ def submit_plan(plan_path: Path, *, workers: int = 8, runner=subprocess.run) -> 
         raise ValidationError("Duplicate labels in cluster plan")
     if any(set(job["dependencies"]) - set(labels) for job in plan["jobs"]):
         raise ValidationError("Unknown dependency in cluster plan")
+    external = _verify_external_dependencies(
+        [parent for job in plan["jobs"] for parent in job.get("external_dependencies", ())], runner
+    )
     Path(plan["remote_directory"], "logs").mkdir(parents=True, exist_ok=True)
     journal = {
         "schema": 1,
@@ -422,6 +726,8 @@ def submit_plan(plan_path: Path, *, workers: int = 8, runner=subprocess.run) -> 
         "submission_workers": workers,
         "jobs": [{**job, "status": "not_submitted", "job_id": None} for job in plan["jobs"]],
     }
+    if external:
+        journal["external_dependency_verification"] = external
     by_label = {job["label"]: job for job in journal["jobs"]}
 
     def save():
@@ -432,6 +738,11 @@ def submit_plan(plan_path: Path, *, workers: int = 8, runner=subprocess.run) -> 
     def submit(job):
         command = ["sbatch", "--parsable"]
         parents = [by_label[label]["job_id"] for label in job["dependencies"]]
+        parents += [
+            parent
+            for parent in job.get("external_dependencies", ())
+            if external[parent]["action"] == "afterok"
+        ]
         if parents:
             command.append("--dependency=afterok:" + ":".join(parents))
         command.append(job["script"])
@@ -655,6 +966,9 @@ def retry_jobs(
                 "action": action,
                 "accounting": parent_accounting,
             }
+        external_verification = _verify_external_dependencies(
+            [parent for job in selected for parent in job.get("external_dependencies", ())], runner
+        )
         prior_status_path = submission_path.parent / "status.json"
         prior_status = read_json(prior_status_path) if prior_status_path.exists() else None
         retry_id = uuid.uuid4().hex
@@ -674,6 +988,11 @@ def retry_jobs(
             "memory_override": memory,
             "old_accounting": accounting,
             "dependency_verification": dependency_verification,
+            **(
+                {"external_dependency_verification": external_verification}
+                if external_verification
+                else {}
+            ),
             "old_status_snapshot": prior_status,
             "verification_commands": [command, queue_command],
             "jobs": [],
@@ -724,6 +1043,11 @@ def retry_jobs(
                     by_label[parent]["job_id"]
                     for parent in job["dependencies"]
                     if parent in labels or dependency_verification[parent]["action"] == "afterok"
+                ]
+                parents += [
+                    parent
+                    for parent in job.get("external_dependencies", ())
+                    if external_verification[parent]["action"] == "afterok"
                 ]
                 if parents:
                     command.append("--dependency=afterok:" + ":".join(parents))
@@ -916,10 +1240,20 @@ def main(argv=None) -> int:
     run = sub.add_parser("run", help="Explicit execution inside a scheduled allocation")
     run.add_argument("--config", required=True)
     run.add_argument(
-        "--kind", choices=["prepare", "bm25", "model", "embed", "score"], required=True
+        "--kind",
+        choices=["prepare", "bm25", "model", "embed", "score", *sorted(DOCUMENT_JOB_KINDS)],
+        required=True,
     )
     run.add_argument("--corpus", required=True)
     run.add_argument("--model")
+    run.add_argument(
+        "--language", help="One output language for an explicit translation or HyDE job"
+    )
+    run.add_argument(
+        "--retry-failed",
+        action="store_true",
+        help="Explicitly retry failed generation requests; prior attempts remain saved",
+    )
     run.add_argument("--journal-directory", type=Path, required=True)
     run.add_argument("--allow-blocked-settings", action="store_true")
     submit = sub.add_parser("submit", help="Explicitly submit an existing plan to Slurm")
@@ -966,6 +1300,8 @@ def main(argv=None) -> int:
             args.corpus,
             args.kind,
             alias=args.model,
+            language=args.language,
+            retry_failed=args.retry_failed,
             journal_directory=args.journal_directory,
             allow_blocked_settings=args.allow_blocked_settings,
         )

@@ -6,10 +6,24 @@ import sys
 from dataclasses import replace
 
 from . import __version__
-from .adapters import DatasetReader, apply_evidence_overlay, query_from_row, select_candidates
+from .adapters import (
+    DatasetReader,
+    apply_evidence_overlay,
+    canonical_source_ids,
+    query_from_row,
+    select_candidates,
+)
 from .adore_pipeline import run_adore
+from .artifacts import CorpusStore
 from .comparison import compare_adore, compare_hyde, compare_translations
-from .config import BASELINES, RERANK_BASELINES, language_tag, load_config
+from .config import (
+    BASELINES,
+    CANDIDATE_MODES,
+    RERANK_BASELINES,
+    language_tag,
+    load_config,
+    validate_retrieval_baselines,
+)
 from .encoders import load_registry
 from .errors import ValidationError
 from .hyde import hyde_languages, prepare_hyde
@@ -24,6 +38,29 @@ def retrieval_backend(baseline: str) -> str:
     return baseline.removeprefix("rerank-").removeprefix("translate-").removeprefix("adore-")
 
 
+def _selection_arguments(command: argparse.ArgumentParser) -> None:
+    # Suppressed defaults let these options work before or after the subcommand.
+    command.add_argument("--candidate-mode", choices=CANDIDATE_MODES, default=argparse.SUPPRESS)
+    command.add_argument("--selection-seed", type=int, default=argparse.SUPPRESS)
+    command.add_argument(
+        "--retrieval-unit", choices=("chunk", "document"), default=argparse.SUPPRESS
+    )
+
+
+def _validation_source_ids(config, corpus, queries):
+    required = {query.source_unit_id for query in queries}
+    lookup = config.corpus_dir(corpus) / "lookup.sqlite"
+    if lookup.is_file():
+        with CorpusStore(lookup) as store:
+            return {
+                unit_id: unit.source_id
+                for unit_id in sorted(required)
+                if (unit := store.get_source(unit_id)) is not None
+            }
+    reader = DatasetReader(config.datasets[corpus].corpus, hf_token(config.env_file))
+    return canonical_source_ids(reader, corpus, required)
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(
         description="Static CLIR benchmark. Preparation never runs retrieval or evaluation."
@@ -34,6 +71,7 @@ def parser() -> argparse.ArgumentParser:
         default="configs/benchmark.yaml",
         help="YAML configuration; relative paths resolve beside this file",
     )
+    _selection_arguments(result)
     sub = result.add_subparsers(dest="command", required=True)
     validate = sub.add_parser(
         "validate",
@@ -198,6 +236,8 @@ def parser() -> argparse.ArgumentParser:
                 if name in {"run-adore", "compare-adore"}
                 else "Repeat to select baselines; default: configured baselines (dense)",
             )
+    for command in sub.choices.values():
+        _selection_arguments(command)
     return result
 
 
@@ -205,6 +245,15 @@ def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     try:
         config = load_config(args.config)
+        if hasattr(args, "candidate_mode"):
+            config = replace(config, candidate_mode=args.candidate_mode)
+        if hasattr(args, "selection_seed"):
+            config = replace(
+                config,
+                candidate_selection=replace(config.candidate_selection, seed=args.selection_seed),
+            )
+        if hasattr(args, "retrieval_unit"):
+            config = replace(config, retrieval_unit=args.retrieval_unit)
         requested_models = getattr(args, "model", None) or config.models
         baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
         if args.command == "prepare-subset":
@@ -256,6 +305,19 @@ def main(argv: list[str] | None = None) -> int:
                     if value != "hyde-dense" and not value.startswith(("adore-", "rerank-"))
                 )
             ) or ("dense",)
+        if args.command in {
+            "validate",
+            "smoke",
+            "retrieve",
+            "evaluate",
+            "compare-translations",
+            "compare-hyde",
+            "run-adore",
+            "compare-adore",
+            "rerank",
+            "compare-rerank",
+        }:
+            validate_retrieval_baselines(config, baselines)
         if args.command == "smoke":
             from .smoke import run_smoke
 
@@ -360,6 +422,7 @@ def main(argv: list[str] | None = None) -> int:
                 "corpora": list(config.datasets),
                 "models": list(config.models),
                 "candidate_mode": config.candidate_mode,
+                "retrieval_unit": config.retrieval_unit,
                 "baselines": list(config.baselines),
                 "evaluation_executed": False,
             }
@@ -370,12 +433,29 @@ def main(argv: list[str] | None = None) -> int:
                     reader = DatasetReader(dataset.qa, hf_token(config.env_file))
                     queries = [query_from_row(row, corpus) for row in reader.read("qas")]
                     queries = apply_evidence_overlay(queries, config.evidence_file)
-                    selected, _ = select_candidates(queries, config.candidate_mode)
+                    selected, selection_audit = select_candidates(
+                        queries,
+                        config.candidate_mode,
+                        source_ids=_validation_source_ids(config, corpus, queries)
+                        if config.candidate_mode == "best-per-document"
+                        else None,
+                        policy=config.candidate_selection,
+                    )
                     ids.update(q.id for q in queries)
                     counts[corpus] = {
                         "input_queries": len(queries),
                         "selected_queries": len(selected),
                     }
+                    if config.candidate_mode == "best-per-document":
+                        counts[corpus].update(
+                            canonical_documents=len(selection_audit),
+                            excluded_unscored_documents=sum(
+                                not row["selected_ids"] for row in selection_audit
+                            ),
+                            excluded_unscored_candidates=sum(
+                                row["excluded_missing_score_count"] for row in selection_audit
+                            ),
+                        )
                 if config.evidence_file:
                     seen = set()
                     with config.evidence_file.open(encoding="utf-8") as handle:

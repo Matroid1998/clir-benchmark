@@ -22,7 +22,8 @@ from .artifacts import CorpusStore, ParquetSink, rows
 from .config import Config
 from .encoders import ModelSpec
 from .errors import ValidationError
-from .util import digest, file_digest, new_directory, read_json, write_json
+from .fingerprints import cached_file_digest as file_digest
+from .util import digest, new_directory, read_json, write_json
 
 MTEB_SCHEMA_REFERENCE = (
     "https://github.com/embeddings-benchmark/mteb/blob/main/mteb/results/task_result.py"
@@ -91,6 +92,7 @@ def language_script(tag: str) -> str:
 
 
 def mteb_result(report: dict) -> dict:
+    document_mode = report.get("retrieval_unit", report["run"].get("retrieval_unit")) == "document"
     scores = []
     for setting in report["metrics"]["setting"]:
         tags = sorted({setting["query_language"], *setting["target_languages"].split(",")})
@@ -106,7 +108,12 @@ def mteb_result(report: dict) -> dict:
             }
         )
     return {
-        "task_name": "CLIRBenchmark_" + report["corpus"],
+        "task_name": "CLIRBenchmark_" + report["corpus"] + ("_Document" if document_mode else ""),
+        **(
+            {"retrieval_unit": "document", "document_identity": "source_unit_id"}
+            if document_mode
+            else {}
+        ),
         # This pins the effective, span-grounded cohort rather than pretending
         # the original HF revision describes a sampled or overlaid dataset.
         "dataset_revision": report["run"]["relevance_hash"],
@@ -361,25 +368,41 @@ RANKING_DETAILS_SCHEMA = pa.schema(
     ]
 )
 
+DOCUMENT_RANKING_DETAILS_SCHEMA = pa.schema(
+    [field for field in RANKING_DETAILS_SCHEMA if field.name != "chunk_id"]
+    + [
+        ("document_id", pa.string()),
+        ("winning_chunk_id", pa.string()),
+    ]
+)
+
 
 def _ranking_details(config: Config, corpus: str, run_dir: Path, destination: Path) -> None:
+    document_mode = config.retrieval_unit == "document"
+    result_id = "document_id" if document_mode else "chunk_id"
     queries = {row["id"]: row for row in rows(config.relevance_dir(corpus) / "queries.parquet")}
     qrels = defaultdict(set)
     for row in rows(config.relevance_dir(corpus) / "qrels.parquet"):
-        qrels[(row["setting_id"], row["query_id"], row["chunk_id"])].add(row["required_source_id"])
+        qrels[(row["setting_id"], row["query_id"], row[result_id])].add(row["required_source_id"])
     with (
         CorpusStore(config.corpus_dir(corpus) / "lookup.sqlite") as store,
-        ParquetSink(destination, RANKING_DETAILS_SCHEMA) as sink,
+        ParquetSink(
+            destination,
+            DOCUMENT_RANKING_DETAILS_SCHEMA if document_mode else RANKING_DETAILS_SCHEMA,
+        ) as sink,
     ):
         for row in rows(run_dir / "run.parquet"):
-            chunk = store.chunk(row["chunk_id"])
+            chunk_id = row["winning_chunk_id"] if document_mode else row["chunk_id"]
+            chunk = store.chunk(chunk_id)
             if chunk is None:
-                raise ValidationError(f"Result refers to unknown chunk {row['chunk_id']}")
+                raise ValidationError(f"Result refers to unknown chunk {chunk_id}")
             source = store.get_source(chunk["source_unit_id"])
             if source is None:
                 raise ValidationError(f"Result refers to unknown source {chunk['source_unit_id']}")
+            if document_mode and source.id != row["document_id"]:
+                raise ValidationError("Winning chunk does not belong to the ranked document")
             query = queries[row["query_id"]]
-            required = qrels[(row["setting_id"], row["query_id"], row["chunk_id"])]
+            required = qrels[(row["setting_id"], row["query_id"], row[result_id])]
             sink.append(
                 {
                     **row,
@@ -401,6 +424,8 @@ def _ranking_details(config: Config, corpus: str, run_dir: Path, destination: Pa
 def export_result(config: Config, corpus: str, run_dir: Path, report_dir: Path) -> Path:
     """Export already computed results; never generate, encode, retrieve or rerank."""
     report = read_json(report_dir / "report.json")
+    if report["run"].get("retrieval_unit", "chunk") != config.retrieval_unit:
+        raise ValidationError("Result retrieval unit does not match the evaluation configuration")
     mteb = mteb_result(report)
     standardized_path = _mteb_path(config, report, run_dir)
     _atomic_json(report_dir / "mteb.json", mteb)
@@ -464,6 +489,11 @@ def export_result(config: Config, corpus: str, run_dir: Path, report_dir: Path) 
             "format": "clir-benchmark-analysis-v1",
             "artifact_root": os.path.relpath(root, report_dir),
             "baseline": report["baseline"],
+            **(
+                {"retrieval_unit": "document", "document_identity": "source_unit_id"}
+                if config.retrieval_unit == "document"
+                else {}
+            ),
             "run_id": run_dir.name,
             "mteb_result": str(standardized_path.resolve().relative_to(root)),
             "mteb_schema_reference": MTEB_SCHEMA_REFERENCE,

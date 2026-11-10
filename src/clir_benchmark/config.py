@@ -27,6 +27,8 @@ RETRIEVAL_BASELINES = (
 )
 RERANK_BASELINES = tuple(f"rerank-{baseline}" for baseline in RETRIEVAL_BASELINES)
 BASELINES = RETRIEVAL_BASELINES + RERANK_BASELINES
+CANDIDATE_MODES = ("best", "all", "best-per-document")
+DOCUMENT_BASELINES = ("dense", "translate-dense", "hyde-dense")
 
 QWEN3_RERANKER_REVISION = "e61197ed45024b0ed8a2d74b80b4d909f1255473"
 
@@ -320,12 +322,41 @@ class RerankerConfig:
 
 
 @dataclass(frozen=True)
+class CandidateSelectionConfig:
+    seed: int = 42
+    preferred_generators: tuple[str, ...] = (
+        "anthropic/claude-haiku-5.5",
+        "gpt-5.6-luna",
+        "qwen/qwen3.8-27b",
+    )
+
+    def __post_init__(self) -> None:
+        if isinstance(self.seed, bool) or not isinstance(self.seed, int):
+            raise ValidationError("candidate_selection.seed must be an integer")
+        values = self.preferred_generators
+        if not isinstance(values, (list, tuple)) or any(
+            not isinstance(value, str) or not value.strip() for value in values
+        ):
+            raise ValidationError(
+                "candidate_selection.preferred_generators must be a list of model IDs"
+            )
+        if len(set(values)) != len(values):
+            raise ValidationError(
+                "candidate_selection.preferred_generators cannot contain duplicates"
+            )
+        # Preference is an unordered tier, not a priority list.
+        object.__setattr__(self, "preferred_generators", tuple(sorted(values)))
+
+
+@dataclass(frozen=True)
 class Config:
     output_dir: Path
     datasets: dict[str, DatasetSpec]
     chunking: ChunkingConfig = field(default_factory=ChunkingConfig)
     runtime: RuntimeConfig = field(default_factory=RuntimeConfig)
     candidate_mode: str = "best"
+    candidate_selection: CandidateSelectionConfig = field(default_factory=CandidateSelectionConfig)
+    retrieval_unit: str = "chunk"
     settings: tuple[str, ...] = ("pairwise", "mixed")
     query_languages: tuple[str, ...] = ()
     target_languages: tuple[str, ...] = ()
@@ -361,6 +392,16 @@ class Config:
                 "corpus_key": self.corpus_key(corpus),
                 "qa": self.datasets[corpus].qa.identity(),
                 "candidate_mode": self.candidate_mode,
+                **(
+                    {"candidate_selection": asdict(self.candidate_selection)}
+                    if self.candidate_mode == "best-per-document"
+                    else {}
+                ),
+                **(
+                    {"retrieval_unit": self.retrieval_unit}
+                    if self.retrieval_unit != "chunk"
+                    else {}
+                ),
                 "settings": self.settings,
                 "query_languages": self.query_languages,
                 "target_languages": self.target_languages,
@@ -370,6 +411,21 @@ class Config:
 
     def relevance_dir(self, corpus: str) -> Path:
         return self.output_dir / "relevance" / corpus / self.relevance_key(corpus)
+
+
+def validate_retrieval_baselines(config: Config, baselines: tuple[str, ...] | None = None) -> None:
+    """Check the resolved selection, after any command-line baseline overrides."""
+    if config.retrieval_unit not in {"chunk", "document"}:
+        raise ValidationError("retrieval_unit must be chunk or document")
+    if config.retrieval_unit == "document":
+        unsupported = set(config.baselines if baselines is None else baselines) - set(
+            DOCUMENT_BASELINES
+        )
+        if unsupported:
+            raise ValidationError(
+                "Document retrieval supports only dense, translate-dense, and hyde-dense; "
+                f"unsupported selected baselines: {', '.join(sorted(unsupported))}"
+            )
 
 
 def load_config(path: str | Path) -> Config:
@@ -425,6 +481,7 @@ def load_config(path: str | Path) -> Config:
             datasets=datasets,
             chunking=ChunkingConfig(**raw.pop("chunking", {})),
             runtime=RuntimeConfig(**raw.pop("runtime", {})),
+            candidate_selection=CandidateSelectionConfig(**raw.pop("candidate_selection", {})),
             bm25=BM25Config(**raw.pop("bm25", {})),
             hybrid=HybridConfig(**raw.pop("hybrid", {})),
             translation=TranslationConfig(**raw.pop("translation", {})),
@@ -435,8 +492,10 @@ def load_config(path: str | Path) -> Config:
         )
     except (TypeError, KeyError) as exc:
         raise ValidationError(f"Invalid configuration: {exc}") from exc
-    if config.candidate_mode not in {"best", "all"}:
-        raise ValidationError("candidate_mode must be best or all")
+    if config.candidate_mode not in CANDIDATE_MODES:
+        raise ValidationError("candidate_mode must be best, all, or best-per-document")
+    if config.retrieval_unit not in {"chunk", "document"}:
+        raise ValidationError("retrieval_unit must be chunk or document")
     if not config.settings or set(config.settings) - {"pairwise", "mixed"}:
         raise ValidationError("settings must contain pairwise and/or mixed")
     for value in (*config.query_languages, *config.target_languages):
