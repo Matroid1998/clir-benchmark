@@ -7,7 +7,11 @@ import pytest
 from conftest import CharacterTokenizer
 
 from clir_benchmark.config import RuntimeConfig
-from clir_benchmark.encoders import HuggingFaceEncoder, load_registry
+from clir_benchmark.encoders import (
+    HuggingFaceEncoder,
+    _preserve_remote_code_revision,
+    load_registry,
+)
 from clir_benchmark.errors import ValidationError
 
 
@@ -142,3 +146,57 @@ def test_sapbert_uses_cls_not_mean(model_stubs):
 def test_embeddinggemma_rejects_float16(model_stubs):
     with pytest.raises(ValidationError, match="float16"):
         HuggingFaceEncoder(load_registry()["embeddinggemma"], RuntimeConfig(dtype="float16"))
+
+
+def test_external_remote_code_is_pinned_for_config_and_model(model_stubs, monkeypatch, tmp_path):
+    _, state = model_stubs
+    spec = replace(load_registry()["nomic-v2-moe"], dimension=4)
+
+    def download(repo_id, **kwargs):
+        state["snapshot"] = {"repo_id": repo_id, **kwargs}
+        return str(tmp_path / spec.revision)
+
+    monkeypatch.setattr("huggingface_hub.snapshot_download", download)
+    HuggingFaceEncoder(spec, RuntimeConfig())
+    assert state["snapshot"]["revision"] == spec.revision
+    assert state["loaded"]["repo_id"] == str(tmp_path / spec.revision)
+    assert state["loaded"]["config_kwargs"] == {"code_revision": spec.code_revision}
+    assert state["loaded"]["model_kwargs"]["code_revision"] == spec.code_revision
+    assert state["loaded"]["tokenizer_kwargs"]["code_revision"] == spec.code_revision
+    assert state["loaded"]["trust_remote_code"] is True
+
+
+def test_module_discovery_does_not_consume_remote_model_code_pin():
+    class Library:
+        def _load_module_class_from_ref(
+            self, class_ref, model_name_or_path, trust_remote_code, revision, model_kwargs, **kwargs
+        ):
+            return model_kwargs.pop("code_revision", None)
+
+    encoder = _preserve_remote_code_revision(Library)()
+    model_kwargs = {"code_revision": "a" * 40, "torch_dtype": "float32"}
+    for module in ("Transformer", "Pooling"):
+        assert (
+            encoder._load_module_class_from_ref(
+                module, "fixture/model", True, "b" * 40, model_kwargs
+            )
+            == "a" * 40
+        )
+    assert model_kwargs == {"code_revision": "a" * 40, "torch_dtype": "float32"}
+    # The compatibility layer must not patch the dependency globally.
+    unwrapped_kwargs = dict(model_kwargs)
+    Library()._load_module_class_from_ref(
+        "Transformer", "fixture/model", True, "b" * 40, unwrapped_kwargs
+    )
+    assert "code_revision" not in unwrapped_kwargs
+
+
+@pytest.mark.parametrize("revision", ["main", "latest", "abc"])
+def test_remote_code_requires_immutable_revision(revision):
+    with pytest.raises(ValidationError, match="commit SHA"):
+        replace(load_registry()["nomic-v2-moe"], code_revision=revision)
+
+
+def test_remote_code_pin_requires_explicit_trust():
+    with pytest.raises(ValidationError, match="trust_remote_code"):
+        replace(load_registry()["nomic-v2-moe"], trust_remote_code=False)

@@ -17,6 +17,37 @@ def forbidden(*args, **kwargs):
     pytest.fail("Result export must only read stored artifacts")
 
 
+def test_parallel_model_exports_share_one_input_snapshot(tmp_path, monkeypatch):
+    from concurrent.futures import ThreadPoolExecutor
+    from threading import Lock
+    from time import sleep
+
+    from test_pipeline import fixture_config
+
+    from clir_benchmark import results
+
+    config, _ = fixture_config(tmp_path)
+    copy = results.shutil.copyfile
+    copied = []
+    guard = Lock()
+
+    def slow_copy(source, destination):
+        with guard:
+            copied.append(str(source))
+        sleep(0.01)
+        return copy(source, destination)
+
+    monkeypatch.setattr(results.shutil, "copyfile", slow_copy)
+    with ThreadPoolExecutor(max_workers=4) as workers:
+        outputs = list(
+            workers.map(lambda _: results._snapshot_local_inputs(config, "eurlex"), range(4))
+        )
+    assert all(output == outputs[0] for output in outputs)
+    assert len(copied) == len(set(copied))
+    for directory in outputs[0]:
+        assert (directory / "manifest.json").is_file()
+
+
 @pytest.mark.parametrize("baseline", RETRIEVAL_BASELINES)
 def test_all_twenty_baselines_export_metrics_and_complete_analysis(
     tmp_path, tokenizer, monkeypatch, baseline

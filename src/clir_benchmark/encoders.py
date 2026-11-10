@@ -25,9 +25,14 @@ class ModelSpec:
     query_prefix: str = ""
     document_prefix: str = ""
     trust_remote_code: bool = False
+    code_revision: str | None = None
 
     def __post_init__(self) -> None:
         pinned(self.revision, f"model {self.alias}")
+        if self.code_revision is not None:
+            pinned(self.code_revision, f"model {self.alias} remote code")
+            if not self.trust_remote_code:
+                raise ValidationError(f"{self.alias}: code_revision requires trust_remote_code")
         if self.dimension < 1 or self.max_length < 2:
             raise ValidationError(f"{self.alias}: invalid dimension or maximum input length")
         if self.backend not in {"sentence_transformers", "transformers_cls"}:
@@ -142,6 +147,37 @@ def audit_inputs(
     return audits
 
 
+def _preserve_remote_code_revision(sentence_transformer_class):
+    """Keep ST module discovery from consuming the Transformers code pin.
+
+    SentenceTransformers 5.7 pops code_revision while importing each module
+    class, mutating the same kwargs later passed to AutoModel. Scope this
+    compatibility wrapper to the encoder instance; published modules and global
+    library behavior remain unchanged.
+    """
+
+    class PinnedCodeSentenceTransformer(sentence_transformer_class):
+        def _load_module_class_from_ref(
+            self,
+            class_ref,
+            model_name_or_path,
+            trust_remote_code,
+            revision,
+            model_kwargs,
+            **kwargs,
+        ):
+            return super()._load_module_class_from_ref(
+                class_ref,
+                model_name_or_path,
+                trust_remote_code,
+                revision,
+                dict(model_kwargs) if model_kwargs is not None else None,
+                **kwargs,
+            )
+
+    return PinnedCodeSentenceTransformer
+
+
 class HuggingFaceEncoder:
     def __init__(self, spec: ModelSpec, runtime: RuntimeConfig, token: str | None = None):
         try:
@@ -164,6 +200,7 @@ class HuggingFaceEncoder:
                 "EmbeddingGemma does not support float16 activations; use float32 or bfloat16"
             )
         dtype = getattr(torch, runtime.dtype)
+        code_options = {"code_revision": spec.code_revision} if spec.code_revision else {}
         if spec.backend == "sentence_transformers":
             try:
                 from sentence_transformers import SentenceTransformer
@@ -171,14 +208,33 @@ class HuggingFaceEncoder:
                 raise ValidationError(
                     "Install optional dependencies: uv sync --extra models"
                 ) from exc
-            self.model = SentenceTransformer(
-                spec.repo_id,
+            model_location = spec.repo_id
+            if spec.repo_id == "nomic-ai/nomic-embed-text-v2-moe":
+                from huggingface_hub import snapshot_download
+
+                # Nomic's custom from_pretrained ignores revision when resolving
+                # weights by repository ID. A pinned local snapshot keeps both
+                # weights and the published SentenceTransformer modules fixed.
+                model_location = snapshot_download(
+                    spec.repo_id,
+                    revision=spec.revision,
+                    token=token,
+                    allow_patterns=["*.json", "*.safetensors", "*.py", "*.txt", "*.model"],
+                )
+            model_class = (
+                _preserve_remote_code_revision(SentenceTransformer)
+                if spec.code_revision
+                else SentenceTransformer
+            )
+            self.model = model_class(
+                model_location,
                 revision=spec.revision,
                 token=token,
                 device=self.device,
                 trust_remote_code=spec.trust_remote_code,
-                model_kwargs={"torch_dtype": dtype},
-                tokenizer_kwargs={"use_fast": True},
+                model_kwargs={"torch_dtype": dtype, **code_options},
+                tokenizer_kwargs={"use_fast": True, **code_options},
+                **({"config_kwargs": code_options} if code_options else {}),
             )
             self.model.max_seq_length = spec.max_length
             self.model.default_prompt_name = None
@@ -192,7 +248,11 @@ class HuggingFaceEncoder:
                 spec.repo_id, revision=spec.revision, token=token, use_fast=True
             )
             self.model = AutoModel.from_pretrained(
-                spec.repo_id, revision=spec.revision, token=token, torch_dtype=dtype
+                spec.repo_id,
+                revision=spec.revision,
+                token=token,
+                torch_dtype=dtype,
+                **code_options,
             ).to(self.device)
         if not self.tokenizer.is_fast:
             raise ValidationError(f"{spec.alias}: fast tokenizer required for truncation audit")

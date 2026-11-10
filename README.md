@@ -101,7 +101,78 @@ $0.50 output per million tokens, verified against the
 Recorded provider responses retain the actual returned model ID and token usage.
 These are API cost estimates; local compute prices remain unknown.
 
-### Full corpus preparation
+### Fir cluster runs
+
+`clir_benchmark.cluster` plans and executes the original `dense`, `bm25`, and
+`hybrid` baselines under Slurm. `write_plan()` accepts a resolved configuration,
+remote source/configuration/environment paths, CPU/GPU accounts, and resource
+requests. With eight encoders and three corpora, `split_embedding=True` creates
+54 independent jobs: three shared preparation/index jobs, three BM25 jobs,
+24 GPU embedding jobs, and 24 CPU dense/hybrid retrieval and evaluation jobs.
+Exact dense search uses NumPy on CPU, so splitting releases GPUs before scoring.
+CPU scoring uses the same encoder configuration as its embedding dependency,
+preserving vector cache identity without loading an encoder.
+
+Use `candidate_mode: all` for every generated question candidate; all selected
+questions are embedded. Retrieval metrics still require eligible query/setting
+pairs. Keep `eligibility.parquet`, settings, and generator breakdowns to audit
+questions without usable exact evidence. Preparation stops on blocked annotation
+settings unless explicitly invoked with `--allow-blocked-settings`.
+
+Stage pinned data, model weights, and Nomic's pinned external implementation in
+the shared Hugging Face cache before execution. Preparation needs HF metadata
+access; embedding and scoring jobs run with the staged cache offline. Prefer HF
+source specifications over `local_dir` for full snapshots, avoiding repeated
+large local-file hashing. The environment script should load the same Python,
+Arrow, and CUDA modules in every job and set `SQLITE_TMPDIR=$SLURM_TMPDIR`.
+Only the HF credential is needed; generation and reranking remain disabled.
+
+After copying the plan, scripts, source tree, and configurations to Fir, submit
+the whole dependency graph from Fir:
+
+```bash
+python -m clir_benchmark.cluster submit --plan /remote/run/plan.json --workers 16
+python -m clir_benchmark.cluster status --submission /remote/run/submission.json
+```
+
+`--workers` controls concurrent submission calls, not running jobs. There is no
+additional array/concurrency cap; Slurm controls execution according to available
+resources and account policy. Submission records every job ID and dependency,
+and rerunning a completed submission reuses those IDs. Incomplete submissions
+require inspecting the scheduler before retrying, preventing duplicate jobs.
+After fixing a failed job, explicitly select it and any cancelled dependents with
+`python -m clir_benchmark.cluster retry --submission /remote/run/submission.json
+--label <job-label> --label <dependent-label> --reason "repair description"`.
+Optional `--time 03:00:00` overrides the new jobs' walltime. Retries verify that
+old jobs are terminal, preserve their IDs and scheduler accounting, and connect
+children to the new parent IDs. Already completed dependencies are verified
+without referencing job IDs Slurm may have purged. Running or ambiguous jobs
+are never resubmitted automatically.
+Each job saves stage outcomes, errors, configuration, library versions, node and
+allocation metadata, and measured wall time. Scheduler CPU/GPU allocation time
+remains separate from model/retrieval timings and unpriced local compute.
+
+Run the local collector in a persistent local process to copy the campaign back:
+
+```bash
+.venv/bin/python -m clir_benchmark.cluster_monitor \
+  --host fir --remote-directory /remote/run \
+  --local-directory artifacts/my-fir-run \
+  --remote-environment /remote/env.sh --remote-python /remote/venv/bin/python \
+  --interval 30
+```
+
+The collector polls status while one independent `rsync` transfers completed
+artifacts, logs, source/configuration snapshots, rankings, MTEB metrics, and full
+embedding vectors. It excludes unfinished temporary artifacts and credentials,
+preserves existing local files, and retries transient connection failures. Keep
+the local machine awake and connected. Its PID, heartbeat, transfer history,
+and latest scheduler status are saved in `.local-monitor/`. When all jobs finish,
+it performs a final sync and verifies report counts and all indexed checksums,
+writing `verification.json`. Remote paths remain unchanged as provenance;
+relative analysis inventories work in the local copy.
+
+### Standard preparation commands
 
 ```bash
 uv run clir-benchmark prepare-corpus --corpus eurlex

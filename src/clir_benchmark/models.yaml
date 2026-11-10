@@ -34,6 +34,8 @@ nomic-v2-moe:
   query_prefix: 'search_query: '
   document_prefix: 'search_document: '
   trust_remote_code: true
+  # auto_map resolves implementation code from nomic-ai/nomic-bert-2048.
+  code_revision: 7710840340a098cfb869c4f65e87cf2b1b70caca
 granite-278m:
   repo_id: ibm-granite/granite-embedding-278m-multilingual
   revision: a9cb5338491faf32b73dd17b714a31821c021bbf

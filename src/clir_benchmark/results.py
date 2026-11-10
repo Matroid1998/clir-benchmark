@@ -7,6 +7,7 @@ deliberately do not claim an MTEB engine version or an end-to-end evaluation tim
 
 from __future__ import annotations
 
+import fcntl
 import os
 import re
 import shutil
@@ -173,24 +174,32 @@ def _snapshot_local_inputs(config: Config, corpus: str) -> list[Path]:
                     metadata[name] = file_digest(path)
         identity = {"source": identity, "subset_metadata": metadata}
         destination = config.output_dir / "input_snapshots" / digest(identity)
-        if not destination.exists():
-            with new_directory(destination) as temporary:
-                files = {
-                    **{name: local / name for name in identity["source"]["files"]},
-                    **{f"subset/{name}": local.parent / name for name in metadata},
-                }
-                for name, original in files.items():
-                    copied = temporary / name
-                    copied.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copyfile(original, copied)
-                    expected = (
-                        metadata[name.removeprefix("subset/")]
-                        if name.startswith("subset/")
-                        else identity["source"]["files"][name]
-                    )
-                    if file_digest(copied) != expected:
-                        raise ValidationError(f"Local input changed during export: {original}")
-                write_json(temporary / "manifest.json", {"schema": 1, **identity})
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        # Distinct model jobs share these immutable inputs. Serialize just the
+        # initial publication so simultaneous exports do not fail or duplicate
+        # a full corpus copy; each report remains independently writable.
+        with (destination.parent / f".{destination.name}.lock").open("a") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            if not destination.exists():
+                with new_directory(destination) as temporary:
+                    files = {
+                        **{name: local / name for name in identity["source"]["files"]},
+                        **{f"subset/{name}": local.parent / name for name in metadata},
+                    }
+                    for name, original in files.items():
+                        copied = temporary / name
+                        copied.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copyfile(original, copied)
+                        expected = (
+                            metadata[name.removeprefix("subset/")]
+                            if name.startswith("subset/")
+                            else identity["source"]["files"][name]
+                        )
+                        if file_digest(copied) != expected:
+                            raise ValidationError(f"Local input changed during export: {original}")
+                    write_json(temporary / "manifest.json", {"schema": 1, **identity})
+            elif read_json(destination / "manifest.json") != {"schema": 1, **identity}:
+                raise ValidationError(f"Local input snapshot identity mismatch: {destination}")
         result.append(destination)
     return result
 
