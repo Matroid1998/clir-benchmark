@@ -30,6 +30,17 @@ def _validate_host(host):
         raise ValidationError("Use an SSH host alias or user@hostname without shell syntax")
 
 
+def _artifact_mapping(remote_directory, local_directory):
+    if (remote_directory is None) != (local_directory is None):
+        raise ValidationError("Remote and local artifact directories must be provided together")
+    if remote_directory is None:
+        return None
+    remote = Path(remote_directory)
+    if not remote.is_absolute() or ".." in remote.parts:
+        raise ValidationError("Remote artifact directory must be an absolute path without '..'")
+    return {"remote": str(remote), "local": str(Path(local_directory).resolve())}
+
+
 def fetch_status(
     host,
     remote_directory,
@@ -102,7 +113,9 @@ def sync_once(host, remote_directory, local_directory, *, runner=subprocess.run,
         "--timeout=120",
         "-e",
         "ssh -o BatchMode=yes -o ConnectTimeout=15",
-        "--exclude=.*/",
+        # Uploading rsync processes create hidden temporary files as well as
+        # directories. Neither is a completed artifact safe to collect.
+        "--exclude=.*",
         "--exclude=__pycache__/",
         "--exclude=*.pyc",
         "--exclude=*.tmp",
@@ -157,7 +170,13 @@ def _expected_reports(job: dict, journal: dict, journal_path: Path) -> int:
 
 
 def verify_local_results(
-    local_directory: Path, remote_directory: str, status: dict, *, checksum_cache=None
+    local_directory: Path,
+    remote_directory: str,
+    status: dict,
+    *,
+    checksum_cache=None,
+    remote_artifact_directory: str | None = None,
+    local_artifact_directory: Path | None = None,
 ) -> dict:
     """Verify every completed stage journal, report, MTEB file and indexed artifact."""
     local = Path(local_directory).resolve()
@@ -167,16 +186,24 @@ def verify_local_results(
     verified = set()
     checksums = {} if checksum_cache is None else checksum_cache
     expected_reports = 0
+    artifact_mapping = _artifact_mapping(remote_artifact_directory, local_artifact_directory)
+    mappings = [(remote, local)]
+    if artifact_mapping:
+        mappings.append((Path(artifact_mapping["remote"]), Path(artifact_mapping["local"])))
+    mappings.sort(key=lambda item: len(item[0].parts), reverse=True)
+    report_roots = {}
 
-    def relocated(value):
-        try:
-            relative = Path(value).relative_to(remote)
-        except ValueError as exc:
-            raise ValidationError(f"Artifact is outside the campaign: {value}") from exc
-        path = (local / relative).resolve()
-        if not path.is_relative_to(local):
-            raise ValidationError(f"Artifact resolves outside the local campaign: {value}")
-        return path
+    def relocated(value, *, include_root=False):
+        for remote_root, local_root in mappings:
+            try:
+                relative = Path(value).relative_to(remote_root)
+            except ValueError:
+                continue
+            path = (local_root / relative).resolve()
+            if not path.is_relative_to(local_root):
+                raise ValidationError(f"Artifact resolves outside the local campaign: {value}")
+            return (path, local_root) if include_root else path
+        raise ValidationError(f"Artifact is outside the campaign and artifact mappings: {value}")
 
     for job in status["jobs"]:
         if job["state"] != "COMPLETED":
@@ -200,7 +227,9 @@ def verify_local_results(
                 problems.append({"job": job["label"], "reason": "stage_failure", "path": str(path)})
             for stage in journal.get("stages", []):
                 if stage["stage"].startswith("evaluate-") and stage.get("status") == "success":
-                    reports.add(relocated(stage["result"]))
+                    report, report_root = relocated(stage["result"], include_root=True)
+                    reports.add(report)
+                    report_roots[report] = report_root
     for report in sorted(reports):
         for filename in ("report.json", "per_query.json", "mteb.json", "analysis_manifest.json"):
             if not (report / filename).is_file():
@@ -210,7 +239,7 @@ def verify_local_results(
             continue
         manifest = read_json(manifest_path)
         root = (report / manifest["artifact_root"]).resolve()
-        if not root.is_relative_to(local):
+        if not root.is_relative_to(report_roots[report]):
             raise ValidationError("Analysis inventory root escapes the local campaign")
         for item in manifest["files"]:
             path = (root / item["path"]).resolve()
@@ -235,6 +264,7 @@ def verify_local_results(
         "unique_artifact_checksums_verified": len(verified),
         "problems": problems,
         "path_mapping": {"remote": str(remote), "local": str(local)},
+        **({"artifact_path_mapping": artifact_mapping} if artifact_mapping else {}),
         "notes": "Remote paths remain in original provenance. Analysis inventories use relative paths and were verified against local files. No remote jobs were changed.",
     }
 
@@ -248,6 +278,8 @@ def monitor(
     remote_python: str,
     interval: float = 30,
     additional_campaigns: tuple[str, ...] = (),
+    remote_artifact_directory: str | None = None,
+    local_artifact_directory: Path | None = None,
     status_reader=fetch_status,
     synchronizer=sync_once,
     verifier=verify_local_results,
@@ -256,6 +288,7 @@ def monitor(
     if not 0 < interval <= 60:
         raise ValidationError("Monitor interval must be greater than zero and at most 60 seconds")
     _validate_host(host)
+    artifact_mapping = _artifact_mapping(remote_artifact_directory, local_artifact_directory)
     campaigns = ["."]
     for value in additional_campaigns:
         relative = Path(value)
@@ -270,6 +303,19 @@ def monitor(
         if str(relative) not in campaigns:
             campaigns.append(str(relative))
     local = Path(local_directory).resolve()
+    if artifact_mapping:
+        remote_artifacts = Path(artifact_mapping["remote"])
+        local_artifacts = Path(artifact_mapping["local"])
+        remote_control = Path(remote_directory)
+        if (
+            remote_artifacts.is_relative_to(remote_control)
+            or remote_control.is_relative_to(remote_artifacts)
+            or local_artifacts.is_relative_to(local)
+            or local.is_relative_to(local_artifacts)
+        ):
+            raise ValidationError(
+                "Separate artifact directories must not overlap the campaign directories"
+            )
     state_directory = local / ".local-monitor"
     state_directory.mkdir(parents=True, exist_ok=True)
     lock = (state_directory / "monitor.lock").open("a")
@@ -297,6 +343,8 @@ def monitor(
     if additional_campaigns:
         state["additional_campaigns"] = campaigns[1:]
         state["campaigns"] = {}
+    if artifact_mapping:
+        state["artifact_path_mapping"] = artifact_mapping
     if state_path.exists():
         previous = read_json(state_path)
         _atomic(state_directory / ("previous-" + str(previous["pid"]) + ".json"), previous)
@@ -353,13 +401,22 @@ def monitor(
         }
 
     def verify_campaigns(status):
+        artifact_options = (
+            {
+                "remote_artifact_directory": artifact_mapping["remote"],
+                "local_artifact_directory": Path(artifact_mapping["local"]),
+            }
+            if artifact_mapping
+            else {}
+        )
         if len(campaigns) == 1:
-            return verifier(local, remote_directory, status)
+            return verifier(local, remote_directory, status, **artifact_options)
         checksums = {}
         results = {}
         for name, campaign_status in status["campaigns"].items():
             try:
                 options = {"checksum_cache": checksums} if verifier is verify_local_results else {}
+                options.update(artifact_options)
                 result = verifier(local, remote_directory, campaign_status, **options)
             except Exception as exc:
                 result = {
@@ -396,6 +453,39 @@ def monitor(
             "unique_artifact_checksums_verified": len(checksums),
             "primary_cancellations_retained": primary_cancellations_only,
             "notes": "Each campaign retains its own scheduler and verification outcome. Terminal cancellations in the primary campaign do not fail additional campaigns; other verification errors do. Shared files are synchronized once and checksummed once.",
+        }
+
+    def synchronize():
+        if not artifact_mapping:
+            return synchronizer(host, remote_directory, local)
+        started = time.perf_counter()
+        transfers = []
+        for role, remote_root, local_root in (
+            ("campaign", remote_directory, local),
+            ("artifacts", artifact_mapping["remote"], Path(artifact_mapping["local"])),
+        ):
+            try:
+                result = synchronizer(host, remote_root, local_root)
+            except Exception as exc:
+                result = {
+                    "status": "failed",
+                    "error_type": type(exc).__name__,
+                    "error": str(exc),
+                }
+            transfers.append(
+                {
+                    **result,
+                    "role": role,
+                    "remote_directory": str(remote_root),
+                    "local_directory": str(local_root),
+                }
+            )
+        return {
+            "status": "success"
+            if all(item["status"] == "success" for item in transfers)
+            else "failed",
+            "seconds": time.perf_counter() - started,
+            "transfers": transfers,
         }
 
     event("monitor_started", pid=os.getpid())
@@ -459,7 +549,7 @@ def monitor(
                     return state_path
             if future is None:
                 final_sync = terminal_observed
-                future = executor.submit(synchronizer, host, remote_directory, local)
+                future = executor.submit(synchronize)
                 event("sync_started", final_sync=final_sync)
             save()
             time.sleep(max(0.01, interval - (time.monotonic() - began)))
@@ -478,6 +568,15 @@ def main(argv=None):
     parser.add_argument("--host", default="fir")
     parser.add_argument("--remote-directory", required=True)
     parser.add_argument("--local-directory", type=Path, required=True)
+    parser.add_argument(
+        "--remote-artifact-directory",
+        help="Separate shared artifact tree on the server; requires --local-artifact-directory",
+    )
+    parser.add_argument(
+        "--local-artifact-directory",
+        type=Path,
+        help="Existing local shared artifact tree; requires --remote-artifact-directory",
+    )
     parser.add_argument("--remote-environment", required=True)
     parser.add_argument("--remote-python", required=True)
     parser.add_argument("--interval", type=float, default=30)

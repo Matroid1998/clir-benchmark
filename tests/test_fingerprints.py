@@ -1,4 +1,5 @@
 import os
+import time
 
 import pytest
 
@@ -26,6 +27,20 @@ def counted_hash(monkeypatch):
     return calls
 
 
+def restore_mtime_after_ctime_tick(path, previous):
+    # Some cluster filesystems update ctime only once per clock tick. Keep the
+    # original mtime while waiting for the metadata change this test exercises.
+    deadline = time.monotonic() + 5
+    while True:
+        os.utime(path, ns=(previous.st_atime_ns, previous.st_mtime_ns))
+        current = path.stat()
+        if current.st_ctime_ns != previous.st_ctime_ns:
+            return current
+        if time.monotonic() >= deadline:
+            pytest.fail("Filesystem ctime did not advance within five seconds")
+        time.sleep(0.01)
+
+
 def test_unchanged_file_and_resolved_path_reuse_digest(tmp_path, counted_hash):
     path = tmp_path / "vectors.npy"
     path.write_bytes(b"immutable embedding contents")
@@ -46,8 +61,8 @@ def test_same_size_rewrite_with_restored_mtime_invalidates_cache(tmp_path, count
     previous = path.stat()
 
     path.write_bytes(b"other contents")
-    os.utime(path, ns=(previous.st_atime_ns, previous.st_mtime_ns))
-    current = path.stat()
+    current = restore_mtime_after_ctime_tick(path, previous)
+    assert current.st_ino == previous.st_ino
     assert current.st_size == previous.st_size
     assert current.st_mtime_ns == previous.st_mtime_ns
     assert current.st_ctime_ns != previous.st_ctime_ns
@@ -76,8 +91,14 @@ def test_file_changed_while_hashing_is_rejected_and_not_cached(tmp_path, monkeyp
     path.write_bytes(b"first contents")
 
     def mutate_after_read(value):
+        previous = value.stat()
         result = file_digest(value)
         value.write_bytes(b"other contents")
+        # Make the concurrent edit observable even when the filesystem gives
+        # two immediate same-size writes identical modification/change times.
+        os.utime(value, ns=(previous.st_atime_ns, previous.st_mtime_ns + 2_000_000_000))
+        assert value.stat().st_size == previous.st_size
+        assert value.stat().st_mtime_ns != previous.st_mtime_ns
         return result
 
     monkeypatch.setattr(fingerprints, "file_digest", mutate_after_read)

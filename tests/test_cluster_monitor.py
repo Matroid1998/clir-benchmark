@@ -1,9 +1,19 @@
+import fcntl
 import json
+import shutil
+import subprocess
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
-from clir_benchmark.cluster_monitor import fetch_status, monitor, sync_once, verify_local_results
+from clir_benchmark.cluster_monitor import (
+    fetch_status,
+    main,
+    monitor,
+    sync_once,
+    verify_local_results,
+)
 from clir_benchmark.errors import ValidationError
 from clir_benchmark.util import file_digest, read_json, write_json
 
@@ -57,10 +67,42 @@ def test_sync_is_non_destructive_and_excludes_partial_artifacts_and_secrets(tmp_
     assert result["status"] == "success"
     command = commands[0]
     assert "--delete" not in command
-    assert "--exclude=.*/" in command and "--exclude=*.tmp" in command
+    assert "--exclude=.*" in command and "--exclude=*.tmp" in command
     assert "--exclude=.env" in command
     assert "--partial-dir=.rsync-partial" in command
     assert command[-2] == "fir:/remote/run/"
+
+
+@pytest.mark.skipif(shutil.which("rsync") is None, reason="Local rsync is unavailable")
+def test_sync_skips_hidden_upload_files_and_preserves_visible_artifacts(tmp_path):
+    source = tmp_path / "server"
+    destination = tmp_path / "collected"
+    visible = [
+        "corpus/lookup.sqlite",
+        "embeddings/vectors.npy",
+        "reports/report.json",
+        "reports/mteb.json",
+    ]
+    hidden = [
+        "corpus/.lookup.sqlite.8QOkrv",
+        "embeddings/.vectors.npy.Abc123",
+        ".uploading/unfinished.json",
+    ]
+    for relative in [*visible, *hidden]:
+        path = source / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(relative)
+
+    def local_transfer(command, **kwargs):
+        # Exercise the real rsync filters without SSH or a remote server.
+        return subprocess.run([*command[:-2], str(source) + "/", command[-1]], **kwargs)
+
+    result = sync_once("fir", "/remote/run", destination, runner=local_transfer)
+    assert result["status"] == "success"
+    assert sorted(
+        str(path.relative_to(destination)) for path in destination.rglob("*") if path.is_file()
+    ) == sorted(visible)
+    assert all((destination / relative).read_text() == relative for relative in visible)
 
 
 def local_result(tmp_path):
@@ -374,3 +416,228 @@ def test_monitor_interval_is_bounded(tmp_path, interval):
             remote_python="/python",
             interval=interval,
         )
+
+
+def external_artifacts_result(tmp_path):
+    shared = tmp_path / "fir"
+    remote, status, artifact = local_result(shared)
+    control = tmp_path / "narval"
+    remote_control = "/remote/narval"
+    journal = read_json(shared / "job_status/bm25/100.json")
+    write_json(control / "job_status/bm25/100.json", journal)
+    status["jobs"][0]["stage_journals"] = [{"path": remote_control + "/job_status/bm25/100.json"}]
+    options = {
+        "remote_artifact_directory": remote + "/artifacts",
+        "local_artifact_directory": shared / "artifacts",
+    }
+    return control, remote_control, status, artifact, options
+
+
+def test_external_artifact_mapping_verifies_reports_and_full_inventory(tmp_path):
+    control, remote, status, artifact, options = external_artifacts_result(tmp_path)
+    shared = options["local_artifact_directory"]
+    report = shared / "reports/corpus/run1"
+    manifest = read_json(report / "analysis_manifest.json")
+    for relative in ("qrels/source.json", "hyde_requests/failed_prior_attempt.json"):
+        path = shared / relative
+        write_json(path, {"audit": relative})
+        manifest["files"].append({"path": relative, "sha256": file_digest(path)})
+    write_json(report / "analysis_manifest.json", manifest)
+    result = verify_local_results(control, remote, status, **options)
+    assert result["status"] == "success"
+    assert result["reports_verified"] == 1
+    assert result["unique_artifact_checksums_verified"] == 3
+    assert result["path_mapping"] == {"remote": remote, "local": str(control)}
+    assert result["artifact_path_mapping"] == {
+        "remote": options["remote_artifact_directory"],
+        "local": str(shared),
+    }
+    assert not (control / "artifacts").exists()
+    (shared / "hyde_requests/failed_prior_attempt.json").write_text("changed")
+    result = verify_local_results(control, remote, status, **options)
+    assert result["status"] == "failed"
+    assert [item["reason"] for item in result["problems"]] == ["checksum_mismatch"]
+    assert artifact.is_file()
+
+
+@pytest.mark.parametrize("escape", ["prefix", "inventory_root", "inventory_path", "symlink"])
+def test_external_mapping_and_inventory_cannot_escape_selected_roots(tmp_path, escape):
+    control, remote, status, _, options = external_artifacts_result(tmp_path)
+    shared = options["local_artifact_directory"]
+    report = shared / "reports/corpus/run1"
+    journal = control / "job_status/bm25/100.json"
+    if escape == "prefix":
+        data = read_json(journal)
+        data["stages"][0]["result"] = options["remote_artifact_directory"] + "-other/reports/run"
+        write_json(journal, data)
+    elif escape == "symlink":
+        (shared / "escape").symlink_to(control, target_is_directory=True)
+        data = read_json(journal)
+        data["stages"][0]["result"] = options["remote_artifact_directory"] + "/escape"
+        write_json(journal, data)
+    else:
+        manifest = read_json(report / "analysis_manifest.json")
+        if escape == "inventory_root":
+            manifest["artifact_root"] = "../../../.."
+        else:
+            manifest["files"][0]["path"] = "../../outside"
+        write_json(report / "analysis_manifest.json", manifest)
+    with pytest.raises(ValidationError, match="outside|escapes"):
+        verify_local_results(control, remote, status, **options)
+
+
+def test_separate_root_monitor_coordinates_both_syncs_and_retries_partial_failure(tmp_path):
+    control = tmp_path / "narval"
+    shared = tmp_path / "fir/artifacts"
+    calls, verifications = [], []
+
+    def synchronize(host, remote, local):
+        calls.append((host, remote, local))
+        if len(calls) == 2:
+            raise OSError("shared artifact transfer interrupted")
+        return {
+            "status": "success",
+            "returncode": 0,
+            "command": ["rsync", remote, str(local)],
+            "stdout": "copied " + remote,
+            "stderr": "",
+        }
+
+    def verify(local, remote, status, **options):
+        verifications.append(options)
+        assert len(calls) == 4
+        return {"status": "success", "reports_verified": 1}
+
+    path = monitor(
+        host="narval",
+        remote_directory="/remote/narval",
+        local_directory=control,
+        remote_artifact_directory="/remote/fir/artifacts",
+        local_artifact_directory=shared,
+        remote_environment="/env",
+        remote_python="/python",
+        interval=0.01,
+        status_reader=lambda *a: {"all_terminal": True, "all_succeeded": True, "jobs": []},
+        synchronizer=synchronize,
+        verifier=verify,
+    )
+    state = read_json(path)
+    assert state["status"] == "complete"
+    assert (
+        calls
+        == [
+            ("narval", "/remote/narval", control),
+            ("narval", "/remote/fir/artifacts", shared),
+        ]
+        * 2
+    )
+    assert len(state["sync_attempts"]) == 2
+    first, second = state["sync_attempts"]
+    assert first["status"] == "failed"
+    assert first["transfers"][1]["error_type"] == "OSError"
+    assert second["status"] == "success"
+    assert [item["role"] for item in second["transfers"]] == ["campaign", "artifacts"]
+    assert all(item["stdout"].startswith("copied") for item in second["transfers"])
+    assert second["final_sync"] is True
+    assert state["artifact_path_mapping"] == {
+        "remote": "/remote/fir/artifacts",
+        "local": str(shared),
+    }
+    assert verifications == [
+        {
+            "remote_artifact_directory": "/remote/fir/artifacts",
+            "local_artifact_directory": shared,
+        }
+    ]
+
+
+@pytest.mark.parametrize("only", ["remote", "local"])
+def test_artifact_directory_options_are_a_required_pair(tmp_path, only):
+    options = {f"{only}_artifact_directory": "/shared" if only == "remote" else tmp_path}
+    with pytest.raises(ValidationError, match="provided together"):
+        monitor(
+            host="narval",
+            remote_directory="/remote/narval",
+            local_directory=tmp_path / "control",
+            remote_environment="/env",
+            remote_python="/python",
+            **options,
+        )
+    with pytest.raises(ValidationError, match="provided together"):
+        verify_local_results(tmp_path, "/remote", {"jobs": []}, **options)
+
+
+@pytest.mark.parametrize(
+    "remote_artifacts,local_relative",
+    [
+        ("/remote/narval/artifacts", "shared"),
+        ("/remote", "shared"),
+        ("/shared", "control/artifacts"),
+    ],
+)
+def test_separate_sync_roots_cannot_overlap_and_duplicate_artifacts(
+    tmp_path, remote_artifacts, local_relative
+):
+    with pytest.raises(ValidationError, match="must not overlap"):
+        monitor(
+            host="narval",
+            remote_directory="/remote/narval",
+            local_directory=tmp_path / "control",
+            remote_artifact_directory=remote_artifacts,
+            local_artifact_directory=tmp_path / local_relative,
+            remote_environment="/env",
+            remote_python="/python",
+        )
+
+
+def test_separate_root_collector_still_refuses_duplicate_campaign_monitor(tmp_path):
+    control = tmp_path / "narval"
+    lock_path = control / ".local-monitor/monitor.lock"
+    lock_path.parent.mkdir(parents=True)
+    with lock_path.open("a") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        with pytest.raises(ValidationError, match="already holds"):
+            monitor(
+                host="narval",
+                remote_directory="/remote/narval",
+                local_directory=control,
+                remote_artifact_directory="/remote/fir/artifacts",
+                local_artifact_directory=tmp_path / "fir/artifacts",
+                remote_environment="/env",
+                remote_python="/python",
+            )
+
+
+def test_cli_passes_the_artifact_mapping_pair(tmp_path, monkeypatch):
+    seen = []
+    result = tmp_path / "monitor.json"
+    write_json(result, {"status": "complete"})
+
+    def fake_monitor(**options):
+        seen.append(options)
+        return result
+
+    monkeypatch.setattr("clir_benchmark.cluster_monitor.monitor", fake_monitor)
+    assert (
+        main(
+            [
+                "--host",
+                "narval",
+                "--remote-directory",
+                "/remote/control",
+                "--local-directory",
+                str(tmp_path / "control"),
+                "--remote-artifact-directory",
+                "/remote/shared/artifacts",
+                "--local-artifact-directory",
+                str(tmp_path / "shared/artifacts"),
+                "--remote-environment",
+                "/env",
+                "--remote-python",
+                "/python",
+            ]
+        )
+        == 0
+    )
+    assert seen[0]["remote_artifact_directory"] == "/remote/shared/artifacts"
+    assert seen[0]["local_artifact_directory"] == Path(tmp_path / "shared/artifacts")
