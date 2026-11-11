@@ -349,6 +349,28 @@ class CandidateSelectionConfig:
 
 
 @dataclass(frozen=True)
+class GenerationCacheReuseConfig:
+    """Explicit prior completion limits whose finished outputs may be reused."""
+
+    translation_max_completion_tokens: tuple[int, ...] = ()
+    hyde_max_completion_tokens: tuple[int, ...] = ()
+
+    def __post_init__(self) -> None:
+        for name in ("translation_max_completion_tokens", "hyde_max_completion_tokens"):
+            values = getattr(self, name)
+            if not isinstance(values, (tuple, list)) or any(
+                isinstance(value, bool) or not isinstance(value, int) or value <= 0
+                for value in values
+            ):
+                raise ValidationError(
+                    f"generation_cache_reuse.{name} must be a list of positive integers"
+                )
+            if len(set(values)) != len(values):
+                raise ValidationError(f"generation_cache_reuse.{name} cannot contain duplicates")
+            object.__setattr__(self, name, tuple(values))
+
+
+@dataclass(frozen=True)
 class Config:
     output_dir: Path
     datasets: dict[str, DatasetSpec]
@@ -369,6 +391,9 @@ class Config:
     hybrid: HybridConfig = field(default_factory=HybridConfig)
     translation: TranslationConfig = field(default_factory=TranslationConfig)
     hyde: HyDEConfig = field(default_factory=HyDEConfig)
+    generation_cache_reuse: GenerationCacheReuseConfig = field(
+        default_factory=GenerationCacheReuseConfig
+    )
     adore: ADOREConfig = field(default_factory=ADOREConfig)
     reranker: RerankerConfig = field(default_factory=RerankerConfig)
 
@@ -486,6 +511,9 @@ def load_config(path: str | Path) -> Config:
             hybrid=HybridConfig(**raw.pop("hybrid", {})),
             translation=TranslationConfig(**raw.pop("translation", {})),
             hyde=HyDEConfig(**raw.pop("hyde", {})),
+            generation_cache_reuse=GenerationCacheReuseConfig(
+                **raw.pop("generation_cache_reuse", {})
+            ),
             adore=ADOREConfig(**raw.pop("adore", {})),
             reranker=RerankerConfig(**raw.pop("reranker", {})),
             **raw,

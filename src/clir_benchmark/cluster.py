@@ -254,8 +254,9 @@ def write_plan(
             'export MKL_NUM_THREADS="${SLURM_CPUS_PER_TASK:-1}"',
             'export OPENBLAS_NUM_THREADS="${SLURM_CPUS_PER_TASK:-1}"',
             "export TOKENIZERS_PARALLELISM=false",
-            f"export HF_HUB_OFFLINE={0 if kind == 'prepare' else 1}",
-            f"export TRANSFORMERS_OFFLINE={0 if kind == 'prepare' else 1}",
+            # Both preparation stages discover pinned QA files through the Hub.
+            f"export HF_HUB_OFFLINE={0 if kind in {'prepare', 'prepare-selected'} else 1}",
+            f"export TRANSFORMERS_OFFLINE={0 if kind in {'prepare', 'prepare-selected'} else 1}",
             shlex.join(command),
             "",
         ]

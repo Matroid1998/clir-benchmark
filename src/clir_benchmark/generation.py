@@ -3,10 +3,12 @@ from __future__ import annotations
 import fcntl
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.request
 from collections.abc import Callable
+from contextlib import ExitStack
 from pathlib import Path
 
 from .artifacts import rows
@@ -173,6 +175,38 @@ def response_text(response: dict, *, label: str) -> str:
     return message.get("content")
 
 
+def _lower_completion_budget(payload: dict, candidate: dict) -> bool:
+    current = payload.get("max_completion_tokens")
+    previous = candidate.get("max_completion_tokens")
+    return (
+        isinstance(current, int)
+        and not isinstance(current, bool)
+        and isinstance(previous, int)
+        and not isinstance(previous, bool)
+        and 0 < previous < current
+        and {key: value for key, value in payload.items() if key != "max_completion_tokens"}
+        == {key: value for key, value in candidate.items() if key != "max_completion_tokens"}
+    )
+
+
+def completion_budget_candidates(
+    payload: dict, budgets: tuple[int, ...], key_factory: Callable[[dict], str]
+) -> dict[str, dict]:
+    """Construct explicitly selected historical requests; never change a live payload."""
+    candidates = {}
+    for budget in budgets:
+        candidate = {**payload, "max_completion_tokens": budget}
+        if not _lower_completion_budget(payload, candidate):
+            raise ValidationError(
+                "Reusable completion budgets must be positive integers below the current limit"
+            )
+        key = key_factory(candidate)
+        if key in candidates:
+            raise ValidationError("Reusable completion budgets must identify distinct requests")
+        candidates[key] = candidate
+    return candidates
+
+
 class RequestCache:
     """Shared durable single-request execution; callers own namespaces and request keys."""
 
@@ -201,23 +235,149 @@ class RequestCache:
         parse_response: Callable,
         retry_failed: bool,
         description: str,
+        compatible_requests: dict[str, dict] | None = None,
     ) -> tuple[dict, bool]:
-        path = self.root / f"{request_key}.json"
-        with (self.root / f"{request_key}.lock").open("a") as lock:
-            try:
-                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            except BlockingIOError:
+        compatible_requests = compatible_requests or {}
+        for key, candidate in compatible_requests.items():
+            if (
+                key == request_key
+                or not isinstance(candidate, dict)
+                or not _lower_completion_budget(payload, candidate)
+            ):
                 raise ValidationError(
-                    f"{self.label} request {request_key} is running in another process"
-                ) from None
+                    "Compatible requests may differ only by a lower max_completion_tokens limit"
+                )
+        with ExitStack() as stack:
+            locked = set()
+
+            def lock_request(key):
+                if not isinstance(key, str) or not re.fullmatch(
+                    r"[A-Za-z0-9][A-Za-z0-9_-]{0,255}", key
+                ):
+                    raise ValidationError("Invalid generation request key")
+                if key not in locked:
+                    lock = stack.enter_context((self.root / f"{key}.lock").open("a"))
+                    try:
+                        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    except BlockingIOError:
+                        raise ValidationError(
+                            f"{self.label} request {key} is running in another process"
+                        ) from None
+                    locked.add(key)
+
+            def load_state(key, expected_payload=None):
+                lock_request(key)
+                try:
+                    value = read_json(self.root / f"{key}.json")
+                except (OSError, ValueError) as exc:
+                    raise ValidationError(
+                        f"Missing or corrupt generation request history: {key}"
+                    ) from exc
+                if (
+                    not isinstance(value, dict)
+                    or value.get("request_key") != key
+                    or not isinstance(value.get("payload"), dict)
+                    or (expected_payload is not None and value["payload"] != expected_payload)
+                    or not isinstance(value.get("attempts"), list)
+                    or not value["attempts"]
+                    or value.get("status") not in {"pending", "failed", "success"}
+                    or any(
+                        not isinstance(attempt, dict)
+                        or attempt.get("status") not in {"pending", "failed", "success"}
+                        or "seconds" not in attempt
+                        or "response" not in attempt
+                        for attempt in value["attempts"]
+                    )
+                ):
+                    raise ValidationError(
+                        f"Corrupt or mismatched generation request history: {key}"
+                    )
+                if value["status"] == "success":
+                    try:
+                        text = parse_response(value["attempts"][-1]["response"])
+                    except (ValidationError, KeyError, IndexError, TypeError, ValueError) as exc:
+                        raise ValidationError(
+                            f"Invalid successful generation request history: {key}"
+                        ) from exc
+                    if value["attempts"][-1]["status"] != "success" or text != value.get("text"):
+                        raise ValidationError(f"Corrupt successful generation request text: {key}")
+                return value
+
+            def materialize(value):
+                # Each physical API attempt lives in one file. Expand references
+                # only in the returned view used for per-query accounting.
+                seen, active, attempts = set(), set(), []
+
+                def visit(current):
+                    key = current["request_key"]
+                    if key in active:
+                        raise ValidationError("Generation request history contains a cycle")
+                    if key in seen:
+                        return
+                    active.add(key)
+                    parents = current.get("prior_request_keys", [])
+                    if (
+                        not isinstance(parents, list)
+                        or any(not isinstance(parent, str) for parent in parents)
+                        or len(set(parents)) != len(parents)
+                    ):
+                        raise ValidationError("Invalid generation request history references")
+                    for parent in parents:
+                        if parent in active:
+                            raise ValidationError("Generation request history contains a cycle")
+                        previous = load_state(parent)
+                        if not _lower_completion_budget(current["payload"], previous["payload"]):
+                            raise ValidationError(
+                                "Generation request history has incompatible payloads"
+                            )
+                        if previous["status"] == "success":
+                            raise ValidationError(
+                                "A failed-request lineage cannot include an unused success"
+                            )
+                        visit(previous)
+                    attempts.extend(current["attempts"])
+                    active.remove(key)
+                    seen.add(key)
+
+                visit(value)
+                return {**value, "attempts": attempts}
+
+            for key in sorted({request_key, *compatible_requests}):
+                lock_request(key)
+            path = self.root / f"{request_key}.json"
             state = (
                 read_json(path)
                 if path.exists()
                 else {"request_key": request_key, "payload": payload, "attempts": []}
             )
+            if path.exists() and (compatible_requests or state.get("prior_request_keys")):
+                state = load_state(request_key, payload)
+            if not path.exists():
+                candidates = [
+                    load_state(key, candidate)
+                    for key, candidate in compatible_requests.items()
+                    if (self.root / f"{key}.json").exists()
+                ]
+                if len(candidates) > 1:
+                    raise ValidationError(
+                        "Multiple compatible request histories require an explicit single source"
+                    )
+                if candidates:
+                    previous = candidates[0]
+                    history = materialize(previous)
+                    if previous["status"] == "success":
+                        self.cache_hits += 1
+                        return history, False
+                    if not retry_failed:
+                        raise ValidationError(
+                            f"Previous failed/interrupted {self.label.lower()}: {previous['request_key']}. Inspect it, then use {self.command} --retry-failed to retry explicitly."
+                        )
+                    state["prior_request_keys"] = [previous["request_key"]]
+            # Validate the accounting lineage before any paid request.
+            history = materialize(state)
             if state.get("status") == "success":
                 self.cache_hits += 1
-                return state, False
+                return history, False
             if state["attempts"] and not retry_failed:
                 raise ValidationError(
                     f"Previous failed/interrupted {self.label.lower()}: {path}. Inspect it, then use {self.command} --retry-failed to retry explicitly."
@@ -231,6 +391,7 @@ class RequestCache:
 
             attempt = {"status": "pending", "seconds": None, "response": None}
             state["attempts"].append(attempt)
+            state["status"] = "pending"
             self.new_attempts.append({"request_key": request_key, "attempt": attempt})
             save()  # Persist pending before the API call, including requests interrupted by a crash.
             started = time.perf_counter()
@@ -249,7 +410,7 @@ class RequestCache:
                 ) from exc
             attempt["status"] = state["status"] = "success"
             save()
-            return state, True
+            return materialize(state), True
 
 
 def attempt_accounting(state: dict, config: GenerationConfig, *, seconds_key: str) -> dict:

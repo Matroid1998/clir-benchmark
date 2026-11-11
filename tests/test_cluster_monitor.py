@@ -26,6 +26,25 @@ def test_remote_status_only_runs_read_only_command_and_quotes_paths():
     assert kwargs["timeout"] <= 60
 
 
+def test_nested_campaign_status_can_use_the_shared_project():
+    calls = []
+
+    def run(command, **kwargs):
+        calls.append(command)
+        return SimpleNamespace(returncode=0, stdout=json.dumps({"jobs": []}), stderr="")
+
+    fetch_status(
+        "fir",
+        "/remote/run/selected",
+        "/env",
+        "/python",
+        project_directory="/remote/run/project",
+        runner=run,
+    )
+    assert "cd /remote/run/project" in calls[0][-1]
+    assert "/remote/run/selected/submission.json" in calls[0][-1]
+
+
 def test_sync_is_non_destructive_and_excludes_partial_artifacts_and_secrets(tmp_path):
     commands = []
 
@@ -100,6 +119,85 @@ def test_local_verification_relocates_remote_paths_and_checks_every_artifact(tmp
     assert result["problems"][0]["reason"] == "checksum_mismatch"
 
 
+def test_variant_reports_use_shared_root_and_resolved_plan_languages(tmp_path, monkeypatch):
+    remote, original, artifact = local_result(tmp_path)
+    nested = tmp_path / "selected"
+    languages = ["en", "de", "es", "fr", "zh"]
+    write_json(
+        nested / "plan.json",
+        {"output_languages": {"corpus": {"translation": languages, "hyde": languages}}},
+    )
+    stages = []
+    for number in range(11):
+        report = tmp_path / f"artifacts/reports/corpus/variant{number}"
+        for name in ("report.json", "per_query.json", "mteb.json"):
+            write_json(report / name, {})
+        write_json(
+            report / "analysis_manifest.json",
+            {
+                "artifact_root": "../../..",
+                "files": [{"path": "corpus/source.json", "sha256": file_digest(artifact)}],
+            },
+        )
+        stages.append(
+            {
+                "stage": f"evaluate-variant-{number}",
+                "status": "success",
+                "result": remote + f"/artifacts/reports/corpus/variant{number}",
+            }
+        )
+    journal = nested / "job_status/variant/200.json"
+    write_json(
+        journal,
+        {
+            "status": "success",
+            "corpus": "corpus",
+            "configuration": {
+                "baselines": ["dense", "translate-dense", "hyde-dense"],
+                "target_languages": [],
+            },
+            "stages": stages,
+        },
+    )
+    status = {
+        "all_terminal": True,
+        "all_succeeded": True,
+        "jobs": [
+            {
+                "label": "variant",
+                "kind": "variant-score",
+                "corpus": "corpus",
+                "state": "COMPLETED",
+                "stage_journals": [{"path": remote + "/selected/job_status/variant/200.json"}],
+            }
+        ],
+    }
+    digests = []
+
+    def counted_digest(path):
+        digests.append(path)
+        return file_digest(path)
+
+    monkeypatch.setattr("clir_benchmark.cluster_monitor.file_digest", counted_digest)
+    cache = {}
+    assert (
+        verify_local_results(tmp_path, remote, original, checksum_cache=cache)["status"]
+        == "success"
+    )
+    result = verify_local_results(tmp_path, remote, status, checksum_cache=cache)
+    assert result["status"] == "success"
+    assert result["reports_verified"] == 11
+    assert digests == [artifact]
+    with pytest.raises(ValidationError, match="outside the campaign"):
+        verify_local_results(nested, remote + "/selected", status)
+    stages.pop()
+    data = read_json(journal)
+    data["stages"] = stages
+    write_json(journal, data)
+    result = verify_local_results(tmp_path, remote, status)
+    assert {"reason": "report_count", "expected": 11, "actual": 10} in result["problems"]
+
+
 def test_missing_journal_or_failed_scheduler_job_cannot_pass(tmp_path):
     remote, status, _ = local_result(tmp_path)
     status["jobs"][0]["state"] = "FAILED"
@@ -165,6 +263,98 @@ def test_terminal_failures_are_synced_but_never_reported_as_success(tmp_path):
         verifier=lambda *a: {"status": "failed", "problems": ["job failed"]},
     )
     assert read_json(path)["status"] == "complete_with_failures"
+
+
+def test_combined_monitor_waits_for_both_campaigns_and_syncs_parent_once(tmp_path):
+    polls, syncs, verifications = [], [], []
+    child_polls = 0
+
+    def poll(host, remote, env, python, **kwargs):
+        nonlocal child_polls
+        polls.append((remote, kwargs))
+        if remote == "/remote/run":
+            return {"all_terminal": True, "all_succeeded": False, "jobs": [{"state": "CANCELLED"}]}
+        child_polls += 1
+        done = child_polls > 1
+        return {
+            "all_terminal": done,
+            "all_succeeded": done,
+            "jobs": [{"state": "COMPLETED" if done else "RUNNING"}],
+        }
+
+    def sync(host, remote, local):
+        syncs.append((remote, local))
+        return {"status": "success"}
+
+    def verify(local, remote, status):
+        verifications.append((local, remote, status))
+        if status["all_succeeded"]:
+            return {"status": "success", "reports_verified": 264, "problems": []}
+        return {
+            "status": "failed",
+            "reports_verified": 42,
+            "problems": [{"reason": "scheduler_state", "state": "CANCELLED"}],
+        }
+
+    path = monitor(
+        host="fir",
+        remote_directory="/remote/run",
+        local_directory=tmp_path,
+        remote_environment="/env",
+        remote_python="/python",
+        interval=0.01,
+        additional_campaigns=("selected",),
+        status_reader=poll,
+        synchronizer=sync,
+        verifier=verify,
+    )
+    state = read_json(path)
+    assert state["status"] == "complete"
+    assert state["campaigns"]["selected"]["status"] == "complete"
+    assert state["campaigns"]["."]["status"] == "complete_with_failures"
+    assert state["verification"]["primary_cancellations_retained"] is True
+    assert state["verification"]["reports_verified"] == 306
+    assert child_polls >= 2
+    assert all(remote == "/remote/run" and local == tmp_path for remote, local in syncs)
+    assert len(verifications) == 2
+    assert all(remote == "/remote/run" for _, remote, _ in verifications)
+    assert any(options == {"project_directory": "/remote/run/project"} for _, options in polls)
+    assert (tmp_path / ".local-monitor/campaigns/selected/verification.json").is_file()
+
+
+def test_combined_monitor_does_not_hide_additional_campaign_failures(tmp_path):
+    status = {"all_terminal": True, "all_succeeded": False, "jobs": [{"state": "CANCELLED"}]}
+    path = monitor(
+        host="fir",
+        remote_directory="/remote/run",
+        local_directory=tmp_path,
+        remote_environment="/env",
+        remote_python="/python",
+        interval=0.01,
+        additional_campaigns=("selected",),
+        status_reader=lambda *a, **k: status,
+        synchronizer=lambda *a: {"status": "success"},
+        verifier=lambda *a: {
+            "status": "failed",
+            "problems": [{"reason": "scheduler_state", "state": "CANCELLED"}],
+        },
+    )
+    state = read_json(path)
+    assert state["status"] == "complete_with_failures"
+    assert state["campaigns"]["selected"]["status"] == "complete_with_failures"
+
+
+@pytest.mark.parametrize("name", ["/outside", "../outside", ".", "nested/../outside", ".hidden"])
+def test_additional_campaign_paths_cannot_escape_root(tmp_path, name):
+    with pytest.raises(ValidationError, match="relative subdirectories"):
+        monitor(
+            host="fir",
+            remote_directory="/remote/run",
+            local_directory=tmp_path,
+            remote_environment="/env",
+            remote_python="/python",
+            additional_campaigns=(name,),
+        )
 
 
 @pytest.mark.parametrize("host", ["fir;rm", "-oProxyCommand=bad", "fir:/tmp", "user@fir\nexit"])

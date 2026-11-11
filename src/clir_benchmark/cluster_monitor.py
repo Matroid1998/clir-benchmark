@@ -31,7 +31,13 @@ def _validate_host(host):
 
 
 def fetch_status(
-    host, remote_directory, remote_environment, remote_python, *, runner=subprocess.run
+    host,
+    remote_directory,
+    remote_environment,
+    remote_python,
+    *,
+    runner=subprocess.run,
+    project_directory=None,
 ):
     """Ask the remote package for scheduler status; never changes scheduled jobs."""
     _validate_host(host)
@@ -40,7 +46,7 @@ def fetch_status(
         [
             "set -e",
             "source " + shlex.quote(remote_environment),
-            "cd " + shlex.quote(str(root / "project")),
+            "cd " + shlex.quote(str(project_directory or root / "project")),
             shlex.join(
                 [
                     remote_python,
@@ -117,13 +123,49 @@ def sync_once(host, remote_directory, local_directory, *, runner=subprocess.run,
     }
 
 
-def verify_local_results(local_directory: Path, remote_directory: str, status: dict) -> dict:
+def _expected_reports(job: dict, journal: dict, journal_path: Path) -> int:
+    configuration = journal.get("configuration", {})
+    baselines = set(configuration.get("baselines", ["dense", "hybrid"]))
+    if job["kind"] in {"model", "score"}:
+        return len({"dense", "hybrid"} & baselines)
+    if job["kind"] == "bm25":
+        return 1
+    if job["kind"] != "variant-score":
+        return 0
+    # The plan records resolved output languages, including defaults derived from
+    # corpus metadata. Reading it never loads models or performs generation.
+    plan_path = journal_path.parents[2] / "plan.json"
+    corpus = job.get("corpus") or journal.get("corpus")
+    languages = (
+        read_json(plan_path).get("output_languages", {}).get(corpus, {})
+        if plan_path.is_file()
+        else {}
+    )
+    total = int("dense" in baselines)
+    for baseline, name in (("translate-dense", "translation"), ("hyde-dense", "hyde")):
+        if baseline not in baselines:
+            continue
+        selected = languages.get(name)
+        if selected is None:
+            selected = (
+                configuration.get("hyde", {}).get("output_languages") if name == "hyde" else None
+            ) or configuration.get("target_languages")
+        if not selected:
+            raise ValidationError(f"Missing resolved {name} languages for {job['label']}")
+        total += len(set(selected))
+    return total
+
+
+def verify_local_results(
+    local_directory: Path, remote_directory: str, status: dict, *, checksum_cache=None
+) -> dict:
     """Verify every completed stage journal, report, MTEB file and indexed artifact."""
     local = Path(local_directory).resolve()
     remote = Path(remote_directory)
     problems = []
     reports = set()
-    verified = {}
+    verified = set()
+    checksums = {} if checksum_cache is None else checksum_cache
     expected_reports = 0
 
     def relocated(value):
@@ -153,13 +195,7 @@ def verify_local_results(local_directory: Path, remote_directory: str, status: d
                 problems.append({"job": job["label"], "reason": "missing_file", "path": str(path)})
                 continue
             journal = read_json(path)
-            if job["kind"] in {"model", "score"}:
-                expected_reports += len(
-                    {"dense", "hybrid"}
-                    & set(journal.get("configuration", {}).get("baselines", ["dense", "hybrid"]))
-                )
-            elif job["kind"] == "bm25":
-                expected_reports += 1
+            expected_reports += _expected_reports(job, journal, path)
             if journal["status"] != "success":
                 problems.append({"job": job["label"], "reason": "stage_failure", "path": str(path)})
             for stage in journal.get("stages", []):
@@ -183,9 +219,10 @@ def verify_local_results(local_directory: Path, remote_directory: str, status: d
             if not path.is_file():
                 problems.append({"reason": "missing_inventory_file", "path": str(path)})
                 continue
-            actual = verified.setdefault(path, None)
+            actual = checksums.get(path)
             if actual is None:
-                actual = verified[path] = file_digest(path)
+                actual = checksums[path] = file_digest(path)
+            verified.add(path)
             if actual != item["sha256"]:
                 problems.append({"reason": "checksum_mismatch", "path": str(path)})
     if len(reports) != expected_reports:
@@ -210,6 +247,7 @@ def monitor(
     remote_environment: str,
     remote_python: str,
     interval: float = 30,
+    additional_campaigns: tuple[str, ...] = (),
     status_reader=fetch_status,
     synchronizer=sync_once,
     verifier=verify_local_results,
@@ -218,6 +256,19 @@ def monitor(
     if not 0 < interval <= 60:
         raise ValidationError("Monitor interval must be greater than zero and at most 60 seconds")
     _validate_host(host)
+    campaigns = ["."]
+    for value in additional_campaigns:
+        relative = Path(value)
+        if (
+            relative.is_absolute()
+            or not relative.parts
+            or any(part.startswith(".") for part in relative.parts)
+        ):
+            raise ValidationError(
+                "Additional campaigns must be relative subdirectories without dot components"
+            )
+        if str(relative) not in campaigns:
+            campaigns.append(str(relative))
     local = Path(local_directory).resolve()
     state_directory = local / ".local-monitor"
     state_directory.mkdir(parents=True, exist_ok=True)
@@ -243,6 +294,9 @@ def monitor(
         "status_errors": [],
         "path_mapping": {"remote": remote_directory, "local": str(local)},
     }
+    if additional_campaigns:
+        state["additional_campaigns"] = campaigns[1:]
+        state["campaigns"] = {}
     if state_path.exists():
         previous = read_json(state_path)
         _atomic(state_directory / ("previous-" + str(previous["pid"]) + ".json"), previous)
@@ -261,13 +315,96 @@ def monitor(
         state["updated_at"] = datetime.now(UTC).isoformat()
         _atomic(state_path, state)
 
+    def poll_campaigns():
+        if len(campaigns) == 1:
+            return status_reader(host, remote_directory, remote_environment, remote_python)
+
+        def poll(name):
+            root = str(Path(remote_directory) / name)
+            options = (
+                {"project_directory": str(Path(remote_directory) / "project")}
+                if name != "."
+                else {}
+            )
+            return status_reader(host, root, remote_environment, remote_python, **options)
+
+        # SSH timeouts run concurrently, so a disconnected host does not multiply
+        # the polling delay by the number of campaigns.
+        with ThreadPoolExecutor(max_workers=len(campaigns)) as polls:
+            futures = {name: polls.submit(poll, name) for name in campaigns}
+            statuses = {name: future.result() for name, future in futures.items()}
+        for name, status in statuses.items():
+            _atomic(state_directory / "campaigns" / name / "latest_status.json", status)
+            state["campaigns"][name] = {
+                "all_terminal": status["all_terminal"],
+                "all_succeeded": status.get("all_succeeded", False),
+                "scheduler_counts": dict(Counter(job["state"] for job in status["jobs"])),
+            }
+        return {
+            "schema": 1,
+            "campaigns": statuses,
+            "jobs": [
+                {**job, "campaign": name}
+                for name, status in statuses.items()
+                for job in status["jobs"]
+            ],
+            "all_terminal": all(status["all_terminal"] for status in statuses.values()),
+            "all_succeeded": all(status.get("all_succeeded") for status in statuses.values()),
+        }
+
+    def verify_campaigns(status):
+        if len(campaigns) == 1:
+            return verifier(local, remote_directory, status)
+        checksums = {}
+        results = {}
+        for name, campaign_status in status["campaigns"].items():
+            try:
+                options = {"checksum_cache": checksums} if verifier is verify_local_results else {}
+                result = verifier(local, remote_directory, campaign_status, **options)
+            except Exception as exc:
+                result = {
+                    "status": "failed",
+                    "problems": [
+                        {
+                            "reason": "verification_error",
+                            "error_type": type(exc).__name__,
+                            "error": str(exc),
+                        }
+                    ],
+                }
+            results[name] = result
+            _atomic(state_directory / "campaigns" / name / "verification.json", result)
+            state["campaigns"][name].update(
+                status="complete" if result["status"] == "success" else "complete_with_failures",
+                verification=result,
+            )
+        primary = results["."]
+        primary_cancellations_only = bool(primary.get("problems")) and all(
+            item.get("reason") == "scheduler_state" and item.get("state") == "CANCELLED"
+            for item in primary["problems"]
+        )
+        successful = all(
+            result["status"] == "success" or (name == "." and primary_cancellations_only)
+            for name, result in results.items()
+        )
+        return {
+            "status": "success" if successful else "failed",
+            "campaigns": results,
+            "reports_verified": sum(
+                result.get("reports_verified", 0) for result in results.values()
+            ),
+            "unique_artifact_checksums_verified": len(checksums),
+            "primary_cancellations_retained": primary_cancellations_only,
+            "notes": "Each campaign retains its own scheduler and verification outcome. Terminal cancellations in the primary campaign do not fail additional campaigns; other verification errors do. Shared files are synchronized once and checksummed once.",
+        }
+
     event("monitor_started", pid=os.getpid())
     save()
     try:
         while True:
             began = time.monotonic()
             try:
-                latest = status_reader(host, remote_directory, remote_environment, remote_python)
+                latest = poll_campaigns()
                 _atomic(state_directory / "latest_status.json", latest)
                 counts = dict(Counter(job["state"] for job in latest["jobs"]))
                 state["scheduler_counts"] = counts
@@ -297,7 +434,7 @@ def monitor(
                 future = None
                 if final_sync and result["status"] == "success" and terminal_observed:
                     try:
-                        verification = verifier(local, remote_directory, latest)
+                        verification = verify_campaigns(latest)
                     except Exception as exc:
                         verification = {
                             "status": "failed",
@@ -344,6 +481,13 @@ def main(argv=None):
     parser.add_argument("--remote-environment", required=True)
     parser.add_argument("--remote-python", required=True)
     parser.add_argument("--interval", type=float, default=30)
+    parser.add_argument(
+        "--additional-campaign",
+        action="append",
+        dest="additional_campaigns",
+        default=[],
+        help="Also monitor a campaign subdirectory; synchronize and verify the shared parent tree once",
+    )
     args = parser.parse_args(argv)
     path = monitor(**vars(args))
     print(path)

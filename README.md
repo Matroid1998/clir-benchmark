@@ -583,6 +583,24 @@ eight embedding models. Remove a baseline from `baselines` or use repeated
 `--baseline` arguments to choose a subset; disabled generation methods require no
 credentials and make no calls.
 
+The selected-document configuration allows up to **8,192 completion tokens** for
+each new translation or HyDE request, including reasoning tokens. It explicitly
+reuses successful requests from the earlier 2,048-token limit through
+`generation_cache_reuse.translation_max_completion_tokens: [2048]` and
+`generation_cache_reuse.hyde_max_completion_tokens: [2048]`. Reuse requires the
+same endpoint, model, prompt, schema, and other request options. The selected
+policy and new limit give generation artifacts distinct identities; their records
+retain the original request keys and actual request parameters. Failed earlier
+requests require `--retry-failed`, and their usage and costs remain in each
+query's accounting through references to the original audits. Physical API
+attempts are stored once, and invocation accounting includes only new calls.
+
+This reuse policy is opt-in elsewhere. Set either list to `[]` to disable it,
+or use repeated `--reuse-translation-token-limit 2048` and
+`--reuse-hyde-token-limit 2048` CLI options. `--no-generation-cache-reuse` disables
+both policies. Corpus and document embeddings remain reusable when the token
+limit changes; generation still only runs through an explicit stage command.
+
 Validation and planning are offline:
 
 ```bash

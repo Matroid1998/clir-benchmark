@@ -208,6 +208,10 @@ def test_document_plan_shares_generation_and_reuses_existing_document_jobs(tmp_p
         assert job["resources"]["gpus"] is None
         assert job["configuration"] == "/remote/models.yaml"
     assert all(job["model"] is None for kind in ("translate", "hyde") for job in by_kind[kind])
+    for job in data["jobs"]:
+        script = (path.parent / "scripts" / Path(job["script"]).name).read_text()
+        offline = 0 if job["kind"] == "prepare-selected" else 1
+        assert f"export HF_HUB_OFFLINE={offline}" in script
 
 
 @pytest.mark.parametrize(

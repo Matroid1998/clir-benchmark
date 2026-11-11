@@ -45,6 +45,20 @@ def _selection_arguments(command: argparse.ArgumentParser) -> None:
     command.add_argument(
         "--retrieval-unit", choices=("chunk", "document"), default=argparse.SUPPRESS
     )
+    for method in ("translation", "hyde"):
+        command.add_argument(
+            f"--reuse-{method}-token-limit",
+            type=int,
+            action="append",
+            default=argparse.SUPPRESS,
+            help="Explicitly reuse finished requests made at this lower completion limit; repeat for multiple limits",
+        )
+    command.add_argument(
+        "--no-generation-cache-reuse",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="Disable reuse across completion limits for both translation and HyDE",
+    )
 
 
 def _validation_source_ids(config, corpus, queries):
@@ -254,6 +268,28 @@ def main(argv: list[str] | None = None) -> int:
             )
         if hasattr(args, "retrieval_unit"):
             config = replace(config, retrieval_unit=args.retrieval_unit)
+        cache_reuse = config.generation_cache_reuse
+        if getattr(args, "no_generation_cache_reuse", False):
+            if any(
+                hasattr(args, f"reuse_{method}_token_limit") for method in ("translation", "hyde")
+            ):
+                raise ValidationError("Cannot enable and disable generation cache reuse together")
+            cache_reuse = replace(
+                cache_reuse,
+                translation_max_completion_tokens=(),
+                hyde_max_completion_tokens=(),
+            )
+        for method in ("translation", "hyde"):
+            if hasattr(args, f"reuse_{method}_token_limit"):
+                cache_reuse = replace(
+                    cache_reuse,
+                    **{
+                        f"{method}_max_completion_tokens": tuple(
+                            getattr(args, f"reuse_{method}_token_limit")
+                        )
+                    },
+                )
+        config = replace(config, generation_cache_reuse=cache_reuse)
         requested_models = getattr(args, "model", None) or config.models
         baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
         if args.command == "prepare-subset":

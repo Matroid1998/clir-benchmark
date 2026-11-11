@@ -14,6 +14,7 @@ from .generation import (
     ChatCompletionsClient,
     RequestCache,
     attempt_accounting,
+    completion_budget_candidates,
     completion_payload,
     eligible_inputs,
     parse_generated_text,
@@ -92,6 +93,13 @@ def translation_path(config: Config, corpus: str, target: str) -> Path:
         "inputs": translation_inputs(config, corpus),
         "prompts": prompts(corpus),
         "translation": asdict(config.translation),
+        **(
+            {
+                "cache_reuse_max_completion_tokens": config.generation_cache_reuse.translation_max_completion_tokens
+            }
+            if config.generation_cache_reuse.translation_max_completion_tokens
+            else {}
+        ),
     }
     return config.output_dir / "translations" / corpus / target / digest(identity)
 
@@ -155,7 +163,7 @@ def prepare_translations(
     inputs = translation_inputs(config, corpus)
     if not inputs:
         raise ValidationError("No eligible queries in ready settings to translate")
-    records = []
+    records, new_records = [], []
     new_attempts = 0
     started = time.perf_counter()
     cache_root = config.output_dir / "translation_requests"
@@ -191,31 +199,51 @@ def prepare_translations(
             )
             continue
         payload = request_payload(config.translation, corpus, row, target)
-        request_key = digest(
-            {
-                "schema": 1,
-                "query_id": row["id"],
-                "endpoint": config.translation.endpoint,
-                "payload": payload,
-            }
-        )
+
+        def key_for_payload(value, query_id=row["id"]):
+            return digest(
+                {
+                    "schema": 1,
+                    "query_id": query_id,
+                    "endpoint": config.translation.endpoint,
+                    "payload": value,
+                }
+            )
+
+        request_key = key_for_payload(payload)
         state, is_new = cache.complete(
             request_key,
             payload,
             parse_response=response_translation,
             retry_failed=retry_failed,
             description=f"{row['id']} -> {target}",
+            compatible_requests=completion_budget_candidates(
+                payload,
+                config.generation_cache_reuse.translation_max_completion_tokens,
+                key_for_payload,
+            ),
         )
         new_attempts += int(is_new)
         records.append(
             {
                 **record,
                 "text": state["text"],
-                "request_key": request_key,
+                "request_key": state["request_key"],
                 "status": "translated",
                 **attempt_accounting(state, config.translation, seconds_key="translation_seconds"),
             }
         )
+        if is_new:
+            new_records.append(
+                {
+                    **records[-1],
+                    **attempt_accounting(
+                        {"attempts": state["attempts"][-1:]},
+                        config.translation,
+                        seconds_key="translation_seconds",
+                    ),
+                }
+            )
     with new_directory(destination) as temporary:
         with ParquetSink(temporary / "queries.parquet", TRANSLATION_SCHEMA) as sink:
             for record in records:
@@ -227,6 +255,13 @@ def prepare_translations(
                 "corpus": corpus,
                 "translation_language": target,
                 "configuration": asdict(config.translation),
+                **(
+                    {
+                        "cache_reuse_max_completion_tokens": config.generation_cache_reuse.translation_max_completion_tokens
+                    }
+                    if config.generation_cache_reuse.translation_max_completion_tokens
+                    else {}
+                ),
                 "system_prompt": prompts(corpus)[0],
                 "user_template": prompts(corpus)[1],
                 "query_count": len(records),
@@ -235,6 +270,8 @@ def prepare_translations(
                 ),
                 "summary": translation_summary(records),
                 "new_api_attempts": new_attempts,
+                "new_work": translation_summary(new_records),
+                "cached_requests": cache.cache_hits,
                 "seconds": time.perf_counter() - started,
             },
         )

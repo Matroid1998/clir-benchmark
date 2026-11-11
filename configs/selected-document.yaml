@@ -59,6 +59,9 @@ baselines:
 - dense
 - translate-dense
 - hyde-dense
+generation_cache_reuse:
+  translation_max_completion_tokens: [2048]
+  hyde_max_completion_tokens: [2048]
 translation:
   endpoint: https://api.openai.com/v1/chat/completions
   model: gpt-6-luna
@@ -66,7 +69,7 @@ translation:
   response_format: json_schema
   request_options:
     reasoning_effort: low
-    max_completion_tokens: 2048
+    max_completion_tokens: 8192
   input_usd_per_million: 0.1
   cached_input_usd_per_million: 0.01
   output_usd_per_million: 0.5
@@ -83,7 +86,7 @@ hyde:
   response_format: json_schema
   request_options:
     reasoning_effort: low
-    max_completion_tokens: 2048
+    max_completion_tokens: 8192
   input_usd_per_million: 0.1
   cached_input_usd_per_million: 0.01
   output_usd_per_million: 0.5

@@ -15,6 +15,7 @@ from .generation import (
     ChatCompletionsClient,
     RequestCache,
     attempt_accounting,
+    completion_budget_candidates,
     completion_payload,
     eligible_inputs,
     nullable_sum,
@@ -88,6 +89,13 @@ def hyde_path(config: Config, corpus: str, output_language: str) -> Path:
         "inputs": hyde_inputs(config, corpus),
         "prompts": prompts(corpus),
         "hyde": asdict(config.hyde),
+        **(
+            {
+                "cache_reuse_max_completion_tokens": config.generation_cache_reuse.hyde_max_completion_tokens
+            }
+            if config.generation_cache_reuse.hyde_max_completion_tokens
+            else {}
+        ),
     }
     return config.output_dir / "hyde" / corpus / output_language / digest(identity)
 
@@ -167,6 +175,13 @@ def prepare_hyde(
         "artifact": str(destination),
         "artifact_reused": destination.exists(),
         "configuration": asdict(config.hyde),
+        **(
+            {
+                "cache_reuse_max_completion_tokens": config.generation_cache_reuse.hyde_max_completion_tokens
+            }
+            if config.generation_cache_reuse.hyde_max_completion_tokens
+            else {}
+        ),
         "status": "interrupted",
     }
     started = time.perf_counter()
@@ -214,21 +229,30 @@ def _prepare_hyde(
     records, new_records = [], []
     for row in inputs:
         payload = request_payload(config.hyde, corpus, row, output_language)
-        request_key = digest(
-            {
-                "schema": 1,
-                "corpus": corpus,
-                "query_id": row["id"],
-                "endpoint": config.hyde.endpoint,
-                "payload": payload,
-            }
-        )
+
+        def key_for_payload(value, query_id=row["id"]):
+            return digest(
+                {
+                    "schema": 1,
+                    "corpus": corpus,
+                    "query_id": query_id,
+                    "endpoint": config.hyde.endpoint,
+                    "payload": value,
+                }
+            )
+
+        request_key = key_for_payload(payload)
         state, is_new = cache.complete(
             request_key,
             payload,
             parse_response=response_hypothetical_document,
             retry_failed=retry_failed,
             description=f"{row['id']} -> {output_language}",
+            compatible_requests=completion_budget_candidates(
+                payload,
+                config.generation_cache_reuse.hyde_max_completion_tokens,
+                key_for_payload,
+            ),
         )
         record = {
             "id": row["id"],
@@ -236,7 +260,7 @@ def _prepare_hyde(
             "language": output_language,
             "source_language": row["question_language"],
             "original_text": row["question"],
-            "request_key": request_key,
+            "request_key": state["request_key"],
             **attempt_accounting(state, config.hyde, seconds_key="generation_seconds"),
         }
         records.append(record)
@@ -263,6 +287,13 @@ def _prepare_hyde(
                 "corpus": corpus,
                 "output_language": output_language,
                 "configuration": asdict(config.hyde),
+                **(
+                    {
+                        "cache_reuse_max_completion_tokens": config.generation_cache_reuse.hyde_max_completion_tokens
+                    }
+                    if config.generation_cache_reuse.hyde_max_completion_tokens
+                    else {}
+                ),
                 "system_prompt": prompts(corpus)[0],
                 "user_template": prompts(corpus)[1],
                 "query_count": len(records),
