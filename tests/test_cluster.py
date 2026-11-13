@@ -2,7 +2,10 @@ from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 
+import pyarrow as pa
+import pyarrow.parquet as pq
 import pytest
+from conftest import FixtureEncoder
 
 from clir_benchmark.cluster import (
     JobResources,
@@ -335,6 +338,8 @@ def test_document_query_embeddings_never_build_documents_or_disabled_modes(tmp_p
     run_job(
         config, "eurlex", "query-embed", alias="bge-m3", journal_directory=tmp_path / "journals"
     )
+    factories = [call.pop("encoder_factory") for call in calls]
+    assert factories[0] is factories[1]
     assert calls == [
         {"kind": "query", "hyde_language": "en"},
         {"kind": "query", "hyde_language": "fr"},
@@ -344,6 +349,91 @@ def test_document_query_embeddings_never_build_documents_or_disabled_modes(tmp_p
             config, "eurlex", "translate", language="en", journal_directory=tmp_path / "disabled"
         )
     assert not (tmp_path / "disabled").exists()
+
+
+def test_query_embedding_job_reuses_one_lazy_model_and_existing_variant_caches(
+    tmp_path, monkeypatch
+):
+    from clir_benchmark.pipeline import embed
+
+    _, config = document_plan(tmp_path)
+    relevance = config.relevance_dir("eurlex")
+    write_json(
+        relevance / "manifest.json",
+        {"selected_query_count": 1, "query_fingerprint": "original-query"},
+    )
+    pq.write_table(
+        pa.Table.from_pylist([{"id": "q1", "question": "original", "question_language": "en"}]),
+        relevance / "queries.parquet",
+    )
+
+    def generation_fixture(cfg, corpus, language, *, hyde=False):
+        label = f"{'hyde' if hyde else 'translation'}-{language}"
+        return (
+            None,
+            [{"id": "q1", "text": label, "language": language}],
+            {"query_count": 1, "passage_fingerprint" if hyde else "query_fingerprint": label},
+        )
+
+    monkeypatch.setattr("clir_benchmark.pipeline.load_translations", generation_fixture)
+    monkeypatch.setattr(
+        "clir_benchmark.pipeline.load_hyde", lambda *args: generation_fixture(*args, hyde=True)
+    )
+    for method in (
+        "clir_benchmark.translation.prepare_translations",
+        "clir_benchmark.hyde.prepare_hyde",
+    ):
+        monkeypatch.setattr(method, lambda *a, **k: pytest.fail("Embedding called generation"))
+
+    # A resumed job must reuse completed variants without loading their models.
+    original = embed(config, "eurlex", "bge-m3", kind="query", encoder_factory=FixtureEncoder)
+    translated = embed(
+        config,
+        "eurlex",
+        "bge-m3",
+        kind="query",
+        translation_language="en",
+        encoder_factory=FixtureEncoder,
+    )
+    preserved = {
+        path: (path / "manifest.json").read_bytes()
+        for path in (original["query"], translated["query"])
+    }
+    instances, encoded = [], []
+
+    class OneModel(FixtureEncoder):
+        def __init__(self, *args, **kwargs):
+            assert not instances, "A previous variant's model is still resident"
+            super().__init__(*args, **kwargs)
+            instances.append(self)
+
+        def encode(self, texts, kind):
+            encoded.append((self, texts, kind))
+            return super().encode(texts, kind)
+
+    monkeypatch.setattr("clir_benchmark.encoders.HuggingFaceEncoder", OneModel)
+    journal = run_job(
+        config, "eurlex", "query-embed", alias="bge-m3", journal_directory=tmp_path / "journals"
+    )
+    assert len(instances) == 1
+    assert encoded == [
+        (instances[0], ["translation-fr"], "query"),
+        (instances[0], ["hyde-en"], "document"),
+        (instances[0], ["hyde-fr"], "document"),
+    ]
+    assert read_json(journal)["encoder_lifecycle"]["model_load_count"] == 1
+    assert all((path / "manifest.json").read_bytes() == data for path, data in preserved.items())
+
+    # All variants now exist: no second model, embedding call, or API call is allowed.
+    cached_journal = run_job(
+        config, "eurlex", "query-embed", alias="bge-m3", journal_directory=tmp_path / "cached"
+    )
+    assert len(instances) == 1
+    assert len(encoded) == 3
+    assert read_json(cached_journal)["encoder_lifecycle"]["model_load_count"] == 0
+    assert [stage["result"] for stage in read_json(cached_journal)["stages"]] == [
+        stage["result"] for stage in read_json(journal)["stages"]
+    ]
 
 
 def test_document_preparation_never_rebuilds_corpus_or_index(tmp_path, monkeypatch):

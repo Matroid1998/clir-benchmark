@@ -536,20 +536,54 @@ def run_job(
                 lambda: prepare_hyde(config, corpus, language, retry_failed=retry_failed),
             )
         elif kind == "query-embed":
+            from .encoders import HuggingFaceEncoder
+
+            # A job can encode the original query and many language variants.
+            # Repeated SentenceTransformer construction can leave old model
+            # tensors awaiting cyclic GC, accumulating GPU memory between stages.
+            # Let embed() check its cache first, then lazily share one encoder.
+            encoder = None
+            journal["encoder_lifecycle"] = {
+                "policy": "one encoder shared across uncached query variants",
+                "model_load_count": 0,
+            }
+
+            def shared_encoder(spec, runtime, token):
+                nonlocal encoder
+                if encoder is None:
+                    encoder = HuggingFaceEncoder(spec, runtime, token)
+                    journal["encoder_lifecycle"]["model_load_count"] += 1
+                return encoder
+
             if "dense" in config.baselines:
-                stage("embed-original-query", lambda: embed(config, corpus, alias, kind="query"))
+                stage(
+                    "embed-original-query",
+                    lambda: embed(
+                        config, corpus, alias, kind="query", encoder_factory=shared_encoder
+                    ),
+                )
             for output in translated_languages:
                 stage(
                     f"embed-translation-{output}",
                     lambda lang=output: embed(
-                        config, corpus, alias, kind="query", translation_language=lang
+                        config,
+                        corpus,
+                        alias,
+                        kind="query",
+                        translation_language=lang,
+                        encoder_factory=shared_encoder,
                     ),
                 )
             for output in hypothetical_languages:
                 stage(
                     f"embed-hyde-{output}",
                     lambda lang=output: embed(
-                        config, corpus, alias, kind="query", hyde_language=lang
+                        config,
+                        corpus,
+                        alias,
+                        kind="query",
+                        hyde_language=lang,
+                        encoder_factory=shared_encoder,
                     ),
                 )
         elif kind == "variant-score":
