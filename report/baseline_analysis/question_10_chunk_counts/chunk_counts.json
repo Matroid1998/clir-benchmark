@@ -1,0 +1,20 @@
+[
+  {
+    "corpus": "chemistry",
+    "prepared_chunks": 35626,
+    "searched_chunks": 30060,
+    "excluded_language_chunks": 5566
+  },
+  {
+    "corpus": "eurlex",
+    "prepared_chunks": 674055,
+    "searched_chunks": 674055,
+    "excluded_language_chunks": 0
+  },
+  {
+    "corpus": "un",
+    "prepared_chunks": 1083284,
+    "searched_chunks": 707231,
+    "excluded_language_chunks": 376053
+  }
+]
