@@ -1,0 +1,14 @@
+Target-matched translation improves cross-language retrieval in all three corpus
+means. HyDE adds value over same-language translation in EUR-Lex, while its mean
+effect is negative in chemistry and UN. The pattern survives the tested quality,
+weighting, encoder-subset and leave-one-encoder-out checks.
+
+Version nDCG and source success can favor different systems. On UN, German
+translation gives E5 71 more relevant language-version hits but 22 fewer recovered
+sources out of 247 questions. The ranking decomposition shows where that credit
+comes from; the all-model German-versus-English nDCG gain remains uncertain.
+
+The objective also changes internal validation choices. Across ten source-fold
+assignments, UN nDCG-trained selection scores higher nDCG but lower source Hit
+than Hit-trained selection. These are exploratory results on selected synthetic
+questions, with fixed encoders and known-source relevance judgments.

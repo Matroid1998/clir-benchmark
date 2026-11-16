@@ -1,0 +1,34 @@
+eurlex_bge_hyde_gain
+Rule: For BGE-M3 mixed search, maximize English-HyDE minus English-translation nDCG@10; break ties by query ID.
+Corpus/model: eurlex/bge-m3
+Query ID: q_1586007449bc6cb14409b743f373bcd6ce4cec0af8ec9d68fe30c1b545241501
+Original language: fr
+Quality: clear
+Canonical source: http://data.europa.eu/eli/reg/2009/4/art_50/oj
+Source unit: eurlex:http://data.europa.eu/eli/reg/2009/4/art_50/oj:fr
+Query generator: gpt-5.6-luna
+Provenance: {"file": "data/legal/qac/generation_600_20261008_model_comparison/eurlex/run.sqlite", "outcome_error": "", "outcome_status": "completed", "position": 0, "task": "d17de381304a505b922ffcb4796646a7b691ae41d81db0247f677a8b5f3e350c"}
+
+ORIGINAL QUESTION
+Quel réseau les autorités centrales en matière d’obligations alimentaires doivent-elles utiliser pour faciliter l’application du régime et renforcer leur coopération ?
+
+SAVED ANSWER (not provided to generation)
+À cette fin, il est fait usage du réseau judiciaire européen en matière civile et commerciale créé par la décision 2001/470/CE.
+
+SAVED EVIDENCE (not provided to generation)
+
+
+original
+Quel réseau les autorités centrales en matière d’obligations alimentaires doivent-elles utiliser pour faciliter l’application du régime et renforcer leur coopération ?
+Metrics: {"ndcg10": 0.0, "hit10": 0.0, "recall10": 0.0, "mrr10": 0.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 11, "first_relevant_language_within_saved100": "fr", "relevant_ranks_within10": [], "relevant_languages_within10": [], "relevant_versions10": 0, "relevant_ranks_within100": [11, 26], "top10_language_counts": {"en": 2, "es": 5, "fr": 3}}
+
+translate_en
+Which network should the central authorities in matters of maintenance obligations use to facilitate the application of the regime and strengthen their cooperation?
+Metrics: {"ndcg10": 0.0, "hit10": 0.0, "recall10": 0.0, "mrr10": 0.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 17, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [], "relevant_languages_within10": [], "relevant_versions10": 0, "relevant_ranks_within100": [17], "top10_language_counts": {"en": 9, "es": 1}}
+
+hyde_en
+The central authorities designated for matters relating to maintenance obligations shall use the European Judicial Network in civil and commercial matters to facilitate the application of the maintenance regime and strengthen cooperation among themselves. Through that network, they may exchange information on practical implementation, identify appropriate contacts and coordinate assistance in cross-border cases. This cooperation complements the specific duties assigned to central authorities and does not replace the procedures for handling individual applications.
+Metrics: {"ndcg10": 1.0, "hit10": 1.0, "recall10": 1.0, "mrr10": 1.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 1, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [1, 2, 3, 4], "relevant_languages_within10": ["en", "de", "fr", "es"], "relevant_versions10": 4, "relevant_ranks_within100": [1, 2, 3, 4], "top10_language_counts": {"de": 1, "en": 6, "es": 1, "fr": 2}}

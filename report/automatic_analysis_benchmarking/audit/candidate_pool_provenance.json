@@ -1,0 +1,594 @@
+{
+  "audited_at": "2026-11-16T00:07:34.856876+00:00",
+  "scope": "Read-only local artifacts, cached pinned published datasets and original generation outputs; no network, models or job execution. Only these audit files were created.",
+  "corpora": {
+    "chemistry": {
+      "manifest_path": "artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/manifest.json",
+      "qa_source": {
+        "local_dir": null,
+        "repo_id": "MehdiAstaraki/chemistry-generated-qa",
+        "revision": "bb2657593e877d75e747a4602468eb0add634895"
+      },
+      "cached_shards": [
+        "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--chemistry-generated-qa/snapshots/bb2657593e877d75e747a4602468eb0add634895/data/qas/train-00000.parquet"
+      ],
+      "cached_dataset_card": "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--chemistry-generated-qa/snapshots/bb2657593e877d75e747a4602468eb0add634895/README.md",
+      "raw_input_rows": 1950,
+      "published_rows": 1950,
+      "canonical_document_winners": 197,
+      "source_language_units": 200,
+      "unique_generators": 10,
+      "generator_counts": {
+        "anthropic/claude-haiku-5.5": 186,
+        "deepseek/deepseek-v4.1-flash": 212,
+        "gpt-5.6-luna": 204,
+        "minimax/minimax-m2.7": 181,
+        "mistralai/mistral-small-2603": 201,
+        "nvidia/nemotron-3.5-lightning": 182,
+        "prism-ml/ternary-bonsai-2-27b": 199,
+        "qwen/qwen3.8-27b": 194,
+        "upstage/solar-pro4": 189,
+        "z-ai/glm-5.3-flashx": 202
+      },
+      "is_best_counts": {
+        "None": 1950
+      },
+      "candidate_rank_counts": {
+        "1": 1887,
+        "2": 47,
+        "3": 16
+      },
+      "selected_candidate_rank_counts": {
+        "1": 194,
+        "2": 3
+      },
+      "candidate_pool_sizes": {
+        "min": 4,
+        "median": 10,
+        "max": 20,
+        "distribution": {
+          "4": 3,
+          "6": 1,
+          "7": 7,
+          "8": 14,
+          "9": 30,
+          "10": 114,
+          "11": 12,
+          "12": 7,
+          "13": 4,
+          "14": 1,
+          "19": 1,
+          "20": 3
+        }
+      },
+      "generators_per_document": {
+        "min": 4,
+        "median": 10,
+        "max": 10,
+        "distribution": {
+          "4": 3,
+          "6": 1,
+          "7": 7,
+          "8": 17,
+          "9": 36,
+          "10": 133
+        }
+      },
+      "generation_task_sizes": {
+        "min": 1,
+        "median": 1,
+        "max": 3,
+        "distribution": {
+          "1": 1840,
+          "2": 31,
+          "3": 16
+        }
+      },
+      "missing_scores": 0,
+      "exact_question_text_duplicate_excess": 3,
+      "published_full_rows_equal_saved_raw_input": true,
+      "published_and_input_and_selection_candidate_ids_equal_with_multiplicity": true,
+      "every_winner_has_group_max_numeric_score": true,
+      "source_generation_outputs": [
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_anthropic_claude-haiku-5.5_gemini38.csv",
+          "saved_rows": 186,
+          "sha256": "85442f56b01104b4f1bf5233fd0cd632b607c526043c72103c49a4d67f5d543c",
+          "source_rows": 186,
+          "exact_metadata_matches": 186,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_deepseek_deepseek-v4.1-flash_gemini38.csv",
+          "saved_rows": 212,
+          "sha256": "97526c6eef80d84a84ae916ce8e9ec02d6bf34bbaa0c8e4f9e038bc1aa207b81",
+          "source_rows": 212,
+          "exact_metadata_matches": 212,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_gpt-5.6-luna_gemini38.csv",
+          "saved_rows": 204,
+          "sha256": "38e1343c2d87cb7fa4625d3249b2ec3a65a63e270c00647ad04fff453f700c05",
+          "source_rows": 204,
+          "exact_metadata_matches": 204,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_minimax_minimax-m2.7_gemini38.csv",
+          "saved_rows": 181,
+          "sha256": "e836a5847fcf72638cca20862065358ca15dd11d70e8bd096dff06c4bfca9077",
+          "source_rows": 181,
+          "exact_metadata_matches": 181,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_mistralai_mistral-small-2603_gemini38.csv",
+          "saved_rows": 201,
+          "sha256": "9e25dd0310ac28be334a5724a70fedc599dec4788654f8b636d086c5cbacaa58",
+          "source_rows": 201,
+          "exact_metadata_matches": 201,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_nvidia_nemotron-3.5-lightning_gemini38.csv",
+          "saved_rows": 182,
+          "sha256": "36901e9614e691a735098d37d42dcb52c5ceb8f5fe28de6e89b4a7783be33aa7",
+          "source_rows": 182,
+          "exact_metadata_matches": 182,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_prism-ml_ternary-bonsai-2-27b_gemini38.csv",
+          "saved_rows": 199,
+          "sha256": "aed78447f963363fb1e9aacb7a93d6d443a3dd512ed158f0b5a7ca61b2282214",
+          "source_rows": 199,
+          "exact_metadata_matches": 199,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_qwen_qwen3.8-27b_gemini38.csv",
+          "saved_rows": 194,
+          "sha256": "593bb2284c5ae7d8b7bd44f6f59519d19bac5b387cc48d35fafeffb1ae87690f",
+          "source_rows": 194,
+          "exact_metadata_matches": 194,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_upstage_solar-pro4_gemini38.csv",
+          "saved_rows": 189,
+          "sha256": "2e2e92d1d2d72cc5fd9dca1bf37d57d97cde7aad23c429a1eab65faeaba76ba5",
+          "source_rows": 189,
+          "exact_metadata_matches": 189,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/generator_compare_200_z-ai_glm-5.3-flashx_gemini38.csv",
+          "saved_rows": 202,
+          "sha256": "4075cd7f852f5d93924f5f12c29fa074ff4161970e46d02182f477010074c3d7",
+          "source_rows": 202,
+          "exact_metadata_matches": 202,
+          "all_csv_rows_preserved": true,
+          "non_best_filename": true
+        }
+      ],
+      "multiversion_input_groups": [
+        {
+          "canonical_source_id": "CN-115917719-A",
+          "candidate_count": 20,
+          "source_unit_ids": [
+            "CN-115917719-A_en",
+            "CN-115917719-A_zh"
+          ]
+        },
+        {
+          "canonical_source_id": "EP-1812498-A2",
+          "candidate_count": 20,
+          "source_unit_ids": [
+            "EP-1812498-A2_en",
+            "EP-1812498-A2_fr"
+          ]
+        },
+        {
+          "canonical_source_id": "EP-4081386-A1",
+          "candidate_count": 20,
+          "source_unit_ids": [
+            "EP-4081386-A1_en",
+            "EP-4081386-A1_fr"
+          ]
+        }
+      ]
+    },
+    "eurlex": {
+      "manifest_path": "artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/manifest.json",
+      "qa_source": {
+        "local_dir": null,
+        "repo_id": "MehdiAstaraki/eurlex-generated-qa",
+        "revision": "c924c03d0ac73ee45a3b6910d420fe523e433d2d"
+      },
+      "cached_shards": [
+        "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--eurlex-generated-qa/snapshots/c924c03d0ac73ee45a3b6910d420fe523e433d2d/data/qas/train-00000.parquet",
+        "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--eurlex-generated-qa/snapshots/c924c03d0ac73ee45a3b6910d420fe523e433d2d/data/qas/train-00001.parquet"
+      ],
+      "cached_dataset_card": "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--eurlex-generated-qa/snapshots/c924c03d0ac73ee45a3b6910d420fe523e433d2d/README.md",
+      "raw_input_rows": 4050,
+      "published_rows": 4050,
+      "canonical_document_winners": 194,
+      "source_language_units": 194,
+      "unique_generators": 10,
+      "generator_counts": {
+        "anthropic/claude-haiku-5.5": 376,
+        "deepseek/deepseek-v4.1-flash": 489,
+        "gpt-5.6-luna": 445,
+        "minimax/minimax-m2.7": 468,
+        "mistralai/mistral-small-2603": 94,
+        "nvidia/nemotron-3.5-lightning": 416,
+        "prism-ml/ternary-bonsai-2-27b": 387,
+        "qwen/qwen3.8-27b": 439,
+        "upstage/solar-pro4": 484,
+        "z-ai/glm-5.3-flashx": 452
+      },
+      "is_best_counts": {
+        "False": 4050
+      },
+      "candidate_rank_counts": {
+        "1": 1723,
+        "2": 1375,
+        "3": 883,
+        "None": 69
+      },
+      "selected_candidate_rank_counts": {
+        "1": 138,
+        "2": 48,
+        "3": 8
+      },
+      "candidate_pool_sizes": {
+        "min": 8,
+        "median": 22.0,
+        "max": 30,
+        "distribution": {
+          "8": 1,
+          "9": 2,
+          "10": 4,
+          "11": 5,
+          "12": 1,
+          "13": 4,
+          "14": 9,
+          "15": 12,
+          "16": 13,
+          "17": 7,
+          "18": 6,
+          "19": 8,
+          "20": 13,
+          "21": 6,
+          "22": 17,
+          "23": 11,
+          "24": 14,
+          "25": 18,
+          "26": 15,
+          "27": 15,
+          "28": 3,
+          "29": 6,
+          "30": 4
+        }
+      },
+      "generators_per_document": {
+        "min": 4,
+        "median": 9.0,
+        "max": 10,
+        "distribution": {
+          "4": 1,
+          "7": 1,
+          "8": 20,
+          "9": 145,
+          "10": 27
+        }
+      },
+      "generation_task_sizes": {
+        "min": 1,
+        "median": 3.0,
+        "max": 3,
+        "distribution": {
+          "1": 348,
+          "2": 492,
+          "3": 906
+        }
+      },
+      "missing_scores": 69,
+      "exact_question_text_duplicate_excess": 20,
+      "published_full_rows_equal_saved_raw_input": true,
+      "published_and_input_and_selection_candidate_ids_equal_with_multiplicity": true,
+      "every_winner_has_group_max_numeric_score": true,
+      "source_generation_outputs": [
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/legal/qac/generation_600_20261008_model_comparison/continuation_de_zh_50_20261012/eurlex/run.sqlite",
+          "saved_rows": 1167,
+          "sha256": "35bb8b6b08d4df789905e1b672039ac65334eedc47a3e75e7aa80ae3ba86e737",
+          "source_rows": 1167,
+          "exact_metadata_matches": 1167,
+          "all_outcome_rows_preserved": true,
+          "outcome_count": 500,
+          "outcome_statuses": {
+            "completed": 450,
+            "no_candidates": 2,
+            "failed": 48
+          }
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/legal/qac/generation_600_20261008_model_comparison/eurlex/run.sqlite",
+          "saved_rows": 2883,
+          "sha256": "bc3d6016cb66875e97dbbd86110d91c1638f56c7c90574e3bb4b9efa18dc51ae",
+          "source_rows": 2883,
+          "exact_metadata_matches": 2883,
+          "all_outcome_rows_preserved": true,
+          "outcome_count": 2154,
+          "outcome_statuses": {
+            "no_candidates": 721,
+            "completed": 1273,
+            "failed": 160
+          }
+        }
+      ],
+      "multiversion_input_groups": []
+    },
+    "un": {
+      "manifest_path": "artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/manifest.json",
+      "qa_source": {
+        "local_dir": null,
+        "repo_id": "MehdiAstaraki/un-generated-qa",
+        "revision": "677117c2e82908933821ba68dfd122d273c20be0"
+      },
+      "cached_shards": [
+        "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--un-generated-qa/snapshots/677117c2e82908933821ba68dfd122d273c20be0/data/qas/train-00000.parquet",
+        "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--un-generated-qa/snapshots/677117c2e82908933821ba68dfd122d273c20be0/data/qas/train-00001.parquet",
+        "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--un-generated-qa/snapshots/677117c2e82908933821ba68dfd122d273c20be0/data/qas/train-00002.parquet"
+      ],
+      "cached_dataset_card": "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--un-generated-qa/snapshots/677117c2e82908933821ba68dfd122d273c20be0/README.md",
+      "raw_input_rows": 4691,
+      "published_rows": 4691,
+      "canonical_document_winners": 247,
+      "source_language_units": 247,
+      "unique_generators": 10,
+      "generator_counts": {
+        "anthropic/claude-haiku-5.5": 405,
+        "deepseek/deepseek-v4.1-flash": 587,
+        "gpt-5.6-luna": 502,
+        "minimax/minimax-m2.7": 515,
+        "mistralai/mistral-small-2603": 166,
+        "nvidia/nemotron-3.5-lightning": 554,
+        "prism-ml/ternary-bonsai-2-27b": 414,
+        "qwen/qwen3.8-27b": 432,
+        "upstage/solar-pro4": 586,
+        "z-ai/glm-5.3-flashx": 530
+      },
+      "is_best_counts": {
+        "False": 4691
+      },
+      "candidate_rank_counts": {
+        "1": 1988,
+        "2": 1593,
+        "3": 1044,
+        "None": 66
+      },
+      "selected_candidate_rank_counts": {
+        "1": 192,
+        "2": 44,
+        "3": 11
+      },
+      "candidate_pool_sizes": {
+        "min": 1,
+        "median": 20,
+        "max": 30,
+        "distribution": {
+          "1": 2,
+          "2": 1,
+          "3": 1,
+          "4": 1,
+          "5": 4,
+          "6": 4,
+          "8": 4,
+          "9": 6,
+          "10": 5,
+          "11": 12,
+          "12": 7,
+          "13": 7,
+          "14": 9,
+          "15": 9,
+          "16": 4,
+          "17": 12,
+          "18": 14,
+          "19": 10,
+          "20": 22,
+          "21": 11,
+          "22": 17,
+          "23": 12,
+          "24": 17,
+          "25": 17,
+          "26": 13,
+          "27": 11,
+          "28": 5,
+          "29": 7,
+          "30": 3
+        }
+      },
+      "generators_per_document": {
+        "min": 1,
+        "median": 9,
+        "max": 10,
+        "distribution": {
+          "1": 4,
+          "2": 5,
+          "3": 4,
+          "4": 6,
+          "5": 10,
+          "6": 9,
+          "7": 13,
+          "8": 37,
+          "9": 121,
+          "10": 38
+        }
+      },
+      "generation_task_sizes": {
+        "min": 1,
+        "median": 3.0,
+        "max": 3,
+        "distribution": {
+          "1": 395,
+          "2": 549,
+          "3": 1066
+        }
+      },
+      "missing_scores": 66,
+      "exact_question_text_duplicate_excess": 13,
+      "published_full_rows_equal_saved_raw_input": true,
+      "published_and_input_and_selection_candidate_ids_equal_with_multiplicity": true,
+      "every_winner_has_group_max_numeric_score": true,
+      "source_generation_outputs": [
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/legal/qac/generation_600_20261008_model_comparison/continuation_de_zh_50_20261012/un_parallel/run.sqlite",
+          "saved_rows": 1161,
+          "sha256": "1e2dabfbe64d6dee92a7dc9ae391c85032c7653b166c47e723c9b567fefad853",
+          "source_rows": 1161,
+          "exact_metadata_matches": 1161,
+          "all_outcome_rows_preserved": true,
+          "outcome_count": 500,
+          "outcome_statuses": {
+            "completed": 437,
+            "no_candidates": 25,
+            "failed": 38
+          }
+        },
+        {
+          "path": "/home/mehdi/Projects/clir-dataset-creation/data/legal/qac/generation_600_20261008_model_comparison/un_parallel/run.sqlite",
+          "saved_rows": 3530,
+          "sha256": "23143ad601237c500193cc2d7d0faad4ade64dd6e6900456b5c64efd1d9ff48c",
+          "source_rows": 3530,
+          "exact_metadata_matches": 3530,
+          "all_outcome_rows_preserved": true,
+          "outcome_count": 2109,
+          "outcome_statuses": {
+            "no_candidates": 339,
+            "completed": 1551,
+            "failed": 219
+          }
+        }
+      ],
+      "multiversion_input_groups": []
+    }
+  },
+  "source_files": {
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/manifest.json": "a08d35a70ebcd07f1c74a9ebab6943b5cc5b336f11c91626d8eac153395da461",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/input_qas.jsonl": "39e30c299ebe134ae93f88105a8570f3b1b000702b63016faab0a58da48c59a9",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/input_queries.parquet": "b60e9b71cf87d13fbb735c7b01dccfe2c26f91d5a9fa781def4b8130599a5aae",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/selection.json": "69e8559a1eedf4faf9656c9e075359d900300edd19a1a97eef34615a75cf3678",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/queries.parquet": "6502f7ed5df453c1047b76627294d603f52793072d4ce0f5fc47d2fd2b3f373d",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--chemistry-generated-qa/snapshots/bb2657593e877d75e747a4602468eb0add634895/README.md": "e407b2fbded1c48d78971f67b6b426bf2f7dfbcdc8b202d121c47446cad13ea0",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--chemistry-generated-qa/snapshots/bb2657593e877d75e747a4602468eb0add634895/data/qas/train-00000.parquet": "73f9328179d42d2c97db470179853d4380a8f34ba224dccdc77244ec23697a2e",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/manifest.json": "49ada09a1fe07ddd085c0b5dcd010426f6290f5a268e7cfdf88aef38e905c1dc",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/input_qas.jsonl": "6e1895e926fed75b9cc5740fbde4162e962e12e292795b5d50fe83c6d140560c",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/input_queries.parquet": "e0415894f5e2c11bd4f8d4a53914be065789f9106fe09fc78f49e1b512e1af94",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/selection.json": "d12bed9f77bf1985c060bb5c850c94332df25a161b5eea4403e57bff51169348",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/queries.parquet": "25c18e5c9ca0d3de37c51d13ca0ca07e04d9edf01376035e5314ece1fce3ba72",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--eurlex-generated-qa/snapshots/c924c03d0ac73ee45a3b6910d420fe523e433d2d/README.md": "f377cda2ffc5e16e9db1b4df59dcf376cdbb6e5b3355c67d7a5de0dababdb041",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--eurlex-generated-qa/snapshots/c924c03d0ac73ee45a3b6910d420fe523e433d2d/data/qas/train-00000.parquet": "996c9cac119586fdc44f0e0f45c90c8d0522471f896c13982c2adb24c3ff8730",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--eurlex-generated-qa/snapshots/c924c03d0ac73ee45a3b6910d420fe523e433d2d/data/qas/train-00001.parquet": "392f299e2b98a5116960108813d708fc3716558f33f1b1714422319d627b68da",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/manifest.json": "4801b1268f27afdcb273793c93ffa8c7d62384ad54af6fcf476ab367077d0f64",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/input_qas.jsonl": "8520dd571b3cf3dcf583810514a8a934c430f58f5dfbca5b9caae8f662871c7e",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/input_queries.parquet": "5f6baf569686a663bfd7b33049c31a3110625eccb3637f5bac850cad1d04a864",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/selection.json": "00a1870af89564d76433ea3f2bb6ccb1dbec64b6074243433f834a869d541722",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/queries.parquet": "077f7f66ab40c2c93a29d43ed10cc080ad1aff1a14b48f7adddd93e693b97cbd",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--un-generated-qa/snapshots/677117c2e82908933821ba68dfd122d273c20be0/README.md": "1572faf5dafbca2cb2371472a055db1088fd791375e4f05e05ef765990a7e046",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--un-generated-qa/snapshots/677117c2e82908933821ba68dfd122d273c20be0/data/qas/train-00000.parquet": "663613b48967be994001d13a7f1c6e268e986846354485cd9b19ca1f95970ecd",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--un-generated-qa/snapshots/677117c2e82908933821ba68dfd122d273c20be0/data/qas/train-00001.parquet": "ae3f165d8e3383482b8a78060ffd04469944bf73042f72fd598c39375abcc2bd",
+    "/home/mehdi/.cache/huggingface/hub/datasets--MehdiAstaraki--un-generated-qa/snapshots/677117c2e82908933821ba68dfd122d273c20be0/data/qas/train-00002.parquet": "b96bde2eca6e9c055f3a6ccb5f6a4e53955673423452e73cf5963984f79e50f6",
+    "/home/mehdi/Projects/clir-benchmark/src/clir_benchmark/adapters.py": "c2ad2b669b8f18ed868845a7a08ec002f1c210b2df3af5921a6114c9cadab2db",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/selected-document-20261110/project/src/clir_benchmark/adapters.py": "c2ad2b669b8f18ed868845a7a08ec002f1c210b2df3af5921a6114c9cadab2db",
+    "/home/mehdi/Projects/clir-benchmark/src/clir_benchmark/pipeline.py": "2872218338cd6afd37fd582ce7236e58e0772c3a03d5edad5eb8f48c3555e58e",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/selected-document-20261110/project/src/clir_benchmark/pipeline.py": "2872218338cd6afd37fd582ce7236e58e0772c3a03d5edad5eb8f48c3555e58e",
+    "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/publishing/records.py": "8ac8c0287e2d8535d18b39ed3e8c579c05212ab6c0c86533aa1a8ecf36d9172b",
+    "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/publishing/generations.py": "d1ab3353ccd345cf0750d13163b1fdd28d08b2c25ad0d004ff1ceb538f7a770b",
+    "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/core/qagen.py": "74e114780c15b7b13b1fe26c0d7d28bc1b5fd8e22a51db8a828704db2dac1b3b",
+    "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/core/grading.py": "4c7e2ae8d19a99523883d7ea3ca4b50bd59be5c5d0237e5a15727ef0502e692e",
+    "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/cli/qac.py": "e344f60881770bb94c75a30b80307c937fdf7002bb2a28ab114d62f9efdd74e4",
+    "/home/mehdi/Projects/clir-dataset-creation/reports/qa_generation_model_comparison/complete_chemistry_20261103.py": "0fd7cee502284097bf50cc1d69dc5228a26a278a66eb086f94540de69f478473",
+    "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/completion_20261103/manifest.json": "2f72dbc8709e10258309cd6d35dc25b5a7bbca8377278c0519b0b94076743886",
+    "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/completion_20261103/summary.json": "97249d15e6079043f95a4132ab09ecd0bcf2dc9254e88578eb0ee53ba836341a"
+  },
+  "code_evidence": {
+    "benchmark_reader": "src/clir_benchmark/adapters.py:22 (DatasetReader.read), :231 (_select_per_document), :338 (best-per-document dispatch)",
+    "benchmark_pipeline": "src/clir_benchmark/pipeline.py:145 (prepare_relevance); reads all qas rows at :157, selects at :170, saves unfiltered raw inputs at :195",
+    "publisher_reader": "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/publishing/records.py:40 (all SQLite outcome rows), :59 (all CSV rows)",
+    "publisher_dedup": "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/publishing/generations.py:182 (same candidate ID with identical metadata only)",
+    "generation_candidate_limit": "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/core/qagen.py:42 (maximum 3), :154 (generation parser), :256 (rank all retained candidates)",
+    "generation_csv_writes": "/home/mehdi/Projects/clir-dataset-creation/src/clir_bench/cli/qac.py:365 (extend all generated rows), :370 (main CSV), :384 (separate best CSV)",
+    "completion_csv_writes": "/home/mehdi/Projects/clir-dataset-creation/reports/qa_generation_model_comparison/complete_chemistry_20261103.py:170 (all rows), :189 (separate main/best outputs)"
+  },
+  "archived_code_equals_current": {
+    "src/clir_benchmark/adapters.py": true,
+    "src/clir_benchmark/pipeline.py": true
+  },
+  "chemistry_saved_generation_prompt": {
+    "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/completion_20261103/manifest.json",
+    "json_key": "prompt_texts.generation/lookup/en",
+    "applies_to_saved_completion_models": [
+      "mistralai/mistral-small-2603",
+      "nvidia/nemotron-3.5-lightning",
+      "minimax/minimax-m2.7",
+      "upstage/solar-pro4"
+    ],
+    "candidate_quota_sentences": [
+      "One strong candidate is enough; no additional weak candidate is needed to fill a quota.",
+      "Return only one to three distinct objects in the exact schema below, or exactly [{\"skip_reason\":\"A brief, specific source-based reason\"}]."
+    ],
+    "sentences_verified": true
+  },
+  "chemistry_completion_summary": {
+    "path": "/home/mehdi/Projects/clir-dataset-creation/data/chemistry/ai4chem_abstract_pairs/qac/chemistry_google_patents_model_comparison_generator/completion_20261103/summary.json",
+    "data": {
+      "mistralai/mistral-small-2603": {
+        "candidate_rows": 201,
+        "documents_with_questions": 199,
+        "abstained": 1,
+        "failures": 0,
+        "pending": 0
+      },
+      "nvidia/nemotron-3.5-lightning": {
+        "candidate_rows": 182,
+        "documents_with_questions": 182,
+        "abstained": 18,
+        "failures": 0,
+        "pending": 0
+      },
+      "minimax/minimax-m2.7": {
+        "candidate_rows": 181,
+        "documents_with_questions": 168,
+        "abstained": 32,
+        "failures": 0,
+        "pending": 0
+      },
+      "upstage/solar-pro4": {
+        "candidate_rows": 189,
+        "documents_with_questions": 188,
+        "abstained": 11,
+        "failures": 1,
+        "pending": 0
+      }
+    }
+  },
+  "confirmed_conclusion": "The selection stage used every supplied candidate from the three pinned published datasets and all rows from their exact local upstream CSV/SQLite generation outputs. No candidate is_best filter, rank filter, or text deduplication reduced these pools. Chemistry had variable 1-3 candidates per successful generation task, predominantly one, before publication.",
+  "unknowns": [
+    "No exhaustive audit of raw API responses, parsing rejects, retries, unpublished runs, or later dataset revisions was performed. Completeness means all rows in the pinned dataset and its identified supplied generation outputs.",
+    "The saved chemistry completion prompt is direct evidence for the four models in that completion manifest. No claim that every historical task used a byte-identical prompt is made.",
+    "Counts of failed/no_candidates upstream outcomes do not identify hypothetical questions that could have been generated; they must not be converted to missing scored candidates.",
+    "Selection uses upstream numeric total_score without independently verifying grader calibration across personas, languages, generators or corpora."
+  ]
+}

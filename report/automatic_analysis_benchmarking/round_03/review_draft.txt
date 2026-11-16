@@ -1,0 +1,89 @@
+ROUND 3 DRAFT — OBJECTIVE DECOMPOSITION AND SOURCE COLLAPSE
+
+Status: computed and validated; awaiting root visual inspection of all four figures.
+
+Questions answered
+1. nDCG@10 = first relevant version discount / per-query IDCG + all additional relevant version discounts / that IDCG.
+   The identity holds per query and after every mean contrast; this is a decomposition of the recorded metric, not a proposed new metric.
+2. The counts below compare the same 247 UN questions; BOTH-HIT results use the SAME paired subset per encoder, not separately selected successes.
+3. Variant-selection disagreement is descriptive on the entire analysis sample, not a deployable or held-out system-selection procedure.
+4. Legal source collapse preserves existing qrels and source-unit granularity. It only processes saved top-100 version rankings.
+
+UN paired decomposition (percentage points; 95% source-question bootstrap intervals)
+  German - translate_en, e5-large-instruct: first -2.181; additional +5.989; total +3.809 [+1.641, +6.115].
+    Source hits gained 18, lost 40, net -22; positive-version hits net +71.
+  German - translate_en, embeddinggemma: first -1.941; additional +4.401; total +2.460 [+0.171, +4.857].
+    Source hits gained 6, lost 26, net -20; positive-version hits net +32.
+  German - translate_en, All fixed models: first -1.695; additional +1.916; total +0.221 [-0.710, +1.145].
+    Source hits gained 11.625, lost 28.75, net -17.125; positive-version hits net +8.125. Counts are averages per fixed encoder.
+  German - original, e5-large-instruct: first -2.005; additional +6.037; total +4.032 [+1.740, +6.531].
+    Source hits gained 21, lost 38, net -17; positive-version hits net +77.
+  German - original, embeddinggemma: first -1.998; additional +8.111; total +6.113 [+3.511, +8.805].
+    Source hits gained 14, lost 32, net -18; positive-version hits net +89.
+  German - original, All fixed models: first -1.808; additional +3.584; total +1.776 [+0.607, +2.960].
+    Source hits gained 14, lost 30.125, net -16.125; positive-version hits net +34.125. Counts are averages per fixed encoder.
+
+BOTH-HIT subset, German - English; per encoder, no pooled estimate across different subsets
+  embeddinggemma, n=171: version hits/question +0.3158 [+0.1813, +0.4503]; first -0.251, additional +6.576, nDCG +6.325 [+3.534, +9.096] points.
+  bge-m3, n=155: version hits/question +0.2194 [+0.1032, +0.3290]; first -0.064, additional +4.950, nDCG +4.887 [+2.426, +7.356] points.
+  qwen3-0.6B, n=136: version hits/question -0.0515 [-0.1912, +0.0882]; first -0.703, additional -1.273, nDCG -1.976 [-5.169, +1.169] points.
+  nomic-v2-moe, n=149: version hits/question +0.3087 [+0.1812, +0.4430]; first -1.980, additional +6.497, nDCG +4.518 [+1.571, +7.427] points.
+  granite-278m, n=142: version hits/question +0.0493 [-0.0845, +0.1901]; first -0.219, additional +0.001, nDCG -0.218 [-3.365, +2.987] points.
+  LaBSE, n=51: version hits/question -0.0784 [-0.2157, +0.0588]; first +2.250, additional -1.159, nDCG +1.091 [-3.645, +5.691] points.
+  SapBERT, n=8: version hits/question -0.6250 [-1.1250, -0.1250]; first -3.954, additional -10.898, nDCG -14.852 [-29.311, -2.634] points.
+  e5-large-instruct, n=126: version hits/question +0.7063 [+0.5794, +0.8492]; first -0.061, additional +11.321, nDCG +11.261 [+8.242, +14.506] points.
+
+Descriptive objective ordering
+  chemistry: disjoint best-system sets in 1/8 encoders; 37 discordant variant pairs out of 440 total pairs (10 tied on at least one metric).
+    qwen3-0.6B: nDCG winner translate_en; Hit winner(s) original; Hit loss at nDCG winner 2.538 points.
+  eurlex: disjoint best-system sets in 4/8 encoders; 140 discordant variant pairs out of 440 total pairs (13 tied on at least one metric).
+    bge-m3: nDCG winner translate_es; Hit winner(s) original; Hit loss at nDCG winner 5.670 points.
+    e5-large-instruct: nDCG winner hyde_zh; Hit winner(s) hyde_de; Hit loss at nDCG winner 23.711 points.
+    granite-278m: nDCG winner hyde_es; Hit winner(s) hyde_en|translate_en; Hit loss at nDCG winner 6.701 points.
+    nomic-v2-moe: nDCG winner hyde_en; Hit winner(s) original; Hit loss at nDCG winner 2.062 points.
+  un: disjoint best-system sets in 5/8 encoders; 108 discordant variant pairs out of 440 total pairs (3 tied on at least one metric).
+    bge-m3: nDCG winner translate_de; Hit winner(s) original; Hit loss at nDCG winner 6.073 points.
+    e5-large-instruct: nDCG winner translate_de; Hit winner(s) translate_es; Hit loss at nDCG winner 9.312 points.
+    embeddinggemma: nDCG winner translate_de; Hit winner(s) translate_en; Hit loss at nDCG winner 8.097 points.
+    nomic-v2-moe: nDCG winner translate_de; Hit winner(s) translate_en; Hit loss at nDCG winner 12.955 points.
+    qwen3-0.6B: nDCG winner translate_en; Hit winner(s) translate_zh; Hit loss at nDCG winner 4.049 points.
+
+Source collapse
+  Checked 3,880,800 legal ranking rows: relevance equals membership in the known canonical source, and all retrieved versions of each source agree on relevance.
+  Distinct sources available per legal top-100 ranking: 29–100; censored top-10 configurations: 0.
+  German - translate_en, e5-large-instruct, collapsed_hit10: -6.883 [-12.955, -0.810] points.
+  German - translate_en, e5-large-instruct, collapsed_mrr10: -3.885 [-8.309, +0.625] points.
+  German - translate_en, e5-large-instruct, collapsed_ndcg10: -4.540 [-8.758, -0.295] points.
+  German - translate_en, embeddinggemma, collapsed_hit10: -8.502 [-12.955, -4.049] points.
+  German - translate_en, embeddinggemma, collapsed_mrr10: -3.348 [-7.014, +0.223] points.
+  German - translate_en, embeddinggemma, collapsed_ndcg10: -4.539 [-7.990, -1.281] points.
+  German - translate_en, All fixed models, collapsed_hit10: -6.579 [-8.706, -4.504] points.
+  German - translate_en, All fixed models, collapsed_mrr10: -3.179 [-4.754, -1.630] points.
+  German - translate_en, All fixed models, collapsed_ndcg10: -3.981 [-5.535, -2.486] points.
+  German - original, e5-large-instruct, collapsed_hit10: -4.858 [-10.931, +1.619] points.
+  German - original, e5-large-instruct, collapsed_mrr10: -3.832 [-8.519, +1.006] points.
+  German - original, e5-large-instruct, collapsed_ndcg10: -4.090 [-8.500, +0.614] points.
+  German - original, embeddinggemma, collapsed_hit10: -6.073 [-10.931, -1.215] points.
+  German - original, embeddinggemma, collapsed_mrr10: -2.988 [-6.910, +0.936] points.
+  German - original, embeddinggemma, collapsed_ndcg10: -3.732 [-7.375, -0.128] points.
+  German - original, All fixed models, collapsed_hit10: -5.213 [-7.490, -2.935] points.
+  German - original, All fixed models, collapsed_mrr10: -3.422 [-5.268, -1.615] points.
+  German - original, All fixed models, collapsed_ndcg10: -3.859 [-5.627, -2.112] points.
+
+Interpretation limits and measurement contract
+- One known gold source per selected query; source-only qrels are not exhaustive human relevance judgments. Unjudged sources may contain useful information.
+- Version nDCG/Recall remain valid for a goal of recovering multiple language versions. Source Hit/collapsed ranks evaluate a different goal; neither is universally superior.
+- All UN queries have four gold versions, making IDCG constant within this comparison. Across corpora, the feature extraction retains each query's actual relevance denominator.
+- First-version contribution combines finding a source within 10 with the rank of its first version. BOTH-HIT isolates paired successful cases descriptively but does not identify a causal mechanism; conditioning can select easier queries.
+- The both-hit subset differs by encoder and pair. No fixed-model estimate pools those different subsets. All full-cohort fixed-model intervals first average eight encoder differences per question and then resample the 247 questions.
+- Legal collapse uses canonical articles/annexes for EUR-Lex and whole documents for UN. Chemistry is excluded because direct accepted translation pairs do not justify transitive source-ID relevance closure.
+- Top-100 versions cannot recover the entire source ranking. At least 10 distinct sources in every saved legal ranking makes the first 10 collapsed sources observable; no new retrieval or qrels were created.
+- Selection of a best variant uses these same questions: it is descriptive/oracle analysis, not a deployable selection rule. All bootstrap intervals are exploratory with no multiple-testing adjustment.
+- The fixed model set is not a random sample of encoders. Sampling uncertainty refers to selected source questions conditional on these encoders and candidate-selection procedure.
+- Generated HyDE text uses document adapters for four models; comparisons across methods do not identify content-only effects. German-vs-English translation uses the same query adapter.
+- No claim of a German semantic bridge, new retrieval metric, first metric reversal, or causal legal-language mechanism is supported by this analysis.
+
+Questions for the next reviewed round
+- Which source/question strata drive the first-versus-additional credit pattern, and does it persist under available quality and identity-control sensitivity exclusions?
+- Does source collapse mainly promote previously rank-11+ gold sources or change ordering among sources already found?
+- How do original question language, first relevant hit language, and version concentration align with the observed tradeoff, without treating correlation as a causal explanation?

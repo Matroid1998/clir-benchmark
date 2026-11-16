@@ -1,0 +1,78 @@
+\begin{tabular}{lllllr}
+\toprule
+family & corpus & contrast & metric & omitted\_model & mean \\
+\midrule
+target & chemistry & H − T & ndcg10 & none & -0.0321 \\
+target & chemistry & H − T & ndcg10 & embeddinggemma & -0.0351 \\
+target & chemistry & H − T & ndcg10 & bge-m3 & -0.0305 \\
+target & chemistry & H − T & ndcg10 & qwen3-0.6B & -0.0333 \\
+target & chemistry & H − T & ndcg10 & nomic-v2-moe & -0.0298 \\
+target & chemistry & H − T & ndcg10 & granite-278m & -0.0355 \\
+target & chemistry & H − T & ndcg10 & LaBSE & -0.0241 \\
+target & chemistry & H − T & ndcg10 & SapBERT & -0.0322 \\
+target & chemistry & H − T & ndcg10 & e5-large-instruct & -0.0363 \\
+target & chemistry & T − original & ndcg10 & none & 0.0829 \\
+target & chemistry & T − original & ndcg10 & embeddinggemma & 0.0916 \\
+target & chemistry & T − original & ndcg10 & bge-m3 & 0.0801 \\
+target & chemistry & T − original & ndcg10 & qwen3-0.6B & 0.0865 \\
+target & chemistry & T − original & ndcg10 & nomic-v2-moe & 0.0791 \\
+target & chemistry & T − original & ndcg10 & granite-278m & 0.0777 \\
+target & chemistry & T − original & ndcg10 & LaBSE & 0.0947 \\
+target & chemistry & T − original & ndcg10 & SapBERT & 0.0857 \\
+target & chemistry & T − original & ndcg10 & e5-large-instruct & 0.0675 \\
+target & eurlex & H − T & ndcg10 & none & 0.0426 \\
+target & eurlex & H − T & ndcg10 & embeddinggemma & 0.0454 \\
+target & eurlex & H − T & ndcg10 & bge-m3 & 0.0455 \\
+target & eurlex & H − T & ndcg10 & qwen3-0.6B & 0.0445 \\
+target & eurlex & H − T & ndcg10 & nomic-v2-moe & 0.0470 \\
+target & eurlex & H − T & ndcg10 & granite-278m & 0.0447 \\
+target & eurlex & H − T & ndcg10 & LaBSE & 0.0289 \\
+target & eurlex & H − T & ndcg10 & SapBERT & 0.0369 \\
+target & eurlex & H − T & ndcg10 & e5-large-instruct & 0.0475 \\
+target & eurlex & T − original & ndcg10 & none & 0.0984 \\
+target & eurlex & T − original & ndcg10 & embeddinggemma & 0.1061 \\
+target & eurlex & T − original & ndcg10 & bge-m3 & 0.1002 \\
+target & eurlex & T − original & ndcg10 & qwen3-0.6B & 0.1025 \\
+target & eurlex & T − original & ndcg10 & nomic-v2-moe & 0.0944 \\
+target & eurlex & T − original & ndcg10 & granite-278m & 0.0992 \\
+target & eurlex & T − original & ndcg10 & LaBSE & 0.1066 \\
+target & eurlex & T − original & ndcg10 & SapBERT & 0.0977 \\
+target & eurlex & T − original & ndcg10 & e5-large-instruct & 0.0802 \\
+target & un & H − T & ndcg10 & none & -0.0422 \\
+target & un & H − T & ndcg10 & embeddinggemma & -0.0374 \\
+target & un & H − T & ndcg10 & bge-m3 & -0.0375 \\
+target & un & H − T & ndcg10 & qwen3-0.6B & -0.0424 \\
+target & un & H − T & ndcg10 & nomic-v2-moe & -0.0393 \\
+target & un & H − T & ndcg10 & granite-278m & -0.0394 \\
+target & un & H − T & ndcg10 & LaBSE & -0.0515 \\
+target & un & H − T & ndcg10 & SapBERT & -0.0512 \\
+target & un & H − T & ndcg10 & e5-large-instruct & -0.0392 \\
+target & un & T − original & ndcg10 & none & 0.0627 \\
+target & un & T − original & ndcg10 & embeddinggemma & 0.0700 \\
+target & un & T − original & ndcg10 & bge-m3 & 0.0641 \\
+target & un & T − original & ndcg10 & qwen3-0.6B & 0.0652 \\
+target & un & T − original & ndcg10 & nomic-v2-moe & 0.0566 \\
+target & un & T − original & ndcg10 & granite-278m & 0.0607 \\
+target & un & T − original & ndcg10 & LaBSE & 0.0686 \\
+target & un & T − original & ndcg10 & SapBERT & 0.0680 \\
+target & un & T − original & ndcg10 & e5-large-instruct & 0.0487 \\
+UN pivot & un & T-de − T-en & ndcg10 & none & 0.0022 \\
+UN pivot & un & T-de − T-en & ndcg10 & embeddinggemma & -0.0010 \\
+UN pivot & un & T-de − T-en & ndcg10 & bge-m3 & -0.0003 \\
+UN pivot & un & T-de − T-en & ndcg10 & qwen3-0.6B & 0.0072 \\
+UN pivot & un & T-de − T-en & ndcg10 & nomic-v2-moe & 0.0024 \\
+UN pivot & un & T-de − T-en & ndcg10 & granite-278m & 0.0053 \\
+UN pivot & un & T-de − T-en & ndcg10 & LaBSE & 0.0027 \\
+UN pivot & un & T-de − T-en & ndcg10 & SapBERT & 0.0044 \\
+UN pivot & un & T-de − T-en & ndcg10 & e5-large-instruct & -0.0029 \\
+UN pivot & un & T-de − T-en & hit10 & none & -0.0693 \\
+UN pivot & un & T-de − T-en & hit10 & embeddinggemma & -0.0677 \\
+UN pivot & un & T-de − T-en & hit10 & bge-m3 & -0.0740 \\
+UN pivot & un & T-de − T-en & hit10 & qwen3-0.6B & -0.0665 \\
+UN pivot & un & T-de − T-en & hit10 & nomic-v2-moe & -0.0607 \\
+UN pivot & un & T-de − T-en & hit10 & granite-278m & -0.0706 \\
+UN pivot & un & T-de − T-en & hit10 & LaBSE & -0.0763 \\
+UN pivot & un & T-de − T-en & hit10 & SapBERT & -0.0723 \\
+UN pivot & un & T-de − T-en & hit10 & e5-large-instruct & -0.0665 \\
+\bottomrule
+\end{tabular}

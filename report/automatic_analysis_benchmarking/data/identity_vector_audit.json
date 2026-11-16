@@ -1,0 +1,178 @@
+[
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_1bf0311e2cf8c628ced3ac642010dfce1002dba730c440e71d2169cf0f303bef",
+    "query_language": "fr",
+    "cosine": 0.9999999999997111,
+    "l2_difference": 7.627378560021735e-07,
+    "max_abs_difference": 9.080395102500916e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/9e287a9b4448290557027a5b95000f188d54866bf2b417ac0bb1967bf8de68e5"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_3778db5aa16ea215970b773e52cc857244a11523efd3509734697b389b053375",
+    "query_language": "fr",
+    "cosine": 0.9999999999997327,
+    "l2_difference": 7.324946987182649e-07,
+    "max_abs_difference": 9.685754776000977e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/9e287a9b4448290557027a5b95000f188d54866bf2b417ac0bb1967bf8de68e5"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_48850b4e074c293b61e085b70727c43df79af7d9e372af9de7686652872c0013",
+    "query_language": "en",
+    "cosine": 0.9999999999997891,
+    "l2_difference": 6.497459151390784e-07,
+    "max_abs_difference": 8.12578946352005e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/7f3b98442a363ddd2c32099ac82f5317b9fba1650a45450beb09e573cafd1097"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_76ecec30b5a2cc047b5ded418e5b8db299c3f2b6283640c03180aeb4c8a30a21",
+    "query_language": "de",
+    "cosine": 0.9999999999997613,
+    "l2_difference": 6.914807683179012e-07,
+    "max_abs_difference": 7.078051567077637e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/a676bf9951775f3ab42ce7d0df31a2e6d0a7f90cb8d1f4764d7437ab133d5f7c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_9ad2194fffca80b50302d3b7eeec9839a9ebf8fd4a5e7b896bb4c4066857fdb7",
+    "query_language": "fr",
+    "cosine": 0.9999999999997622,
+    "l2_difference": 6.903812758664945e-07,
+    "max_abs_difference": 8.754432201385498e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/9e287a9b4448290557027a5b95000f188d54866bf2b417ac0bb1967bf8de68e5"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_9b84320b61cb5c7ef2456acce9e346a6203e8df8699338d7c0cbb490761368a4",
+    "query_language": "en",
+    "cosine": 0.9999999999997449,
+    "l2_difference": 7.196928000116048e-07,
+    "max_abs_difference": 1.043081283569336e-07,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/7f3b98442a363ddd2c32099ac82f5317b9fba1650a45450beb09e573cafd1097"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_c8d1bc83d43654f2beea959c78d58754f3dc36e899e1f9a20dc99cc06d0c0791",
+    "query_language": "fr",
+    "cosine": 0.999999999999738,
+    "l2_difference": 7.243137592886455e-07,
+    "max_abs_difference": 9.685754776000977e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/9e287a9b4448290557027a5b95000f188d54866bf2b417ac0bb1967bf8de68e5"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_d0601a5b6c2ee7bc40ccc476f42c716e3e7f7fb88825b567aaecf9eddf14b138",
+    "query_language": "de",
+    "cosine": 0.9999999999997313,
+    "l2_difference": 7.333918853639883e-07,
+    "max_abs_difference": 7.636845111846924e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/a676bf9951775f3ab42ce7d0df31a2e6d0a7f90cb8d1f4764d7437ab133d5f7c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "query_id": "q_f1342e01453c2c33a90531cb8c3179f6519733abb14ecc54017200289f7902d5",
+    "query_language": "en",
+    "cosine": 0.9999999999997614,
+    "l2_difference": 6.927560503920897e-07,
+    "max_abs_difference": 8.009374141693115e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/7f3b98442a363ddd2c32099ac82f5317b9fba1650a45450beb09e573cafd1097"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "query_id": "q_1bf0311e2cf8c628ced3ac642010dfce1002dba730c440e71d2169cf0f303bef",
+    "query_language": "fr",
+    "cosine": 0.9999999999968525,
+    "l2_difference": 2.5103329943954716e-06,
+    "max_abs_difference": 2.5331974029541016e-07,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/cfe72619cc0e12f31ecaf31b9462d2f55a1eb0d96b35468a3a19689936f2ba1f",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/ef30ffba8c06a0a1bd2a0be8f01603ed1142e1fe90877e7b037c73a30ccdbb0f"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "query_id": "q_286887ab787a06aac1317b4aa1e25f0cfe4cebd5c98ca2a6b0fa9c16fcebe3db",
+    "query_language": "fr",
+    "cosine": 0.9999999999997695,
+    "l2_difference": 6.79534551414447e-07,
+    "max_abs_difference": 9.313225746154785e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/b5a4f39f00daa631bb3330078f1e02def74aa93557463bf9d02ec057114cec7c"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "query_id": "q_47bc4626ceadc735ff83720d59aa12562c185dc47e502303af61fff27981150a",
+    "query_language": "fr",
+    "cosine": 0.9999999999997689,
+    "l2_difference": 6.819562506233916e-07,
+    "max_abs_difference": 1.2293457984924316e-07,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/b5a4f39f00daa631bb3330078f1e02def74aa93557463bf9d02ec057114cec7c"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "query_id": "q_839b3a728d8166792906e0d3254bf9bb601d4da5a4bec6899336c3ed4262bffa",
+    "query_language": "fr",
+    "cosine": 0.9999999999997725,
+    "l2_difference": 6.766061346122187e-07,
+    "max_abs_difference": 8.009374141693115e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/b5a4f39f00daa631bb3330078f1e02def74aa93557463bf9d02ec057114cec7c"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "query_id": "q_a87440b30f3492b5a2e547307e015f64fef677e63fc3171d00615be6ef9b4d37",
+    "query_language": "fr",
+    "cosine": 0.9999999999997062,
+    "l2_difference": 7.682642525499201e-07,
+    "max_abs_difference": 9.12696123123169e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/b5a4f39f00daa631bb3330078f1e02def74aa93557463bf9d02ec057114cec7c"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "query_id": "q_f239699fc273952ebd120f4156d79d0e64209ccd0bfb66aad7d15d0470697c27",
+    "query_language": "es",
+    "cosine": 0.9999999999997571,
+    "l2_difference": 6.976562792161006e-07,
+    "max_abs_difference": 8.940696716308594e-08,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/3b2ab14bdf5a1745215508cd4633022f3a253aab47f38430fb4779b46836eff5"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "query_id": "q_f239699fc273952ebd120f4156d79d0e64209ccd0bfb66aad7d15d0470697c27",
+    "query_language": "es",
+    "cosine": 0.9999999999962099,
+    "l2_difference": 2.753506334812438e-06,
+    "max_abs_difference": 3.501772880554199e-07,
+    "original_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/7454a67bc0337cd8bd64ba98f7007a1f9b459650f78e0fded8a58a4827e20681",
+    "identity_translation_embedding": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/f637b5f7ebf3c4df9a957d33cc59ca498884b4f8bf8cbe84c2c48098727b4563"
+  }
+]

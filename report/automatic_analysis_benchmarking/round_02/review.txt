@@ -1,0 +1,54 @@
+ROUND 2 — LANGUAGE CONTROLS AND AN OBJECTIVE REVERSAL
+
+Visual inspection
+All four generated PNGs were opened and inspected by the root analyst. The
+target-matched forest plot shows paired contrasts rather than incompatible
+absolute-score comparisons. The surface plot labels each cohort size and masks
+unavailable target languages. The pivot plots distinguish source hits from
+version recall, show uncertainty, and include all eight fixed models. A legend
+overlap in figure 4 was identified, corrected, and the corrected image reopened.
+The legend now clears both lower x-axis labels; all four figures are accepted.
+The full numerical review, intervals, and limitations are in review_draft.txt.
+
+Accepted findings
+Target-language-matched translation improves cross-language nDCG over the
+original query in all three fixed-model averages: +8.29 chemistry, +9.84 EUR-Lex,
+and +6.27 UN points. Within that matched language, HyDE adds -3.21, +4.26, and
+-4.22 points respectively. This qualifies Round 1: the mixed-pool language
+average was not evidence that translation generally harms cross-language search.
+
+The corpus sign pattern is not confined to one arbitrary output language:
+HyDE-minus-translation mixed nDCG is positive in EUR-Lex and negative in chemistry
+and UN in each of the five shared output languages, averaging the fixed models.
+Individual encoder effects vary, and the four adapter-role changes remain a
+limitation for claims about generation content alone.
+
+The UN German pivot shows an objective reversal. Against the original query,
+the fixed-model mean nDCG rises 1.78 points (95% paired interval .61 to 2.96),
+while source Hit@10 falls 6.53 points (-8.91 to -4.15). Against English translation,
+the mean nDCG change is uncertain (+.22 points, -.71 to 1.14), while source Hit
+falls 6.93 points (-9.16 to -4.81). Thus we reject a broad claim that German is a
+better pivot. It can look better under a version-sensitive objective while
+finding fewer known sources. The Hit point estimate is negative for all eight
+models, and for every original-language stratum after averaging fixed encoders.
+These counts are not eight independent experimental replications.
+
+Questions driving Round 3
+1. Decompose nDCG exactly into the contribution from the first relevant version
+   and from additional relevant versions. Which term drives the German gain?
+2. Quantify lost/gained source hits and extra language-version hits in counts,
+   especially for E5 and EmbeddingGemma. Does the version-count difference also
+   hold on the SAME questions where both methods find the source?
+3. How often does selecting a system by version nDCG differ from selecting by
+   source success? Treat this as descriptive model selection, not test-set
+   deployment or an oracle recommendation.
+4. On the legal corpora, what happens when a fixed top-100 document ranking is
+   collapsed into unique canonical sources? Preserve existing qrels; do not
+   use a transitive chemistry translation closure or invent new positives.
+
+Claims explicitly not made
+This does not establish a German semantic bridge, the first metric reversal in
+IR, a new relevance metric, or a causal property of legal language. Closely
+related coverage/ordering and multilingual-equivalence work is documented in
+literature/. All intervals are exploratory, without multiplicity correction;
+the original-language strata and fixed-model averages describe this sample.

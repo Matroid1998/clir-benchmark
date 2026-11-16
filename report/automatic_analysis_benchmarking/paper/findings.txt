@@ -1,0 +1,114 @@
+Six-round CLIR analysis: findings for a paper
+
+The strongest contribution is a controlled empirical study of two distinctions:
+what hypothetical passage generation adds beyond translation, and whether an
+evaluation rewards finding a source or recovering more of its language versions.
+The study covers 638 selected source-grounded questions, eight fixed encoders,
+three corpora and 264 matched document-level reports. The six rounds, visual
+reviews, scripts, complete tables and provenance audits are preserved alongside
+this summary. No new retrieval, model inference or paid API calls were made.
+
+1. A translation control changes the conclusion about HyDE.
+
+In cross-language single-target search, translating into the searched language
+improves mean nDCG@10 over the original query by 8.29 points in chemistry,
+9.84 in EUR-Lex and 6.27 in UN. HyDE in that same language changes nDCG relative
+to translation by -3.21, +4.26 and -4.22 points, respectively. These are paired
+source-question means across eight fixed encoders, with targets averaged within
+each question first. See compact Figure 1 and Round 2 Tables 1-2.
+
+All eight encoders have negative chemistry and positive EUR-Lex point contrasts;
+UN has six negative and two positive contrasts. Thus a single grand average
+conceals useful corpus/model differences. The corpus mean signs survive quality
+and identity-control exclusions, language/setting weighting, and omission of
+any single encoder. They also occur among the four encoders whose query and
+document prefixes coincide. None of the primary query encodings was truncated.
+These checks narrow simple explanations but do not identify a causal domain,
+text-length or adapter effect. The implemented HyDE uses one generated passage;
+it does not cover every configuration of the original HyDE algorithm.
+
+Community implication: compare hypothetical generation with translation into
+the SAME language on the SAME questions and target pool. Report model-specific
+effects and question-level losses alongside the mean. Positive EUR-Lex means
+still coexist with losses for 21-35% of questions within individual encoders.
+
+2. Better version-level nDCG can mean finding fewer known sources.
+
+In UN mixed search, E5 with German rather than English translation retrieves
+71 more accepted language-version hits but finds the source for 22 fewer of
+247 questions. Its +3.81 nDCG points decompose exactly into -2.18 from the first
+relevant version and +5.99 from additional versions. EmbeddingGemma likewise
+adds 32 version hits but loses 20 source hits, while nDCG rises 2.46 points.
+On paired questions where both translations find the source, the additional-
+version effect remains. See compact Figure 2 and Round 3 Tables 2-4.
+
+The all-eight-encoder German-versus-English nDCG change is uncertain: +0.22
+points, with an exploratory 95% interval of -0.71 to +1.14. Its source Hit@10
+change is -6.93 points [-9.16,-4.81]. We do not recommend German generally.
+At top 100, German still has lower source Hit (-3.49 points) but higher version
+Recall (+2.15). Collapsing legal rankings to unique sources also removes the
+apparent advantage: source nDCG@10 changes by -3.98 points on average. All legal
+top-100 lists contain enough unique sources to observe the collapsed top 10.
+
+Community implication: state whether the task values source discovery, finding
+an answer in a requested language, or recovering parallel versions. Report
+source success alongside version-level ranking metrics. Both are valid goals;
+their preferred systems differ. Here Hit, SourceRecall and AllSourceSuccess
+are identical because each query has one required canonical source. They must
+not be presented as three independent confirmations. Chemistry uses directly
+accepted translations, so unrestricted canonical-source collapse is not applied.
+
+3. The validation objective changes held-out system choices.
+
+Five-fold internal selection chooses one of 11 variants for each corpus/model
+using only training questions. On UN, selecting for nDCG rather than source Hit
+gives +1.96 held-out nDCG points but -3.04 Hit points in the original split.
+Across ten refitted fold assignments, the differences remain +1.41 to +2.26
+nDCG and -3.54 to -1.92 Hit points. On EUR-Lex the same trade-off ranges over
++0.10 to +1.42 nDCG and -4.77 to -2.77 Hit points. See Round 5 and Round 6 Table 5.
+
+This is an empirical consequence of objective choice, not a proposed routing
+method. Internal folds were designed after exploring this dataset; they are not
+an untouched external evaluation. Bootstrap intervals condition on the fitted
+choices, and the alternative splits are correlated. The per-query oracle is
+reported only as an upper bound. Its large headroom does not show that a useful
+query-level router has been learned.
+
+4. Answer plausibility alone is an insufficient retrieval diagnostic.
+
+The rule-selected chemistry failure generates a spatial answer broadly
+consistent with the saved answer, yet BGE's first accepted source falls from
+rank 1 to 19. A EUR-Lex gain adds the saved answer's network name and moves the
+source from rank 17 to 1. A UN example keeps first rank 1 while expanding accepted
+version coverage from one to four. These six audited cases illustrate observed
+behavior; their extreme selection does not estimate frequency, factuality or
+causality. Full texts, source provenance and ranks are in Round 4/cases.
+
+Accounting and reproducibility
+
+Recorded configured-price generation cost is $0.72763552: translation $0.230011
+and HyDE $0.49762452. All four failed attempts are retained. These estimates
+include observed prompt-cache discounts and are not verified invoices or fully
+cold forecasts. Outputs are reused across all encoders and settings. Summing
+every saved manifest would double-count older compatible artifacts. Generation
+attempt durations, amortized offline embedding and amortized offline retrieval
+are reported separately; compute prices and online end-to-end latency remain
+unknown. The analysis itself incurs no new generation expense.
+
+Claim boundaries and paper positioning
+
+The potential contribution is the combination of matched dense multilingual
+controls, a ranking-level diagnosis of source/version trade-offs, and explicit
+selection consequences on three curated corpora. Prior work already studies
+HyDE, multilingual expansion, parallel-language retrieval, language alignment,
+expansion failures and metric disagreements. We make no first-use, new-metric,
+universal language, causal-domain or downstream-answer-quality claim. The bounded
+primary-source comparison is in prior_work_positioning.txt and literature/.
+
+The questions are synthetic and selected by highest provided score. All 10,691
+published candidates were considered; candidate pools are variable, not always
+30 questions per source. Corpus domain and source granularity are confounded
+(patent abstracts, legal articles, UN documents), qrels are source associations
+and not exhaustive human judgments, and four encoders change query/document
+prefixes. Independent human questions and external validation are the highest
+priorities before making broad CLIR or deployment claims.

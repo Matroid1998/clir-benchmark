@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "folds": 5,
+  "seed": 42,
+  "source_questions": 638,
+  "out_of_fold_rows": 30624,
+  "training_choices": 240,
+  "train_test_source_overlap": 0,
+  "shared_source_folds_across_models": true,
+  "all_cohorts_identical": true,
+  "oracle_upper_bounds_verified": true,
+  "translation_historical_usd": 0.230011,
+  "hyde_historical_usd": 0.49762452,
+  "paid_api_calls_in_analysis": 0,
+  "benchmark_execution": false
+}

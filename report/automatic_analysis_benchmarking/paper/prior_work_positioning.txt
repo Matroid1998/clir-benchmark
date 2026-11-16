@@ -1,0 +1,94 @@
+Proposed contribution framing
+
+Position the paper as a controlled empirical diagnosis of generative dense CLIR:
+what hypothetical passages add beyond query translation, and how evaluating
+language versions versus canonical sources changes the apparent benefit. The
+study compares eight fixed encoders on 638 score-selected synthetic questions
+from chemistry patents, EUR-Lex and UN documents. Its value is the combination
+of matched controls, explicit relevance units, ranking-level explanation and
+auditable failure cases. These are useful experimental contributions, but their
+combination does not automatically establish novelty.
+
+The central generation contrast is HyDE minus translation in the SAME output
+language, holding questions, encoder, searched pool and qrels fixed. This avoids
+attributing a translation effect to hypothetical content. Original queries remain
+necessary controls: recovering a translation-induced loss is not necessarily an
+improvement over the original. The implemented HyDE comparison still changes
+input structure and, for four encoders, query/document prefixes; it is a pipeline
+comparison rather than an isolated causal intervention on content.
+
+Accepted evidence through Round 4
+
+Target-language-matched translation improves the fixed-model average over
+original queries in each corpus. HyDE's increment over that translation is
+negative in chemistry and UN but positive in EUR-Lex. The sign pattern persists
+among four encoders with identical query/document prefixes, and no input in the
+primary target-matched comparison was truncated. These checks reject two simple
+explanations without establishing a domain mechanism. Favorable EUR-Lex averages
+coexist with losses on 21–35% of questions within each encoder.
+
+The clearest objective diagnostic is UN E5: German versus English translation
+loses 22 net source hits among 247 questions while adding 71 accepted language-
+version hits. Its +3.81 nDCG points decompose into -2.18 from first relevant
+versions and +5.99 from additional versions. The pooled eight-model nDCG gain
+over English is uncertain. Thus the paper should explain this model-specific
+tradeoff, not recommend German as a superior pivot. Source collapse and matched
+both-hit analyses strengthen interpretation; they do not make version nDCG wrong.
+
+Closest prior work and the remaining empirical distinction
+
+1. Macmillan-Scott et al. (2025), Generative Query Expansion with Multilingual
+LLMs for Cross-Lingual Information Retrieval.
+https://arxiv.org/abs/2511.19325
+https://arxiv.org/html/2511.19325v1
+Multilingual expansion and translation/expansion ordering are established here.
+The stated BM25 and original-query-only baseline limitations motivate our
+same-output-language dense controls across encoders, rather than a claim to
+introduce multilingual generative expansion.
+
+2. Roy et al. (2020), LAReQA.
+https://aclanthology.org/2020.emnlp-main.477/
+Mixed-language equivalent-answer retrieval and same-language alignment are
+central concerns. Our contribution can document how controlled query choices
+change source success versus parallel-version coverage in specialized corpora;
+distinguishing single-target success from multilingual equivalents is not new.
+
+3. Jang et al. (2026), SHIFT.
+https://aclanthology.org/2026.findings-emnlp.109/
+SHIFT explicitly measures relevant-document coverage outside the query language.
+Our fixed-qrel source/version decomposition answers a different question. A
+query-relative target-only metric would change its positive subset when query
+language changes, so our treatment comparisons retain invariant qrels.
+
+4. Zhu et al. (2026), When Does Mixing Help?
+https://aclanthology.org/2026.acl-long.1455/
+Language interpolation already yields Recall–nDCG disagreements. Our narrower
+distinction is canonical-source success versus multiple accepted parallel
+versions, explained using their rank contributions. Neither metric reversal
+nor choosing query languages is itself an unclaimed research area.
+
+5. Weller et al. (2024), When do Generative Query and Document Expansions Fail?
+https://aclanthology.org/2024.findings-eacl.134/
+Expansion failures and baseline-dependent gains are established. Our matched
+multilingual comparisons and question-level losses add conditional evidence;
+eight heterogeneous encoders cannot identify a causal model-strength law.
+
+External validation required for broader CLIR claims
+
+- Evaluate frozen comparisons on an independent, nonparallel multilingual corpus
+  with human-authored queries and pooled human relevance judgments, including
+  relevant non-source documents. This tests dependence on synthetic selection
+  and known-source qrels.
+- Replicate on unseen source documents and domains with controlled original-
+  language and gold-version availability; add genuinely lower-resource languages.
+  Preserve fixed-qrel and source/version reporting.
+- Repeat translation/HyDE with another generator and multiple generation samples;
+  independently assess meaning preservation on a blinded multilingual sample.
+  Re-encode matched inputs under both encoder roles to isolate that difference.
+- Freeze headline contrasts and evaluate them on an untouched holdout with
+  source-grouped inference and declared weighting/cutoffs. Later internal
+  cross-validation cannot substitute for this external confirmation.
+
+Candidate titles
+Finding Sources or Their Translations? Controlled Diagnostics of Generative CLIR
+Translation, HyDE, and the Retrieval Objective: A Controlled Multilingual Study

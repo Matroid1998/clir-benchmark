@@ -1,0 +1,2114 @@
+[
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/5efd98afb265d51f58f246ce7751f96ef88a3575611a272f362fd8362c4db62e",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/a0b500a3e8cd5e680086c5a8cf5d14c036082a02f6209ab797801e74081fc331",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/8b9c08f4616441bcedb6f6a4e5d616f0c166109a5f34c0fd118cc46db64b1f35",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/c479b97868f5ba0a9454c35bd3cf8fcc7de26d5238f53e1977011f25c5d2c8c5",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/1a14fc8e2ea8a0a3fdaede4b38b0484beebaa293bf39a17b33613cf414f66d78",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/6480486647854a0013f4805d7b7278c7262031b54949bd51620f5c64c967d8d4",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/0b9b693bcff3810c4e9c87494bc6ac4256405db1d06f9410cc4800cb9d276008",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/18e92cff5f1f5ec30f71dcea1de72d85b844fcc90b6d5a5217e5480a0ef6555e",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/bd2df241346a106875215df3e6df5e80cbb229277659a446aeb4b1c682122031",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/316103f30d49ea31af76a372887bccdc6441c57b9c23bd3c5e5a166436919fe1",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/75a20afc0541d77ce604134ec9d746b0a1773800c842b3e27ef672cd7e100e70",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/cc9e71f1ce5ec14703d9325e007b514bea642b86e9e35a3cb5c0f105e1e381fc",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/34aa3a52e05a20dc84d16ad0387c553296bd79a97188a773fc11071ba8817cce",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/e4ac149d9d8e8d34f07bfdf91f1703c7b1e4844f29bae19947205c3c9c218a0d",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/7f21441a4177bed1d643fc77b9d405ca3b1b6dc2ea552f5707ef25e418ed5645",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/7657bdfda356c2b92a367b841fced1b199e5b8c4a6feb79047ca1e9433592aac",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/dd5b8655ac102608ae4adc5b67baf1fed1c12b0bd1d43bc71560c810d1d661ae",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/9037c3feffb2dad2cdc080bb5c50b4dba792d0e110d39813bbfb86f308d24ea0",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/1cf7d14c4753c4cf1344e8b0406072d29dba8ad610687f34b4bd226fafb6cc97",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/8a5a81162ee2a1ee144d4a06d9e8af6c1e4104096e053d97f191502a0667edbe",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/706e3ec0141edf4936c15ab1b5541f5044f03588f273a27ca098290232fc3379",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/2aeed445b7ed367ee6bf936354b38487ca0ec97a61f72b4463cbe2da8534d2e2",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/863f42d8d875c5d0830015378a83a4e5b5550cda43b1b9774cc30dc24588d99a",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/3af17b43403fd8e895903afcd0ee7b984ed40e552ee29669155bc865c3c51fe5",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/9e8f587ef747cfa97e017e914666a1992098d98a650ea1af94a01d841beb335c",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/6de201e606748b42dfe36a4a26a7d4b3a64a88309515c4b3036c750a60f2a04b",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/b714322fa77f5f48ce0f0973c43732714e16a8e129e4d504b4d32e9ebfe2091a",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/044b6b6f74ac96b4168387d1892e6887984bbde1e4c0d18825f317f87bd6681d",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/deef6ba4b870ba10cb096b6df385924ead2b3c71060b9a2eb9995047b6bb00f3",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/08a298d365008f04067afc1bdd2da5a690ea9f26c422f6f0e1ab03db7aaf175d",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/e732b90e940dafe2829526b5223024e5ed60f7102c84924d3af2742e1a42ab63",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/49384ea3840f17c3692aa642241a76ca3557467b0471dc2197b7f276eefe75a6",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/ade19512a46e0b4daf23881e873bb27c23820a549055e243eb7edfb2f10d7e4c",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/69f19df4f12862f55e8ac89a969542e7662273ceec587913af3b792c66d93e94",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/a4b39b71d4833157bc44399b26efb86c96f6f073eeeae5da7e759241a6c950e2",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/1a476fca315be9dd3a32b4833818c8284643f05a68d94c754a96884d7c9b25c8",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/d9292c71d8be6b96ca6b004a5b242dbc36c5a5d9e683d86023c2dcbfeb5e1001",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/98339ba94eaeb551064c3a478f014e1e573dddccef259aebe2cb1017e585e053",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/410bbcdf913ef54b22c71de6234b7c8dd3b8573c8d1a6ca75e44691fbbdbba30",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/3ff4afccc10950bb8a96111aac670576c633ac2f42852641200cfc2125131d9a",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/8b058ba97984409ceecce4cd52aa2f0509a0cfb92075f3f575e6855396de0cfa",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/2c86957f05c986567ea3b44f5f236455f829314392a0fedad772c4d797890d27",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/89555e8fc9499bebb9d6ef7b8cceea9d7da96770a4d727a9493b1d5604959130",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/871299892f216eccd67137befec550c0006b2a2acf63182c2d8595c752f07f63",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/0598a0e3e68562a1afda5c86b3a85b8f72b042fc2fda534e59c1cf735979f7cf",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/919208b0f79032ce0064a7fb4a5b251cc04f142f7f777ef59b6227061d16ee1a",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/0892ba138498115c70bdb97d8a7223fd5e3540f767abee3fd790eb7228da43d0",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/41b7629f9319d9a79733a8f0f5f317c2350902369495e001631b0157fa9b1823",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/ea53be00ffe934fe8b2e180f9d752b060c3600fdbf5e19cf826d2dc7de8058b0",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/3c2dc4e21853c4c36c0d46f26d660b0cce408afc3ed01f0caf7d7083641742c0",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/c951cd4e330af48d839c0f464ac3c5baa249b1f89b59f99e2562a4b7b4cf243a",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/2e32aaf2e615b0409cba5f96cd5660f38729dbf022e07c1b78a85aefd53ff6b7",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/a850c090cad319a955d95732c43470c2e5b835cbf51ad93b9895447d64d55e49",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/6a77c2870c6aefa67240f0c547170804a1e91fb3f543631d8cf7a32a6c55bdd7",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/e6d7fd6cd9df769a2cee6b545aea52437dd6dff1ce0f30fe24e8b0d4ffb7718a",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/26774a531d5a130a1537fb09d4d0e4efd16be27fbcb2f24af179dda9d15f3d02",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/598014cd75506a5e820fe077eb0cbdf8285127ff20f59520711a829eba8c0c21",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/f4685eaedc0e24fce2e8301d9b0ccbe613a40c3eb27a060493ebc8f6310137a8",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/f269098fca243523777e2436b8cbe0a264bd252f84655c25cacaec8a8a93ff7c",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/56934ab1301d0b326b6a535bd2c45c3142fde7be9236cb72a5adae37c6c22d9e",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/8b099468df8c9439a2bf7b75d21da64b472e7eb414b0d56d20e84efa6d51fcff",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/f33e67b92210d92e40dedfd8f312172188cec8b8130f30f2c7074f2d0f26f1d1",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/7756d15603acfb227cf62da44addb8d0b0f885db3a2ad6765976a5e948dc8bcb",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/30c4b8ab2d70bb2502220d57320cf1d43b90f77c3526a860fe6a4bbdbc781bb4",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/fd0abe451311cd66523d5b4e5d33d6db78e60a3d1938c649f123e78b13069877",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/e04cd5988697af00f989eceeb2d28d44cd2ef9dad4fd05253679475b24a39ad9",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/5aae2da23f3ce7ecb4f615be4fe5054cc052e4842b7beda09187f6358cc8839a",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/031494e3e74754c551838fe2c04071263eb9635d55496a18edcbeec843cbc98f",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/a57e54609ca62cd7f6118b3eafe4e77a9ef695ff98202686d090e6de407360c0",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/c5d182f0c90cb1b254f05323f4c79ca13aa2f703e615c0c59c044eb580bb8826",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/b23439a7d299c33ad9fd78dac24ecf7371ce1758eefc03680f0d3b709a4a752d",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/db6cbe0e34e2439aaccadc3890734c64fb561058997512e3ebeb9342fdaaa4b4",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/6eb84a3b5a93782eae7ae0210cd1c910f93192bf9ba2263d638dfb66b9398622",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/9cd0d749a9dc9d36f8a1d0115a29f3dfde7f5015ce422cdf222b57d709aa582d",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/e56675d70e1e0e23329f0836428f35548e13b379d41d44d6172e0a2f3aede061",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/c4d6159c366bfac0e21ac315da6dcb3922ac5bc0222e01f61edb85130bf092b7",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/a1b73f20b4691cba01eca28686e294bb4f75d03d1355c409e62136cac0ebc2bb",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/33a435ed863238bd63ad4bb0055559d080d747b181e94dcbaa206f88cf09bd5f",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/0cbdb667f4f0371b45249aff2ac590e89d2f49efe4a6247e03979d1fd5766947",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/f7ea9185ca3cfc1db819f7ceb0898f85fe70d1d69d9416fbb1b2e8e112f9f886",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/220a2582bc652cb6605278ed9c46e1aa40b95e5df066f8a1506678f29d996431",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/f2b499cfe4db2503a4758f43c7f82a6adeaecc043f82c708a4ea9829e7313adf",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/94ce83def8e9caf2321552068bef1faf248d1dfce00e7dbd18eedc4f0c6c56d7",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/72c3bb81c524bfac48c5b6962acffc6a7858e7c8ed21c0eaaca499c26fd0c30c",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/4ebf538cc87b8ead122fdbce9e359f0272ca2abb3c78ac378513521ead99d6c7",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/49e11d72bf5e03424d403af83f23c8eb8fdbb4af6c3b7f780ada5455c3235347",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/79727a05aff88e9cedc37b631863ea501d18a5919096832f9013ec0e2c8dc0fb",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "eurlex",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/4d587f25d34a580c496a24f29142d528f2444056386735efac9e559d452285a6",
+    "relevance_hash": "edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/e8c676fed105fc2ecf88dc5bd89e19499ca5804cb0af2ce704642c57d3612177",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/82a5e40b730a6ae39c48304b2925d2402c1a7d4fe87b3c3a312734322b53092c",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/f7639ec6b6c31f923099ad2c8a4e6e0b80b2b409579f5cfb29cf6ab7ea78c5dc",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/f605d66e5d12c2d29f07b542fd731f06ce18f0375472085ae7e2e03d02101351",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/d60adedd6caf270c1175e869e0baaf5d598903bdb5ed2abdb31ea8505de9351d",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/c818d2211d9b52aa978491c5ff7d68171d1d0ec5c7939de4a6d6fe30e2ee57c9",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/f394d358877a7f6bfa6793759407491beed9c3ff833e603ffa6abc7359f2e8f8",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/f072556a752cb9cf1160e7388ed108e4567116ae3044dc3961d6254610aab6b8",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/d2ab075871e52ed640b9f67b9001e5f595bd924b56ad4e357525ee2e9001c21f",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/e4efd76c404e375085c0be9eee3584939ed56c049662cb4303f2592990c2d16e",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/794f46d945fd5d87eab2e46e138ab17ceb4da510e71b7ecda7d0c05602916c98",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/eb38a9d6ed09f40a30512289980b95378d5a3a421f09160a6ab2bc2c092d1112",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/a458d95e3c501a79d1b2e4ce9189c4c99a2209e3cc1c77ccff4804edac0e9d09",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/6f788316dbc2eedad83411d7702d46f9ecd7e4c6b60a9dd632d4deca6cd72586",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/a42610e8d0300c9518daaffdad307e8c5257c3b9d2a8016aa9f6672a7abd637b",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/1f7d1ebcea2817cda445597e59134f790926d1f8bddfc3cb8e1002165f2965f8",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/af7a4678c91ded6a8244338f4d671bdbab6e0da6042fb43c90561443f21add79",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/3840ba3e3385a5a98684656e2e24198854c66b429d3ca8ed6cc8db4932510e05",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/0ccaa4df4912bc5c4ddbef6897412ef97c7f02226db7be710849b8f3ac0c5357",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/f8cb352de540c9c4604bdc2e075b6b416debc4347eeeb9c7a5467315195a34d6",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/b480661dfff9638c53b264be0b24ca86e14f7b907f965924b0b0b3121ebd4fb0",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/0ffe44b2d902ab26714a6efc7619343b1ee2946242f0b7f26c669160d6ac8310",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/160abc334d7d27697a013b976fc341325df8dad8befa2cff660f246b5b8d2901",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/45a4cb2cdb6a87969adfd016b3f04cac532c2893745143992548192eac6023f9",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/da8c8f3c2d66d54767c33871478a87e909ffbb4cb01f23e1a9dbf76c927c22da",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/f6f3d446f81ff0cac82e9b19ab15e70e524d72174aef81a883ce77884ccd90e0",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/45091584eeed67473603f3f7b9832cc207c747d4a777db124494f22bc370c95d",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/9e2f3e5d1c39d231928086979f00aa9dc488550300627ded445b7f485ff5e3cc",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/3fa760d3c77515ec1a44f54fd29c143291ec8e6bb884489977589bcafa6668ab",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/ac00f7d4e07a6b2098c186998bf7453fc32daf4dd94f33de81e95b04d0e75ba6",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/d678ab679e8dce5594627ab2b3217db6be1d6945374e44d03de77ba1c6e86f6b",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/8f46faca2211151857c26be5e06075b29d88d64d61dd2641216d3bdb7a745d1a",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/990234e01b2adfedd2ba79ad542a00a518dc92c87a1118690196375817d0422c",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/12eb281b97126d87f60930941c4d32125f8fa6db946ace434b37280438322ebd",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/16e65414f9623f21d44b612e28d3b3de48b1f2aed270fea14acd4ec35375601f",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/b55e309b54903569990383081d3344c137a95cff7ca9f412c8e0b2b0851743a2",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/c049697f79a06bd22cfd45e784499fd41292bb49e53049f041b7c89b919b7ed5",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/205f2b34c7fd035e1a36e622896d339f94605c633d19e17096b8ad65c728dd56",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/66b5dc9eb86424d162d3aeb75aaead2aa05799affb26dad8bd9028695621741d",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/22234c818f1f50f54d608b68220ff8150bd4f980ea81a54d0d5d913d3d0bc383",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/cb8b10d7fdd2c61aeb22f3fbbae974ca914a8ee79606851852ca0865be797a63",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/9a512999af7a2c3201fb86ff3986a910e04c89feeabfa37fcd29bdc77cdbb8a5",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/b3a8565d118573eba929cd72171819425f3a0c64f4f4a7e9866f8b634d2e6387",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/1deb8b29308b188d6b9482bf692997158c7ab57f6c569f10ef0b2bd4c48d474d",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/b12929f712d2c5272ddcd1d51d15ca6fb26ef8821c5325f44f3c860c929db65d",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/a3df62d413965a52edf75488feb1fdd3d419bb5bc1525dcc7a87f693f7315f6c",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/5d3f1cb21a7468cfb05611de6d2cce81aed95fe9b5f4ff018a7e7fca82e004b7",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/706fb16d56d93d19d7826320a3e44671b36c2c4c63d2e12d01bbcf64841ec86f",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/42624240cab71277bcbbfc624f336c798001d6ccc23ff72131857bda87ba256d",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/cde1d1396f5934d472933c60297c172cbd0105a2c10714a42d939ccdbae3b58b",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/203d3dc737ebb25e43d632fa1e8ec7f49546011586c6447318deff58e61984e2",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/143ffe779ef0ad17befd8be29e9fb4a951715887ca22d351eb71e282e19cdef9",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/b48b93824c93723c962efcb458c8020f3be68439408723f6d76b13d7db03ef9e",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/18ef96fbdf019339bbaeff9186404d7c27b07d38b6c6f2e4db010ab7c14d1add",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/fb095cd9dda4ff0f3e5785b05acb7f2ac724d3ccbde69798bc3bb2ba8cb4edc3",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/92969dd01e09058517159ae55bbf9a4d62281833dfb5818932a252d9004dea3d",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/26680b50cf9bd2c0abeaa9c39db32bce071bbd114ce3927bcd7b0f28875f0d04",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/891548a7cb8a7c1d19ba3dee4ed80e89028286800f61fee34349c2e1ae94f02c",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/e1e4df5323ebd2ea615685e5f2d8e2ebb49572f334d9e3895726d59b9be40d5f",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/be726b5cdb5b0ada1509c20df2ac44d07eb0e9e2503df5dac45b04b44958fce7",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/e4d472edb2c9f9c2fc8a1dc6f31829a3e7008046376a36b20be278f26d4544ed",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/9f55b4a653a56ac167eda0cad824c59a1ea3c28d91bf29bb4c29619e12fe2401",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/90568a13aeb177157613d74746baa3deed8fe16e2c78fef9d335ca62ac868775",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/331f53ac74b0d2ff1c3581dc2b6b1bc9fb90f37acc4b3a1ae4b585cf173aef42",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/15e647bf27cfad5a7647ee5d53e9ac9380ffa9960db239a1243c5d58bef2b15a",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/b758b126b13609bb409fd187d49b04acd18bd95fbabed5002762b948d5cc9de6",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/5365b6cc8bf88eb40cc509cf54a733dcf5746e1516df97cad30757284f0303bb",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/141009abe0d9f1f3c1dc1bb92fd55350066fb823ef08b0e6479f924cc55d027e",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/cebaa01ad43273bb6063d3f4eec1f9a5621c90987d8b4aefb22aa51ea7615361",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/684e0c5b382665358dd45d5fb75be1eea60739e6272d4c049f2b2578bc08956e",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/4285fbf7389aa84e865bd9ed5b5f0dafc1779344428a7960904e5310fdb91572",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/cb27e260f6157926be62aaa7e145d86ff01f28a2ad0799f71720c83c56fe3648",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/eabade691592d416e6004d7bfae3a68d533ee4abd435a137dca500d16904662e",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/d39011c4c27465dac43675b91d4bc23eca4dcb7980192d5c6afe8f8e18f442f0",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/41d92babbdd9ad9f1124a830b42d419283af1d88a3ea11d8d0cfd1161f9425e3",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/fcb2a28cf1d6cb7474fef512c25782d98fdcb1ec78bf72a4cbfb20ac4f03712c",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/e3879fb3b1f797398b523ad16322fdc563885307e13214e3cc5ee42772ebbf2c",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/adfa83327a003de4eb4deaf06c34a297229bf0761f212d9762e1ee128377cf09",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/be7e52acecee8caaf83350c2e58505116dab603dd3dc038b40f63f5d90d6e88b",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/584a486b42a4c6badc05ef82fd4374aed4f00b01795964070f1d17960cc532c3",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/a742141b529945f01d8fadd665626e0c368ecdaac20504e799ecdfe0b4e43788",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/c66c86c6a7068fe033a2fc3921ad3c39b753ff796808cf0acf62d404dd6cb83b",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/42f7232115adb6dc5c753d91336fd046449f74bba7f01b042f0b501c81aeb12f",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/2dbaca0297841530b3b95631ff732833a71b3befa4022662000fc4c6eba308e9",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/b734f47105c14a185652d707ccbb01a6202d394fd2bdc509c1427a2e3112b794",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/ac251609dac58020a6c76299838e5433c4ea92909ae34328ae68ac7114474e9c",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "un",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/un/1000e764f3ef87c9664884ad848c155d96823c76dd5c13e00a2a6fa50c0d1261",
+    "relevance_hash": "790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3ca01f8930c83c237aef2276011a5f41f454678aff02bd7529158d99803716a5",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/55ef1be38f22b47959e2b8fe7f6b0a7164c1b6fd7e99e91e8bcf0b5459721489",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/9e5804342a0e1d181293d2b44d8a606f227ae84f6cec824123c962387c099b9b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/f1ef2596a119d0766f24f052773e93461f4c112eb62760b642f355fa74c0f05e",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3bb142ce9b85cd977cec2cbd4ac6d603716e076363baeb3277e88b3c49a459fa",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/6b6c557ebbc41d72e039b04a5b87cda74058197f77025fc5af1b542bda48967b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/ebd2becb4e00cdcc80f87fa6ba6a79dfe78efe448c9947406fbbcd06fb6f9c13",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/cf9b824f23ccda62497bad7a8d21efb035c68d9baa4562c3f289e81a14e0acd5",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/15adcc200b6f139ecc156fe2b7015cb10aad08c85fd77d52ae91004e1a68e792",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/8a92fafefc7b1a47fc7ec53240f6980c139c62ca5a1b2f4ad65df4bdaab65f9b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "embeddinggemma",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/1cccea06c4e705c4697475c64b61e11eae8f2b005477933c0856f16de3bdd686",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/e4191a74264edcf3cb17184bfc67cef9dc8eafb88bc6806df129bae77dbd916d",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/d6383beb7815bde3cf1f7888e88aa7059d1208193005c33ad26df91b3a9212d1",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/bfa9690c51c2cc3acb5d7a4bc09f8313443874eab10cdf4ba89227a1890d0576",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/2489b373a7141980913ae989055ae0488063e166d5a87a5e9529dd08f22c83dc",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/8e7396b4b318e5d88846d09aabfa66d3139cd6b46387a496677df8cc2a355378",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/d2cb84ab57ba963ad6fe60f5efb76a9a1f3387dc2f55800b88b4b95e1da6aa09",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/2df2a0e2ad8c3e743b24771f4e374080676f243ae0d5040f61c880b11415ffda",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/bd8d85fbc66c7d331d7cbadbffe6cea75b80120bd831cc8580ccd2e7ff0c3f22",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3e005e0a3cbc19e8ba16c241735a307d2220ed37f247f0c5ea4580cc0fda893d",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/4d55db365fb108d0d96bf281743cee322e845cbc4d34e64aa1c4d78452341bc8",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "bge-m3",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/d452c234f5c7b4f8b7773903b2390659b46b51c660d1fcb27abffc671653e8c2",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/7c372480ade8eb946adf4e22a3e07ca2bf94d8a5c11c8acce6d569c21cc09b6c",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/17fec723a7953af384c2525e9120f96a2cd5bca203213c8ccacf85f48608379b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/45071b528b3b653ef26c462126ad27cb24150b691abb592e3e192d9f4e12d1ed",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/387179aa6a8d7781351546fddfa554d65b735e2d5e7a32b9a9162d7340fd244b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/f47c9d086c92ac4441b5bad8a5d220180e4501341ff9e224c4a4984629a85d1a",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/7b16a1bf41aea6a45b75d98405a1e8c150955ae48ee7bc0353ebd01c08af6222",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/8043698bccf8c6581cbc178a27b3f6183b09102cd2f35b52278a5b6742fca7a6",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/7ec4c4770cc4ce74670e345fc4ee1e0f63ab69eae8601b93b74d53ac740addbe",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/8fc7837965531058aa121ea07b401107aea769918cdcf6ad06f8255cba89ee21",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/d2f8d34a4dd1b43edc65bec351de15605e02f17c2a3ebd8e8b8c89e832fd3faf",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "qwen3-0.6B",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/0e575412813407d6281df0974315bd728f0a0dc0c4eb7c670e8c64693a233dcc",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/125226b674d70f486f8db0f4329e9d4764a9d87bf507db89c261f13546258152",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/ea5570c4f170f33ccf684bdb0bdc09adf727d8b12a0c119234512c9b66e66fa4",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/4e8d15fe81c32dd1e4e6ed7972a9e31a80b1ea62bd61b6798c9682070b2837c9",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/69caf4675bde820c72dbad726d3d759bbb600e11be8667416e4e16d062e4cfa0",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/491dedb2ce553ffffd1e639e32e7c59b987fef375607bb4e381cf5467523bef8",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/d456900126776cc92c12b1d27d7cb635a7431c78142847fc7b46835ac36976e6",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/00e58004422827c94ba795ada4aaffcd015dfab1079a069224363059fad50fc8",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3a6447510d8042609d774541666fe9535d79ba3740e51c5b95b9bdf10390caeb",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/c53b2ab836039f6a05fa142826bfba2e45380bb385bd0d20d2729c4a84f9cd47",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/224bcb096fd25d4dfeef22359d31c30e449426d75b528e40afb44ccd1d3e60cd",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "nomic-v2-moe",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/9317a11c72d67a4b04815b9f52b4337dc8bfbe6c41ceeb347020ffc947d4e946",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/ca7218103949bfe3b21ccc2ec3d39fcd2016042c5d70c2f02c2306799a40309a",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/65dce059bb31ac9667bf80385a94edf3ebb9cb655d8f2e583cdde02ee8e0b2b6",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/d02f3a6309a1e525ef2d78b29d17c308a4d3c47b29a636277b808497aa2eb75b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/d4e038d4d724d3753b2637e4dfdf5cc8bdbf7cd580250a5d0cdef4aa72b1b032",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/c7951d5dadd6eded38c3379ac17df4114e24045486c55a999c40a8b3e8c6301c",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/714b5a59af6aa49bdb5fc499aacacd2b62b6b8d60f5d80b3cb6f7c2e0ded8e58",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/62170f799e170140498e21e8da28ffeae58e938875ce564fea49f52a850a827b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/7651e37a2854805215edd50329720044b32de2669d4931653e7e2e9f3464db1d",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/1169d5907ece2a088a2c02247ef68b96364f4032665c066763b727e4dd7566fe",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/7a99b6b66129d7c4fe818e5df1dd5be1e7d2e34f8b1f125e8c93603f90c6b6af",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "granite-278m",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/434636fffb5aabf64a36e8c7cf35eb7d3c337b5d3a72a93c347386e212114aad",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/5c6784c6e0dcfeab28a9d19f1e643ad63558276855f0ff0bd1b9be037e0de933",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/03dd0cc8aa28be1b67dc6da27fe44837bea6b650f9db0b8f9731dd64159a2e8c",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/5e190618e22765bc40df2e11f1ed9e5152088ae8d6b7229883bacdb421ee08d3",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/ae07965fe08b30f76e90c4471a84b461c02cad7796bf0b76fea51f1194c73446",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/95b169bab1025a41b21b97ab83eb0c518119f0ce4b422553d20de94d486ceb83",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/a749bf663d12ebb24433875cefcd2bdd367ea84113420c69b1604091e424e631",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/ccc8048b0ed964a137b5847c4b74910ed8bb08808329a05b434047560813045c",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/e46a428424d9b1058ab52f2337a98118d95cd6ebf848d79f20b3c950f8fb7807",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/8e80b9658bbcfb52c27bfeabd2bb313ab24cef83bb2c116a079809ac9dcd7e6b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/311bd892dbebcddc6310778085aa6d2df2f6ca181e82c604ca2602d7fcfd9dbb",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "LaBSE",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/02a3ab31f7628e0912578cd1eed7dd1ca843e01dff543f95274eda324d058760",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/e90ad6d1b8a1905162c5199624f4317b9840e2fdf860f52020f4b2d95eab8de6",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/ce558eeeb47fcbc102ffbddc4d2666405555b7736e46f8a76dfba5b1d41957ab",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/b775ca3ab3a6d5918401aa2f8c55d2f5abebb9f6bc00bd9da14b19b3d2fb7eac",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3d9f46e618119198db7ee8cca395053cfcb62fa169c3c2a83195b19810b124fc",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/cea9d3420aee6f4c3feaab9b2548fede1682321f3aed835a0c56d7f23447d873",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/0368676cf43c5cc51c66de305ed05c56e43009bb34903a3779c34ae9ea30987e",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/bb1c361c6f0c8b32004ee77723f04f2c1356a524bd91c4a511df1b019501ce11",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/94498180eb038c1b15b87d0d87f13a23e231b6bf40e8d5d90dd91bdb68b87c54",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/4206bab92b2812d3382d046a89a4d890574a25f5e88c313ff1ebdcffa745b5e5",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/ec6dcb7ba6ec5c1b86c6b992bef72f91616cbb2e9c62a3dde5e5ad647cf0d56d",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "SapBERT",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/66f271cf18ffb112eaec8b3d4e8efcbe0c91045142c99fe795e4b4d28f3a9236",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "dense",
+    "output_language": "original",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/e889a77372d3f884e778949b265417847c01da3d9f7c1bb607bbaec09a9f981a",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/d332591cebcfca6f09cd69199d7b4fa9b7ec37284a30de51e3c94402bfe79fc3",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/7db0db60adc0b6bdc5ee229c50110765bd0134f2e81f9fe4cb589f06e9602a4d",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/14566f79edb35a942fbce3ecf327a886bd74a32336aa1ac51f84e0bc0a32d459",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/17c4f2c589ca6ea06a2730c510db640a9da52afbac592d0858469f4a0a6dce6d",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "translate-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/6575e7bd7b95838fa78f09e396cf249940dea08723edc56da52e30c70e571d5b",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "de",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/44b8c8c11198e8c62bd6b6848034e54a5ad04472cc05a96fd9b603551654358a",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "en",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/e1170ca8ff5d55d558257ec73dca234197d743f07fdf9f67d6bc350c28edf217",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "es",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/b6dc149f7cd45e7082a3f4adfd1eb7c7f3348174b12ff8c3bcaf9394e45a3920",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "fr",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/8807edf086a90e2ad07b7153c56f70b8fe0dabb1ba1c73d6612b971b570c4c71",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  },
+  {
+    "corpus": "chemistry",
+    "model": "e5-large-instruct",
+    "baseline": "hyde-dense",
+    "output_language": "zh",
+    "report_directory": "artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/aa2fdfe00274946079d0ac03b5fe9f9bccfdfcabf7c1099f3ba9e9f7b82a3109",
+    "relevance_hash": "f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c"
+  }
+]

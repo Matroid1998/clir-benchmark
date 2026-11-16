@@ -1,0 +1,69 @@
+Offline reproduction
+
+Open index.html for the figure gallery, paper/findings.txt for the final findings,
+and rounds.json for the six-round record. Each round's review.txt records the
+actual inspection and the questions used to design the next round. review_draft.txt
+is the numerical script output; the root review is the accepted interpretation.
+
+The analysis uses completed local artifacts only. None of these scripts submits
+jobs, calls an API, loads an embedding model or executes retrieval. No credentials
+are needed. Python/package versions are recorded in audit/analysis_environment.json
+and pinned in scripts/requirements.txt. A separate environment can be prepared:
+
+  uv venv .venv-acl-analysis
+  uv pip install --python .venv-acl-analysis/bin/python -r report/acl_analysis_20261115/scripts/requirements.txt
+
+From the project root, check the delivered snapshot:
+
+  .venv-acl-analysis/bin/python report/acl_analysis_20261115/scripts/validate_bundle.py
+
+The validator checks six accepted review records, figure formats, numeric tables,
+manifest hashes and the expected 264-report/638-question data counts. Its file
+inventory covers the report bundle. Separate existing receipts in
+artifacts/narval-20261111-selected-document/.local-monitor/ verify the raw local
+results against Narval source SHA-256 checksums. This analysis does not change
+those results or their saved MTEB exports.
+
+To regenerate without overwriting the delivered snapshot, copy this report folder
+to another sibling under report/, for example report/acl_reproduction. Keep the
+scripts/ and data/ directories together. From the project root:
+
+  .venv-acl-analysis/bin/python report/acl_reproduction/scripts/run_analysis.py --list
+  .venv-acl-analysis/bin/python report/acl_reproduction/scripts/run_analysis.py
+  .venv-acl-analysis/bin/python report/acl_reproduction/scripts/select_round04_cases.py
+  .venv-acl-analysis/bin/python report/acl_reproduction/scripts/make_paper_figures.py
+  .venv-acl-analysis/bin/python report/acl_reproduction/scripts/make_paper_tables.py
+  .venv-acl-analysis/bin/python report/acl_reproduction/scripts/make_gallery.py
+
+The default order is Round 1 through Round 6. Repeated --round N options select
+individual rounds, but their input artifacts from previous rounds must exist.
+Use --rebuild-data explicitly to project data again from the original local
+result files before running the analyses. This reads large files but still
+performs no benchmark execution. Original local artifact paths must remain at
+their saved project-relative locations. The source inventory and extraction
+checks are in data/dataset_manifest.json and data/validation.json.
+
+Derived numerical tables are reproducible from the saved outputs and fixed
+seeds. PDF metadata timestamps may differ after rendering; byte-identical PDF
+hashes are not a numerical reproducibility requirement. Regeneration writes new
+manifests with review pending where implemented; old prose reviews are historical
+records, not automatic acceptance of newly rendered figures. Computational
+assertions run inside each round script. The final bundle validator deliberately
+requires renewed accepted review records before certifying a new snapshot.
+
+Qualitative examples are selected reproducibly by scripts/select_round04_cases.py
+and their analyst notes are in round_04/cases/. These notes are interpretations,
+not an automated factuality evaluation. Literature and provenance audits are
+bounded manual investigations with their evidence recorded under literature/
+and audit/. They are not silently re-executed by run_analysis.py.
+
+Data and statistical conventions
+
+data/per_query.parquet preserves all 247,192 query/setting/model/variant rows.
+data/generation.parquet contains 6,380 reusable generation records. Never sum
+their repeated per-report copies to estimate experiment spend. Each selected
+query has one canonical source, so query-level paired bootstrap resampling also
+clusters by source here. Repeated models, settings and output languages are
+averaged within source as specified by each round, not treated as independent
+samples. All confidence intervals are exploratory and condition on the fixed
+corpora, encoders, chosen questions and saved generated outputs.

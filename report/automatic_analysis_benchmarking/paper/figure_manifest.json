@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-11-16T00:15:03.592990+00:00",
+  "scope": "Presentation only; all estimates, confidence intervals and counts copied from accepted Round 2/3 tables",
+  "source_sha256": {
+    "round_02/table02_target_matched_contrasts.csv": "14f2468df5dc88402189f4000dc255539de1d5a60a0c96c0041f8ea91e0f829b",
+    "round_03/table02_un_decomposition_contrasts.csv": "f35b9325dae53492085ffd689a11cc0a49f8c7f631902a683ba8953eb34f6137",
+    "round_03/table03_un_source_and_version_counts.csv": "1108da4553a0744a993490da7024fce5dec3451ac5c5cbfe1c65e96a061adc7e"
+  },
+  "script_sha256": "5610fad2517d10c89a4d904a5d96616fd7df2d76b3f980ee53b0823b3e91d716",
+  "nominal_figure_width_inches": 7,
+  "font_sizes_points": {
+    "body": 8.5,
+    "ticks": 8,
+    "legend": 8,
+    "titles": 9
+  },
+  "visual_review_status": "complete_root",
+  "output_sha256": {
+    "figure1_language_matched_controls.pdf": "c0fcc9f3bd99caa87be85f5f8e64373c37f2c175a7b2b173e0ddf0da7ff8c0bf",
+    "figure1_language_matched_controls.png": "e6d4feac7afb08503352b5c9da6b839e2413662f5d1894ab2dda5fc15710cb77",
+    "figure1_language_matched_controls.svg": "1e3e65f1c881fe3de1f74de592ca4c10a89862f19260262010f4b4037fd7aade",
+    "figure2_un_objective_decomposition.pdf": "2239b0e53e2f9aee8d034b65151c2548376a9ee90a6686b13dbd0de144a91d6b",
+    "figure2_un_objective_decomposition.png": "d2fb4204d6302475a4149be0b562cbd802d3445427b48d1aabbe9bbe3bd1aa32",
+    "figure2_un_objective_decomposition.svg": "0fde8d9683e4d23cffdad237ff80996f31d4a7f2ab94207e2be3c9a291828ea2",
+    "figure_captions.txt": "0365139dcdd1428c003e35e4e4d0bbdb3b76dbc9de379593d5144f0d17f1693b",
+    "figure_data.json": "6cf752396de58a64f406ed7f6cc0c47c49ec7a005f7626c50570051b1bd6ac88"
+  },
+  "visual_review_completed_at": "2026-11-16T00:38:18.353052+00:00",
+  "review_note": "Root opened both compact PNGs; labels, intervals, decomposition and net-count annotations are readable."
+}

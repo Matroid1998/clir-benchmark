@@ -1,0 +1,102 @@
+ROUND 2 — LANGUAGE-MATCHED CONTROLS AND ABSENT-LANGUAGE PIVOTS
+
+VISUAL REVIEW STATUS: Pending root inspection of the four rendered figures.
+This draft records numerical findings only and does not certify visual review.
+
+Question and estimands
+A. In cross-language single-target search, compare original queries, translations
+into the searched language, and HyDE passages in that same language. Average
+eligible target settings within a question first; then average questions.
+B. Compare HyDE with translation while holding output language fixed, for each
+searched target or mixed collection. Fixed encoders are averaged within each
+question. Cell cohorts differ; unavailable cells remain missing.
+C. In mixed search, compare UN German / EUR-Lex Chinese translation against
+English translation and original queries, per encoder and original language.
+All intervals resample source questions, not model-setting observations.
+
+Numerical findings for root visual review
+- Chemistry, target-matched nDCG (n=197): original 0.6367, translation 0.7196, HyDE 0.6875.
+  translate-minus-original: +8.29 points, paired 95% CI [+6.44, +10.17].
+  hyde-minus-original: +5.08 points, paired 95% CI [+2.93, +7.26].
+  hyde-minus-translate: -3.21 points, paired 95% CI [-4.58, -1.83].
+- EUR-Lex, target-matched nDCG (n=194): original 0.4990, translation 0.5974, HyDE 0.6400.
+  translate-minus-original: +9.84 points, paired 95% CI [+8.16, +11.45].
+  hyde-minus-original: +14.09 points, paired 95% CI [+11.39, +16.77].
+  hyde-minus-translate: +4.26 points, paired 95% CI [+1.97, +6.64].
+- UN, target-matched nDCG (n=247): original 0.3220, translation 0.3847, HyDE 0.3425.
+  translate-minus-original: +6.27 points, paired 95% CI [+5.11, +7.48].
+  hyde-minus-original: +2.05 points, paired 95% CI [-0.04, +4.17].
+  hyde-minus-translate: -4.22 points, paired 95% CI [-6.17, -2.25].
+
+Absent-language pivots (point-estimate counts across the eight fixed models):
+- UN German vs english_translation: nDCG positive for 4/8, Hit@10 negative for 8/8; opposite nDCG/Hit signs for 4/8.
+  Fixed-model mean ndcg10: +0.22 points [-0.71, +1.14].
+  Fixed-model mean hit10: -6.93 points [-9.16, -4.81].
+  Fixed-model mean recall10: +0.82 points [-0.24, +1.89].
+- UN German vs original: nDCG positive for 5/8, Hit@10 negative for 8/8; opposite nDCG/Hit signs for 5/8.
+  Fixed-model mean ndcg10: +1.78 points [+0.61, +2.96].
+  Fixed-model mean hit10: -6.53 points [-8.91, -4.15].
+  Fixed-model mean recall10: +3.45 points [+2.14, +4.78].
+- EUR-Lex Chinese vs english_translation: nDCG positive for 1/8, Hit@10 negative for 8/8; opposite nDCG/Hit signs for 1/8.
+  Fixed-model mean ndcg10: -6.88 points [-8.78, -4.99].
+  Fixed-model mean hit10: -16.95 points [-19.72, -14.24].
+  Fixed-model mean recall10: -4.95 points [-6.77, -3.12].
+- EUR-Lex Chinese vs original: nDCG positive for 1/8, Hit@10 negative for 8/8; opposite nDCG/Hit signs for 1/8.
+  Fixed-model mean ndcg10: -5.59 points [-7.45, -3.67].
+  Fixed-model mean hit10: -17.27 points [-20.23, -14.37].
+  Fixed-model mean recall10: -2.93 points [-4.88, -0.90].
+
+Original-language stratification (fixed-model mean Hit@10 deltas):
+- EUR-Lex / de / absent-minus-original: -16.25 points [-22.00, -10.75], n=50.
+- EUR-Lex / de / absent-minus-english_translation: -11.00 points [-16.00, -6.50], n=50.
+- EUR-Lex / en / absent-minus-original: -17.27 points [-23.18, -11.81], n=55.
+- EUR-Lex / en / absent-minus-english_translation: -17.27 points [-23.18, -11.81], n=55.
+- EUR-Lex / es / absent-minus-original: -16.12 points [-21.38, -10.86], n=38.
+- EUR-Lex / es / absent-minus-english_translation: -17.76 points [-22.70, -13.16], n=38.
+- EUR-Lex / fr / absent-minus-original: -19.12 points [-25.49, -13.24], n=51.
+- EUR-Lex / fr / absent-minus-english_translation: -21.81 points [-27.95, -15.93], n=51.
+- UN / en / absent-minus-original: -8.46 points [-12.50, -4.41], n=68.
+- UN / en / absent-minus-english_translation: -8.46 points [-12.50, -4.41], n=68.
+- UN / es / absent-minus-original: -7.46 points [-13.16, -2.41], n=57.
+- UN / es / absent-minus-english_translation: -5.26 points [-10.31, -0.44], n=57.
+- UN / fr / absent-minus-original: -4.86 points [-8.16, -1.56], n=72.
+- UN / fr / absent-minus-english_translation: -7.29 points [-11.11, -3.47], n=72.
+- UN / zh / absent-minus-original: -5.25 points [-12.50, +1.75], n=50.
+- UN / zh / absent-minus-english_translation: -6.25 points [-11.50, -1.50], n=50.
+
+What these data support
+Target-matched translation is a materially different comparator from R1's
+uniform average over output languages. The latter is not a deployment policy.
+HyDE's incremental value must be assessed against translation in the same
+language and against the original query. Metric choices can reverse which
+absent-language pivot looks preferable. Point-estimate counts are not a claim
+of eight statistically independent model replications.
+
+Limitations and checks carried forward
+- All effects are exploratory and conditional on the selected synthetic questions.
+- Encoders and corpora are fixed; CIs describe question variation only.
+- Numerous contrasts are shown without familywise or FDR correction.
+- Settings and original languages have unequal cohort sizes. Single-target
+  and mixed nDCG also have different relevance-set sizes.
+- R1's mixed-search averages and R2's target-matched cross-language estimates
+  change collection regime, output policy, and aggregation together. Their
+  absolute levels cannot isolate a causal benefit from language matching.
+- SourceRecall@10 equals Hit@10 for these one-source questions; it is not an
+  independent confirmation. Recall@10 counts document-language versions.
+- The known 26 identity near-tie discrepancies remain uncorrected.
+- HyDE uses each model's document adapter whereas translation uses its query
+  adapter. A passage-generation mechanism is not isolated by this comparison.
+- No unseen evaluation data or new retrieval/generation runs were introduced.
+
+Questions for Round 3, after root inspects these figures
+1. For the UN German pivot, do higher version-based scores coincide with more
+   language versions retrieved per successful source, but more missed sources?
+2. Does the metric disagreement survive paired bootstrap at the individual
+   model level and original-language stratification? Which models drive it?
+3. Are mixed rankings crowded by multiple versions of a source, and does this
+   relate to the gap between Hit@10 and Recall/nDCG? Inspect ranking-level data.
+4. Why is the target-matched HyDE increment positive in EUR-Lex but negative
+   in chemistry/UN: query wins/losses, source length, or encoder adapters?
+   These require controlled descriptive checks, not causal attribution.
+5. What would a deployable language rule achieve without query-wise hindsight
+   or selecting the best policy on the same questions used to report it?

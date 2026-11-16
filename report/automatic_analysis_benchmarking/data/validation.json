@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "per_query_rows": 247192,
+  "unique_queries": 638,
+  "paired_row_keys_unique": true,
+  "metric_values_finite_and_in_unit_interval": true,
+  "reconstructed_setting_rows": 5720,
+  "max_setting_metric_error": 2.220446049250313e-16,
+  "reconstructed_macro_rows": 792,
+  "max_macro_metric_error": 2.220446049250313e-16,
+  "source_recall_equals_hit_max_error": 0.0,
+  "identity_translation_text_pairs_exact": 638,
+  "identity_metric_tolerance": 1e-10,
+  "identity_metric_exceptions": 26,
+  "identity_metric_note": "Saved model outputs exhibit a small number of identity-ranking differences. These are retained and explicitly audited, not silently corrected.",
+  "request_keys_shared_across_distinct_query_records": 0
+}

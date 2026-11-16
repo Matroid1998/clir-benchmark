@@ -1,0 +1,34 @@
+un_e5_source_gain
+Rule: Among Tde-hit/Ten-miss at 10, maximize Tde-minus-Ten nDCG@10; break ties by query ID.
+Corpus/model: un/e5-large-instruct
+Query ID: q_ba28f17d8c78afc99c921a76c1c398976d692554faf8c180994d9f9e41483934
+Original language: en
+Quality: clear
+Canonical source: 2011/a/res/65/99
+Source unit: un:2011/a/res/65/99:en
+Query generator: qwen/qwen3.8-27b
+Provenance: {"file": "data/legal/qac/generation_600_20261008_model_comparison/un_parallel/run.sqlite", "outcome_error": "", "outcome_status": "completed", "position": 0, "task": "a916f3a13e98399714e48333f014582ca34dfb6a7bf3a4c370b4f9caa45094d5"}
+
+ORIGINAL QUESTION
+What reporting obligation did the General Assembly place on the Secretary-General in its 10 December 2010 resolution on persons displaced by the June 1967 and subsequent hostilities?
+
+SAVED ANSWER (not provided to generation)
+after consulting with the Commissioner-General, to report to the General Assembly before its sixty-sixth session on the progress made with regard to the implementation of the present resolution
+
+SAVED EVIDENCE (not provided to generation)
+
+
+original
+What reporting obligation did the General Assembly place on the Secretary-General in its 10 December 2010 resolution on persons displaced by the June 1967 and subsequent hostilities?
+Metrics: {"ndcg10": 0.0, "hit10": 0.0, "recall10": 0.0, "mrr10": 0.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 11, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [], "relevant_languages_within10": [], "relevant_versions10": 0, "relevant_ranks_within100": [11], "top10_language_counts": {"en": 10}}
+
+translate_en
+What reporting obligation did the General Assembly place on the Secretary-General in its 10 December 2010 resolution on persons displaced by the June 1967 and subsequent hostilities?
+Metrics: {"ndcg10": 0.0, "hit10": 0.0, "recall10": 0.0, "mrr10": 0.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 11, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [], "relevant_languages_within10": [], "relevant_versions10": 0, "relevant_ranks_within100": [11], "top10_language_counts": {"en": 10}}
+
+translate_de
+Welche Berichtspflicht legte die Generalversammlung dem Generalsekretär in ihrer Resolution vom 10. Dezember 2010 über die durch die Feindseligkeiten im Juni 1967 und danach vertriebenen Personen auf?
+Metrics: {"ndcg10": 0.5413996682199069, "hit10": 1.0, "recall10": 0.5, "mrr10": 1.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 1, "first_relevant_language_within_saved100": "fr", "relevant_ranks_within10": [1, 5], "relevant_languages_within10": ["fr", "en"], "relevant_versions10": 2, "relevant_ranks_within100": [1, 5, 33, 51], "top10_language_counts": {"en": 4, "fr": 6}}

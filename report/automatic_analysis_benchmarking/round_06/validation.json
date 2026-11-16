@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "primary_questions": 638,
+  "clear_questions": 581,
+  "identity_affected_questions": 14,
+  "target_pairing_complete": true,
+  "un_pairing_complete": true,
+  "models_fixed": 8,
+  "bootstrap_draws": 5000,
+  "seed": 42,
+  "all_raw_scores_preserved": true,
+  "benchmark_execution": false,
+  "refitted_fold_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    42
+  ],
+  "seed42_reproduces_round5_exactly": true
+}

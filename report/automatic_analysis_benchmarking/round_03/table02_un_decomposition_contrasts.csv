@@ -1,0 +1,109 @@
+corpus,model,treatment,reference,contrast,n_queries,fixed_models,metric,estimate,ci_low,ci_high
+un,nomic-v2-moe,translate_de,translate_en,translate_de-minus-translate_en,247,1,first_contribution,-0.03852392148131347,-0.052780727912427244,-0.024025973908162176
+un,nomic-v2-moe,translate_de,translate_en,translate_de-minus-translate_en,247,1,additional_contribution,0.03975453222556102,0.026361698840196474,0.05422553515723169
+un,nomic-v2-moe,translate_de,translate_en,translate_de-minus-translate_en,247,1,ndcg10,0.0012306107442475586,-0.021155655634730524,0.023837940688971326
+un,nomic-v2-moe,translate_de,translate_en,translate_de-minus-translate_en,247,1,hit10,-0.12955465587044535,-0.18218623481781376,-0.07692307692307693
+un,nomic-v2-moe,translate_de,translate_en,translate_de-minus-translate_en,247,1,positive_versions10,0.06072874493927125,-0.04048582995951417,0.1700404858299595
+un,nomic-v2-moe,translate_de,translate_en,translate_de-minus-translate_en,247,1,mrr10,-0.08823179744232376,-0.12795843776106933,-0.04880193271640641
+un,qwen3-0.6B,translate_de,translate_en,translate_de-minus-translate_en,247,1,first_contribution,-0.023596255511419077,-0.03974199191146956,-0.007342601555785254
+un,qwen3-0.6B,translate_de,translate_en,translate_de-minus-translate_en,247,1,additional_contribution,-0.009037352659048089,-0.022086578444690662,0.0035478405344915947
+un,qwen3-0.6B,translate_de,translate_en,translate_de-minus-translate_en,247,1,ndcg10,-0.03263360817046717,-0.05410719857124104,-0.01040748666695265
+un,qwen3-0.6B,translate_de,translate_en,translate_de-minus-translate_en,247,1,hit10,-0.08906882591093117,-0.1417004048582996,-0.03643724696356275
+un,qwen3-0.6B,translate_de,translate_en,translate_de-minus-translate_en,247,1,positive_versions10,-0.13360323886639677,-0.23491902834008094,-0.03643724696356275
+un,qwen3-0.6B,translate_de,translate_en,translate_de-minus-translate_en,247,1,mrr10,-0.051192082771030135,-0.0963756747638327,-0.006089422273632805
+un,SapBERT,translate_de,translate_en,translate_de-minus-translate_en,247,1,first_contribution,-0.009679280435142452,-0.017450237318391598,-0.0022982994076776527
+un,SapBERT,translate_de,translate_en,translate_de-minus-translate_en,247,1,additional_contribution,-0.0035296652789029914,-0.007712054134885447,-0.0004985878314589675
+un,SapBERT,translate_de,translate_en,translate_de-minus-translate_en,247,1,ndcg10,-0.013208945714045446,-0.022628811742220298,-0.004414904979886049
+un,SapBERT,translate_de,translate_en,translate_de-minus-translate_en,247,1,hit10,-0.048582995951417005,-0.08906882591093117,-0.012145748987854251
+un,SapBERT,translate_de,translate_en,translate_de-minus-translate_en,247,1,positive_versions10,-0.06882591093117409,-0.11336032388663968,-0.02834008097165992
+un,SapBERT,translate_de,translate_en,translate_de-minus-translate_en,247,1,mrr10,-0.01733018443544759,-0.034238279994858935,-0.001445119208277161
+un,LaBSE,translate_de,translate_en,translate_de-minus-translate_en,247,1,first_contribution,0.001951854760162715,-0.010944466206828788,0.015171388484396997
+un,LaBSE,translate_de,translate_en,translate_de-minus-translate_en,247,1,additional_contribution,-0.002846861896739127,-0.008023649224451446,0.0023484525405607056
+un,LaBSE,translate_de,translate_en,translate_de-minus-translate_en,247,1,ndcg10,-0.0008950071365764115,-0.01618121741295146,0.015049084963205459
+un,LaBSE,translate_de,translate_en,translate_de-minus-translate_en,247,1,hit10,-0.020242914979757085,-0.06882591093117409,0.02834008097165992
+un,LaBSE,translate_de,translate_en,translate_de-minus-translate_en,247,1,positive_versions10,-0.04048582995951417,-0.10526315789473684,0.024291497975708502
+un,LaBSE,translate_de,translate_en,translate_de-minus-translate_en,247,1,mrr10,0.01190154874365401,-0.022114782147676867,0.04570661429214057
+un,e5-large-instruct,translate_de,translate_en,translate_de-minus-translate_en,247,1,first_contribution,-0.021806063321984988,-0.03854537677261526,-0.005195138101733422
+un,e5-large-instruct,translate_de,translate_en,translate_de-minus-translate_en,247,1,additional_contribution,0.05989360944195695,0.0471593420104094,0.07318067419473533
+un,e5-large-instruct,translate_de,translate_en,translate_de-minus-translate_en,247,1,ndcg10,0.03808754611997197,0.016405226821279,0.06115182128650997
+un,e5-large-instruct,translate_de,translate_en,translate_de-minus-translate_en,247,1,hit10,-0.08906882591093117,-0.14979757085020243,-0.02834008097165992
+un,e5-large-instruct,translate_de,translate_en,translate_de-minus-translate_en,247,1,positive_versions10,0.2874493927125506,0.18218623481781376,0.3967611336032389
+un,e5-large-instruct,translate_de,translate_en,translate_de-minus-translate_en,247,1,mrr10,-0.04604459867617763,-0.09023090579011632,-0.000414055973266533
+un,granite-278m,translate_de,translate_en,translate_de-minus-translate_en,247,1,first_contribution,-0.016080039964439387,-0.029541972729820124,-0.002867938956734916
+un,granite-278m,translate_de,translate_en,translate_de-minus-translate_en,247,1,additional_contribution,-0.0033001317667457186,-0.01826742442660252,0.01144879530259117
+un,granite-278m,translate_de,translate_en,translate_de-minus-translate_en,247,1,ndcg10,-0.019380171731185104,-0.04383043524608617,0.004048791984179739
+un,granite-278m,translate_de,translate_en,translate_de-minus-translate_en,247,1,hit10,-0.06072874493927125,-0.11336032388663968,-0.008097165991902834
+un,granite-278m,translate_de,translate_en,translate_de-minus-translate_en,247,1,positive_versions10,-0.05263157894736842,-0.1700404858299595,0.060829959514168565
+un,granite-278m,translate_de,translate_en,translate_de-minus-translate_en,247,1,mrr10,-0.033659469185784975,-0.06916714864083286,0.001022186877449982
+un,embeddinggemma,translate_de,translate_en,translate_de-minus-translate_en,247,1,first_contribution,-0.019408682358422063,-0.032851788625357314,-0.006691004134296292
+un,embeddinggemma,translate_de,translate_en,translate_de-minus-translate_en,247,1,additional_contribution,0.044006033100625785,0.02829529439887655,0.060282728976236655
+un,embeddinggemma,translate_de,translate_en,translate_de-minus-translate_en,247,1,ndcg10,0.024597350742203723,0.001710747903337368,0.04856618914493596
+un,embeddinggemma,translate_de,translate_en,translate_de-minus-translate_en,247,1,hit10,-0.08097165991902834,-0.12550607287449392,-0.03643724696356275
+un,embeddinggemma,translate_de,translate_en,translate_de-minus-translate_en,247,1,positive_versions10,0.12955465587044535,0.020242914979757085,0.2388663967611336
+un,embeddinggemma,translate_de,translate_en,translate_de-minus-translate_en,247,1,mrr10,-0.0395684724632093,-0.07696099222415011,-0.0036179390784653914
+un,bge-m3,translate_de,translate_en,translate_de-minus-translate_en,247,1,first_contribution,-0.008447317681008095,-0.02068822718053145,0.0039049915493213575
+un,bge-m3,translate_de,translate_en,translate_de-minus-translate_en,247,1,additional_contribution,0.028343299131693776,0.015875687555962664,0.04066795665588543
+un,bge-m3,translate_de,translate_en,translate_de-minus-translate_en,247,1,ndcg10,0.019895981450685676,0.0011278388884167804,0.03845271724315238
+un,bge-m3,translate_de,translate_en,translate_de-minus-translate_en,247,1,hit10,-0.03643724696356275,-0.08097165991902834,0.008097165991902834
+un,bge-m3,translate_de,translate_en,translate_de-minus-translate_en,247,1,positive_versions10,0.08097165991902834,-0.016194331983805668,0.17408906882591094
+un,bge-m3,translate_de,translate_en,translate_de-minus-translate_en,247,1,mrr10,-0.016886768202557675,-0.050854178716020826,0.017758699633699616
+un,All fixed models,translate_de,translate_en,translate_de-minus-translate_en,247,8,first_contribution,-0.016948713249195852,-0.02310870460167236,-0.010870719843082213
+un,All fixed models,translate_de,translate_en,translate_de-minus-translate_en,247,8,additional_contribution,0.019160432787300206,0.013922987462482248,0.024391703489220252
+un,All fixed models,translate_de,translate_en,translate_de-minus-translate_en,247,8,ndcg10,0.002211719538104349,-0.0071048720238070144,0.011447542552947741
+un,All fixed models,translate_de,translate_en,translate_de-minus-translate_en,247,8,hit10,-0.06933198380566802,-0.09159919028340081,-0.04807692307692308
+un,All fixed models,translate_de,translate_en,translate_de-minus-translate_en,247,8,positive_versions10,0.03289473684210526,-0.009615384615384616,0.07540485829959515
+un,All fixed models,translate_de,translate_en,translate_de-minus-translate_en,247,8,mrr10,-0.03512647805410963,-0.05109259527022684,-0.019362835172868083
+un,nomic-v2-moe,translate_de,original,translate_de-minus-original,247,1,first_contribution,-0.02530069814381019,-0.04078461681677919,-0.010032977970404392
+un,nomic-v2-moe,translate_de,original,translate_de-minus-original,247,1,additional_contribution,0.05019388462398515,0.03427243347252179,0.0673023605934747
+un,nomic-v2-moe,translate_de,original,translate_de-minus-original,247,1,ndcg10,0.024893186480174977,-0.0014717208624095088,0.051803963324629554
+un,nomic-v2-moe,translate_de,original,translate_de-minus-original,247,1,hit10,-0.0728744939271255,-0.12955465587044535,-0.012145748987854251
+un,nomic-v2-moe,translate_de,original,translate_de-minus-original,247,1,positive_versions10,0.20647773279352227,0.08502024291497975,0.3319838056680162
+un,nomic-v2-moe,translate_de,original,translate_de-minus-original,247,1,mrr10,-0.06194974616027246,-0.1038934274789538,-0.021017929438982088
+un,qwen3-0.6B,translate_de,original,translate_de-minus-original,247,1,first_contribution,-0.03367711045564089,-0.05009211840570306,-0.016906220726112156
+un,qwen3-0.6B,translate_de,original,translate_de-minus-original,247,1,additional_contribution,0.027883473744428164,0.013791901455996763,0.04278822824813396
+un,qwen3-0.6B,translate_de,original,translate_de-minus-original,247,1,ndcg10,-0.005793636711212733,-0.029374226284463636,0.01763925888170021
+un,qwen3-0.6B,translate_de,original,translate_de-minus-original,247,1,hit10,-0.1214574898785425,-0.17813765182186234,-0.06477732793522267
+un,qwen3-0.6B,translate_de,original,translate_de-minus-original,247,1,positive_versions10,0.05263157894736842,-0.05273279352226717,0.16194331983805668
+un,qwen3-0.6B,translate_de,original,translate_de-minus-original,247,1,mrr10,-0.07444412312833365,-0.12035561660561657,-0.027388262322472854
+un,SapBERT,translate_de,original,translate_de-minus-original,247,1,first_contribution,-0.017134653556691207,-0.027244953792776486,-0.008238582920750099
+un,SapBERT,translate_de,original,translate_de-minus-original,247,1,additional_contribution,-0.002081411719598589,-0.0047680955275987156,0.0
+un,SapBERT,translate_de,original,translate_de-minus-original,247,1,ndcg10,-0.019216065276289794,-0.030299947510239195,-0.009762059327232587
+un,SapBERT,translate_de,original,translate_de-minus-original,247,1,hit10,-0.06882591093117409,-0.11336032388663968,-0.02834008097165992
+un,SapBERT,translate_de,original,translate_de-minus-original,247,1,positive_versions10,-0.08502024291497975,-0.13360323886639677,-0.04048582995951417
+un,SapBERT,translate_de,original,translate_de-minus-original,247,1,mrr10,-0.03675053017158281,-0.062150207248891455,-0.014881916329284773
+un,LaBSE,translate_de,original,translate_de-minus-original,247,1,first_contribution,-0.00585277645933152,-0.016965351316650855,0.004670571332697596
+un,LaBSE,translate_de,original,translate_de-minus-original,247,1,additional_contribution,-0.0021744775243631473,-0.007227915665222361,0.0027916621766618907
+un,LaBSE,translate_de,original,translate_de-minus-original,247,1,ndcg10,-0.008027253983694667,-0.021515152864119685,0.004871788309610987
+un,LaBSE,translate_de,original,translate_de-minus-original,247,1,hit10,-0.02834008097165992,-0.0728744939271255,0.012145748987854251
+un,LaBSE,translate_de,original,translate_de-minus-original,247,1,positive_versions10,-0.048582995951417005,-0.10931174089068826,0.012145748987854251
+un,LaBSE,translate_de,original,translate_de-minus-original,247,1,mrr10,-0.011586658955080004,-0.039443520660625925,0.01517752715121136
+un,e5-large-instruct,translate_de,original,translate_de-minus-original,247,1,first_contribution,-0.020050086741606254,-0.03742192910251349,-0.001955171989334074
+un,e5-large-instruct,translate_de,original,translate_de-minus-original,247,1,additional_contribution,0.060369383145424275,0.04738376934112979,0.07373679020688265
+un,e5-large-instruct,translate_de,original,translate_de-minus-original,247,1,ndcg10,0.04031929640381802,0.01740062279727363,0.0653095901801003
+un,e5-large-instruct,translate_de,original,translate_de-minus-original,247,1,hit10,-0.06882591093117409,-0.12955465587044535,-0.008097165991902834
+un,e5-large-instruct,translate_de,original,translate_de-minus-original,247,1,positive_versions10,0.3117408906882591,0.20647773279352227,0.4251012145748988
+un,e5-large-instruct,translate_de,original,translate_de-minus-original,247,1,mrr10,-0.045509607351712604,-0.09276512595591542,0.002978319195424417
+un,granite-278m,translate_de,original,translate_de-minus-original,247,1,first_contribution,-0.005928294613371723,-0.019447530670040545,0.007377149291911917
+un,granite-278m,translate_de,original,translate_de-minus-original,247,1,additional_contribution,0.029621973460877724,0.013601637939177638,0.04524694881314326
+un,granite-278m,translate_de,original,translate_de-minus-original,247,1,ndcg10,0.023693678847505995,-0.00132931370935235,0.04724954870333441
+un,granite-278m,translate_de,original,translate_de-minus-original,247,1,hit10,-0.02834008097165992,-0.08097165991902834,0.020242914979757085
+un,granite-278m,translate_de,original,translate_de-minus-original,247,1,positive_versions10,0.15789473684210525,0.03643724696356275,0.2793522267206478
+un,granite-278m,translate_de,original,translate_de-minus-original,247,1,mrr10,-0.010688580425422537,-0.04671048615127562,0.02546739444765759
+un,embeddinggemma,translate_de,original,translate_de-minus-original,247,1,first_contribution,-0.019979591159012836,-0.0347936934220215,-0.005418019971231152
+un,embeddinggemma,translate_de,original,translate_de-minus-original,247,1,additional_contribution,0.08111217239313802,0.06157164200871384,0.10132401676443319
+un,embeddinggemma,translate_de,original,translate_de-minus-original,247,1,ndcg10,0.06113258123412517,0.035109081616031566,0.08805127191941772
+un,embeddinggemma,translate_de,original,translate_de-minus-original,247,1,hit10,-0.0728744939271255,-0.12550607287449392,-0.020242914979757085
+un,embeddinggemma,translate_de,original,translate_de-minus-original,247,1,positive_versions10,0.3603238866396761,0.23076923076923078,0.4940283400809702
+un,embeddinggemma,translate_de,original,translate_de-minus-original,247,1,mrr10,-0.043106162843004954,-0.08275528565002249,-0.0032679856693014916
+un,bge-m3,translate_de,original,translate_de-minus-original,247,1,first_contribution,-0.016745732230414062,-0.031228490876294347,-0.002008195972775298
+un,bge-m3,translate_de,original,translate_de-minus-original,247,1,additional_contribution,0.04182229262397258,0.025590553198688148,0.05787543223628272
+un,bge-m3,translate_de,original,translate_de-minus-original,247,1,ndcg10,0.025076560393558513,0.00020369256853080972,0.049775987052071244
+un,bge-m3,translate_de,original,translate_de-minus-original,247,1,hit10,-0.06072874493927125,-0.10931174089068826,-0.012145748987854251
+un,bge-m3,translate_de,original,translate_de-minus-original,247,1,positive_versions10,0.14979757085020243,0.03643724696356275,0.2550607287449393
+un,bge-m3,translate_de,original,translate_de-minus-original,247,1,mrr10,-0.0360323886639676,-0.07735235524709203,0.005564271255060718
+un,All fixed models,translate_de,original,translate_de-minus-original,247,8,first_contribution,-0.018083617919984835,-0.02509275001828359,-0.01114917559945196
+un,All fixed models,translate_de,original,translate_de-minus-original,247,8,additional_contribution,0.03584341134348302,0.028891977261126852,0.04299775712453647
+un,All fixed models,translate_de,original,translate_de-minus-original,247,8,ndcg10,0.017759793423498187,0.006072310167193054,0.029595143315206247
+un,All fixed models,translate_de,original,translate_de-minus-original,247,8,hit10,-0.0652834008097166,-0.08908147773279351,-0.04149797570850203
+un,All fixed models,translate_de,original,translate_de-minus-original,247,8,positive_versions10,0.13815789473684212,0.08551366396761134,0.19130819838056662
+un,All fixed models,translate_de,original,translate_de-minus-original,247,8,mrr10,-0.040008474712422075,-0.0584229052197802,-0.021586523399845764

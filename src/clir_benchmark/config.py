@@ -28,7 +28,14 @@ RETRIEVAL_BASELINES = (
 RERANK_BASELINES = tuple(f"rerank-{baseline}" for baseline in RETRIEVAL_BASELINES)
 BASELINES = RETRIEVAL_BASELINES + RERANK_BASELINES
 CANDIDATE_MODES = ("best", "all", "best-per-document")
-DOCUMENT_BASELINES = ("dense", "translate-dense", "hyde-dense")
+DOCUMENT_BASELINES = (
+    "dense",
+    "translate-dense",
+    "hyde-dense",
+    "rerank-dense",
+    "rerank-translate-dense",
+    "rerank-hyde-dense",
+)
 
 QWEN3_RERANKER_REVISION = "e61197ed45024b0ed8a2d74b80b4d909f1255473"
 
@@ -448,7 +455,8 @@ def validate_retrieval_baselines(config: Config, baselines: tuple[str, ...] | No
         )
         if unsupported:
             raise ValidationError(
-                "Document retrieval supports only dense, translate-dense, and hyde-dense; "
+                "Document retrieval supports only dense, translate-dense, hyde-dense, "
+                "and their rerank-* variants; "
                 f"unsupported selected baselines: {', '.join(sorted(unsupported))}"
             )
 

@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "target_matched_query_model_rows": 5104,
+  "target_matched_counts_per_model": {
+    "chemistry": 197,
+    "eurlex": 194,
+    "un": 247
+  },
+  "all_eight_encoder_cohorts_equal": true,
+  "un_first_language_rows_per_variant_model": 247,
+  "un_categories_exhaustive_and_reconstruct_hit10": true,
+  "query_truncation_excludes_corpus_document_repetitions": true,
+  "tables": 8,
+  "figures": 4
+}

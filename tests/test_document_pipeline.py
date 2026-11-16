@@ -174,7 +174,7 @@ def test_document_dense_does_not_require_generation_and_rejects_unsupported_mode
     embed(config, "eurlex", "bge-m3", encoder_factory=FixtureEncoder)
     retrieve(config, "eurlex", "bge-m3")
     evaluate(config, "eurlex", "bge-m3")
-    for baseline in ("bm25", "hybrid", "adore-dense", "rerank-dense"):
+    for baseline in ("bm25", "hybrid", "adore-dense", "rerank-bm25"):
         with pytest.raises(ValidationError, match="Document retrieval supports"):
             retrieve(config, "eurlex", "bge-m3", baseline=baseline)
 

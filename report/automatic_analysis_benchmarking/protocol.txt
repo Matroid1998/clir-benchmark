@@ -1,0 +1,58 @@
+ACL analysis of the completed CLIR experiments
+Started: 2026-11-15 (America/Toronto)
+
+Objective
+Use the existing results to discover useful, defensible empirical findings through
+six sequential rounds of figures, tables, visual inspection, and new questions.
+This is exploratory analysis, not a preregistered confirmatory study. A surprising
+pattern or a confidence interval does not establish novelty or causal mechanism.
+
+Scope
+The main study contains 638 selected questions, eight fixed retrieval models,
+three corpora, original dense retrieval, five separately evaluated translation
+languages, and five separately evaluated HyDE languages. Use the 264 matched
+document-level reports. Earlier chunk-level/BM25/hybrid results have different
+cohorts or units and must not be mixed into this comparison. Preserve raw results.
+No generation calls, new model inference, server jobs, or new API charges.
+
+Initial questions (adapt after each round)
+1. What is actually comparable, and which broad model/domain/regime patterns
+   survive a clear account of cohort sizes and language availability?
+2. Does HyDE add value beyond translation into the SAME output language? How do
+   target-language alignment and original query language change this answer?
+3. Do language-version coverage and canonical-source finding lead to different
+   system choices? Which apparent gains reflect the evaluation objective?
+4. Who benefits and who is harmed? Can grounded examples, input properties, and
+   identity controls explain or qualify the aggregate patterns?
+5. Can practical choices recover improvements on held-out source documents at
+   sensible costs? Separate oracle upper bounds from deployable decisions.
+6. Which claims survive uncertainty estimates, alternative aggregation, source
+   grouping, negative-control exclusions, and comparison to close prior work?
+
+Inference and reporting rules
+- Pair methods on identical (corpus, query ID, target setting, model) records.
+- A query repeated across settings/models/methods is not an independent sample.
+  Resample source/query clusters within corpus; retain paired variants together.
+- Label corpus-macro, setting-macro, and query-weighted estimands explicitly.
+  Fixed models and three domains are not random samples of all retrieval tasks.
+- Separate mixed-corpus and single-target evaluation. Source availability and
+  original-language composition are design constraints, not treatment effects.
+- Prefer language-controlled HyDE-minus-translation to a confounded comparison
+  with the original query alone. Check encoder-role differences as a limitation.
+- Report document-language version metrics and source-finding metrics separately.
+  Do not present redundant metrics as independent supporting evidence.
+- Costs use the recorded configured API prices, not invoice-verified charges.
+  Count shared request keys once; distinguish generation from amortized encoding
+  and retrieval times. Do not label sums of those as measured online latency.
+- Learn any routing/selection rule only on training folds. Group splits by source
+  document and keep oracle test-set selection visibly labeled as an upper bound.
+- Preserve weak, null, and contradictory results. Investigate identity controls.
+- Do not claim priority/novelty without a bounded primary-source literature check.
+
+Round record requirements
+Each round has its own question, runnable analysis, at least one figure and one
+table, a visual inspection record, findings with numerical support, limitations,
+and explicit questions that motivate the next round. Scientific figures are
+exported as PNG plus vector PDF/SVG; numeric tables are supplied as CSV and LaTeX.
+The final synthesis will identify the strongest claims, rejected claims,
+community implications, and experiments still needed before submission.

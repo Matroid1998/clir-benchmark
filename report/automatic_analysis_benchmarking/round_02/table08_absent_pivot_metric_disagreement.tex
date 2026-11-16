@@ -1,0 +1,42 @@
+\begin{tabular}{llllrrrrrr}
+\toprule
+corpus & model & pivot\_language & contrast & n\_queries & hit10 & ndcg10 & recall10 & ndcg\_vs\_hit\_opposite\_signs & recall\_vs\_hit\_opposite\_signs \\
+\midrule
+eurlex & All fixed models & zh & absent-minus-english\_translation & 194 & -0.1695 & -0.0688 & -0.0495 & False & False \\
+eurlex & All fixed models & zh & absent-minus-original & 194 & -0.1727 & -0.0559 & -0.0293 & False & False \\
+eurlex & LaBSE & zh & absent-minus-english\_translation & 194 & -0.0258 & -0.0225 & -0.0374 & False & False \\
+eurlex & LaBSE & zh & absent-minus-original & 194 & -0.0258 & -0.0103 & 0.0013 & False & True \\
+eurlex & SapBERT & zh & absent-minus-english\_translation & 194 & -0.2062 & -0.1048 & -0.1057 & False & False \\
+eurlex & SapBERT & zh & absent-minus-original & 194 & -0.1753 & -0.0938 & -0.0760 & False & False \\
+eurlex & bge-m3 & zh & absent-minus-english\_translation & 194 & -0.1237 & -0.0672 & -0.0374 & False & False \\
+eurlex & bge-m3 & zh & absent-minus-original & 194 & -0.1443 & -0.0696 & -0.0374 & False & False \\
+eurlex & e5-large-instruct & zh & absent-minus-english\_translation & 194 & -0.3196 & -0.0427 & 0.0387 & False & True \\
+eurlex & e5-large-instruct & zh & absent-minus-original & 194 & -0.3144 & -0.0438 & 0.0477 & False & True \\
+eurlex & embeddinggemma & zh & absent-minus-english\_translation & 194 & -0.0928 & -0.0334 & -0.0180 & False & False \\
+eurlex & embeddinggemma & zh & absent-minus-original & 194 & -0.1031 & -0.0094 & 0.0013 & False & True \\
+eurlex & granite-278m & zh & absent-minus-english\_translation & 194 & -0.2887 & -0.1627 & -0.1662 & False & False \\
+eurlex & granite-278m & zh & absent-minus-original & 194 & -0.2784 & -0.1502 & -0.1546 & False & False \\
+eurlex & nomic-v2-moe & zh & absent-minus-english\_translation & 194 & -0.2268 & -0.1178 & -0.0863 & False & False \\
+eurlex & nomic-v2-moe & zh & absent-minus-original & 194 & -0.2371 & -0.0972 & -0.0541 & False & False \\
+eurlex & qwen3-0.6B & zh & absent-minus-english\_translation & 194 & -0.0722 & 0.0007 & 0.0168 & True & True \\
+eurlex & qwen3-0.6B & zh & absent-minus-original & 194 & -0.1031 & 0.0268 & 0.0374 & True & True \\
+un & All fixed models & de & absent-minus-english\_translation & 247 & -0.0693 & 0.0022 & 0.0082 & True & True \\
+un & All fixed models & de & absent-minus-original & 247 & -0.0653 & 0.0178 & 0.0345 & True & True \\
+un & LaBSE & de & absent-minus-english\_translation & 247 & -0.0202 & -0.0009 & -0.0101 & False & False \\
+un & LaBSE & de & absent-minus-original & 247 & -0.0283 & -0.0080 & -0.0121 & False & False \\
+un & SapBERT & de & absent-minus-english\_translation & 247 & -0.0486 & -0.0132 & -0.0172 & False & False \\
+un & SapBERT & de & absent-minus-original & 247 & -0.0688 & -0.0192 & -0.0213 & False & False \\
+un & bge-m3 & de & absent-minus-english\_translation & 247 & -0.0364 & 0.0199 & 0.0202 & True & True \\
+un & bge-m3 & de & absent-minus-original & 247 & -0.0607 & 0.0251 & 0.0374 & True & True \\
+un & e5-large-instruct & de & absent-minus-english\_translation & 247 & -0.0891 & 0.0381 & 0.0719 & True & True \\
+un & e5-large-instruct & de & absent-minus-original & 247 & -0.0688 & 0.0403 & 0.0779 & True & True \\
+un & embeddinggemma & de & absent-minus-english\_translation & 247 & -0.0810 & 0.0246 & 0.0324 & True & True \\
+un & embeddinggemma & de & absent-minus-original & 247 & -0.0729 & 0.0611 & 0.0901 & True & True \\
+un & granite-278m & de & absent-minus-english\_translation & 247 & -0.0607 & -0.0194 & -0.0132 & False & False \\
+un & granite-278m & de & absent-minus-original & 247 & -0.0283 & 0.0237 & 0.0395 & True & True \\
+un & nomic-v2-moe & de & absent-minus-english\_translation & 247 & -0.1296 & 0.0012 & 0.0152 & True & True \\
+un & nomic-v2-moe & de & absent-minus-original & 247 & -0.0729 & 0.0249 & 0.0516 & True & True \\
+un & qwen3-0.6B & de & absent-minus-english\_translation & 247 & -0.0891 & -0.0326 & -0.0334 & False & False \\
+un & qwen3-0.6B & de & absent-minus-original & 247 & -0.1215 & -0.0058 & 0.0132 & False & True \\
+\bottomrule
+\end{tabular}

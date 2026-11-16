@@ -1,0 +1,56 @@
+Priorities before broader claims or an ACL submission
+
+1. Validate on independent questions.
+The current 638 questions are generated from known sources and selected by the
+highest provided grade, with preferred-generator tie breaking. Add a genuinely
+untouched, preferably human-authored query set with the same source/version
+objectives. Keep this six-round analysis explicitly exploratory. Source-fold
+cross-validation cannot remove the question-selection or adaptive-analysis limits.
+
+2. Audit relevance beyond the known originating source.
+Assess a stratified sample of top-ranked unjudged sources, especially exact-text
+duplicates and legal near-duplicates. State whether source/citation identity or
+answer-bearing content defines relevance. Preserve the source-association task;
+do not silently relabel duplicate text as relevant. Validate chemistry's directly
+accepted translation pairs separately from legal canonical-language variants.
+
+3. Isolate the implementation choices behind HyDE.
+For the four encoders with different query/document prefixes, re-encode matched
+translation and hypothetical passages in both roles. Control generation model,
+language, number of passages and mixing with the original query. The current
+single-passage replacement is one HyDE setup; do not generalize to all variants.
+These are proposed future ablations, not work performed in this analysis.
+
+4. Check transfer and generation variability.
+Use another generation model and repeated generation samples, then an external
+corpus or a held-out collection for selection policies. Keep a translation-only
+same-language control. Separate corpus domain from document granularity and
+max-over-chunk opportunity counts before proposing a domain-specific mechanism.
+
+5. Align the headline metric with the intended task.
+If the task is to find a known source, report source Hit/MRR or a clearly defined
+canonical-source ranking. If multilingual-version recovery is intended, retain
+version nDCG/Recall and state that objective. Show both when making multilingual
+retrieval recommendations. Report cutoff and language availability explicitly.
+
+6. Make the paper self-contained and reproducible.
+Release or document exact QA/corpus revisions, candidate grading/selection rules,
+all ten generator IDs, eight encoder IDs, the query-only generation prompts,
+prefixes, retrieval aggregation, qrels, cost rates and analysis scripts. Include
+the variable candidate-pool counts and missing-score exclusions. Keep every
+question in the primary cohort; label quality restrictions as sensitivity checks.
+Use the compact figures and full model-specific table, not only the eight-model
+mean. The original results already include detailed artifacts and MTEB-style
+exports; the local backup was independently SHA-verified.
+
+7. Bound cost and latency claims.
+Use recorded configured prices and deduplicated request accounting for this
+study. A claim about deployment cost needs explicit hardware prices and model
+loading, generation-cache assumptions and tuning expense. A claim about online
+latency needs an actual comparable end-to-end measurement; summed historical
+API durations and amortized offline components do not supply one.
+
+The current evidence can support a carefully scoped empirical evaluation paper.
+It does not establish a new retrieval algorithm, a new metric, priority over all
+related work, universal language preferences or real-user deployment gains.
+No further model/API/server execution has been started for these priorities.

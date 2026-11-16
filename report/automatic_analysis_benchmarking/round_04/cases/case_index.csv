@@ -1,0 +1,7 @@
+case_id,corpus,model,query_id,source_id,query_language,clear_only,candidate_count,ndcg_delta,version_delta
+un_e5_source_loss,un,e5-large-instruct,q_4bac2def037911480b8b1ed3fb59d26d853ac5cb2392ea225a422ec71c854db1,2001/a/res/55/231,en,True,39,-0.3903800499921017,-1
+un_e5_source_gain,un,e5-large-instruct,q_ba28f17d8c78afc99c921a76c1c398976d692554faf8c180994d9f9e41483934,2011/a/res/65/99,en,True,18,0.5413996682199069,2
+un_e5_version_gain_both_hit,un,e5-large-instruct,q_db24165b1a872216cc32f5ca1ec0bbd756e6170dd7adcfa40137eef1d815c121,2013/a/res/67/100,en,True,118,0.5204732013389002,3
+un_e5_stable_control,un,e5-large-instruct,q_39f367930441d1d2bd68347bf8c89ccd8b6beb920c6f939b9157c615274d8ea4,2006/s/res/1698_2006_,fr,True,14,0.0,0
+eurlex_bge_hyde_gain,eurlex,bge-m3,q_1586007449bc6cb14409b743f373bcd6ce4cec0af8ec9d68fe30c1b545241501,http://data.europa.eu/eli/reg/2009/4/art_50/oj,fr,True,163,1.0,4
+chemistry_bge_hyde_loss,chemistry,bge-m3,q_aed3759927fa7ca3a9b1fff822f8ff0ab3572f214b48e81e1e33985005dfc8ef,WO-2019095513-A1,fr,True,182,-1.0,-2

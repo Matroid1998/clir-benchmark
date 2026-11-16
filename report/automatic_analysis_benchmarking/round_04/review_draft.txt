@@ -1,0 +1,115 @@
+ROUND 4 — QUERY HETEROGENEITY, ENCODER SETS AND FIRST-HIT LANGUAGES
+
+Visual review: PENDING ROOT. This is a numerical review draft, not a completed visual-review round.
+
+Design and denominators
+HyDE and translation are paired in output==searched target language, using genuinely cross-language settings.
+Eligible target settings are averaged within each source question first. All model-specific cells contain
+197 chemistry, 194 EUR-Lex or 247 UN questions. No repeated encoder/query rows are bootstrapped as independent.
+The ±0.25 threshold is a descriptive magnitude threshold chosen for this diagnostic, not an outcome-based exclusion.
+Ties use |delta|<=1e-10. Intervals: 5,000 paired source-question bootstrap draws, seed42, percentile95%;
+exploratory, no multiplicity correction. All recorded near-tie exceptions remain included.
+
+1. Query-level gains and losses
+Chemistry
+  EmbeddingGemma: mean -1.13 points; gain/tie/loss 14/161/22; severe gain/loss 10/13.
+  BGE-M3: mean -4.34 points; gain/tie/loss 9/154/34; severe gain/loss 5/23.
+  Qwen3-0.6B: mean -2.34 points; gain/tie/loss 16/155/26; severe gain/loss 9/17.
+  Nomic v2 MoE: mean -4.84 points; gain/tie/loss 11/154/32; severe gain/loss 7/25.
+  Granite-278M: mean -0.80 points; gain/tie/loss 19/155/23; severe gain/loss 16/14.
+  LaBSE: mean -8.81 points; gain/tie/loss 26/114/57; severe gain/loss 16/45.
+  SapBERT: mean -3.15 points; gain/tie/loss 27/128/42; severe gain/loss 18/28.
+  E5-large-instruct: mean -0.26 points; gain/tie/loss 23/149/25; severe gain/loss 16/18.
+EUR-Lex
+  EmbeddingGemma: mean +2.27 points; gain/tie/loss 69/71/54; severe gain/loss 18/13.
+  BGE-M3: mean +2.21 points; gain/tie/loss 65/69/60; severe gain/loss 29/18.
+  Qwen3-0.6B: mean +2.87 points; gain/tie/loss 76/63/55; severe gain/loss 21/13.
+  Nomic v2 MoE: mean +1.17 points; gain/tie/loss 58/68/68; severe gain/loss 22/18.
+  Granite-278M: mean +2.74 points; gain/tie/loss 80/49/65; severe gain/loss 28/16.
+  LaBSE: mean +13.82 points; gain/tie/loss 107/46/41; severe gain/loss 57/19.
+  SapBERT: mean +8.20 points; gain/tie/loss 90/52/52; severe gain/loss 43/13.
+  E5-large-instruct: mean +0.76 points; gain/tie/loss 67/64/63; severe gain/loss 19/20.
+UN
+  EmbeddingGemma: mean -7.59 points; gain/tie/loss 72/50/125; severe gain/loss 16/50.
+  BGE-M3: mean -7.53 points; gain/tie/loss 83/40/124; severe gain/loss 14/58.
+  Qwen3-0.6B: mean -4.09 points; gain/tie/loss 83/45/119; severe gain/loss 21/39.
+  Nomic v2 MoE: mean -6.28 points; gain/tie/loss 84/44/119; severe gain/loss 21/53.
+  Granite-278M: mean -6.21 points; gain/tie/loss 72/48/127; severe gain/loss 16/42.
+  LaBSE: mean +2.24 points; gain/tie/loss 94/98/55; severe gain/loss 33/23.
+  SapBERT: mean +2.04 points; gain/tie/loss 49/174/24; severe gain/loss 14/6.
+  E5-large-instruct: mean -6.38 points; gain/tie/loss 80/48/119; severe gain/loss 21/51.
+EUR-Lex positive means coexist with losses for individual questions in every encoder.
+Chemistry has many ties; a mean near zero can still conceal a minority of substantial gains and losses.
+UN encoders disagree: LaBSE/SapBERT have positive mean contrasts while the other six have negative means.
+A query gain rate is distinct from the mean effect and from the probability of finding any relevant source.
+
+2. Fixed encoder subsets
+  Chemistry, All eight encoders: -3.21 [-4.58, -1.83] nDCG points.
+  Chemistry, Same query/document prefix (4): -4.28 [-6.10, -2.45] nDCG points.
+  Chemistry, Changed prefix/instruction (4): -2.14 [-3.80, -0.56] nDCG points.
+  EUR-Lex, All eight encoders: +4.26 [+1.97, +6.64] nDCG points.
+  EUR-Lex, Same query/document prefix (4): +6.74 [+4.00, +9.60] nDCG points.
+  EUR-Lex, Changed prefix/instruction (4): +1.77 [-0.54, +4.14] nDCG points.
+  UN, All eight encoders: -4.22 [-6.17, -2.25] nDCG points.
+  UN, Same query/document prefix (4): -2.36 [-4.14, -0.57] nDCG points.
+  UN, Changed prefix/instruction (4): -6.08 [-8.48, -3.64] nDCG points.
+Both fixed subsets retain the corpus sign pattern in their means: chemistry negative, EUR-Lex positive, UN negative.
+The same-prefix subset rules out a changed text prefix as a necessary condition for the observed EUR-Lex gain.
+It does not isolate a causal effect of expansion, prefix choice, encoder architecture, pretraining or embedding role.
+Four encoders per subset are fixed systems, not a random sample of encoder families; subgroup gaps remain descriptive.
+
+3. UN first relevant language, unconditional on retrieval success
+  EmbeddingGemma, Original: en=58, es=49, fr=50, zh=38, no_hit=52; denominator247.
+  EmbeddingGemma, English translation: en=169, es=15, fr=12, zh=1, no_hit=50; denominator247.
+  EmbeddingGemma, German translation: en=91, es=33, fr=44, zh=9, no_hit=70; denominator247.
+  BGE-M3, Original: en=57, es=45, fr=46, zh=34, no_hit=65; denominator247.
+  BGE-M3, English translation: en=143, es=17, fr=13, zh=3, no_hit=71; denominator247.
+  BGE-M3, German translation: en=91, es=38, fr=27, zh=11, no_hit=80; denominator247.
+  Qwen3-0.6B, Original: en=43, es=48, fr=53, zh=35, no_hit=68; denominator247.
+  Qwen3-0.6B, English translation: en=125, es=36, fr=2, zh=8, no_hit=76; denominator247.
+  Qwen3-0.6B, German translation: en=23, es=102, fr=6, zh=18, no_hit=98; denominator247.
+  Nomic v2 MoE, Original: en=54, es=41, fr=50, zh=30, no_hit=72; denominator247.
+  Nomic v2 MoE, English translation: en=170, es=9, fr=10, zh=0, no_hit=58; denominator247.
+  Nomic v2 MoE, German translation: en=59, es=48, fr=45, zh=5, no_hit=90; denominator247.
+  Granite-278M, Original: en=52, es=30, fr=50, zh=30, no_hit=85; denominator247.
+  Granite-278M, English translation: en=124, es=20, fr=19, zh=7, no_hit=77; denominator247.
+  Granite-278M, German translation: en=75, es=29, fr=39, zh=12, no_hit=92; denominator247.
+  LaBSE, Original: en=3, es=22, fr=48, zh=2, no_hit=172; denominator247.
+  LaBSE, English translation: en=7, es=18, fr=45, zh=3, no_hit=174; denominator247.
+  LaBSE, German translation: en=0, es=11, fr=57, zh=0, no_hit=179; denominator247.
+  SapBERT, Original: en=4, es=10, fr=10, zh=7, no_hit=216; denominator247.
+  SapBERT, English translation: en=15, es=7, fr=4, zh=0, no_hit=221; denominator247.
+  SapBERT, German translation: en=2, es=1, fr=11, zh=0, no_hit=233; denominator247.
+  E5-large-instruct, Original: en=49, es=38, fr=43, zh=31, no_hit=86; denominator247.
+  E5-large-instruct, English translation: en=166, es=0, fr=0, zh=0, no_hit=81; denominator247.
+  E5-large-instruct, German translation: en=92, es=5, fr=45, zh=2, no_hit=103; denominator247.
+Every stacked bar keeps all 247 questions; no-hit includes first relevant ranks above 10 and absence from the saved top 100.
+Only the earliest relevant version is classified. The figure does not characterize all retrieved languages,
+language availability, query-language matching, intrinsic language bias, or a causal semantic bridge.
+Paired first-language category changes and full transitions are supplied; category percentages are compositional.
+
+4. Query-side truncation is not a boundary in the primary target-matched contrast
+Saved query-side summaries contain 3 truncated HyDE encodings among 25,520 query/model/output-language encodings.
+All three are LaBSE EUR-Lex Chinese outputs. EUR-Lex has no searched Chinese target, so they do not enter
+the target-matched cross-language comparison. Original and translated query encodings have zero truncations.
+Thus saved query truncation cannot account for the primary target-matched H−T pattern. This is not evidence
+that passage length is irrelevant, nor an ablation of document chunking or truncation elsewhere in the corpus.
+No query-level length effect was estimated from aggregate truncation summaries, and repeated document
+truncation summaries shared by variants are excluded from query accounting.
+
+Limitations and provenance
+Synthetic maximum-score-selected questions, variable generator candidate pools, source-associated qrels and fixed
+encoders limit external generalization. Candidate provenance is audited separately in audit/candidate_pool_provenance.txt.
+This round tests descriptive robustness within saved runs. It cannot attribute mechanisms or establish a deployable
+per-query policy. Text examples are separately owned under round_04/cases/ and are not selected by this script.
+
+Questions for Round5: held-out selection and costs
+1. On a fixed source-level held-out split, does a training-only choice of variant beat the original/English controls?
+   Keep language versions and all encoder rows from one source together; never choose using test outcomes.
+2. Does selecting for source Hit versus version nDCG produce different held-out gains and harm rates?
+3. What is the generation cost of a deployable one-language policy versus exploring all five languages?
+   Charge failures/retries, reuse generation across encoders, and retain unknown local compute costs.
+4. Can gains remain meaningful when reported with added API costs and offline component timings, without calling
+   amortized cached timings measured online latency? Avoid per-query oracle routing and in-sample best-of-five claims.
+5. Given source-question losses within favorable corpus means, which minimum control and harm report should accompany
+   any deployment recommendation? No new generation or policy execution is authorized by this diagnostic.

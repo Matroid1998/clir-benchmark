@@ -866,6 +866,24 @@ handling. `reranker.candidate_k` or `--rerank-candidates N` selects a smaller pr
 from 1 through 100. It never inserts unseen chunks, expands the candidate set, or
 fuses languages or retrieval runs. An empty parent ranking stays empty.
 
+With `retrieval_unit: document`, the dense, translated-dense, and HyDE parents
+also support reranking. The candidates are the parent's top 100 distinct
+document-language versions. Qwen scores the **winning chunk already selected by
+the parent** for each document, preserving that chunk and the document ID in the
+output. It does not rescore every chunk in the corpus. Document qrels, cohorts,
+source-recall metrics, and separately identified MTEB exports remain unchanged.
+`configs/selected-document-rerank.yaml` selects only `rerank-dense` for the 638
+selected questions; existing embeddings and parent runs must already exist.
+
+Document reranking uses a resumable SQLite cache under `reranking_cache/`, with
+one file per original query and scoring configuration. This avoids millions of
+small files on the cluster. Concurrent retrievers preserve the first stored
+measurement and retain duplicate inference attempts. Each completed run also
+stores an immutable `pair_scores.parquet` containing every pair's full input,
+score, token audit, timing, and model metadata. Retain the cache with invocation
+records to preserve incomplete work and concurrent attempts. Legacy chunk-mode
+pair artifacts and identities are unchanged.
+
 All variants score each document against the **original question**, including
 translated-query, HyDE, and ADORE parents. Translation language, HyDE language,
 and ADORE round settings still identify the separate candidate-generation runs.

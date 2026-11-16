@@ -1,0 +1,34 @@
+un_e5_source_loss
+Rule: Among Ten-hit/Tde-miss at 10, minimize Tde-minus-Ten nDCG@10; break ties by query ID.
+Corpus/model: un/e5-large-instruct
+Query ID: q_4bac2def037911480b8b1ed3fb59d26d853ac5cb2392ea225a422ec71c854db1
+Original language: en
+Quality: clear
+Canonical source: 2001/a/res/55/231
+Source unit: un:2001/a/res/55/231:en
+Query generator: qwen/qwen3.8-27b
+Provenance: {"file": "data/legal/qac/generation_600_20261008_model_comparison/un_parallel/run.sqlite", "outcome_error": "", "outcome_status": "completed", "position": 0, "task": "a7d8fa3314ae6b3c7954342d5e93e6834abe61bf0e5162a7a73e220c2fdaa7ac"}
+
+ORIGINAL QUESTION
+In its resolution on results-based budgeting, what conditions did the General Assembly require for the implementation of the approved measures?
+
+SAVED ANSWER (not provided to generation)
+these measures, as approved by the General Assembly in the present resolution, should be implemented in a gradual and incremental manner, in full compliance with the Regulations and Rules Governing Programme Planning, the Programme Aspects of the Budget, the Monitoring of Implementation and the Methods of Evaluation and the Financial Regulations and Rules of the United Nations
+
+SAVED EVIDENCE (not provided to generation)
+
+
+original
+In its resolution on results-based budgeting, what conditions did the General Assembly require for the implementation of the approved measures?
+Metrics: {"ndcg10": 0.3903800499921017, "hit10": 1.0, "recall10": 0.25, "mrr10": 1.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 1, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [1], "relevant_languages_within10": ["en"], "relevant_versions10": 1, "relevant_ranks_within100": [1], "top10_language_counts": {"en": 10}}
+
+translate_en
+In its resolution on results-based budgeting, what conditions did the General Assembly require for the implementation of the approved measures?
+Metrics: {"ndcg10": 0.3903800499921017, "hit10": 1.0, "recall10": 0.25, "mrr10": 1.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 1, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [1], "relevant_languages_within10": ["en"], "relevant_versions10": 1, "relevant_ranks_within100": [1], "top10_language_counts": {"en": 10}}
+
+translate_de
+Welche Bedingungen verlangte die Generalversammlung in ihrer Resolution zur ergebnisorientierten Haushaltsplanung für die Umsetzung der genehmigten Maßnahmen?
+Metrics: {"ndcg10": 0.0, "hit10": 0.0, "recall10": 0.0, "mrr10": 0.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 17, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [], "relevant_languages_within10": [], "relevant_versions10": 0, "relevant_ranks_within100": [17, 39], "top10_language_counts": {"es": 1, "fr": 9}}

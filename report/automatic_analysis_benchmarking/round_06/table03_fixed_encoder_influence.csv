@@ -1,0 +1,73 @@
+family,corpus,contrast,metric,omitted_model,mean
+target,chemistry,H − T,ndcg10,none,-0.032102335895546424
+target,chemistry,H − T,ndcg10,embeddinggemma,-0.035068771195833355
+target,chemistry,H − T,ndcg10,bge-m3,-0.030490735106284715
+target,chemistry,H − T,ndcg10,qwen3-0.6B,-0.03334208816840288
+target,chemistry,H − T,ndcg10,nomic-v2-moe,-0.029774168892417185
+target,chemistry,H − T,ndcg10,granite-278m,-0.035540988727635676
+target,chemistry,H − T,ndcg10,LaBSE,-0.024096072755599687
+target,chemistry,H − T,ndcg10,SapBERT,-0.032185201173041786
+target,chemistry,H − T,ndcg10,e5-large-instruct,-0.036320661145156134
+target,chemistry,T − original,ndcg10,none,0.0828535659085935
+target,chemistry,T − original,ndcg10,embeddinggemma,0.09157021834263834
+target,chemistry,T − original,ndcg10,bge-m3,0.08009803292090494
+target,chemistry,T − original,ndcg10,qwen3-0.6B,0.08645417459502544
+target,chemistry,T − original,ndcg10,nomic-v2-moe,0.0791194875248071
+target,chemistry,T − original,ndcg10,granite-278m,0.07766410348664217
+target,chemistry,T − original,ndcg10,LaBSE,0.09472645517696493
+target,chemistry,T − original,ndcg10,SapBERT,0.08565055774048166
+target,chemistry,T − original,ndcg10,e5-large-instruct,0.06754549748128343
+target,eurlex,H − T,ndcg10,none,0.0425537572075466
+target,eurlex,H − T,ndcg10,embeddinggemma,0.045393478008431576
+target,eurlex,H − T,ndcg10,bge-m3,0.04546935228172026
+target,eurlex,H − T,ndcg10,qwen3-0.6B,0.04453679194160728
+target,eurlex,H − T,ndcg10,nomic-v2-moe,0.04696204614660355
+target,eurlex,H − T,ndcg10,granite-278m,0.0447179671719278
+target,eurlex,H − T,ndcg10,LaBSE,0.028892631783143122
+target,eurlex,H − T,ndcg10,SapBERT,0.03691265789881696
+target,eurlex,H − T,ndcg10,e5-large-instruct,0.0475451324281223
+target,eurlex,T − original,ndcg10,none,0.09837776683747515
+target,eurlex,T − original,ndcg10,embeddinggemma,0.10610709561458323
+target,eurlex,T − original,ndcg10,bge-m3,0.10024820687655854
+target,eurlex,T − original,ndcg10,qwen3-0.6B,0.10251446607067688
+target,eurlex,T − original,ndcg10,nomic-v2-moe,0.09442787557629304
+target,eurlex,T − original,ndcg10,granite-278m,0.09918560768652127
+target,eurlex,T − original,ndcg10,LaBSE,0.1066051837060467
+target,eurlex,T − original,ndcg10,SapBERT,0.09770006158137269
+target,eurlex,T − original,ndcg10,e5-large-instruct,0.08023363758774887
+target,un,H − T,ndcg10,none,-0.04223718023762336
+target,un,H − T,ndcg10,embeddinggemma,-0.037430326839470444
+target,un,H − T,ndcg10,bge-m3,-0.03752048714121028
+target,un,H − T,ndcg10,qwen3-0.6B,-0.04243327729926128
+target,un,H − T,ndcg10,nomic-v2-moe,-0.039301933797715516
+target,un,H − T,ndcg10,granite-278m,-0.039405684329061316
+target,un,H − T,ndcg10,LaBSE,-0.05146683014157887
+target,un,H − T,ndcg10,SapBERT,-0.051182502664339005
+target,un,H − T,ndcg10,e5-large-instruct,-0.039156399688350094
+target,un,T − original,ndcg10,none,0.0627386597773781
+target,un,T − original,ndcg10,embeddinggemma,0.06996361832535593
+target,un,T − original,ndcg10,bge-m3,0.06412925365351134
+target,un,T − original,ndcg10,qwen3-0.6B,0.0652138717592225
+target,un,T − original,ndcg10,nomic-v2-moe,0.05659314581450726
+target,un,T − original,ndcg10,granite-278m,0.06071179224237164
+target,un,T − original,ndcg10,LaBSE,0.06858788273165112
+target,un,T − original,ndcg10,SapBERT,0.06803690821912851
+target,un,T − original,ndcg10,e5-large-instruct,0.048672805473276515
+UN pivot,un,T-de − T-en,ndcg10,none,0.002211719538104349
+UN pivot,un,T-de − T-en,ndcg10,embeddinggemma,-0.0009862277767669887
+UN pivot,un,T-de − T-en,ndcg10,bge-m3,-0.0003146035922644142
+UN pivot,un,T-de − T-en,ndcg10,qwen3-0.6B,0.0071896234964717075
+UN pivot,un,T-de − T-en,ndcg10,nomic-v2-moe,0.0023518779372267468
+UN pivot,un,T-de − T-en,ndcg10,granite-278m,0.005296275433717128
+UN pivot,un,T-de − T-en,ndcg10,LaBSE,0.0026555376344873146
+UN pivot,un,T-de − T-en,ndcg10,SapBERT,0.004414671716982891
+UN pivot,un,T-de − T-en,ndcg10,e5-large-instruct,-0.002913398545019596
+UN pivot,un,T-de − T-en,hit10,none,-0.06933198380566802
+UN pivot,un,T-de − T-en,hit10,embeddinggemma,-0.06766917293233082
+UN pivot,un,T-de − T-en,hit10,bge-m3,-0.07403123192596875
+UN pivot,un,T-de − T-en,hit10,qwen3-0.6B,-0.06651243493348756
+UN pivot,un,T-de − T-en,hit10,nomic-v2-moe,-0.06072874493927124
+UN pivot,un,T-de − T-en,hit10,granite-278m,-0.07056101792943896
+UN pivot,un,T-de − T-en,hit10,LaBSE,-0.07634470792365528
+UN pivot,un,T-de − T-en,hit10,SapBERT,-0.07229612492770388
+UN pivot,un,T-de − T-en,hit10,e5-large-instruct,-0.06651243493348755

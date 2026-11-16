@@ -1,0 +1,78 @@
+{
+  "retrieved_at": "2026-11-15T23:48:47.746653+00:00",
+  "scope": "Focused primary-source review; not an exhaustive novelty guarantee",
+  "references": [
+    {
+      "label": "hyde",
+      "citation_key": "gao-etal-2023-precise",
+      "metadata_url": "https://aclanthology.org/2023.acl-long.99.bib",
+      "metadata_sha256": "0f9e7cfadb1409dd228dd0c8e27a83edc20890f702f7f27de1198cb0861ed096"
+    },
+    {
+      "label": "query2doc",
+      "citation_key": "wang-etal-2023-query2doc",
+      "metadata_url": "https://aclanthology.org/2023.emnlp-main.585.bib",
+      "metadata_sha256": "6b3688298d902d9d3606720fbca2c1c45848fa5dfd7faa473f5057ed8c700832"
+    },
+    {
+      "label": "expansion_failures",
+      "citation_key": "weller-etal-2024-generative",
+      "metadata_url": "https://aclanthology.org/2024.findings-eacl.134.bib",
+      "metadata_sha256": "16a52156c9693a2beaf00ddba0d806e55b594017302cccf582a50b065fa8b1f2"
+    },
+    {
+      "label": "lareqa",
+      "citation_key": "roy-etal-2020-lareqa",
+      "metadata_url": "https://aclanthology.org/2020.emnlp-main.477.bib",
+      "metadata_sha256": "a5ee2d59875fc866f3a4c510bb5bc1aa82fc7f33c835a0a4f419c0eb7160e885"
+    },
+    {
+      "label": "language_bias",
+      "citation_key": "yang-etal-2024-language-bias",
+      "metadata_url": "https://aclanthology.org/2024.mrl-1.23.bib",
+      "metadata_sha256": "26eae817b85675f1f1eb761245db4b5452a1def1e91978bf27f1258a9a96295f"
+    },
+    {
+      "label": "delp_delta",
+      "citation_key": "park-etal-2026-enhancing",
+      "metadata_url": "https://aclanthology.org/2026.findings-acl.1353.bib",
+      "metadata_sha256": "e1ded89c8eef3352728adc989cf03754cead54971455922ae0f9d9d75680047d"
+    },
+    {
+      "label": "query_mixing",
+      "citation_key": "zhu-etal-2026-mixing",
+      "metadata_url": "https://aclanthology.org/2026.acl-long.1455.bib",
+      "metadata_sha256": "47cf5cd566271b98754a3a9aefab3424ada2e51dcb0f30f2f2b68c1d419ba95d"
+    },
+    {
+      "label": "multilingual_expansion",
+      "citation_key": "macmillanscott2025generativequeryexpansionmultilingual",
+      "metadata_url": "https://arxiv.org/bibtex/2511.19325",
+      "metadata_sha256": "f8ac39f9dd0cd3b905c55874eeeffe7e33f1c8abca0471a18e025e3b0740ffeb"
+    },
+    {
+      "label": "clirudit",
+      "citation_key": "valentini-etal-2025-clirudit",
+      "metadata_url": "https://aclanthology.org/2025.mrl-main.16.bib",
+      "metadata_sha256": "b73fed868b73447dc9974c68bcecdcd244c08cd8b4530b0548f5b8b748e28306"
+    },
+    {
+      "label": "complementary_rewriting",
+      "citation_key": "shanian-etal-2026-better",
+      "metadata_url": "https://aclanthology.org/2026.emnlp-industry.143.bib",
+      "metadata_sha256": "25ea20ee73c716f433278882f228fb3ccd16dbe7b39f020b570fba23f61dfb6c"
+    },
+    {
+      "label": "mugi",
+      "citation_key": "zhang-etal-2024-exploring-best",
+      "metadata_url": "https://aclanthology.org/2024.findings-emnlp.103.bib",
+      "metadata_sha256": "cc44e7e94156dfdff3a048eb3c1b03793cad26759f468268962f6425e80f60fc"
+    },
+    {
+      "label": "mmteb",
+      "citation_key": "enevoldsen2025mmtebmassivemultilingualtext",
+      "metadata_url": "https://arxiv.org/bibtex/2502.13595",
+      "metadata_sha256": "0e1c84e2427de1994503c9d4a373c8e7a03abbd46fafbee9c4128138ccf9495b"
+    }
+  ]
+}

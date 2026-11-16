@@ -1,0 +1,41 @@
+Mixed-ranking projection
+========================
+Rebuild from the repository root:
+  .venv/bin/python report/acl_analysis_20261115/scripts/build_mixed_rankings.py
+
+mixed_rankings.parquet contains only the saved mixed-language-pool rankings from
+all 264 selected-document reports. Each source Parquet file is read separately,
+with projected columns and mixed-setting filters. No source text, query text,
+model weights, generation API, or retrieval execution is used.
+
+Unique row key: (corpus, model, variant, query_id, rank).
+The setting_id is retained as a further join check.
+Join query-level metrics using (corpus, model, variant, setting_id, query_id).
+
+Columns:
+  corpus, model, variant, method, output_language: report configuration.
+  setting_id, query_id: original query/setting identity.
+  rank: one-based document-language rank, at most 100.
+  score: saved cosine score, preserved as float64 storage.
+  relevance: saved binary known-source qrel membership, checked against qrels.
+  document_id: retrieved document-language version.
+  source_id: retrieved canonical source unit (not necessarily a whole publication).
+  document_language: language of that retrieved version.
+
+Mixed means the configured language pool, not that all five languages exist in
+every corpus. Original query language can be joined from per_query.parquet;
+output_language describes generated input language and may differ from it.
+
+Validation reconstructs first-hit MRR@10, nDCG@10, Hit@10, and Recall@10 against
+per_query.parquet for every query configuration. It also checks contiguous unique
+ranks, unique document IDs, qrel membership, cohort equality, and persisted row
+counts/schema. Details, input/output hashes and the complete source file list are
+in mixed_rankings_metadata.json. Source ranking hashes are copied from the
+previously verified result inventories; the extractor does not hash full ranking
+files because that would read the deliberately excluded text columns.
+
+The saved rankings stop after 100 document-language versions. Collapsing sources
+can therefore leave fewer than 100 unique sources, and the unseen tail cannot be
+reconstructed. For chemistry, source_id equality must not silently broaden gold
+relevance beyond directly accepted translation pairs. Keep the original relevance
+flag unless deliberately defining and labeling a different evaluation.

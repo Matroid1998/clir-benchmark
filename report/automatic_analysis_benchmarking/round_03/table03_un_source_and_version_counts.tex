@@ -1,0 +1,24 @@
+\begin{tabular}{lllllrrrrrrlrrrrrr}
+\toprule
+corpus & model & treatment & reference & contrast & n\_queries & fixed\_models & source\_hits\_gained & source\_hits\_lost & net\_source\_hits & net\_positive\_version\_hits & count\_units & source\_hit\_delta & source\_hit\_ci\_low & source\_hit\_ci\_high & version\_count\_delta\_per\_question & version\_count\_ci\_low & version\_count\_ci\_high \\
+\midrule
+un & nomic-v2-moe & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 1 & 8.0000 & 40.0000 & -32.0000 & 15.0000 & questions or version hits & -0.1296 & -0.1822 & -0.0769 & 0.0607 & -0.0405 & 0.1700 \\
+un & qwen3-0.6B & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 1 & 13.0000 & 35.0000 & -22.0000 & -33.0000 & questions or version hits & -0.0891 & -0.1417 & -0.0364 & -0.1336 & -0.2349 & -0.0364 \\
+un & SapBERT & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 1 & 6.0000 & 18.0000 & -12.0000 & -17.0000 & questions or version hits & -0.0486 & -0.0891 & -0.0121 & -0.0688 & -0.1134 & -0.0283 \\
+un & LaBSE & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 1 & 17.0000 & 22.0000 & -5.0000 & -10.0000 & questions or version hits & -0.0202 & -0.0688 & 0.0283 & -0.0405 & -0.1053 & 0.0243 \\
+un & e5-large-instruct & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 1 & 18.0000 & 40.0000 & -22.0000 & 71.0000 & questions or version hits & -0.0891 & -0.1498 & -0.0283 & 0.2874 & 0.1822 & 0.3968 \\
+un & granite-278m & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 1 & 13.0000 & 28.0000 & -15.0000 & -13.0000 & questions or version hits & -0.0607 & -0.1134 & -0.0081 & -0.0526 & -0.1700 & 0.0608 \\
+un & embeddinggemma & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 1 & 6.0000 & 26.0000 & -20.0000 & 32.0000 & questions or version hits & -0.0810 & -0.1255 & -0.0364 & 0.1296 & 0.0202 & 0.2389 \\
+un & bge-m3 & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 1 & 12.0000 & 21.0000 & -9.0000 & 20.0000 & questions or version hits & -0.0364 & -0.0810 & 0.0081 & 0.0810 & -0.0162 & 0.1741 \\
+un & All fixed models & translate\_de & translate\_en & translate\_de-minus-translate\_en & 247 & 8 & 11.6250 & 28.7500 & -17.1250 & 8.1250 & mean count per fixed model & -0.0693 & -0.0916 & -0.0481 & 0.0329 & -0.0096 & 0.0754 \\
+un & nomic-v2-moe & translate\_de & original & translate\_de-minus-original & 247 & 1 & 19.0000 & 37.0000 & -18.0000 & 51.0000 & questions or version hits & -0.0729 & -0.1296 & -0.0121 & 0.2065 & 0.0850 & 0.3320 \\
+un & qwen3-0.6B & translate\_de & original & translate\_de-minus-original & 247 & 1 & 11.0000 & 41.0000 & -30.0000 & 13.0000 & questions or version hits & -0.1215 & -0.1781 & -0.0648 & 0.0526 & -0.0527 & 0.1619 \\
+un & SapBERT & translate\_de & original & translate\_de-minus-original & 247 & 1 & 5.0000 & 22.0000 & -17.0000 & -21.0000 & questions or version hits & -0.0688 & -0.1134 & -0.0283 & -0.0850 & -0.1336 & -0.0405 \\
+un & LaBSE & translate\_de & original & translate\_de-minus-original & 247 & 1 & 11.0000 & 18.0000 & -7.0000 & -12.0000 & questions or version hits & -0.0283 & -0.0729 & 0.0121 & -0.0486 & -0.1093 & 0.0121 \\
+un & e5-large-instruct & translate\_de & original & translate\_de-minus-original & 247 & 1 & 21.0000 & 38.0000 & -17.0000 & 77.0000 & questions or version hits & -0.0688 & -0.1296 & -0.0081 & 0.3117 & 0.2065 & 0.4251 \\
+un & granite-278m & translate\_de & original & translate\_de-minus-original & 247 & 1 & 18.0000 & 25.0000 & -7.0000 & 39.0000 & questions or version hits & -0.0283 & -0.0810 & 0.0202 & 0.1579 & 0.0364 & 0.2794 \\
+un & embeddinggemma & translate\_de & original & translate\_de-minus-original & 247 & 1 & 14.0000 & 32.0000 & -18.0000 & 89.0000 & questions or version hits & -0.0729 & -0.1255 & -0.0202 & 0.3603 & 0.2308 & 0.4940 \\
+un & bge-m3 & translate\_de & original & translate\_de-minus-original & 247 & 1 & 13.0000 & 28.0000 & -15.0000 & 37.0000 & questions or version hits & -0.0607 & -0.1093 & -0.0121 & 0.1498 & 0.0364 & 0.2551 \\
+un & All fixed models & translate\_de & original & translate\_de-minus-original & 247 & 8 & 14.0000 & 30.1250 & -16.1250 & 34.1250 & mean count per fixed model & -0.0653 & -0.0891 & -0.0415 & 0.1382 & 0.0855 & 0.1913 \\
+\bottomrule
+\end{tabular}

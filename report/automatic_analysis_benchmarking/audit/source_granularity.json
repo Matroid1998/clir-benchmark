@@ -1,0 +1,80 @@
+{
+  "chemistry": {
+    "all_unit_types": {
+      "abstract": 20283
+    },
+    "selected_unit_types": {
+      "abstract": 197
+    },
+    "language_version_counts": {
+      "en": 5829,
+      "zh": 1997,
+      "de": 1240,
+      "fr": 5823,
+      "es": 1990,
+      "ja": 1407,
+      "ru": 1997
+    },
+    "all_canonical_sources": 9432,
+    "all_parent_ids": 9432,
+    "selected_parent_ids": 197,
+    "sample_source": {
+      "id": "CN-103889983-B_zh",
+      "source_id": "CN-103889983-B",
+      "parent_id": "CN-103889983-B",
+      "language": "zh",
+      "unit_type": "abstract"
+    }
+  },
+  "eurlex": {
+    "all_unit_types": {
+      "article": 266494,
+      "annex": 74339
+    },
+    "selected_unit_types": {
+      "article": 194
+    },
+    "language_version_counts": {
+      "de": 85243,
+      "en": 85346,
+      "es": 84893,
+      "fr": 85351
+    },
+    "all_canonical_sources": 85509,
+    "all_parent_ids": 14580,
+    "selected_parent_ids": 194,
+    "sample_source": {
+      "id": "eurlex:http://data.europa.eu/eli/dir/2005/28/art_17/oj:en",
+      "source_id": "http://data.europa.eu/eli/dir/2005/28/art_17/oj",
+      "parent_id": "32005L0028",
+      "language": "en",
+      "unit_type": "article"
+    }
+  },
+  "un": {
+    "all_unit_types": {
+      "document": 88134
+    },
+    "selected_unit_types": {
+      "document": 247
+    },
+    "language_version_counts": {
+      "ar": 14689,
+      "en": 14689,
+      "es": 14689,
+      "fr": 14689,
+      "ru": 14689,
+      "zh": 14689
+    },
+    "all_canonical_sources": 14689,
+    "all_parent_ids": 14689,
+    "selected_parent_ids": 247,
+    "sample_source": {
+      "id": "un:1997/a/res/51/14b:fr",
+      "source_id": "1997/a/res/51/14b",
+      "parent_id": "1997/a/res/51/14b",
+      "language": "fr",
+      "unit_type": "document"
+    }
+  }
+}

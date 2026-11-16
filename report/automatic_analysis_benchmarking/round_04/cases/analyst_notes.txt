@@ -1,0 +1,170 @@
+ROUND 4 QUALITATIVE CASE INSPECTION
+Model-analyst observations, 2026-11-15. These are not independent human judgments,
+paid grading results, or a translation-quality evaluation.
+
+Selection and scope
+The six cases were chosen by scripts/select_round04_cases.py before their texts
+were inspected. The script, candidate-pool CSVs and selection_manifest.json retain
+the rules, ordering, denominators, seed, complete selected query IDs and input
+hashes. All six came from clear-quality pools, so no quality fallback was needed.
+No original-query-language restriction was applied. Extreme cases illustrate
+possibilities, not their frequency or average effect. The stable control uses a
+seeded choice among 14 eligible questions, not the most visually persuasive case.
+
+UN E5 clear-pool sizes: 39 English-hit/German-miss of 40 before quality restriction;
+18 German-hit/English-miss of 18; 118 both-hit of 126; 14 stable controls of 14.
+EUR-Lex and chemistry BGE examples maximize/minimize the same English-output,
+mixed-setting nDCG contrast among 163 and 182 clear queries, respectively.
+
+The three UN extreme cases selected under these rules happen to have English
+originals. Their English translation is an exact identity, confirmed in the
+saved generation record. This is not evidence from three independently generated
+English paraphrases. The stable UN control and both BGE cases originate in French.
+Ten/Tde below mean the language of the retrieval query, not the original language.
+
+Full original questions, translations/HyDE, saved answers, source IDs, generator
+provenance, qrels and ranking statistics are in the matching .txt/.json files.
+JSON retains saved top-100 rank identities/scores and winning-chunk texts for
+top-10 results and accepted positives within 100. The present observations were
+made from those query texts, the first-ranked result, and the first accepted
+positive; they do not certify every document's semantic relevance.
+
+Saved answers/evidence were inspected here after case selection. They were not
+inputs to query translation or HyDE generation. Empty saved evidence strings in
+the legal examples are retained, not filled with invented source spans.
+
+1. un_e5_source_loss
+Query: q_4bac2def037911480b8b1ed3fb59d26d853ac5cb2392ea225a422ec71c854db1
+Source: 2001/a/res/55/231, results-based budgeting.
+
+Visible text: the German query retains the General Assembly, its resolution on
+results-based budgeting, implementation of approved measures, and the request
+for conditions. It adds no answer proposition. The inspected texts do not show
+an obvious omitted date/entity or a contradiction. This observation is narrower
+than certifying translation equivalence.
+
+Ranks: Ten finds the English source first and only that accepted version in the
+top ten; Tde first finds it at rank 17, so nDCG@10 changes .390380 to 0 and source
+Hit changes 1 to 0. Ten's top ten are all English; Tde's are nine French and one
+Spanish. The Tde top result is another resolution (68/241), and its displayed
+chunk discusses financing and reporting on implementation. It is unaccepted
+under the source qrels, not automatically semantically unrelated in every respect.
+
+The winning chunk for the accepted English document also changes: Ten selects
+the beginning containing the implementation conditions, while Tde selects a
+later portion. Thus a different language expression coincides with different
+winning chunks and ranks. The case does not identify why E5 changed its scores.
+
+2. un_e5_source_gain
+Query: q_ba28f17d8c78afc99c921a76c1c398976d692554faf8c180994d9f9e41483934
+Source: 2011/a/res/65/99, adopted 10 December 2010.
+
+Visible text: both query forms retain the reporting obligation, General Assembly,
+Secretary-General, the date 10 December 2010, June 1967, and subsequent hostilities.
+The German form asks the same kind of question; no answer-bearing deadline is
+supplied in the query itself.
+
+Ranks: Ten's accepted source is at 11; Tde retrieves its French version at 1 and
+English version at 5, moving nDCG@10 from 0 to .541400. Ten's rank-one result is
+resolution 57/119 on the same displacement topic from a different year. Its text
+has closely related reporting language. The query's specified date makes source
+identity relevant; the result should not be labeled wholly unrelated merely
+because its qrel is zero. The French positive selected by Tde visibly includes
+the reporting obligation and 10 December 2010 date. This is a concrete recovery
+of the accepted dated source, not evidence of a general German advantage.
+
+3. un_e5_version_gain_both_hit
+Query: q_db24165b1a872216cc32f5ca1ec0bbd756e6170dd7adcfa40137eef1d815c121
+Source: 2013/a/res/67/100, relations with the UN host country.
+
+Visible text: the German query retains visa concerns, anticipated host-country
+measures, the General Assembly, UN host-country relations, and 14 December 2012.
+No particular visa decision or legal instrument is inserted as an answer.
+
+Ranks: both forms already rank the accepted English source first. Ten retrieves
+one accepted version in the top ten; Tde retrieves all four at ranks 1, 2, 5, 8
+(English, French, Spanish, Chinese). Source Hit and MRR@10 remain 1, while nDCG
+rises from .390380 to .910853. This is a direct illustration of additional-version
+reward without improved first-source position for this question.
+
+The English document's winning chunks differ. Ten's displayed chunk is the
+resolution's concluding agenda/date portion; Tde's contains its earlier visa
+provisions. Document-level qrels mark the document relevant in both cases, and
+the metric does not certify answer-bearing quality of the winning chunk. This
+additional observation cannot be generalized to answer quality without a separate
+span or downstream evaluation.
+
+4. un_e5_stable_control
+Query: q_39f367930441d1d2bd68347bf8c89ccd8b6beb920c6f939b9157c615274d8ea4
+Source: 2006/s/res/1698_2006_, Democratic Republic of the Congo.
+
+Visible text: both translations preserve the request for an end date, the DRC,
+the Security Council, 2006, and measures concerning child recruitment. Neither
+inserts the saved answer, 31 July 2007. The source chunk visibly states that date.
+
+Ranks: Ten and Tde both find the English source at 1 with one accepted version
+in the top ten, giving identical .390380 nDCG, .25 version Recall and 1 Hit/MRR.
+The original French question finds the French version at 3. Equal top-ten metrics
+do not mean identical retrieval lists: Ten's top ten are all English, Tde's are
+four English and six French. Tde also finds accepted versions at 27, 31 and 86,
+outside the selected cutoff. The stable designation applies to the specified
+top-ten scores/counts, not all ranks or every cutoff.
+
+5. eurlex_bge_hyde_gain
+Query: q_1586007449bc6cb14409b743f373bcd6ce4cec0af8ec9d68fe30c1b545241501
+Source: Regulation 4/2009, Article 50.
+
+Visible text: the English translation asks which network central authorities
+handling maintenance obligations should use. HyDE supplies the name "European
+Judicial Network in civil and commercial matters", which is present in the
+saved answer and the accepted English article. This is observable addition of
+an answer-matching named entity absent from the question. It is not proof that
+the model saw the source at inference time; its generation input was the query
+with fixed task/domain instructions. Pretraining exposure is not audited here.
+
+HyDE also adds sentences about practical information exchange, contacts,
+cross-border cases and procedures. The inspected short source article supports
+cooperation and information exchange in general; this note does not individually
+verify every added proposition or classify the additions as hallucinations.
+
+Ranks: translation's first accepted source is 17; HyDE returns all four accepted
+versions at 1-4, changing nDCG from 0 to 1. The translation's rank-one document
+concerns cooperation and charging across rail networks, illustrating shared
+network/cooperation vocabulary under the fixed qrels. No lexical ablation was
+performed, so the named entity cannot be claimed as the isolated cause.
+
+6. chemistry_bge_hyde_loss
+Query: q_aed3759927fa7ca3a9b1fff822f8ff0ab3572f214b48e81e1e33985005dfc8ef
+Source: patent WO-2019095513-A1, filter-core device and humidifier abstract.
+
+Visible text: translation retains the upper housing, filter-core device,
+inverted U-shape and location question about water inlets. HyDE retains those
+concepts but converts the question to a passage describing a "transverse crown",
+"depending side portions", flow toward the core, and an "upper transverse
+portion". The saved answer/source describes the horizontal central part of the
+inverted U-shaped housing. The source excerpt does not use the same English
+terminology, and the added geometry/flow description is not established as false
+by this inspection. Do not classify this as a proven factual error or hallucination.
+At a broad spatial level, the proposed transverse upper location does not show
+an obvious contradiction with the saved horizontal-central answer; this short
+comparison is insufficient to certify the passage's complete faithfulness.
+
+Ranks: translation returns the two accepted versions, Chinese and French, at
+1-2. HyDE returns them at 28 and 19, respectively, changing nDCG from 1 to 0.
+Its rank-one result is a different filter/membrane patent with tubes, covers and
+water-flow terminology. Both variants have the same top-ten language counts
+(7 English, 1 Spanish, 1 French, 1 Chinese), so this example's loss is not a
+change in that marginal language distribution. Different identities occupy the
+ranks. The example shows that retaining recognizable task concepts in a generated
+passage is insufficient to guarantee better source retrieval; it does not isolate
+length, word choice, factuality or model geometry as the cause.
+
+Cross-case interpretation limits
+The two BGE examples use identical empty query/document prefixes and the same
+English output language. This avoids the prefix difference present for E5/Gemma/
+Qwen/Nomic HyDE, but still compares different text lengths, structures and content.
+The outcomes are selected extremes, so they do not estimate how often answer-
+matching additions help or harmless-looking reformulations hurt. The UN examples
+show gains, losses, unchanged source success with more versions, and equal cutoff
+metrics with different lists. They support inspection of what changed; none
+establishes a German bridge mechanism or a causal explanation for corpus means.

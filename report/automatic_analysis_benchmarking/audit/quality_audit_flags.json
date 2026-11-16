@@ -1,0 +1,405 @@
+{
+  "chemistry": {
+    "quality_audit_status": {
+      "clear": 182,
+      "repair": 13,
+      "blocking": 2
+    },
+    "alignment_eligibility": {
+      "eligible": 188,
+      "no_exact_source_passage": 8,
+      "quarantined_source_language": 1
+    },
+    "noneligible_alignment_query_ids": [
+      "q_0e3066a6dcd812fe325a700d00dda55baedc0a25e91e5beec8eb5c404ffa5a4c",
+      "q_132806b6c5439064b4ebf5e5dabc4cd5959ff52637e28c1ccefa0f841ed1752f",
+      "q_1bf0311e2cf8c628ced3ac642010dfce1002dba730c440e71d2169cf0f303bef",
+      "q_2a442e536d0c42115c084510f6ff2aaf865214ae4613ba4ef786a645a2d6d08c",
+      "q_6a3476bd8cd65bbe5c3c3ec26c10fbf2120bf0aafa59ea70afff47221929e259",
+      "q_6bdcbc1ff38dec35c155b7bb9f779fc19cb55280b9b1c344dce2fde488ef535e",
+      "q_934c0305313b500c46c37be80655732e91fa917044d36140f79380b13b5f942a",
+      "q_b8dec46d4db6fd235e484caa584f0f0e8dbe634a1005ae9fbdfce53b8c7bd9fd",
+      "q_f918be8905701b181f95761eba28af81ed92b1b9efc858379f5abbb30bcda23c"
+    ],
+    "high_score_components": [
+      {
+        "id": "q_2a442e536d0c42115c084510f6ff2aaf865214ae4613ba4ef786a645a2d6d08c",
+        "total": 37.0,
+        "faith_overall": 12.0,
+        "qual_overall": 25.0
+      },
+      {
+        "id": "q_598e16440b0d59c1a33315413ba5c973df53d64a6b3227687014b1bb3ba979c4",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_679d5712146952f41eac995fe649397d41aceec7a8b89bd4dba6396a33acf3e1",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_96600215f9c2223196dc6e8214ce35fb155cb6b14a2afec20adfa1bea7762d42",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_d663036cdd7c2eb76500fb5610ddd0ce79150d8ed6f33cdd99f05f4a64cc3094",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_f16302ab9457a4fc753eedf4279cc538f636bfefa1a3a92f0380db8934249289",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_f9df7b27aedd45ee61e15e808c0ddb43f8621279e36862468ad2b6138fe0bbcd",
+        "total": 37.0,
+        "faith_overall": 12.0,
+        "qual_overall": 25.0
+      },
+      {
+        "id": "q_ff562678b2b9fcddeb588cb5d74040f668be6c67a4ee74bff2dbf0551c708ae9",
+        "total": 33.0,
+        "faith_overall": 12.0,
+        "qual_overall": 21.0
+      }
+    ]
+  },
+  "eurlex": {
+    "quality_audit_status": {
+      "clear": 163,
+      "repair": 25,
+      "blocking": 6
+    },
+    "alignment_eligibility": {
+      "no_exact_source_passage": 32,
+      "eligible": 162
+    },
+    "noneligible_alignment_query_ids": [
+      "q_00aed6f9b1f3efe7663b40d82e4e30977ca0a8f5ab18c661044d721b46dcabd4",
+      "q_15fbce4d740ba980c9b5576b302e98fd062edb8ddcf1f14fb4618158a03635a7",
+      "q_17bd8b1f1a0312ca92ca60ec4dd862577521da64b754d5ede4e491913f291c3c",
+      "q_20c46174267d8c45daa796a9260edb49ebf955b926ee643aedba48c36c0aa7e0",
+      "q_286887ab787a06aac1317b4aa1e25f0cfe4cebd5c98ca2a6b0fa9c16fcebe3db",
+      "q_2b31dd91fe17025cec4921446c309907d1997b5f1e4ea8a1ace248a526c212d2",
+      "q_3757a7cb205097d5b8361d52858f672d565e85c207825774fc77154673694cb1",
+      "q_37f08aa4d3b4dd3656154a105c292d99876977c1b3027304bfb83078c10ca00e",
+      "q_3a819f5ce7b05c13de7f2ef1e0c7875e3746144adca2889469bc1bf5eaa9f17b",
+      "q_46408a07e05cb07b80a61d7bfb570dffca525a41511a6b1fa2fea10b38256d35",
+      "q_4b1b1e9a37d71679ab59efa6826cc8b31eb5807bdd18f07e7d3b94b001bcdd84",
+      "q_4b302c510831b4525591b6ff5698675598a1be7704d59831445a68ffa18aa625",
+      "q_54087eeeeb3a735e53dd648fded4b6ea9f85b7243e8e6fee1de10cf8ab4e2f28",
+      "q_6a5ec9f573e3c7b45d349f09f34e9715310cf4ca370200afa67399a17de9f4f3",
+      "q_70424962d2bc96ed5fbb5a13b542412c3133643e6a5bf5df1d7dc1270eed3d7b",
+      "q_7216a5528a3c12d5bc9f4ef054bbdcdfe4774ef51b3f41098be784c824224094",
+      "q_84471a43a175a4b4bc4ad1a8ee344ff04dac59eed8f685bd5950b1b0a56726b4",
+      "q_94117f5a5f93769c4cd3f1ad3326ecfbc22fc628806225607b86d77897dac9b2",
+      "q_a21fadc41fffee9c7c3f8ea398b9776cc030e71ae5e057a9bb577e9c6933b7c0",
+      "q_a82ccfa79308e1c33b75a87c77aae4984d4673a82158f3b4305a910f040ffa65",
+      "q_a92813e4599175e43cd7334551d1888e2f32c10d834653d3201df030acadafb4",
+      "q_b04ac7ce03eb83c4d1876ac712c62748b29344667885f00e800546d2a3f7c892",
+      "q_b3ed1c771d187e5114507ecb79b651a6585ea4f34e98acd7555b5d4b1afeed53",
+      "q_b95744725fb18dd1f1106734a69d90bb72a50abe5a4ef0565d5f1ce577457ee5",
+      "q_d045f1fd9a9462cad5f3ff81455d744ffaeb0d3eb0cd297575c7fd5bf696ba21",
+      "q_da43bd8240df3ca4074c4429ed78e762b591728515c8ed0b727db6dc7f5dc996",
+      "q_debf4966f7e30d7f5748735f12c2113ed24ed67533f9a7a82ccaa3dc8cf55414",
+      "q_e2179c6009473458f18f4515eab799e33555eb2c57042985a8218d1d60364b00",
+      "q_e7037c6c86fc6b302919499dff57a1bc457d028c1ff56b3e43c41f8f461b8736",
+      "q_e9253ab0614591d864de7e12eb4536f21ebe7306261baec167b3065cb014cbb7",
+      "q_f3c5bab558fdb13b771eb52b1510a46d2ec5a1e64f32917d82986b920c8deb73",
+      "q_fc9ff4c16476e8b073b8a8e4f6cb5d1303acb171c7b41506269d39777d51363d"
+    ],
+    "high_score_components": [
+      {
+        "id": "q_10d98655e535e4b5914961d7d2f4349e77441b933629c330bb914677ee21da98",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_286887ab787a06aac1317b4aa1e25f0cfe4cebd5c98ca2a6b0fa9c16fcebe3db",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_3757a7cb205097d5b8361d52858f672d565e85c207825774fc77154673694cb1",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_3a819f5ce7b05c13de7f2ef1e0c7875e3746144adca2889469bc1bf5eaa9f17b",
+        "total": 33.0,
+        "faith_overall": 14.0,
+        "qual_overall": 19.0
+      },
+      {
+        "id": "q_3ee21d84e643a03021cefe85eefedc2c23e274451464e468575895fefec9f390",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_505997d6ade4ea5366265a936f30146cddd1afc6c1a20acbca8ebd318e7a2867",
+        "total": 34.0,
+        "faith_overall": 12.0,
+        "qual_overall": 22.0
+      },
+      {
+        "id": "q_581fdead64aefda5a481aedabec1c3ceafc26da75d130fc0a1b852ab67092448",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_7216a5528a3c12d5bc9f4ef054bbdcdfe4774ef51b3f41098be784c824224094",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_76c85b4cb1cf450cefa26c4a856b8f3795eaca338517a146a0fd4d1701d52664",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_78e5d27a04fe7162afb607cb477a92b5f4e812faa1604ba906247df67a735054",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_7a1d47897e5dece6bb5e9f433d7f816d2be2bb306866c2060452520361f9a750",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_839b3a728d8166792906e0d3254bf9bb601d4da5a4bec6899336c3ed4262bffa",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_84471a43a175a4b4bc4ad1a8ee344ff04dac59eed8f685bd5950b1b0a56726b4",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_8f27681178b9b1d39332c6cb7d99d76d81a526466b968d9f668ee043fc2dcc8e",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_94117f5a5f93769c4cd3f1ad3326ecfbc22fc628806225607b86d77897dac9b2",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_a21fadc41fffee9c7c3f8ea398b9776cc030e71ae5e057a9bb577e9c6933b7c0",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_a649c1da4d0777d22ede63bfaf967bd649bc41fc59fbef1ae7646042afefe033",
+        "total": 33.0,
+        "faith_overall": 14.0,
+        "qual_overall": 19.0
+      },
+      {
+        "id": "q_a92813e4599175e43cd7334551d1888e2f32c10d834653d3201df030acadafb4",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_a96910d35741f170a2ad8ee3c9166072691c955ae667c8ea2ff769e78e701dee",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_ab78165e94100238cb35119178f832e7430d859f5b088239bdaf9a05c113ed0e",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_adfdd6492a70fd2c906e66a7bad1d31c7d182bf5f96c8560679c0c4eef76fb04",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_b084a8aff2bf1b8cebf7baf77f53ee28711f26ce9636071e5e3e394c82b5eec5",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_bd06a7d167e152aba659c63641a648a6e2902cda01e40e10c989a6b7b8e9e438",
+        "total": 33.0,
+        "faith_overall": 12.0,
+        "qual_overall": 21.0
+      },
+      {
+        "id": "q_bd2a43c6651a60a8bfa55c078a4cac63432c8194158eb0a16ed8b3e2d9cca1f5",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_e2179c6009473458f18f4515eab799e33555eb2c57042985a8218d1d60364b00",
+        "total": 33.0,
+        "faith_overall": 14.0,
+        "qual_overall": 19.0
+      },
+      {
+        "id": "q_ec493a96a5d1b391a48ace9c2b28483e777af0187b2b1b302b7bed8ef658dc30",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_eec8e86e239738e48d872f641df9cbd0529f0129e4c322d20ba80fc2f38dee30",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_fe871ac0199de2716f6d4552bd9ad254b9e14f4cef01556fa563cbc4b8838748",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      }
+    ]
+  },
+  "un": {
+    "quality_audit_status": {
+      "clear": 236,
+      "repair": 4,
+      "blocking": 5,
+      "minor_issues": 2
+    },
+    "alignment_eligibility": {
+      "eligible": 232,
+      "no_exact_source_passage": 15
+    },
+    "noneligible_alignment_query_ids": [
+      "q_1dd841b6752af4143f709ab527d0eebc3ac1e2189ac4d14f871eb1dc1f32ec88",
+      "q_26ff3f964cf092219052c9f17716ab611209bd34b172e585138a02e2426c0250",
+      "q_482b870d3b638e0911c64b4580c13c1b55bcef701de9a0a07cc0bd3b2f1ffae5",
+      "q_5e9027fae937e070958c5e015aa6ce70b29e9e12424bff733c78bcf1aaf7b2d6",
+      "q_6617b7cb9da46838b8a65a3403fbd667ea45b5c629e7ce606899d2e9bac8d17a",
+      "q_7647bed861cde3749c0f1e6b8aa201cc30e673d410a3e710cccb46bd38160d0f",
+      "q_888b9689896690cab4e440f06e1a8f130af67a3b98edf5025bafcf970232a1d3",
+      "q_93454cd6c69cdcae0cb0968270eb0f4a18b4deb6f244806b373a2089ac722399",
+      "q_af833f2d77e24d08140764cd28db02115741cd30d949d89288bf66cfcbc78b4e",
+      "q_b7685e60d768ddb598ec6e3f2afbe77245ee24d1322472be1650c5eeb3d3f093",
+      "q_cc593a47872f089dc0b4fc42aa7746c732a9f37c0a1858e2de7c402f20bbac1d",
+      "q_d0e1d0146412c745ca1a280840b3f858ea9a12c91e50f3da65c40532da5d330c",
+      "q_ddac0ee0571857a5f73745dba94d8282f75de133a81dacc4dc05d335c94113e2",
+      "q_ea7658cbcb6d94a552fd5781205c7a403eedb1db388f7cb7adf43e8da253422d",
+      "q_ed029ae9251702b6b13126bb7a7580bec72a98b8c4b350533b97b93f2876ac66"
+    ],
+    "high_score_components": [
+      {
+        "id": "q_0e04247d98b3e0e214d838d3e990db30eb0ab0c6b09042630a862965777a9ddb",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_1a66c94a19b6151186c0567acfb3329478041d3e1c782b29a9d0606531eeb3df",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_1ff272bb6c55fdc3ea8fe00110273d2f11122dc272bb7554ef5b9345188b0a5a",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_26ff3f964cf092219052c9f17716ab611209bd34b172e585138a02e2426c0250",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_3ee68fa0d91902bafb81f951824f02aa903a2ef7c9424376975c07965ebe0a7b",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_40d6e8d781f426e724c42aadc0db06e26964027259fa11b50d545c2e96c5eefe",
+        "total": 33.0,
+        "faith_overall": 13.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_667412acf2a6f885080955bd7f147fb84503805b6e34b8f43c422953aa4d85e3",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_753c467615d30e6f016e2f7e11aec7b7f7b3bd8425f4589e2bb52239feb5e9ec",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_8bb6cea84ddd8f2dd8775f50d5af96ffc2636f16439f40d5d80de4c0beff2429",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_a0e7b9da054055132c83057b550d3371982b2f4edfc2a732f280aa82168c9260",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_a1981a89ea6905f716c2d67a3d783d6a82cd9ae1208ae904224e49c25f93c872",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_c45c7aff4217d40435b98e3ff8368f7e9dbc053a8202ff643f7b3558b5a8d496",
+        "total": 34.0,
+        "faith_overall": 14.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_d68631279056c6c783832b812355662a0f541bf191e6c5db1a5a242d16711760",
+        "total": 35.0,
+        "faith_overall": 15.0,
+        "qual_overall": 20.0
+      },
+      {
+        "id": "q_edfd77786cb3644c6a776e3b909e695de4305e624f1d1ae80e21a57261c36751",
+        "total": 33.0,
+        "faith_overall": 14.0,
+        "qual_overall": 19.0
+      }
+    ]
+  }
+}

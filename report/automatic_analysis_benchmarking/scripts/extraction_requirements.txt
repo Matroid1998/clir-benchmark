@@ -1,0 +1,4 @@
+# Data extraction only; no model or API dependencies.
+numpy==2.5.4
+pandas==3.1.1
+pyarrow==23.0.1

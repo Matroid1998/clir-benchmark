@@ -1,0 +1,57 @@
+Suggested framing
+Sources or Language Versions? Controlled Query Generation for Cross-Lingual Retrieval
+
+Abstract starting point (requires author revision)
+Generated query representations can change both the language of a retrieval
+request and the information it contains. In multilingual collections, evaluation
+may also reward retrieving several translations of one source rather than finding
+more sources. We analyze 638 selected source-grounded questions across three
+corpora and eight dense encoders, comparing original questions, translation and
+single-passage HyDE in five separately evaluated output languages. With matched
+target-language controls, translation improves all three corpus means, whereas
+HyDE's incremental effect is positive in EUR-Lex and negative in chemistry and
+UN. Ranking-level analysis exposes an objective trade-off: UN E5 retrieves 71
+more relevant language versions with German than English translation but finds
+the known source for 22 fewer questions. Exact nDCG decomposition attributes its
+gain to additional versions. Source-grouped internal selection reproduces the
+trade-off between nDCG and source success across alternative fold assignments.
+We provide query-level results, controlled comparisons, audits and generation
+accounting, and show why language-matched controls and explicit retrieval units
+are necessary for interpreting these experiments. Findings are exploratory and
+conditional on curated synthetic queries, fixed encoders and known-source qrels.
+
+Results narrative
+1. Define the two experimental distinctions before presenting scores: original
+   versus translated query versus added hypothetical content; source discovery
+   versus parallel-language-version recovery. Cite the closest expansion,
+   multilingual-equivalence and metric-trade-off work.
+2. Describe selection and comparability. Disclose 10,691 available candidates,
+   638 winners, variable pools and preferred-generator ties; source granularity,
+   language availability, one-source qrels, prefix roles and the single-passage
+   HyDE configuration. Avoid implying independent real-user queries.
+3. Present Figure 1 and the full encoder table: target-matched translation helps,
+   then hypothetical generation has a corpus/model-dependent incremental effect.
+   Include question-level losses and same-prefix sensitivity.
+4. Present Figure 2: exact first/additional-version decomposition, gained/lost
+   source counts, both-hit paired subsets and legal source collapse. Explain
+   why both metrics can be valid without recommending German generally.
+5. Show that objective choice affects training-fold selection. Use Round 5's
+   held-out contrasts and Round 6's alternative folds; keep oracle headroom and
+   external-generalization limits explicit.
+6. Summarize robustness, costs and limitations. Use the strongest claims only;
+   move full language surfaces, identity controls, cases, prompt audits and
+   accounting to appendices or the artifact package.
+
+Recommended main assets
+figure1_language_matched_controls.pdf with figure_captions.txt (Figure 1).
+figure2_un_objective_decomposition.pdf with figure_captions.txt (Figure 2).
+table1_target_matched_summary.tex: corpus means, absolute scores and paired changes.
+table2_encoder_hyde_contrasts.tex: model-specific increments and prefix roles.
+table3_selection_objectives.tex: fixed-model held-out objective trade-offs.
+Round 6 Figure 4 can replace an appendix plot if policy selection is central.
+
+Appendix assets
+All six round reviews document why the analysis moved to its next question.
+The claim/evidence CSV links each conclusion and rejected interpretation to the
+supporting tables, caveats and future validation. Literature notes and BibTeX
+support a bounded related-work discussion; they are not a guarantee of priority.

@@ -1,0 +1,2524 @@
+{
+  "summary": {
+    "query_model_cases": 16,
+    "distinct_queries": 14,
+    "all_text_identical": true,
+    "all_identity_status": true,
+    "all_token_audits_identical": true,
+    "all_model_specs_identical": true,
+    "all_runtime_identical": true,
+    "minimum_cosine_double": 0.9999999999962099,
+    "maximum_vector_absolute_difference": 3.501772880554199e-07,
+    "maximum_ranking_score_difference": 5.364418029785156e-07,
+    "changed_query_setting_rows": 26,
+    "settings_with_exact_text_duplicate_near_positive": 25,
+    "settings_with_exact_text_duplicate_crossing": 26,
+    "maximum_crossed_pair_score_gap": 1.1920928955078125e-07
+  },
+  "cases": [
+    {
+      "corpus": "eurlex",
+      "model": "qwen3-0.6B",
+      "language": "es",
+      "query_id": "q_f239699fc273952ebd120f4156d79d0e64209ccd0bfb66aad7d15d0470697c27",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/7454a67bc0337cd8bd64ba98f7007a1f9b459650f78e0fded8a58a4827e20681",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/f637b5f7ebf3c4df9a957d33cc59ca498884b4f8bf8cbe84c2c48098727b4563",
+      "original_row_index": 184,
+      "identity_row_index": 184,
+      "cosine_double": 0.9999999999962099,
+      "max_abs_vector_difference": 3.501772880554199e-07,
+      "l2_vector_difference": 2.753506334812438e-06,
+      "norm_original": 1.0000000213767837,
+      "norm_identity": 0.9999999934227104,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "eurlex__es__es",
+          "original_first_relevant_rank": 2,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 4.76837158203125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              0.0,
+              1.0
+            ],
+            "Hit@1": [
+              0.0,
+              1.0
+            ],
+            "MRR@10": [
+              0.5,
+              1.0
+            ],
+            "Recall@1": [
+              0.0,
+              1.0
+            ],
+            "SourceRecall@1": [
+              0.0,
+              1.0
+            ],
+            "nDCG@10": [
+              0.6309297535714575,
+              1.0
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:es",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2009/1061/art_5/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2015/479/art_4/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:es",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": -1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2009/1061/art_5/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2015/479/art_4/oj"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2015/479/art_4/oj:es",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:es",
+              "positive_ranks": [
+                2,
+                1
+              ],
+              "negative_ranks": [
+                1,
+                2
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": 1.1920928955078125e-07,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "eurlex__es__mixed",
+          "original_first_relevant_rank": 2,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 5.364418029785156e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              0.0,
+              1.0
+            ],
+            "Hit@1": [
+              0.0,
+              1.0
+            ],
+            "MRR@10": [
+              0.5,
+              1.0
+            ],
+            "Recall@1": [
+              0.0,
+              0.25
+            ],
+            "SourceRecall@1": [
+              0.0,
+              1.0
+            ],
+            "nDCG@10": [
+              0.653894291235738,
+              0.7979719524871096
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:es",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2009/1061/art_5/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2015/479/art_4/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:es",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": -1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2009/1061/art_5/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2015/479/art_4/oj"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2015/479/art_4/oj:es",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:es",
+              "positive_ranks": [
+                2,
+                1
+              ],
+              "negative_ranks": [
+                1,
+                2
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": 1.1920928955078125e-07,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "eurlex",
+      "model": "nomic-v2-moe",
+      "language": "es",
+      "query_id": "q_f239699fc273952ebd120f4156d79d0e64209ccd0bfb66aad7d15d0470697c27",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/3b2ab14bdf5a1745215508cd4633022f3a253aab47f38430fb4779b46836eff5",
+      "original_row_index": 184,
+      "identity_row_index": 184,
+      "cosine_double": 0.9999999999997571,
+      "max_abs_vector_difference": 8.940696716308594e-08,
+      "l2_vector_difference": 6.976562792161006e-07,
+      "norm_original": 1.0000000407750664,
+      "norm_identity": 1.000000059961909,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "eurlex__es__en",
+          "original_first_relevant_rank": 2,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 1.4901161193847656e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              0.0,
+              1.0
+            ],
+            "Hit@1": [
+              0.0,
+              1.0
+            ],
+            "MRR@10": [
+              0.5,
+              1.0
+            ],
+            "Recall@1": [
+              0.0,
+              1.0
+            ],
+            "SourceRecall@1": [
+              0.0,
+              1.0
+            ],
+            "nDCG@10": [
+              0.6309297535714575,
+              1.0
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:en",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2009/1061/art_5/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2015/479/art_4/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:en",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2009/1061/art_5/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2015/479/art_4/oj"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2015/479/art_4/oj:en",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:en",
+              "positive_ranks": [
+                2,
+                1
+              ],
+              "negative_ranks": [
+                1,
+                2
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": 5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "eurlex__es__mixed",
+          "original_first_relevant_rank": 3,
+          "identity_first_relevant_rank": 3,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "nDCG@10": [
+              0.5772180291864624,
+              0.5818889925939541
+            ]
+          },
+          "near_ties_to_first_positive": [],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2015/479/art_4/oj:en",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2009/1061/art_5/oj:en",
+              "positive_ranks": [
+                10,
+                9
+              ],
+              "negative_ranks": [
+                9,
+                10
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": 5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "eurlex",
+      "model": "nomic-v2-moe",
+      "language": "fr",
+      "query_id": "q_286887ab787a06aac1317b4aa1e25f0cfe4cebd5c98ca2a6b0fa9c16fcebe3db",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/b5a4f39f00daa631bb3330078f1e02def74aa93557463bf9d02ec057114cec7c",
+      "original_row_index": 36,
+      "identity_row_index": 36,
+      "cosine_double": 0.9999999999997695,
+      "max_abs_vector_difference": 9.313225746154785e-08,
+      "l2_vector_difference": 6.79534551414447e-07,
+      "norm_original": 1.000000049089885,
+      "norm_identity": 1.00000005001106,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "eurlex__fr__es",
+          "original_first_relevant_rank": 5,
+          "identity_first_relevant_rank": 8,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@5": [
+              1.0,
+              0.0
+            ],
+            "Hit@5": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              0.2,
+              0.125
+            ],
+            "Recall@5": [
+              1.0,
+              0.0
+            ],
+            "SourceRecall@5": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              0.38685280723454163,
+              0.31546487678572877
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2006/807/art_6/oj:es",
+              "irrelevant_rank": 6,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2006/807/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1621/art_6/oj"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1374/art_6/oj:es",
+              "irrelevant_rank": 7,
+              "score_gap_to_first_positive": -1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2005/1374/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1621/art_6/oj"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1384/art_6/oj:es",
+              "irrelevant_rank": 8,
+              "score_gap_to_first_positive": -1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2005/1384/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1621/art_6/oj"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1516/art_6/oj:es",
+              "irrelevant_rank": 9,
+              "score_gap_to_first_positive": -1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2005/1516/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1621/art_6/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1374/art_6/oj:es",
+              "irrelevant_rank": 5,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2005/1374/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1621/art_6/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1384/art_6/oj:es",
+              "irrelevant_rank": 6,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2005/1384/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1621/art_6/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1516/art_6/oj:es",
+              "irrelevant_rank": 7,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2005/1516/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1621/art_6/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2006/807/art_6/oj:es",
+              "irrelevant_rank": 9,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2006/807/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1621/art_6/oj"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1621/art_6/oj:es",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1374/art_6/oj:es",
+              "positive_ranks": [
+                5,
+                8
+              ],
+              "negative_ranks": [
+                7,
+                5
+              ],
+              "original_score_gap": 1.1920928955078125e-07,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            },
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1621/art_6/oj:es",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1384/art_6/oj:es",
+              "positive_ranks": [
+                5,
+                8
+              ],
+              "negative_ranks": [
+                8,
+                6
+              ],
+              "original_score_gap": 1.1920928955078125e-07,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            },
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1621/art_6/oj:es",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1516/art_6/oj:es",
+              "positive_ranks": [
+                5,
+                8
+              ],
+              "negative_ranks": [
+                9,
+                7
+              ],
+              "original_score_gap": 1.1920928955078125e-07,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "eurlex",
+      "model": "nomic-v2-moe",
+      "language": "fr",
+      "query_id": "q_47bc4626ceadc735ff83720d59aa12562c185dc47e502303af61fff27981150a",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/b5a4f39f00daa631bb3330078f1e02def74aa93557463bf9d02ec057114cec7c",
+      "original_row_index": 57,
+      "identity_row_index": 57,
+      "cosine_double": 0.9999999999997689,
+      "max_abs_vector_difference": 1.2293457984924316e-07,
+      "l2_vector_difference": 6.819562506233916e-07,
+      "norm_original": 1.0000000365369255,
+      "norm_identity": 0.999999990751357,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "eurlex__fr__fr",
+          "original_first_relevant_rank": 3,
+          "identity_first_relevant_rank": 4,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "MRR@10": [
+              0.3333333333333333,
+              0.25
+            ],
+            "nDCG@10": [
+              0.5,
+              0.43067655807339306
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1094/art_74/oj:fr",
+              "irrelevant_rank": 4,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2010/1094/art_74/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2010/1093/art_74/oj"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1095/art_74/oj:fr",
+              "irrelevant_rank": 5,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2010/1095/art_74/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2010/1093/art_74/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1094/art_74/oj:fr",
+              "irrelevant_rank": 3,
+              "score_gap_to_first_positive": 1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2010/1094/art_74/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2010/1093/art_74/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1095/art_74/oj:fr",
+              "irrelevant_rank": 5,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2010/1095/art_74/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2010/1093/art_74/oj"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1093/art_74/oj:fr",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1094/art_74/oj:fr",
+              "positive_ranks": [
+                3,
+                4
+              ],
+              "negative_ranks": [
+                4,
+                3
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -1.1920928955078125e-07,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "eurlex__fr__mixed",
+          "original_first_relevant_rank": 3,
+          "identity_first_relevant_rank": 4,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "MRR@10": [
+              0.3333333333333333,
+              0.25
+            ],
+            "nDCG@10": [
+              0.19519002499605084,
+              0.16812753627111746
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1094/art_74/oj:fr",
+              "irrelevant_rank": 4,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2010/1094/art_74/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2010/1093/art_74/oj"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1095/art_74/oj:fr",
+              "irrelevant_rank": 5,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2010/1095/art_74/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2010/1093/art_74/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1094/art_74/oj:fr",
+              "irrelevant_rank": 3,
+              "score_gap_to_first_positive": 1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2010/1094/art_74/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2010/1093/art_74/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1095/art_74/oj:fr",
+              "irrelevant_rank": 5,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2010/1095/art_74/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2010/1093/art_74/oj"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1093/art_74/oj:fr",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2010/1094/art_74/oj:fr",
+              "positive_ranks": [
+                3,
+                4
+              ],
+              "negative_ranks": [
+                4,
+                3
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -1.1920928955078125e-07,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "eurlex",
+      "model": "nomic-v2-moe",
+      "language": "fr",
+      "query_id": "q_839b3a728d8166792906e0d3254bf9bb601d4da5a4bec6899336c3ed4262bffa",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/b5a4f39f00daa631bb3330078f1e02def74aa93557463bf9d02ec057114cec7c",
+      "original_row_index": 101,
+      "identity_row_index": 101,
+      "cosine_double": 0.9999999999997725,
+      "max_abs_vector_difference": 8.009374141693115e-08,
+      "l2_vector_difference": 6.766061346122187e-07,
+      "norm_original": 0.9999999713270663,
+      "norm_identity": 1.0000000185554216,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "eurlex__fr__en",
+          "original_first_relevant_rank": 10,
+          "identity_first_relevant_rank": 11,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@10": [
+              1.0,
+              0.0
+            ],
+            "Hit@10": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              0.1,
+              0.0
+            ],
+            "Recall@10": [
+              1.0,
+              0.0
+            ],
+            "SourceRecall@10": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              0.2890648263178879,
+              0.0
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2014/43/art_28/oj:en",
+              "irrelevant_rank": 11,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2014/43/art_28/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2015/104/art_28/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2014/43/art_28/oj:en",
+              "irrelevant_rank": 10,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2014/43/art_28/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2015/104/art_28/oj"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2015/104/art_28/oj:en",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2014/43/art_28/oj:en",
+              "positive_ranks": [
+                10,
+                11
+              ],
+              "negative_ranks": [
+                11,
+                10
+              ],
+              "original_score_gap": 5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "eurlex",
+      "model": "nomic-v2-moe",
+      "language": "fr",
+      "query_id": "q_a87440b30f3492b5a2e547307e015f64fef677e63fc3171d00615be6ef9b4d37",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/03c445411f2b53b0d91bd1e7d60b6495f5e80043ebbdd46a8c4d26f9c199fa32",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/b5a4f39f00daa631bb3330078f1e02def74aa93557463bf9d02ec057114cec7c",
+      "original_row_index": 120,
+      "identity_row_index": 120,
+      "cosine_double": 0.9999999999997062,
+      "max_abs_vector_difference": 9.12696123123169e-08,
+      "l2_vector_difference": 7.682642525499201e-07,
+      "norm_original": 1.0000000079875024,
+      "norm_identity": 1.0000000576525416,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "eurlex__fr__es",
+          "original_first_relevant_rank": 6,
+          "identity_first_relevant_rank": 7,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "MRR@10": [
+              0.16666666666666666,
+              0.14285714285714285
+            ],
+            "nDCG@10": [
+              0.3562071871080222,
+              0.3333333333333333
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2006/362/art_6/oj:es",
+              "irrelevant_rank": 7,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2006/362/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1382/art_6/oj"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "eurlex:http://data.europa.eu/eli/reg/2006/362/art_6/oj:es",
+              "irrelevant_rank": 6,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "http://data.europa.eu/eli/reg/2006/362/art_6/oj",
+              "relevant_source_id": "http://data.europa.eu/eli/reg/2005/1382/art_6/oj"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "eurlex:http://data.europa.eu/eli/reg/2005/1382/art_6/oj:es",
+              "negative_document_id": "eurlex:http://data.europa.eu/eli/reg/2006/362/art_6/oj:es",
+              "positive_ranks": [
+                6,
+                7
+              ],
+              "negative_ranks": [
+                7,
+                6
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "qwen3-0.6B",
+      "language": "fr",
+      "query_id": "q_1bf0311e2cf8c628ced3ac642010dfce1002dba730c440e71d2169cf0f303bef",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/cfe72619cc0e12f31ecaf31b9462d2f55a1eb0d96b35468a3a19689936f2ba1f",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/ef30ffba8c06a0a1bd2a0be8f01603ed1142e1fe90877e7b037c73a30ccdbb0f",
+      "original_row_index": 20,
+      "identity_row_index": 20,
+      "cosine_double": 0.9999999999968525,
+      "max_abs_vector_difference": 2.5331974029541016e-07,
+      "l2_vector_difference": 2.5103329943954716e-06,
+      "norm_original": 1.0000000782196115,
+      "norm_identity": 0.9999999991940717,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__fr__fr",
+          "original_first_relevant_rank": 12,
+          "identity_first_relevant_rank": 10,
+          "max_matched_document_score_change": 2.980232238769531e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@10": [
+              0.0,
+              1.0
+            ],
+            "Hit@10": [
+              0.0,
+              1.0
+            ],
+            "MRR@10": [
+              0.0,
+              0.1
+            ],
+            "Recall@10": [
+              0.0,
+              1.0
+            ],
+            "SourceRecall@10": [
+              0.0,
+              1.0
+            ],
+            "nDCG@10": [
+              0.0,
+              0.2890648263178879
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2205089-A2_fr",
+              "irrelevant_rank": 9,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205089-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2205094-A2_fr",
+              "irrelevant_rank": 10,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205094-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2209378-A2_fr",
+              "irrelevant_rank": 11,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2209378-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053063-A2_fr",
+              "irrelevant_rank": 13,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053063-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053095-A2_fr",
+              "irrelevant_rank": 14,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053095-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053061-A2_fr",
+              "irrelevant_rank": 15,
+              "score_gap_to_first_positive": -2.384185791015625e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053061-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2205094-A2_fr",
+              "irrelevant_rank": 9,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205094-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053095-A2_fr",
+              "irrelevant_rank": 11,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053095-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2205089-A2_fr",
+              "irrelevant_rank": 12,
+              "score_gap_to_first_positive": -1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205089-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2209378-A2_fr",
+              "irrelevant_rank": 13,
+              "score_gap_to_first_positive": -1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2209378-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053063-A2_fr",
+              "irrelevant_rank": 14,
+              "score_gap_to_first_positive": -1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053063-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053061-A2_fr",
+              "irrelevant_rank": 15,
+              "score_gap_to_first_positive": -2.384185791015625e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053061-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "WO-2009053062-A2_fr",
+              "negative_document_id": "EP-2205089-A2_fr",
+              "positive_ranks": [
+                12,
+                10
+              ],
+              "negative_ranks": [
+                9,
+                12
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": 1.1920928955078125e-07,
+              "winning_text_identical": true
+            },
+            {
+              "positive_document_id": "WO-2009053062-A2_fr",
+              "negative_document_id": "EP-2209378-A2_fr",
+              "positive_ranks": [
+                12,
+                10
+              ],
+              "negative_ranks": [
+                11,
+                13
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": 1.1920928955078125e-07,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "de",
+      "query_id": "q_76ecec30b5a2cc047b5ded418e5b8db299c3f2b6283640c03180aeb4c8a30a21",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/a676bf9951775f3ab42ce7d0df31a2e6d0a7f90cb8d1f4764d7437ab133d5f7c",
+      "original_row_index": 96,
+      "identity_row_index": 96,
+      "cosine_double": 0.9999999999997613,
+      "max_abs_vector_difference": 7.078051567077637e-08,
+      "l2_vector_difference": 6.914807683179012e-07,
+      "norm_original": 1.0000000089911805,
+      "norm_identity": 1.0000000387820855,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__de__de",
+          "original_first_relevant_rank": 1,
+          "identity_first_relevant_rank": 2,
+          "max_matched_document_score_change": 1.7881393432617188e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              1.0,
+              0.0
+            ],
+            "Hit@1": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              1.0,
+              0.5
+            ],
+            "Recall@1": [
+              1.0,
+              0.0
+            ],
+            "SourceRecall@1": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              1.0,
+              0.6309297535714575
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2723943-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2723943-A1",
+              "relevant_source_id": "WO-2012175392-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2723943-A1_de",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2723943-A1",
+              "relevant_source_id": "WO-2012175392-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "WO-2012175392-A1_de",
+              "negative_document_id": "EP-2723943-A1_de",
+              "positive_ranks": [
+                1,
+                2
+              ],
+              "negative_ranks": [
+                2,
+                1
+              ],
+              "original_score_gap": 5.960464477539063e-08,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "chemistry__de__mixed",
+          "original_first_relevant_rank": 1,
+          "identity_first_relevant_rank": 2,
+          "max_matched_document_score_change": 1.7881393432617188e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              1.0,
+              0.0
+            ],
+            "Hit@1": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              1.0,
+              0.5
+            ],
+            "Recall@1": [
+              0.3333333333333333,
+              0.0
+            ],
+            "SourceRecall@1": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              0.8194270280062366,
+              0.6462302129493455
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2723943-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2723943-A1",
+              "relevant_source_id": "WO-2012175392-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2723943-A1_de",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2723943-A1",
+              "relevant_source_id": "WO-2012175392-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "WO-2012175392-A1_de",
+              "negative_document_id": "EP-2723943-A1_de",
+              "positive_ranks": [
+                1,
+                2
+              ],
+              "negative_ranks": [
+                2,
+                1
+              ],
+              "original_score_gap": 5.960464477539063e-08,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "de",
+      "query_id": "q_d0601a5b6c2ee7bc40ccc476f42c716e3e7f7fb88825b567aaecf9eddf14b138",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/a676bf9951775f3ab42ce7d0df31a2e6d0a7f90cb8d1f4764d7437ab133d5f7c",
+      "original_row_index": 157,
+      "identity_row_index": 157,
+      "cosine_double": 0.9999999999997313,
+      "max_abs_vector_difference": 7.636845111846924e-08,
+      "l2_vector_difference": 7.333918853639883e-07,
+      "norm_original": 1.0000000415498584,
+      "norm_identity": 1.000000055040055,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__de__de",
+          "original_first_relevant_rank": 3,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              0.0,
+              1.0
+            ],
+            "Hit@1": [
+              0.0,
+              1.0
+            ],
+            "MRR@10": [
+              0.3333333333333333,
+              1.0
+            ],
+            "Recall@1": [
+              0.0,
+              1.0
+            ],
+            "SourceRecall@1": [
+              0.0,
+              1.0
+            ],
+            "nDCG@10": [
+              0.5,
+              1.0
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2785775-A1_de",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2785775-A1",
+              "relevant_source_id": "EP-2599810-A1"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2013079461-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2013079461-A1",
+              "relevant_source_id": "EP-2599810-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2785775-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2785775-A1",
+              "relevant_source_id": "EP-2599810-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2013079461-A1_de",
+              "irrelevant_rank": 3,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2013079461-A1",
+              "relevant_source_id": "EP-2599810-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "EP-2599810-A1_de",
+              "negative_document_id": "EP-2785775-A1_de",
+              "positive_ranks": [
+                3,
+                1
+              ],
+              "negative_ranks": [
+                1,
+                2
+              ],
+              "original_score_gap": -5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            },
+            {
+              "positive_document_id": "EP-2599810-A1_de",
+              "negative_document_id": "WO-2013079461-A1_de",
+              "positive_ranks": [
+                3,
+                1
+              ],
+              "negative_ranks": [
+                2,
+                3
+              ],
+              "original_score_gap": -5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "chemistry__de__mixed",
+          "original_first_relevant_rank": 3,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              0.0,
+              1.0
+            ],
+            "Hit@1": [
+              0.0,
+              1.0
+            ],
+            "MRR@10": [
+              0.3333333333333333,
+              1.0
+            ],
+            "Recall@1": [
+              0.0,
+              0.5
+            ],
+            "SourceRecall@1": [
+              0.0,
+              1.0
+            ],
+            "nDCG@10": [
+              0.3065735963827292,
+              0.6131471927654584
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2785775-A1_de",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2785775-A1",
+              "relevant_source_id": "EP-2599810-A1"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2013079461-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2013079461-A1",
+              "relevant_source_id": "EP-2599810-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2785775-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2785775-A1",
+              "relevant_source_id": "EP-2599810-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2013079461-A1_de",
+              "irrelevant_rank": 3,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2013079461-A1",
+              "relevant_source_id": "EP-2599810-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "EP-2599810-A1_de",
+              "negative_document_id": "EP-2785775-A1_de",
+              "positive_ranks": [
+                3,
+                1
+              ],
+              "negative_ranks": [
+                1,
+                2
+              ],
+              "original_score_gap": -5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            },
+            {
+              "positive_document_id": "EP-2599810-A1_de",
+              "negative_document_id": "WO-2013079461-A1_de",
+              "positive_ranks": [
+                3,
+                1
+              ],
+              "negative_ranks": [
+                2,
+                3
+              ],
+              "original_score_gap": -5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "en",
+      "query_id": "q_48850b4e074c293b61e085b70727c43df79af7d9e372af9de7686652872c0013",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/7f3b98442a363ddd2c32099ac82f5317b9fba1650a45450beb09e573cafd1097",
+      "original_row_index": 64,
+      "identity_row_index": 64,
+      "cosine_double": 0.9999999999997891,
+      "max_abs_vector_difference": 8.12578946352005e-08,
+      "l2_vector_difference": 6.497459151390784e-07,
+      "norm_original": 1.000000061032095,
+      "norm_identity": 1.000000049615301,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__en__en",
+          "original_first_relevant_rank": 2,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              0.0,
+              1.0
+            ],
+            "Hit@1": [
+              0.0,
+              1.0
+            ],
+            "MRR@10": [
+              0.5,
+              1.0
+            ],
+            "Recall@1": [
+              0.0,
+              1.0
+            ],
+            "SourceRecall@1": [
+              0.0,
+              1.0
+            ],
+            "nDCG@10": [
+              0.6309297535714575,
+              1.0
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2024200208-A1_en",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2024200208-A1",
+              "relevant_source_id": "EP-4689569-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2024200208-A1_en",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2024200208-A1",
+              "relevant_source_id": "EP-4689569-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "EP-4689569-A1_en",
+              "negative_document_id": "WO-2024200208-A1_en",
+              "positive_ranks": [
+                2,
+                1
+              ],
+              "negative_ranks": [
+                1,
+                2
+              ],
+              "original_score_gap": -5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "chemistry__en__mixed",
+          "original_first_relevant_rank": 2,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              0.0,
+              1.0
+            ],
+            "Hit@1": [
+              0.0,
+              1.0
+            ],
+            "MRR@10": [
+              0.5,
+              1.0
+            ],
+            "Recall@1": [
+              0.0,
+              0.5
+            ],
+            "SourceRecall@1": [
+              0.0,
+              1.0
+            ],
+            "nDCG@10": [
+              0.6934264036172708,
+              0.9197207891481876
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2024200208-A1_en",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2024200208-A1",
+              "relevant_source_id": "EP-4689569-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2024200208-A1_en",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2024200208-A1",
+              "relevant_source_id": "EP-4689569-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "EP-4689569-A1_en",
+              "negative_document_id": "WO-2024200208-A1_en",
+              "positive_ranks": [
+                2,
+                1
+              ],
+              "negative_ranks": [
+                1,
+                2
+              ],
+              "original_score_gap": -5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "en",
+      "query_id": "q_9b84320b61cb5c7ef2456acce9e346a6203e8df8699338d7c0cbb490761368a4",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/7f3b98442a363ddd2c32099ac82f5317b9fba1650a45450beb09e573cafd1097",
+      "original_row_index": 124,
+      "identity_row_index": 124,
+      "cosine_double": 0.9999999999997449,
+      "max_abs_vector_difference": 1.043081283569336e-07,
+      "l2_vector_difference": 7.196928000116048e-07,
+      "norm_original": 1.0000000483780107,
+      "norm_identity": 0.9999999626500001,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__en__de",
+          "original_first_relevant_rank": 1,
+          "identity_first_relevant_rank": 2,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              1.0,
+              0.0
+            ],
+            "Hit@1": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              1.0,
+              0.5
+            ],
+            "Recall@1": [
+              1.0,
+              0.0
+            ],
+            "SourceRecall@1": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              1.0,
+              0.6309297535714575
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2411467-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2411467-A1",
+              "relevant_source_id": "WO-2010108617-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2411467-A1_de",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2411467-A1",
+              "relevant_source_id": "WO-2010108617-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "WO-2010108617-A1_de",
+              "negative_document_id": "EP-2411467-A1_de",
+              "positive_ranks": [
+                1,
+                2
+              ],
+              "negative_ranks": [
+                2,
+                1
+              ],
+              "original_score_gap": 5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "en",
+      "query_id": "q_f1342e01453c2c33a90531cb8c3179f6519733abb14ecc54017200289f7902d5",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/7f3b98442a363ddd2c32099ac82f5317b9fba1650a45450beb09e573cafd1097",
+      "original_row_index": 180,
+      "identity_row_index": 180,
+      "cosine_double": 0.9999999999997614,
+      "max_abs_vector_difference": 8.009374141693115e-08,
+      "l2_vector_difference": 6.927560503920897e-07,
+      "norm_original": 0.999999959513532,
+      "norm_identity": 1.0000000066320107,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__en__fr",
+          "original_first_relevant_rank": 9,
+          "identity_first_relevant_rank": 10,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "MRR@10": [
+              0.1111111111111111,
+              0.1
+            ],
+            "nDCG@10": [
+              0.3010299956639812,
+              0.2890648263178879
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2010023448-A1_fr",
+              "irrelevant_rank": 10,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2010023448-A1",
+              "relevant_source_id": "EP-2342177-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2010023448-A1_fr",
+              "irrelevant_rank": 9,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2010023448-A1",
+              "relevant_source_id": "EP-2342177-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "EP-2342177-A1_fr",
+              "negative_document_id": "WO-2010023448-A1_fr",
+              "positive_ranks": [
+                9,
+                10
+              ],
+              "negative_ranks": [
+                10,
+                9
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "fr",
+      "query_id": "q_1bf0311e2cf8c628ced3ac642010dfce1002dba730c440e71d2169cf0f303bef",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/9e287a9b4448290557027a5b95000f188d54866bf2b417ac0bb1967bf8de68e5",
+      "original_row_index": 20,
+      "identity_row_index": 20,
+      "cosine_double": 0.9999999999997111,
+      "max_abs_vector_difference": 9.080395102500916e-08,
+      "l2_vector_difference": 7.627378560021735e-07,
+      "norm_original": 1.00000004367872,
+      "norm_identity": 0.999999982780738,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__fr__fr",
+          "original_first_relevant_rank": 9,
+          "identity_first_relevant_rank": 11,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@10": [
+              1.0,
+              0.0
+            ],
+            "Hit@10": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              0.1111111111111111,
+              0.0
+            ],
+            "Recall@10": [
+              1.0,
+              0.0
+            ],
+            "SourceRecall@10": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              0.3010299956639812,
+              0.0
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053061-A2_fr",
+              "irrelevant_rank": 5,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053061-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053095-A2_fr",
+              "irrelevant_rank": 6,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053095-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2205094-A2_fr",
+              "irrelevant_rank": 7,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205094-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2209378-A2_fr",
+              "irrelevant_rank": 8,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2209378-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053063-A2_fr",
+              "irrelevant_rank": 10,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053063-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2205089-A2_fr",
+              "irrelevant_rank": 11,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205089-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2209378-A2_fr",
+              "irrelevant_rank": 5,
+              "score_gap_to_first_positive": 1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2209378-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053063-A2_fr",
+              "irrelevant_rank": 6,
+              "score_gap_to_first_positive": 1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053063-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2205089-A2_fr",
+              "irrelevant_rank": 7,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205089-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053061-A2_fr",
+              "irrelevant_rank": 8,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053061-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053095-A2_fr",
+              "irrelevant_rank": 9,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053095-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2205094-A2_fr",
+              "irrelevant_rank": 10,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205094-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "WO-2009053062-A2_fr",
+              "negative_document_id": "WO-2009053063-A2_fr",
+              "positive_ranks": [
+                9,
+                11
+              ],
+              "negative_ranks": [
+                10,
+                6
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -1.1920928955078125e-07,
+              "winning_text_identical": true
+            },
+            {
+              "positive_document_id": "WO-2009053062-A2_fr",
+              "negative_document_id": "EP-2205089-A2_fr",
+              "positive_ranks": [
+                9,
+                11
+              ],
+              "negative_ranks": [
+                11,
+                7
+              ],
+              "original_score_gap": 5.960464477539063e-08,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "chemistry__fr__mixed",
+          "original_first_relevant_rank": 10,
+          "identity_first_relevant_rank": 12,
+          "max_matched_document_score_change": 2.384185791015625e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@10": [
+              1.0,
+              0.0
+            ],
+            "Hit@10": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              0.1,
+              0.0
+            ],
+            "Recall@10": [
+              0.5,
+              0.0
+            ],
+            "SourceRecall@10": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              0.17723928678404774,
+              0.0
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053061-A2_fr",
+              "irrelevant_rank": 6,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053061-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053095-A2_fr",
+              "irrelevant_rank": 7,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053095-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2205094-A2_fr",
+              "irrelevant_rank": 8,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205094-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2209378-A2_fr",
+              "irrelevant_rank": 9,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2209378-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2009053063-A2_fr",
+              "irrelevant_rank": 11,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053063-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-2205089-A2_fr",
+              "irrelevant_rank": 12,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205089-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2209378-A2_fr",
+              "irrelevant_rank": 6,
+              "score_gap_to_first_positive": 1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2209378-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053063-A2_fr",
+              "irrelevant_rank": 7,
+              "score_gap_to_first_positive": 1.1920928955078125e-07,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053063-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2205089-A2_fr",
+              "irrelevant_rank": 8,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205089-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053061-A2_fr",
+              "irrelevant_rank": 9,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053061-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2009053095-A2_fr",
+              "irrelevant_rank": 10,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2009053095-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-2205094-A2_fr",
+              "irrelevant_rank": 11,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-2205094-A2",
+              "relevant_source_id": "WO-2009053062-A2"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "WO-2009053062-A2_fr",
+              "negative_document_id": "WO-2009053063-A2_fr",
+              "positive_ranks": [
+                10,
+                12
+              ],
+              "negative_ranks": [
+                11,
+                7
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -1.1920928955078125e-07,
+              "winning_text_identical": true
+            },
+            {
+              "positive_document_id": "WO-2009053062-A2_fr",
+              "negative_document_id": "EP-2205089-A2_fr",
+              "positive_ranks": [
+                10,
+                12
+              ],
+              "negative_ranks": [
+                12,
+                8
+              ],
+              "original_score_gap": 5.960464477539063e-08,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "fr",
+      "query_id": "q_3778db5aa16ea215970b773e52cc857244a11523efd3509734697b389b053375",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/9e287a9b4448290557027a5b95000f188d54866bf2b417ac0bb1967bf8de68e5",
+      "original_row_index": 50,
+      "identity_row_index": 50,
+      "cosine_double": 0.9999999999997327,
+      "max_abs_vector_difference": 9.685754776000977e-08,
+      "l2_vector_difference": 7.324946987182649e-07,
+      "norm_original": 1.0000000041779333,
+      "norm_identity": 1.0000000395017814,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__fr__en",
+          "original_first_relevant_rank": 1,
+          "identity_first_relevant_rank": 2,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              1.0,
+              0.0
+            ],
+            "Hit@1": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              1.0,
+              0.5
+            ],
+            "Recall@1": [
+              1.0,
+              0.0
+            ],
+            "SourceRecall@1": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              1.0,
+              0.6309297535714575
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "CA-2105072-C_en",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "CA-2105072-C",
+              "relevant_source_id": "CA-2105072-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "CA-2105072-C_en",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "CA-2105072-C",
+              "relevant_source_id": "CA-2105072-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "CA-2105072-A1_en",
+              "negative_document_id": "CA-2105072-C_en",
+              "positive_ranks": [
+                1,
+                2
+              ],
+              "negative_ranks": [
+                2,
+                1
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "chemistry__fr__mixed",
+          "original_first_relevant_rank": 1,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 1.7881393432617188e-07,
+          "changed_metrics": {
+            "nDCG@10": [
+              0.9197207891481876,
+              0.8772153153380493
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "CA-2105072-C_fr",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "CA-2105072-C",
+              "relevant_source_id": "CA-2105072-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "CA-2105072-C_fr",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "CA-2105072-C",
+              "relevant_source_id": "CA-2105072-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "CA-2105072-A1_en",
+              "negative_document_id": "CA-2105072-C_en",
+              "positive_ranks": [
+                3,
+                4
+              ],
+              "negative_ranks": [
+                4,
+                3
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "fr",
+      "query_id": "q_9ad2194fffca80b50302d3b7eeec9839a9ebf8fd4a5e7b896bb4c4066857fdb7",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/9e287a9b4448290557027a5b95000f188d54866bf2b417ac0bb1967bf8de68e5",
+      "original_row_index": 122,
+      "identity_row_index": 122,
+      "cosine_double": 0.9999999999997622,
+      "max_abs_vector_difference": 8.754432201385498e-08,
+      "l2_vector_difference": 6.903812758664945e-07,
+      "norm_original": 1.0000000470540358,
+      "norm_identity": 1.0000000296031273,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__fr__de",
+          "original_first_relevant_rank": 1,
+          "identity_first_relevant_rank": 2,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              1.0,
+              0.0
+            ],
+            "Hit@1": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              1.0,
+              0.5
+            ],
+            "Recall@1": [
+              1.0,
+              0.0
+            ],
+            "SourceRecall@1": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              1.0,
+              0.6309297535714575
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2021089444-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2021089444-A1",
+              "relevant_source_id": "EP-4081386-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2021089444-A1_de",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2021089444-A1",
+              "relevant_source_id": "EP-4081386-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "EP-4081386-A1_de",
+              "negative_document_id": "WO-2021089444-A1_de",
+              "positive_ranks": [
+                1,
+                2
+              ],
+              "negative_ranks": [
+                2,
+                1
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "chemistry__fr__mixed",
+          "original_first_relevant_rank": 1,
+          "identity_first_relevant_rank": 1,
+          "max_matched_document_score_change": 1.4901161193847656e-07,
+          "changed_metrics": {
+            "nDCG@10": [
+              0.8772153153380493,
+              0.8503449055347546
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "WO-2021089444-A1_fr",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2021089444-A1",
+              "relevant_source_id": "EP-4081386-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "WO-2021089444-A1_fr",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "WO-2021089444-A1",
+              "relevant_source_id": "EP-4081386-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "EP-4081386-A1_de",
+              "negative_document_id": "WO-2021089444-A1_de",
+              "positive_ranks": [
+                4,
+                5
+              ],
+              "negative_ranks": [
+                5,
+                4
+              ],
+              "original_score_gap": 0.0,
+              "identity_score_gap": -5.960464477539063e-08,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "corpus": "chemistry",
+      "model": "nomic-v2-moe",
+      "language": "fr",
+      "query_id": "q_c8d1bc83d43654f2beea959c78d58754f3dc36e899e1f9a20dc99cc06d0c0791",
+      "text_identical": true,
+      "translation_status": "identity",
+      "translation_cost_usd": 0.0,
+      "original_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/8b26f78badd5be0dbf9351b3567f43be564d29a438973bf2dfb042d04c4240a9",
+      "identity_embedding_path": "artifacts/fir-20261109-all-questions/artifacts/embeddings/query/9e287a9b4448290557027a5b95000f188d54866bf2b417ac0bb1967bf8de68e5",
+      "original_row_index": 152,
+      "identity_row_index": 152,
+      "cosine_double": 0.999999999999738,
+      "max_abs_vector_difference": 9.685754776000977e-08,
+      "l2_vector_difference": 7.243137592886455e-07,
+      "norm_original": 1.0000000206329356,
+      "norm_identity": 1.0000000320639146,
+      "token_audits_identical": true,
+      "model_spec_identical": true,
+      "runtime_identical": true,
+      "changed_settings": [
+        {
+          "setting_id": "chemistry__fr__de",
+          "original_first_relevant_rank": 1,
+          "identity_first_relevant_rank": 2,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "AllSourceSuccess@1": [
+              1.0,
+              0.0
+            ],
+            "Hit@1": [
+              1.0,
+              0.0
+            ],
+            "MRR@10": [
+              1.0,
+              0.5
+            ],
+            "Recall@1": [
+              1.0,
+              0.0
+            ],
+            "SourceRecall@1": [
+              1.0,
+              0.0
+            ],
+            "nDCG@10": [
+              1.0,
+              0.6309297535714575
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-1986596-A1_de",
+              "irrelevant_rank": 2,
+              "score_gap_to_first_positive": -5.960464477539063e-08,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-1986596-A1",
+              "relevant_source_id": "WO-2007096045-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-1986596-A1_de",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-1986596-A1",
+              "relevant_source_id": "WO-2007096045-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "WO-2007096045-A1_de",
+              "negative_document_id": "EP-1986596-A1_de",
+              "positive_ranks": [
+                1,
+                2
+              ],
+              "negative_ranks": [
+                2,
+                1
+              ],
+              "original_score_gap": 5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        },
+        {
+          "setting_id": "chemistry__fr__mixed",
+          "original_first_relevant_rank": 2,
+          "identity_first_relevant_rank": 2,
+          "max_matched_document_score_change": 1.1920928955078125e-07,
+          "changed_metrics": {
+            "Recall@5": [
+              1.0,
+              0.5
+            ],
+            "nDCG@10": [
+              0.6240505200038379,
+              0.6052602440527057
+            ]
+          },
+          "near_ties_to_first_positive": [
+            {
+              "run": "original",
+              "irrelevant_document_id": "EP-1986596-A1_fr",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-1986596-A1",
+              "relevant_source_id": "WO-2007096045-A1"
+            },
+            {
+              "run": "identity",
+              "irrelevant_document_id": "EP-1986596-A1_fr",
+              "irrelevant_rank": 1,
+              "score_gap_to_first_positive": 0.0,
+              "winning_chunk_text_equal": true,
+              "irrelevant_source_id": "EP-1986596-A1",
+              "relevant_source_id": "WO-2007096045-A1"
+            }
+          ],
+          "crossed_positive_negative_pairs": [
+            {
+              "positive_document_id": "WO-2007096045-A1_de",
+              "negative_document_id": "EP-1986596-A1_de",
+              "positive_ranks": [
+                5,
+                6
+              ],
+              "negative_ranks": [
+                6,
+                5
+              ],
+              "original_score_gap": 5.960464477539063e-08,
+              "identity_score_gap": 0.0,
+              "winning_text_identical": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+Case selection is deterministic and was specified before reading selected texts.
+All cases use mixed search with identical qrels and source questions within each pair.
+Ten/Tde denote English/German query translation, not the original query language.
+Clear-quality restriction is applied separately per rule when possible; no language filter.
+No case establishes a population frequency, causal mechanism, translation error, or hallucination.
+Saved answers/evidence are supplied here for analyst inspection only; generation did not receive them.
+BGE-M3 has identical empty query/document prefixes. HyDE still changes text type and length.
+The candidate-pool CSVs and selection_manifest.json retain all eligibility/order decisions.
+All .txt/.json case files are generated; analyst_notes.txt is separately authored after inspection.

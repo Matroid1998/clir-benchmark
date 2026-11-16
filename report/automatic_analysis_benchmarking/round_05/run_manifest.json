@@ -1,0 +1,43 @@
+{
+  "round": 5,
+  "generated_at": "2026-11-16T00:37:15.284159+00:00",
+  "visual_review_status": "complete_root",
+  "script_sha256": "37a6f2d7a4a7e6015d2269411019c3f663c267aa6d6c7e43568fd14c3ed9a899",
+  "inputs": {
+    "round_04/review.txt": "ae849ea4d727a525d28edcfe16d51c0c3078a4d3d62c301a7eca791ac0f8ad73",
+    "data/per_query.parquet": "2015a3b5f06b3a6ab01b01bca8f469ecac836e53288bd70711ccc53b0cd65303",
+    "data/generation.parquet": "553cb24d8cd8e843aee02e2f6f4da464de5c02025b3bd947aff3f7918f57880b",
+    "audit/generation_accounting.json": "69306635cdf90a2b9c588099a84b604092974a73a8d4108c56b65effc86b4312"
+  },
+  "output_sha256": {
+    "fig02_training_fold_choices.png": "c558cdb44b5938f3a9ed682825074ec80b775c79135102109c63361345e16a3f",
+    "table02_held_out_paired_contrasts.tex": "51644ba03827fa5a7c06f4731aba93a196749cce7dfe757cb09c9736d83226f8",
+    "table03_training_choices.tex": "36fabae88141d789dc083ee28f963ac82530c4dfb16924ee275dd5cfe1915886",
+    "table01_held_out_levels_and_oracles.tex": "7f4047117b30e0b6ffa3a4a7e6e716ebb0cd4d04c8ec2b2ae12c1d6690fffb9f",
+    "review_draft.txt": "8109ea30091770e348aafd1d6538380df30ddb374e87f0c01e9b069e6f07a485",
+    "table04_selected_output_costs_and_components.csv": "f4882bc1ca2f6956d676c52c24bcea445ffd8bffbc84cdb6368c2899975ce8c3",
+    "validation.json": "fb8cc1fe2317cb8a046c4232f81790b59438b572c68263ad1938b809c5e179b8",
+    "table04_selected_output_costs_and_components.tex": "0a92f86cee3cfbce2e068ad125aec0ef345b8ccc005fe0279299a5524ae3bcde",
+    "fig01_held_out_objective_tradeoffs.png": "bd38f748f2dd0a74eddda9e8042966a1403616c653f15b2ff141021bcc376fb6",
+    "table02_held_out_paired_contrasts.csv": "e599ee97a65dda404a4fc5409777dc68e6886e8ae3392f2488f1dae23b902fe7",
+    "fig03_generation_accounting_and_duration.svg": "7301db24bca2d8e6df6b00a971b462ed757d5848c87dccd4b9b87efb22662942",
+    "out_of_fold_predictions.parquet": "786b7968424e50223b3b624b0101fba9de4b25aa5c48947f4ba36e3599d733cd",
+    "table05_shared_output_union_cost.tex": "57d7509761b977f76163262eae5f16c978a9fb0250ecc05342ec354d073a21db",
+    "table06_unique_generation_pool.tex": "158b431f42239d589e76abaa42e5bb60fe7385c1b5c477e3f854ddd0f4a7aa5c",
+    "fig02_training_fold_choices.pdf": "cfcbdead628e2cd433956dfff1a5eec4d3d3e1c310420fa466d2df24ab23d980",
+    "table01_held_out_levels_and_oracles.csv": "14866dceb82a35d630cd69638b7d11eeb262ef4c8bdb1b71684e9daea4181e4a",
+    "source_folds.csv": "132611ad75f0a11c14d171e0aab7aeb0a09af0198bf6a206b3a0a8d43fc5ee33",
+    "fig01_held_out_objective_tradeoffs.pdf": "85c0b14a43c32246750997a5e170dcd94a8d4ba5199507d21bf8f97ef0c9c9d7",
+    "fig03_generation_accounting_and_duration.pdf": "8dc864a27b68d47bed5b679b921fed57e0459976b20e0cd3cc90767bde9d6f89",
+    "fig02_training_fold_choices.svg": "163486e8af9de28a721037d360f821aad53298085b7b654ba240db270aef6bab",
+    "table06_unique_generation_pool.csv": "66c1a950ee0064866fed7f5cfd44d5a48073e94fffc3303da4e8ffe8c372dec5",
+    "fig03_generation_accounting_and_duration.png": "6e6291cd367accb55de0cb2bb39ad4a4bd2d6b9f8c40948ad1dea44e7777c795",
+    "table03_training_choices.csv": "88e9acfbd6d09677d850e1c25fe5cead8490d652100e992b2ff3be1e166348ba",
+    "fig01_held_out_objective_tradeoffs.svg": "d6dcb4da3f603f2781790d38c4f4d70d1089f67f138febd56b2639502b63874e",
+    "table05_shared_output_union_cost.csv": "05da2f3fb2792a8fec0779a0fe6c500d3f18d9dd0a2e566304642e98f3c45212"
+  },
+  "paid_calls": 0,
+  "model_loads": 0,
+  "visual_review_completed_at": "2026-11-16T00:38:18.352620+00:00",
+  "visual_review": "review.txt"
+}

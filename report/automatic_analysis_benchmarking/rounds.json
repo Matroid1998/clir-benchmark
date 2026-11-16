@@ -1,0 +1,40 @@
+{
+  "rounds": [
+    {
+      "round": 1,
+      "status": "complete",
+      "manifest": "round_01/round_manifest.json",
+      "review": "round_01/review.txt"
+    },
+    {
+      "round": 2,
+      "status": "complete",
+      "manifest": "round_02/run_manifest.json",
+      "review": "round_02/review.txt"
+    },
+    {
+      "round": 3,
+      "status": "complete",
+      "manifest": "round_03/run_manifest.json",
+      "review": "round_03/review.txt"
+    },
+    {
+      "round": 4,
+      "status": "complete",
+      "manifest": "round_04/run_manifest.json",
+      "review": "round_04/review.txt"
+    },
+    {
+      "round": 5,
+      "status": "complete",
+      "manifest": "round_05/run_manifest.json",
+      "review": "round_05/review.txt"
+    },
+    {
+      "round": 6,
+      "status": "complete",
+      "manifest": "round_06/run_manifest.json",
+      "review": "round_06/review.txt"
+    }
+  ]
+}

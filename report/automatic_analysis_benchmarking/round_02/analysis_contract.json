@@ -1,0 +1,21 @@
+{
+  "round": 2,
+  "depends_on_review": "round_01/review.txt",
+  "questions": [
+    "Target-matched cross-language controls",
+    "Same-output-language HyDE minus translation",
+    "Absent-corpus-language pivots and metric disagreement"
+  ],
+  "metrics": [
+    "ndcg10",
+    "hit10",
+    "recall10"
+  ],
+  "bootstrap_draws": 5000,
+  "bootstrap_seed": 42,
+  "resampling_unit": "one source question; targets and fixed encoders averaged before resampling where pooled",
+  "confidence_intervals": "paired percentile 95%; exploratory and not multiplicity adjusted",
+  "target_availability": "never impute absent or empty target cohorts as zero performance",
+  "source_data_sha256": "2015a3b5f06b3a6ab01b01bca8f469ecac836e53288bd70711ccc53b0cd65303",
+  "prior_review_sha256": "897f60db686c65604617b665f9e1a603cec617cf2133f8cc3ca9012c04e23467"
+}

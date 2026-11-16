@@ -1,0 +1,63 @@
+ROUND 5 NUMERICAL REVIEW — TRAINING-FOLD CHOICES AND HISTORICAL COST
+
+Visual review pending root. Five folds stratify original language within corpus; every source shares a fold across models.
+Choices use only training mean objective, then training mean cost, then original/lexical ordering.
+Each corpus/model/fold chooses one static variant. No per-query features or held-out outcomes drive fitted selection.
+
+Fixed-eight-encoder held-out contrasts (points; source bootstrap conditional on chosen policies):
+  chemistry, ndcg10, cv_ndcg − original: -0.20 [-0.38, -0.04]; gains/losses/ties 12/23/162.
+  chemistry, ndcg10, cv_hit − original: +0.00 [+0.00, +0.00]; gains/losses/ties 0/0/197.
+  chemistry, ndcg10, cv_ndcg − english: +4.85 [+3.48, +6.26]; gains/losses/ties 104/44/49.
+  chemistry, ndcg10, cv_hit − english: +5.05 [+3.63, +6.52]; gains/losses/ties 104/44/49.
+  chemistry, ndcg10, cv_ndcg − cv_hit: -0.20 [-0.38, -0.04]; gains/losses/ties 12/23/162.
+  chemistry, hit10, cv_ndcg − original: -0.13 [-0.32, +0.00]; gains/losses/ties 0/2/195.
+  chemistry, hit10, cv_hit − original: +0.00 [+0.00, +0.00]; gains/losses/ties 0/0/197.
+  chemistry, hit10, cv_ndcg − english: +7.36 [+5.52, +9.39]; gains/losses/ties 78/7/112.
+  chemistry, hit10, cv_hit − english: +7.49 [+5.58, +9.58]; gains/losses/ties 78/7/112.
+  chemistry, hit10, cv_ndcg − cv_hit: -0.13 [-0.32, +0.00]; gains/losses/ties 0/2/195.
+  eurlex, ndcg10, cv_ndcg − original: +3.50 [+1.59, +5.37]; gains/losses/ties 114/77/3.
+  eurlex, ndcg10, cv_hit − original: +3.40 [+1.84, +4.91]; gains/losses/ties 106/81/7.
+  eurlex, ndcg10, cv_ndcg − english: +2.21 [+0.38, +3.99]; gains/losses/ties 113/75/6.
+  eurlex, ndcg10, cv_hit − english: +2.12 [+0.53, +3.67]; gains/losses/ties 106/83/5.
+  eurlex, ndcg10, cv_ndcg − cv_hit: +0.10 [-0.84, +1.00]; gains/losses/ties 99/89/6.
+  eurlex, hit10, cv_ndcg − original: +0.39 [-2.51, +3.41]; gains/losses/ties 56/53/85.
+  eurlex, hit10, cv_hit − original: +3.16 [+0.77, +5.54]; gains/losses/ties 62/38/94.
+  eurlex, hit10, cv_ndcg − english: +0.71 [-1.93, +3.35]; gains/losses/ties 52/49/93.
+  eurlex, hit10, cv_hit − english: +3.48 [+1.16, +5.80]; gains/losses/ties 63/39/92.
+  eurlex, hit10, cv_ndcg − cv_hit: -2.77 [-4.45, -1.16]; gains/losses/ties 21/47/126.
+  un, ndcg10, cv_ndcg − original: +2.86 [+1.76, +3.97]; gains/losses/ties 146/87/14.
+  un, ndcg10, cv_hit − original: +0.90 [+0.20, +1.58]; gains/losses/ties 123/99/25.
+  un, ndcg10, cv_ndcg − english: +1.31 [+0.59, +2.02]; gains/losses/ties 134/94/19.
+  un, ndcg10, cv_hit − english: -0.66 [-1.29, -0.07]; gains/losses/ties 104/111/32.
+  un, ndcg10, cv_ndcg − cv_hit: +1.96 [+1.17, +2.76]; gains/losses/ties 135/92/20.
+  un, hit10, cv_ndcg − original: -2.73 [-4.96, -0.46]; gains/losses/ties 60/88/99.
+  un, hit10, cv_hit − original: +0.30 [-1.52, +2.13]; gains/losses/ties 71/73/103.
+  un, hit10, cv_ndcg − english: -3.14 [-4.86, -1.42]; gains/losses/ties 50/86/111.
+  un, hit10, cv_hit − english: -0.10 [-1.52, +1.37]; gains/losses/ties 63/68/116.
+  un, hit10, cv_ndcg − cv_hit: -3.04 [-4.71, -1.42]; gains/losses/ties 39/68/140.
+
+Recorded generation accounting (unique outputs, not repeated model/settings records):
+  hyde: $0.49762452; 3194 attempts; 3190 outputs, including identity bypasses where applicable.
+  translate: $0.23001100; 2552 attempts; 3190 outputs, including identity bypasses where applicable.
+  cv_hit: selected outputs used across all eight encoders have union historical attribution $0.18652140.
+  cv_ndcg: selected outputs used across all eight encoders have union historical attribution $0.19023366.
+  english: selected outputs used across all eight encoders have union historical attribution $0.03765020.
+  original: selected outputs used across all eight encoders have union historical attribution $0.00000000.
+
+Interpretation boundaries
+- Internal CV is exploratory: this design follows analysis of the same dataset, not an untouched external evaluation.
+- Bootstrap intervals resample paired source-level scored outputs, averaging fixed encoders first; they do not refit selectors.
+- Overlapping training folds and selection instability are not fully captured by those conditional intervals.
+- Oracles use each held-out outcome and are upper bounds only. Their favorable scores are not deployable results.
+- Every query appears in training in other folds; exploring/training these policies used the complete generation pool.
+- Selected-output attribution excludes training exploration and is not an actual measured saving or a new API bill.
+- Historical generation includes four failed attempts, retries and provider cache discounts; it is not fully cold pricing.
+- Generation is reused across encoders. Table 5 deduplicates their selected-output unions.
+- API attempt durations, offline amortized embedding and offline amortized retrieval are separate measurements.
+- CPU/GPU monetary costs and measured online end-to-end latency remain unknown.
+
+Questions driving Round 6
+Do headline contrasts survive quality/identity exclusions, original-language and setting weighting, and omission of one encoder?
+Does the UN source-success/version-coverage tradeoff persist across saved cutoffs, or is it a top-10-only operating point?
+Which practical conclusions remain conditional on this one fold assignment and the selected synthetic-query population?
+Which claims should be retained, narrowed or rejected in the final evidence table?

@@ -1,0 +1,433 @@
+corpus,model,pivot_language,n_queries,fixed_models,query_language,metric,contrast,estimate,ci_low,ci_high
+eurlex,All fixed models,zh,50,8,de,ndcg10,absent-minus-original,-0.025755352780912982,-0.054907942976789366,0.003457076221895898
+eurlex,All fixed models,zh,50,8,de,ndcg10,absent-minus-english_translation,-0.0336950390687697,-0.062398404212348955,-0.006391309436251
+eurlex,All fixed models,zh,50,8,de,hit10,absent-minus-original,-0.1625,-0.22,-0.1075
+eurlex,All fixed models,zh,50,8,de,hit10,absent-minus-english_translation,-0.11,-0.16,-0.065
+eurlex,All fixed models,zh,50,8,de,recall10,absent-minus-original,0.004375,-0.025625,0.036875
+eurlex,All fixed models,zh,50,8,de,recall10,absent-minus-english_translation,-0.01625,-0.043125,0.01125
+eurlex,All fixed models,zh,55,8,en,ndcg10,absent-minus-original,-0.07926374481016205,-0.11846053861564883,-0.043391097159135146
+eurlex,All fixed models,zh,55,8,en,ndcg10,absent-minus-english_translation,-0.07926374481016205,-0.11846053861564883,-0.043391097159135146
+eurlex,All fixed models,zh,55,8,en,hit10,absent-minus-original,-0.17272727272727273,-0.2318181818181818,-0.11812500000000083
+eurlex,All fixed models,zh,55,8,en,hit10,absent-minus-english_translation,-0.17272727272727273,-0.2318181818181818,-0.11812500000000083
+eurlex,All fixed models,zh,55,8,en,recall10,absent-minus-original,-0.061931818181818185,-0.09943181818181818,-0.026704545454545453
+eurlex,All fixed models,zh,55,8,en,recall10,absent-minus-english_translation,-0.061931818181818185,-0.09943181818181818,-0.026704545454545453
+eurlex,All fixed models,zh,38,8,es,ndcg10,absent-minus-original,-0.06412551216219789,-0.10110977468467386,-0.028451345699958937
+eurlex,All fixed models,zh,38,8,es,ndcg10,absent-minus-english_translation,-0.07194062908883701,-0.11166177396887289,-0.031206596212548458
+eurlex,All fixed models,zh,38,8,es,hit10,absent-minus-original,-0.1611842105263158,-0.2138157894736842,-0.10855263157894737
+eurlex,All fixed models,zh,38,8,es,hit10,absent-minus-english_translation,-0.17763157894736842,-0.22697368421052633,-0.13157894736842105
+eurlex,All fixed models,zh,38,8,es,recall10,absent-minus-original,-0.03042763157894737,-0.07319078947368421,0.009868421052631578
+eurlex,All fixed models,zh,38,8,es,recall10,absent-minus-english_translation,-0.05016447368421053,-0.09046052631578948,-0.009868421052631578
+eurlex,All fixed models,zh,51,8,fr,ndcg10,absent-minus-original,-0.054312589200668164,-0.097778958838733,-0.009911294466385272
+eurlex,All fixed models,zh,51,8,fr,ndcg10,absent-minus-english_translation,-0.08959557009157765,-0.13084582897837066,-0.04916251625162333
+eurlex,All fixed models,zh,51,8,fr,hit10,absent-minus-original,-0.19117647058823528,-0.2549019607843137,-0.1323529411764706
+eurlex,All fixed models,zh,51,8,fr,hit10,absent-minus-english_translation,-0.2181372549019608,-0.2794730392156863,-0.15931372549019607
+eurlex,All fixed models,zh,51,8,fr,recall10,absent-minus-original,-0.026348039215686275,-0.07170649509803921,0.02267156862745098
+eurlex,All fixed models,zh,51,8,fr,recall10,absent-minus-english_translation,-0.06801470588235294,-0.10723039215686274,-0.028799019607843136
+eurlex,LaBSE,zh,50,1,de,ndcg10,absent-minus-original,-0.005219681213079788,-0.0430803008439485,0.03203950524987066
+eurlex,LaBSE,zh,50,1,de,ndcg10,absent-minus-english_translation,-0.05258324352333636,-0.10160000666955135,-0.006833602837795912
+eurlex,LaBSE,zh,50,1,de,hit10,absent-minus-original,-0.02,-0.1,0.04
+eurlex,LaBSE,zh,50,1,de,hit10,absent-minus-english_translation,-0.04,-0.1,0.0
+eurlex,LaBSE,zh,50,1,de,recall10,absent-minus-original,0.02,-0.02,0.065
+eurlex,LaBSE,zh,50,1,de,recall10,absent-minus-english_translation,-0.065,-0.115,-0.02
+eurlex,LaBSE,zh,55,1,en,ndcg10,absent-minus-original,0.003618656077290841,-0.04957300514224928,0.05706695124834994
+eurlex,LaBSE,zh,55,1,en,ndcg10,absent-minus-english_translation,0.003618656077290841,-0.04957300514224928,0.05706695124834994
+eurlex,LaBSE,zh,55,1,en,hit10,absent-minus-original,0.03636363636363636,-0.07272727272727272,0.14545454545454545
+eurlex,LaBSE,zh,55,1,en,hit10,absent-minus-english_translation,0.03636363636363636,-0.07272727272727272,0.14545454545454545
+eurlex,LaBSE,zh,55,1,en,recall10,absent-minus-original,-0.004545454545454545,-0.05909090909090909,0.05
+eurlex,LaBSE,zh,55,1,en,recall10,absent-minus-english_translation,-0.004545454545454545,-0.05909090909090909,0.05
+eurlex,LaBSE,zh,38,1,es,ndcg10,absent-minus-original,-0.05917217366571875,-0.11176635414024437,-0.007442527088377035
+eurlex,LaBSE,zh,38,1,es,ndcg10,absent-minus-english_translation,-0.027024768654910606,-0.0888135906780661,0.029828113245513127
+eurlex,LaBSE,zh,38,1,es,hit10,absent-minus-original,-0.07894736842105263,-0.21052631578947367,0.05263157894736842
+eurlex,LaBSE,zh,38,1,es,hit10,absent-minus-english_translation,-0.02631578947368421,-0.15789473684210525,0.10526315789473684
+eurlex,LaBSE,zh,38,1,es,recall10,absent-minus-original,-0.046052631578947366,-0.125,0.02631578947368421
+eurlex,LaBSE,zh,38,1,es,recall10,absent-minus-english_translation,-0.05263157894736842,-0.13157894736842105,0.019736842105263157
+eurlex,LaBSE,zh,51,1,fr,ndcg10,absent-minus-original,0.006177522381761089,-0.049183969423771026,0.05907883607931007
+eurlex,LaBSE,zh,51,1,fr,ndcg10,absent-minus-english_translation,-0.01784554526173107,-0.06348619770331675,0.026776241166421955
+eurlex,LaBSE,zh,51,1,fr,hit10,absent-minus-original,-0.058823529411764705,-0.17647058823529413,0.058823529411764705
+eurlex,LaBSE,zh,51,1,fr,hit10,absent-minus-english_translation,-0.0784313725490196,-0.19607843137254902,0.0392156862745098
+eurlex,LaBSE,zh,51,1,fr,recall10,absent-minus-original,0.024509803921568627,-0.03431372549019608,0.0784313725490196
+eurlex,LaBSE,zh,51,1,fr,recall10,absent-minus-english_translation,-0.03431372549019608,-0.09313725490196079,0.0196078431372549
+eurlex,SapBERT,zh,50,1,de,ndcg10,absent-minus-original,-0.04272163016530768,-0.08912179362444146,0.0018913364234040971
+eurlex,SapBERT,zh,50,1,de,ndcg10,absent-minus-english_translation,-0.04931235685796437,-0.11605582332265746,0.012888700028036295
+eurlex,SapBERT,zh,50,1,de,hit10,absent-minus-original,-0.1,-0.22,0.02
+eurlex,SapBERT,zh,50,1,de,hit10,absent-minus-english_translation,-0.12,-0.24,0.02
+eurlex,SapBERT,zh,50,1,de,recall10,absent-minus-original,-0.015,-0.06,0.035
+eurlex,SapBERT,zh,50,1,de,recall10,absent-minus-english_translation,-0.055,-0.125,0.01
+eurlex,SapBERT,zh,55,1,en,ndcg10,absent-minus-original,-0.12097700901746315,-0.19054129722166233,-0.05334169493153903
+eurlex,SapBERT,zh,55,1,en,ndcg10,absent-minus-english_translation,-0.12097700901746315,-0.19054129722166233,-0.05334169493153903
+eurlex,SapBERT,zh,55,1,en,hit10,absent-minus-original,-0.12727272727272726,-0.2545454545454545,0.0
+eurlex,SapBERT,zh,55,1,en,hit10,absent-minus-english_translation,-0.12727272727272726,-0.2545454545454545,0.0
+eurlex,SapBERT,zh,55,1,en,recall10,absent-minus-original,-0.11818181818181818,-0.19545454545454546,-0.045454545454545456
+eurlex,SapBERT,zh,55,1,en,recall10,absent-minus-english_translation,-0.11818181818181818,-0.19545454545454546,-0.045454545454545456
+eurlex,SapBERT,zh,38,1,es,ndcg10,absent-minus-original,-0.19629459948111527,-0.28885979506977344,-0.11388571029580583
+eurlex,SapBERT,zh,38,1,es,ndcg10,absent-minus-english_translation,-0.16712586495912354,-0.25519799823625894,-0.08350926150255433
+eurlex,SapBERT,zh,38,1,es,hit10,absent-minus-original,-0.34210526315789475,-0.5,-0.18421052631578946
+eurlex,SapBERT,zh,38,1,es,hit10,absent-minus-english_translation,-0.3157894736842105,-0.5,-0.10526315789473684
+eurlex,SapBERT,zh,38,1,es,recall10,absent-minus-original,-0.18421052631578946,-0.2894736842105263,-0.08552631578947369
+eurlex,SapBERT,zh,38,1,es,recall10,absent-minus-english_translation,-0.17763157894736842,-0.28289473684210525,-0.07894736842105263
+eurlex,SapBERT,zh,51,1,fr,ndcg10,absent-minus-original,-0.03830207631111726,-0.09744127788645747,0.022331918533930014
+eurlex,SapBERT,zh,51,1,fr,ndcg10,absent-minus-english_translation,-0.09529431499227435,-0.17100384536743343,-0.01633656780443289
+eurlex,SapBERT,zh,51,1,fr,hit10,absent-minus-original,-0.17647058823529413,-0.3137254901960784,-0.058823529411764705
+eurlex,SapBERT,zh,51,1,fr,hit10,absent-minus-english_translation,-0.29411764705882354,-0.43137254901960786,-0.1568627450980392
+eurlex,SapBERT,zh,51,1,fr,recall10,absent-minus-original,-0.00980392156862745,-0.0784313725490196,0.058823529411764705
+eurlex,SapBERT,zh,51,1,fr,recall10,absent-minus-english_translation,-0.08823529411764706,-0.1715686274509804,0.0
+eurlex,bge-m3,zh,50,1,de,ndcg10,absent-minus-original,-0.03842322396225559,-0.09982553151586493,0.02142305618342878
+eurlex,bge-m3,zh,50,1,de,ndcg10,absent-minus-english_translation,-0.015493449026758302,-0.07275931195901096,0.0427731715200775
+eurlex,bge-m3,zh,50,1,de,hit10,absent-minus-original,-0.18,-0.3,-0.08
+eurlex,bge-m3,zh,50,1,de,hit10,absent-minus-english_translation,-0.04,-0.12,0.04
+eurlex,bge-m3,zh,50,1,de,recall10,absent-minus-original,-0.01,-0.07,0.055
+eurlex,bge-m3,zh,50,1,de,recall10,absent-minus-english_translation,0.02,-0.03,0.075
+eurlex,bge-m3,zh,55,1,en,ndcg10,absent-minus-original,-0.09080446282753686,-0.16000369130731346,-0.028325431864279448
+eurlex,bge-m3,zh,55,1,en,ndcg10,absent-minus-english_translation,-0.09080446282753686,-0.16000369130731346,-0.028325431864279448
+eurlex,bge-m3,zh,55,1,en,hit10,absent-minus-original,-0.18181818181818182,-0.2909090909090909,-0.09090909090909091
+eurlex,bge-m3,zh,55,1,en,hit10,absent-minus-english_translation,-0.18181818181818182,-0.2909090909090909,-0.09090909090909091
+eurlex,bge-m3,zh,55,1,en,recall10,absent-minus-original,-0.05909090909090909,-0.1318181818181818,0.00909090909090909
+eurlex,bge-m3,zh,55,1,en,recall10,absent-minus-english_translation,-0.05909090909090909,-0.1318181818181818,0.00909090909090909
+eurlex,bge-m3,zh,38,1,es,ndcg10,absent-minus-original,-0.017374611436862246,-0.09632341008648915,0.05764499489222114
+eurlex,bge-m3,zh,38,1,es,ndcg10,absent-minus-english_translation,-0.04712337416740344,-0.13287088279953743,0.033531661562472406
+eurlex,bge-m3,zh,38,1,es,hit10,absent-minus-original,-0.02631578947368421,-0.15789473684210525,0.10526315789473684
+eurlex,bge-m3,zh,38,1,es,hit10,absent-minus-english_translation,-0.07894736842105263,-0.18421052631578946,0.02631578947368421
+eurlex,bge-m3,zh,38,1,es,recall10,absent-minus-original,0.02631578947368421,-0.06578947368421052,0.11842105263157894
+eurlex,bge-m3,zh,38,1,es,recall10,absent-minus-english_translation,-0.02631578947368421,-0.1118421052631579,0.05921052631578947
+eurlex,bge-m3,zh,51,1,fr,ndcg10,absent-minus-original,-0.11633113871746951,-0.20501465778289185,-0.0314439230009496
+eurlex,bge-m3,zh,51,1,fr,ndcg10,absent-minus-english_translation,-0.10744281452326608,-0.18959032258007127,-0.02853622248981604
+eurlex,bge-m3,zh,51,1,fr,hit10,absent-minus-original,-0.1568627450980392,-0.29411764705882354,-0.0392156862745098
+eurlex,bge-m3,zh,51,1,fr,hit10,absent-minus-english_translation,-0.17647058823529413,-0.29411764705882354,-0.058823529411764705
+eurlex,bge-m3,zh,51,1,fr,recall10,absent-minus-original,-0.08823529411764706,-0.18627450980392157,0.004901960784313725
+eurlex,bge-m3,zh,51,1,fr,recall10,absent-minus-english_translation,-0.0784313725490196,-0.16176470588235295,0.004901960784313725
+eurlex,e5-large-instruct,zh,50,1,de,ndcg10,absent-minus-original,-0.12123589731838103,-0.1762214371171504,-0.0611789837730383
+eurlex,e5-large-instruct,zh,50,1,de,ndcg10,absent-minus-english_translation,-0.10174369072167742,-0.15890198347657078,-0.04176105992529742
+eurlex,e5-large-instruct,zh,50,1,de,hit10,absent-minus-original,-0.42,-0.56,-0.28
+eurlex,e5-large-instruct,zh,50,1,de,hit10,absent-minus-english_translation,-0.32,-0.46,-0.18
+eurlex,e5-large-instruct,zh,50,1,de,recall10,absent-minus-original,-0.055,-0.115,0.01012499999999818
+eurlex,e5-large-instruct,zh,50,1,de,recall10,absent-minus-english_translation,-0.035,-0.09,0.025
+eurlex,e5-large-instruct,zh,55,1,en,ndcg10,absent-minus-original,-0.016322320044487824,-0.09046697683591501,0.05581690480150299
+eurlex,e5-large-instruct,zh,55,1,en,ndcg10,absent-minus-english_translation,-0.016322320044487824,-0.09046697683591501,0.05581690480150299
+eurlex,e5-large-instruct,zh,55,1,en,hit10,absent-minus-original,-0.3090909090909091,-0.43636363636363634,-0.2
+eurlex,e5-large-instruct,zh,55,1,en,hit10,absent-minus-english_translation,-0.3090909090909091,-0.43636363636363634,-0.2
+eurlex,e5-large-instruct,zh,55,1,en,recall10,absent-minus-original,0.07272727272727272,-0.00909090909090909,0.15454545454545454
+eurlex,e5-large-instruct,zh,55,1,en,recall10,absent-minus-english_translation,0.07272727272727272,-0.00909090909090909,0.15454545454545454
+eurlex,e5-large-instruct,zh,38,1,es,ndcg10,absent-minus-original,-0.016252027210892216,-0.1005437922195961,0.07345963908086711
+eurlex,e5-large-instruct,zh,38,1,es,ndcg10,absent-minus-english_translation,-0.020454631745656197,-0.10209036378644326,0.07066074178230336
+eurlex,e5-large-instruct,zh,38,1,es,hit10,absent-minus-original,-0.2631578947368421,-0.42105263157894735,-0.13157894736842105
+eurlex,e5-large-instruct,zh,38,1,es,hit10,absent-minus-english_translation,-0.3157894736842105,-0.47368421052631576,-0.18421052631578946
+eurlex,e5-large-instruct,zh,38,1,es,recall10,absent-minus-original,0.09210526315789473,-0.006578947368421052,0.19736842105263158
+eurlex,e5-large-instruct,zh,38,1,es,recall10,absent-minus-english_translation,0.07894736842105263,-0.019736842105263157,0.18421052631578946
+eurlex,e5-large-instruct,zh,51,1,fr,ndcg10,absent-minus-original,-0.0181956732492389,-0.09851184572216223,0.06443371039769934
+eurlex,e5-large-instruct,zh,51,1,fr,ndcg10,absent-minus-english_translation,-0.029681705584489963,-0.10569930255672484,0.04771721189420068
+eurlex,e5-large-instruct,zh,51,1,fr,hit10,absent-minus-original,-0.2549019607843137,-0.39215686274509803,-0.11764705882352941
+eurlex,e5-large-instruct,zh,51,1,fr,hit10,absent-minus-english_translation,-0.3333333333333333,-0.47058823529411764,-0.21568627450980393
+eurlex,e5-large-instruct,zh,51,1,fr,recall10,absent-minus-original,0.08823529411764706,0.0,0.17647058823529413
+eurlex,e5-large-instruct,zh,51,1,fr,recall10,absent-minus-english_translation,0.04411764705882353,-0.04411764705882353,0.1323529411764706
+eurlex,embeddinggemma,zh,50,1,de,ndcg10,absent-minus-original,0.06997248628917649,0.0037963383699255926,0.14082504905706095
+eurlex,embeddinggemma,zh,50,1,de,ndcg10,absent-minus-english_translation,0.04587800411305437,-0.013658361806871286,0.11237974507251834
+eurlex,embeddinggemma,zh,50,1,de,hit10,absent-minus-original,-0.04,-0.14,0.06
+eurlex,embeddinggemma,zh,50,1,de,hit10,absent-minus-english_translation,0.0,-0.08,0.08
+eurlex,embeddinggemma,zh,50,1,de,recall10,absent-minus-original,0.085,0.015,0.16
+eurlex,embeddinggemma,zh,50,1,de,recall10,absent-minus-english_translation,0.07,0.015,0.135
+eurlex,embeddinggemma,zh,55,1,en,ndcg10,absent-minus-original,-0.08459973371538039,-0.14643873591539797,-0.028664377828994538
+eurlex,embeddinggemma,zh,55,1,en,ndcg10,absent-minus-english_translation,-0.08459973371538039,-0.14643873591539797,-0.028664377828994538
+eurlex,embeddinggemma,zh,55,1,en,hit10,absent-minus-original,-0.16363636363636364,-0.2727272727272727,-0.07272727272727272
+eurlex,embeddinggemma,zh,55,1,en,hit10,absent-minus-english_translation,-0.16363636363636364,-0.2727272727272727,-0.07272727272727272
+eurlex,embeddinggemma,zh,55,1,en,recall10,absent-minus-original,-0.09090909090909091,-0.15454545454545454,-0.031818181818181815
+eurlex,embeddinggemma,zh,55,1,en,recall10,absent-minus-english_translation,-0.09090909090909091,-0.15454545454545454,-0.031818181818181815
+eurlex,embeddinggemma,zh,38,1,es,ndcg10,absent-minus-original,0.05723447655974081,-0.012329003799271585,0.12630558016845306
+eurlex,embeddinggemma,zh,38,1,es,ndcg10,absent-minus-english_translation,-0.0029657161279783135,-0.06331726535341353,0.053033903941832376
+eurlex,embeddinggemma,zh,38,1,es,hit10,absent-minus-original,0.02631578947368421,-0.05263157894736842,0.13157894736842105
+eurlex,embeddinggemma,zh,38,1,es,hit10,absent-minus-english_translation,-0.02631578947368421,-0.07894736842105263,0.0
+eurlex,embeddinggemma,zh,38,1,es,recall10,absent-minus-original,0.10526315789473684,0.02631578947368421,0.18421052631578946
+eurlex,embeddinggemma,zh,38,1,es,recall10,absent-minus-english_translation,0.039473684210526314,-0.02631578947368421,0.10526315789473684
+eurlex,embeddinggemma,zh,51,1,fr,ndcg10,absent-minus-original,-0.05570038655071588,-0.11705598017694789,0.004218167489501251
+eurlex,embeddinggemma,zh,51,1,fr,ndcg10,absent-minus-english_translation,-0.0785671210402644,-0.13590188730962555,-0.0243804652329167
+eurlex,embeddinggemma,zh,51,1,fr,hit10,absent-minus-original,-0.19607843137254902,-0.3137254901960784,-0.09803921568627451
+eurlex,embeddinggemma,zh,51,1,fr,hit10,absent-minus-english_translation,-0.1568627450980392,-0.27450980392156865,-0.058823529411764705
+eurlex,embeddinggemma,zh,51,1,fr,recall10,absent-minus-original,-0.058823529411764705,-0.1323529411764706,0.014705882352941176
+eurlex,embeddinggemma,zh,51,1,fr,recall10,absent-minus-english_translation,-0.06862745098039216,-0.12254901960784313,-0.014705882352941176
+eurlex,granite-278m,zh,50,1,de,ndcg10,absent-minus-original,-0.03589473764306156,-0.10099891414684016,0.03212978332286684
+eurlex,granite-278m,zh,50,1,de,ndcg10,absent-minus-english_translation,-0.03840906019724927,-0.098986224852934,0.02346899635954136
+eurlex,granite-278m,zh,50,1,de,hit10,absent-minus-original,-0.2,-0.34,-0.06
+eurlex,granite-278m,zh,50,1,de,hit10,absent-minus-english_translation,-0.18,-0.3,-0.06
+eurlex,granite-278m,zh,50,1,de,recall10,absent-minus-original,-0.03,-0.1,0.045
+eurlex,granite-278m,zh,50,1,de,recall10,absent-minus-english_translation,-0.03,-0.1,0.04
+eurlex,granite-278m,zh,55,1,en,ndcg10,absent-minus-original,-0.20222716889954062,-0.27979759810252014,-0.1233776736210833
+eurlex,granite-278m,zh,55,1,en,ndcg10,absent-minus-english_translation,-0.20222716889954062,-0.27979759810252014,-0.1233776736210833
+eurlex,granite-278m,zh,55,1,en,hit10,absent-minus-original,-0.34545454545454546,-0.4909090909090909,-0.21818181818181817
+eurlex,granite-278m,zh,55,1,en,hit10,absent-minus-english_translation,-0.34545454545454546,-0.4909090909090909,-0.21818181818181817
+eurlex,granite-278m,zh,55,1,en,recall10,absent-minus-original,-0.22727272727272727,-0.3090909090909091,-0.14545454545454545
+eurlex,granite-278m,zh,55,1,en,recall10,absent-minus-english_translation,-0.22727272727272727,-0.3090909090909091,-0.14545454545454545
+eurlex,granite-278m,zh,38,1,es,ndcg10,absent-minus-original,-0.24327545403787595,-0.324409494213671,-0.16949833322217842
+eurlex,granite-278m,zh,38,1,es,ndcg10,absent-minus-english_translation,-0.2764651554968002,-0.3588533526294445,-0.19488775788842658
+eurlex,granite-278m,zh,38,1,es,hit10,absent-minus-original,-0.34210526315789475,-0.5,-0.18421052631578946
+eurlex,granite-278m,zh,38,1,es,hit10,absent-minus-english_translation,-0.39473684210526316,-0.5526315789473685,-0.23684210526315788
+eurlex,granite-278m,zh,38,1,es,recall10,absent-minus-original,-0.24342105263157895,-0.3355263157894737,-0.15789473684210525
+eurlex,granite-278m,zh,38,1,es,recall10,absent-minus-english_translation,-0.2894736842105263,-0.375,-0.20394736842105263
+eurlex,granite-278m,zh,51,1,fr,ndcg10,absent-minus-original,-0.13684586275853913,-0.21379438520449956,-0.06416529808117362
+eurlex,granite-278m,zh,51,1,fr,ndcg10,absent-minus-english_translation,-0.15716035485141946,-0.23798726048870547,-0.08178467876152255
+eurlex,granite-278m,zh,51,1,fr,hit10,absent-minus-original,-0.23529411764705882,-0.37254901960784315,-0.11764705882352941
+eurlex,granite-278m,zh,51,1,fr,hit10,absent-minus-english_translation,-0.2549019607843137,-0.39215686274509803,-0.13725490196078433
+eurlex,granite-278m,zh,51,1,fr,recall10,absent-minus-original,-0.1323529411764706,-0.21568627450980393,-0.05392156862745098
+eurlex,granite-278m,zh,51,1,fr,recall10,absent-minus-english_translation,-0.14215686274509803,-0.23529411764705882,-0.058823529411764705
+eurlex,nomic-v2-moe,zh,50,1,de,ndcg10,absent-minus-original,-0.07713818964025895,-0.1344315252700135,-0.019832982171691486
+eurlex,nomic-v2-moe,zh,50,1,de,ndcg10,absent-minus-english_translation,-0.08657746920263742,-0.13602994390916004,-0.04142806677290789
+eurlex,nomic-v2-moe,zh,50,1,de,hit10,absent-minus-original,-0.24,-0.38,-0.1
+eurlex,nomic-v2-moe,zh,50,1,de,hit10,absent-minus-english_translation,-0.18,-0.3,-0.06
+eurlex,nomic-v2-moe,zh,50,1,de,recall10,absent-minus-original,-0.015,-0.09,0.055
+eurlex,nomic-v2-moe,zh,50,1,de,recall10,absent-minus-english_translation,-0.065,-0.125,-0.005
+eurlex,nomic-v2-moe,zh,55,1,en,ndcg10,absent-minus-original,-0.1207213932622966,-0.2001444361823835,-0.040954527597177465
+eurlex,nomic-v2-moe,zh,55,1,en,ndcg10,absent-minus-english_translation,-0.1207213932622966,-0.2001444361823835,-0.040954527597177465
+eurlex,nomic-v2-moe,zh,55,1,en,hit10,absent-minus-original,-0.2,-0.32727272727272727,-0.09090909090909091
+eurlex,nomic-v2-moe,zh,55,1,en,hit10,absent-minus-english_translation,-0.2,-0.32727272727272727,-0.09090909090909091
+eurlex,nomic-v2-moe,zh,55,1,en,recall10,absent-minus-original,-0.08636363636363636,-0.1590909090909091,-0.00909090909090909
+eurlex,nomic-v2-moe,zh,55,1,en,recall10,absent-minus-english_translation,-0.08636363636363636,-0.1590909090909091,-0.00909090909090909
+eurlex,nomic-v2-moe,zh,38,1,es,ndcg10,absent-minus-original,-0.08721017686377555,-0.159913413181323,-0.013556622513997875
+eurlex,nomic-v2-moe,zh,38,1,es,ndcg10,absent-minus-english_translation,-0.08388772482608149,-0.17491304449646336,0.007286746100673328
+eurlex,nomic-v2-moe,zh,38,1,es,hit10,absent-minus-original,-0.21052631578947367,-0.34210526315789475,-0.10526315789473684
+eurlex,nomic-v2-moe,zh,38,1,es,hit10,absent-minus-english_translation,-0.21052631578947367,-0.34210526315789475,-0.10526315789473684
+eurlex,nomic-v2-moe,zh,38,1,es,recall10,absent-minus-original,-0.039473684210526314,-0.1118421052631579,0.03289473684210526
+eurlex,nomic-v2-moe,zh,38,1,es,recall10,absent-minus-english_translation,-0.046052631578947366,-0.13815789473684212,0.05263157894736842
+eurlex,nomic-v2-moe,zh,51,1,fr,ndcg10,absent-minus-original,-0.09891726754567212,-0.17631612027126883,-0.02461419806500089
+eurlex,nomic-v2-moe,zh,51,1,fr,ndcg10,absent-minus-english_translation,-0.1706274081616741,-0.24584660262530839,-0.09885372599661446
+eurlex,nomic-v2-moe,zh,51,1,fr,hit10,absent-minus-original,-0.29411764705882354,-0.43137254901960786,-0.1568627450980392
+eurlex,nomic-v2-moe,zh,51,1,fr,hit10,absent-minus-english_translation,-0.3137254901960784,-0.45098039215686275,-0.19607843137254902
+eurlex,nomic-v2-moe,zh,51,1,fr,recall10,absent-minus-original,-0.06862745098039216,-0.15196078431372548,0.014705882352941176
+eurlex,nomic-v2-moe,zh,51,1,fr,recall10,absent-minus-english_translation,-0.13725490196078433,-0.21568627450980393,-0.06372549019607843
+eurlex,qwen3-0.6B,zh,50,1,de,ndcg10,absent-minus-original,0.04461805140586421,-0.011454626797014459,0.10333315862601221
+eurlex,qwen3-0.6B,zh,50,1,de,ndcg10,absent-minus-english_translation,0.028680952866411143,-0.015526311584402815,0.07932701054101182
+eurlex,qwen3-0.6B,zh,50,1,de,hit10,absent-minus-original,-0.1,-0.22,0.02
+eurlex,qwen3-0.6B,zh,50,1,de,hit10,absent-minus-english_translation,0.0,-0.1,0.1
+eurlex,qwen3-0.6B,zh,50,1,de,recall10,absent-minus-original,0.055,-0.005,0.115
+eurlex,qwen3-0.6B,zh,50,1,de,recall10,absent-minus-english_translation,0.03,-0.02,0.08
+eurlex,qwen3-0.6B,zh,55,1,en,ndcg10,absent-minus-original,-0.0020765267918818205,-0.05248742309988298,0.0510783424116807
+eurlex,qwen3-0.6B,zh,55,1,en,ndcg10,absent-minus-english_translation,-0.0020765267918818205,-0.05248742309988298,0.0510783424116807
+eurlex,qwen3-0.6B,zh,55,1,en,hit10,absent-minus-original,-0.09090909090909091,-0.18181818181818182,0.0
+eurlex,qwen3-0.6B,zh,55,1,en,hit10,absent-minus-english_translation,-0.09090909090909091,-0.18181818181818182,0.0
+eurlex,qwen3-0.6B,zh,55,1,en,recall10,absent-minus-original,0.01818181818181818,-0.02727272727272727,0.06818181818181818
+eurlex,qwen3-0.6B,zh,55,1,en,recall10,absent-minus-english_translation,0.01818181818181818,-0.02727272727272727,0.06818181818181818
+eurlex,qwen3-0.6B,zh,38,1,es,ndcg10,absent-minus-original,0.04934046883891606,-0.021466339217338044,0.11606904289800318
+eurlex,qwen3-0.6B,zh,38,1,es,ndcg10,absent-minus-english_translation,0.04952220326725778,-0.0268862787910067,0.12763364447583858
+eurlex,qwen3-0.6B,zh,38,1,es,hit10,absent-minus-original,-0.05263157894736842,-0.15789473684210525,0.05263157894736842
+eurlex,qwen3-0.6B,zh,38,1,es,hit10,absent-minus-english_translation,-0.05263157894736842,-0.18421052631578946,0.05328947368420095
+eurlex,qwen3-0.6B,zh,38,1,es,recall10,absent-minus-original,0.046052631578947366,-0.039473684210526314,0.125
+eurlex,qwen3-0.6B,zh,38,1,es,recall10,absent-minus-english_translation,0.07236842105263158,-0.006578947368421052,0.1513157894736842
+eurlex,qwen3-0.6B,zh,51,1,fr,ndcg10,absent-minus-original,0.023614169145646405,-0.04577980362268004,0.09923466886670569
+eurlex,qwen3-0.6B,zh,51,1,fr,ndcg10,absent-minus-english_translation,-0.06014529631750161,-0.11299308746682055,-0.009656019831898885
+eurlex,qwen3-0.6B,zh,51,1,fr,hit10,absent-minus-original,-0.1568627450980392,-0.27450980392156865,-0.058823529411764705
+eurlex,qwen3-0.6B,zh,51,1,fr,hit10,absent-minus-english_translation,-0.13725490196078433,-0.23529411764705882,-0.058823529411764705
+eurlex,qwen3-0.6B,zh,51,1,fr,recall10,absent-minus-original,0.03431372549019608,-0.0392156862745098,0.11764705882352941
+eurlex,qwen3-0.6B,zh,51,1,fr,recall10,absent-minus-english_translation,-0.0392156862745098,-0.08823529411764706,0.00980392156862745
+un,All fixed models,de,68,8,en,ndcg10,absent-minus-original,0.013512213487490874,-0.004434178112899724,0.03281196240804676
+un,All fixed models,de,68,8,en,ndcg10,absent-minus-english_translation,0.013512213487490874,-0.004434178112899724,0.03281196240804676
+un,All fixed models,de,68,8,en,hit10,absent-minus-original,-0.08455882352941177,-0.125,-0.04411764705882353
+un,All fixed models,de,68,8,en,hit10,absent-minus-english_translation,-0.08455882352941177,-0.125,-0.04411764705882353
+un,All fixed models,de,68,8,en,recall10,absent-minus-original,0.017922794117647058,-0.002768841911764702,0.03952205882352941
+un,All fixed models,de,68,8,en,recall10,absent-minus-english_translation,0.017922794117647058,-0.002768841911764702,0.03952205882352941
+un,All fixed models,de,57,8,es,ndcg10,absent-minus-original,0.0020204318296493263,-0.02206243319768051,0.026277755241437543
+un,All fixed models,de,57,8,es,ndcg10,absent-minus-english_translation,0.001999058368487466,-0.01906462022657496,0.02298505625285816
+un,All fixed models,de,57,8,es,hit10,absent-minus-original,-0.07456140350877193,-0.13157894736842105,-0.02412280701754386
+un,All fixed models,de,57,8,es,hit10,absent-minus-english_translation,-0.05263157894736842,-0.10307017543859649,-0.0043859649122807015
+un,All fixed models,de,57,8,es,recall10,absent-minus-original,0.02631578947368421,-0.0005482456140350877,0.0537280701754386
+un,All fixed models,de,57,8,es,recall10,absent-minus-english_translation,0.010416666666666666,-0.014802631578947368,0.03453947368421053
+un,All fixed models,de,72,8,fr,ndcg10,absent-minus-original,0.025731981285291906,0.006768276033031094,0.04486662971829694
+un,All fixed models,de,72,8,fr,ndcg10,absent-minus-english_translation,0.002349946915425719,-0.016102041631497598,0.0207606638714216
+un,All fixed models,de,72,8,fr,hit10,absent-minus-original,-0.04861111111111111,-0.08159722222222222,-0.015625
+un,All fixed models,de,72,8,fr,hit10,absent-minus-english_translation,-0.07291666666666667,-0.1111111111111111,-0.034722222222222224
+un,All fixed models,de,72,8,fr,recall10,absent-minus-original,0.036458333333333336,0.016059027777777776,0.057291666666666664
+un,All fixed models,de,72,8,fr,recall10,absent-minus-english_translation,0.006076388888888889,-0.013454861111111112,0.025607638888888888
+un,All fixed models,de,50,8,zh,ndcg10,absent-minus-original,0.02999942383247285,-0.0030916878300364923,0.0644467829828701
+un,All fixed models,de,50,8,zh,ndcg10,absent-minus-english_translation,-0.013113565923040861,-0.029199107111904113,0.002898029409052562
+un,All fixed models,de,50,8,zh,hit10,absent-minus-original,-0.0525,-0.125,0.0175
+un,All fixed models,de,50,8,zh,hit10,absent-minus-english_translation,-0.0625,-0.115,-0.015
+un,All fixed models,de,50,8,zh,recall10,absent-minus-original,0.06375,0.0275,0.101875
+un,All fixed models,de,50,8,zh,recall10,absent-minus-english_translation,-0.004375,-0.02375,0.014375
+un,LaBSE,de,68,1,en,ndcg10,absent-minus-original,0.015341353476898871,-0.011425353021526885,0.04183071785438041
+un,LaBSE,de,68,1,en,ndcg10,absent-minus-english_translation,0.015341353476898871,-0.011425353021526885,0.04183071785438041
+un,LaBSE,de,68,1,en,hit10,absent-minus-original,0.04411764705882353,-0.014705882352941176,0.11764705882352941
+un,LaBSE,de,68,1,en,hit10,absent-minus-english_translation,0.04411764705882353,-0.014705882352941176,0.11764705882352941
+un,LaBSE,de,68,1,en,recall10,absent-minus-original,0.007352941176470588,-0.01838235294117647,0.03308823529411765
+un,LaBSE,de,68,1,en,recall10,absent-minus-english_translation,0.007352941176470588,-0.01838235294117647,0.03308823529411765
+un,LaBSE,de,57,1,es,ndcg10,absent-minus-original,-0.025911566532693466,-0.05263045601262448,-0.003057005712695491
+un,LaBSE,de,57,1,es,ndcg10,absent-minus-english_translation,0.0031007317123919473,-0.020794821409375108,0.026171517509937247
+un,LaBSE,de,57,1,es,hit10,absent-minus-original,-0.10526315789473684,-0.19298245614035087,-0.03508771929824561
+un,LaBSE,de,57,1,es,hit10,absent-minus-english_translation,0.0,-0.10526315789473684,0.10526315789473684
+un,LaBSE,de,57,1,es,recall10,absent-minus-original,-0.03508771929824561,-0.06140350877192982,-0.013157894736842105
+un,LaBSE,de,57,1,es,recall10,absent-minus-english_translation,-0.0043859649122807015,-0.03070175438596491,0.021929824561403508
+un,LaBSE,de,72,1,fr,ndcg10,absent-minus-original,-0.002886096417582969,-0.018779282577356143,0.013146376039455537
+un,LaBSE,de,72,1,fr,ndcg10,absent-minus-english_translation,-0.0018740142458646876,-0.037362743054404256,0.03456214593725898
+un,LaBSE,de,72,1,fr,hit10,absent-minus-original,-0.041666666666666664,-0.1111111111111111,0.027777777777777776
+un,LaBSE,de,72,1,fr,hit10,absent-minus-english_translation,-0.06944444444444445,-0.18055555555555555,0.027777777777777776
+un,LaBSE,de,72,1,fr,recall10,absent-minus-original,0.0,-0.020833333333333332,0.020833333333333332
+un,LaBSE,de,72,1,fr,recall10,absent-minus-english_translation,-0.017361111111111112,-0.052083333333333336,0.017361111111111112
+un,LaBSE,de,50,1,zh,ndcg10,absent-minus-original,-0.026823710719444106,-0.06783642176867072,0.01050659839473494
+un,LaBSE,de,50,1,zh,ndcg10,absent-minus-english_translation,-0.0261218296213516,-0.0629563261865226,0.008807427220779292
+un,LaBSE,de,50,1,zh,hit10,absent-minus-original,-0.02,-0.14,0.12
+un,LaBSE,de,50,1,zh,hit10,absent-minus-english_translation,-0.06,-0.2,0.06
+un,LaBSE,de,50,1,zh,recall10,absent-minus-original,-0.03,-0.08,0.015
+un,LaBSE,de,50,1,zh,recall10,absent-minus-english_translation,-0.03,-0.075,0.01
+un,SapBERT,de,68,1,en,ndcg10,absent-minus-original,-0.013763118284666719,-0.02912311305335406,-0.002413680746065734
+un,SapBERT,de,68,1,en,ndcg10,absent-minus-english_translation,-0.013763118284666719,-0.02912311305335406,-0.002413680746065734
+un,SapBERT,de,68,1,en,hit10,absent-minus-original,-0.07352941176470588,-0.14705882352941177,-0.014705882352941176
+un,SapBERT,de,68,1,en,hit10,absent-minus-english_translation,-0.07352941176470588,-0.14705882352941177,-0.014705882352941176
+un,SapBERT,de,68,1,en,recall10,absent-minus-original,-0.022058823529411766,-0.04044117647058824,-0.007352941176470588
+un,SapBERT,de,68,1,en,recall10,absent-minus-english_translation,-0.022058823529411766,-0.04044117647058824,-0.007352941176470588
+un,SapBERT,de,57,1,es,ndcg10,absent-minus-original,-0.025177682581381262,-0.04992888315295325,-0.004779957122819677
+un,SapBERT,de,57,1,es,ndcg10,absent-minus-english_translation,-0.0192534023448249,-0.037866190211404825,-0.003670460847442729
+un,SapBERT,de,57,1,es,hit10,absent-minus-original,-0.08771929824561403,-0.19298245614035087,0.017543859649122806
+un,SapBERT,de,57,1,es,hit10,absent-minus-english_translation,-0.07017543859649122,-0.15789473684210525,0.017543859649122806
+un,SapBERT,de,57,1,es,recall10,absent-minus-original,-0.02631578947368421,-0.05701754385964912,0.0
+un,SapBERT,de,57,1,es,recall10,absent-minus-english_translation,-0.021929824561403508,-0.043859649122807015,0.0
+un,SapBERT,de,72,1,fr,ndcg10,absent-minus-original,-0.010663517337083032,-0.025067164184969598,0.0016359876710594116
+un,SapBERT,de,72,1,fr,ndcg10,absent-minus-english_translation,-0.011182059139339435,-0.024787260046964188,0.00026976902416407504
+un,SapBERT,de,72,1,fr,hit10,absent-minus-original,-0.041666666666666664,-0.1111111111111111,0.027777777777777776
+un,SapBERT,de,72,1,fr,hit10,absent-minus-english_translation,-0.05555555555555555,-0.1388888888888889,0.013888888888888888
+un,SapBERT,de,72,1,fr,recall10,absent-minus-original,-0.010416666666666666,-0.027777777777777776,0.006944444444444444
+un,SapBERT,de,72,1,fr,recall10,absent-minus-english_translation,-0.013888888888888888,-0.034722222222222224,0.003472222222222222
+un,SapBERT,de,50,1,zh,ndcg10,absent-minus-original,-0.03215149848955066,-0.06490882676049406,-0.0003203405963269559
+un,SapBERT,de,50,1,zh,ndcg10,absent-minus-english_translation,-0.008483307126488586,-0.042017466628905265,0.021361519107410753
+un,SapBERT,de,50,1,zh,hit10,absent-minus-original,-0.08,-0.18,0.0
+un,SapBERT,de,50,1,zh,hit10,absent-minus-english_translation,0.02,-0.06,0.1
+un,SapBERT,de,50,1,zh,recall10,absent-minus-original,-0.03,-0.06,0.0
+un,SapBERT,de,50,1,zh,recall10,absent-minus-english_translation,-0.01,-0.04,0.02
+un,bge-m3,de,68,1,en,ndcg10,absent-minus-original,0.025224233603665075,-0.00519611874581903,0.05654794750451364
+un,bge-m3,de,68,1,en,ndcg10,absent-minus-english_translation,0.025224233603665075,-0.00519611874581903,0.05654794750451364
+un,bge-m3,de,68,1,en,hit10,absent-minus-original,-0.058823529411764705,-0.14705882352941177,0.029411764705882353
+un,bge-m3,de,68,1,en,hit10,absent-minus-english_translation,-0.058823529411764705,-0.14705882352941177,0.029411764705882353
+un,bge-m3,de,68,1,en,recall10,absent-minus-original,0.025735294117647058,-0.014705882352941176,0.0661764705882353
+un,bge-m3,de,68,1,en,recall10,absent-minus-english_translation,0.025735294117647058,-0.014705882352941176,0.0661764705882353
+un,bge-m3,de,57,1,es,ndcg10,absent-minus-original,0.03944365636175629,-0.025100924376865626,0.10498724809271452
+un,bge-m3,de,57,1,es,ndcg10,absent-minus-english_translation,0.022513404689797855,-0.026877103574341962,0.06986715767175619
+un,bge-m3,de,57,1,es,hit10,absent-minus-original,-0.08771929824561403,-0.19298245614035087,0.017543859649122806
+un,bge-m3,de,57,1,es,hit10,absent-minus-english_translation,-0.07017543859649122,-0.17543859649122806,0.017543859649122806
+un,bge-m3,de,57,1,es,recall10,absent-minus-original,0.043859649122807015,-0.021929824561403508,0.10964912280701754
+un,bge-m3,de,57,1,es,recall10,absent-minus-english_translation,0.017543859649122806,-0.04824561403508772,0.07894736842105263
+un,bge-m3,de,72,1,fr,ndcg10,absent-minus-original,0.00239324025902679,-0.039481334076827475,0.04546069197237141
+un,bge-m3,de,72,1,fr,ndcg10,absent-minus-english_translation,0.019385742318739713,-0.012309357181555203,0.05125144457917464
+un,bge-m3,de,72,1,fr,hit10,absent-minus-original,-0.027777777777777776,-0.09722222222222222,0.041666666666666664
+un,bge-m3,de,72,1,fr,hit10,absent-minus-english_translation,-0.027777777777777776,-0.09722222222222222,0.041666666666666664
+un,bge-m3,de,72,1,fr,recall10,absent-minus-original,0.0,-0.04513888888888889,0.04513888888888889
+un,bge-m3,de,72,1,fr,recall10,absent-minus-english_translation,0.020833333333333332,-0.020833333333333332,0.0625
+un,bge-m3,de,50,1,zh,ndcg10,absent-minus-original,0.04116121641779379,-0.021035992696098717,0.10690350532167443
+un,bge-m3,de,50,1,zh,ndcg10,absent-minus-english_translation,0.01040044038004801,-0.030989607200314587,0.051634402049623294
+un,bge-m3,de,50,1,zh,hit10,absent-minus-original,-0.08,-0.24,0.08
+un,bge-m3,de,50,1,zh,hit10,absent-minus-english_translation,0.02,-0.08,0.12
+un,bge-m3,de,50,1,zh,recall10,absent-minus-original,0.1,0.025,0.18
+un,bge-m3,de,50,1,zh,recall10,absent-minus-english_translation,0.015,-0.025,0.055
+un,e5-large-instruct,de,68,1,en,ndcg10,absent-minus-original,0.041886277807999715,-0.006954356786151756,0.09187641847116082
+un,e5-large-instruct,de,68,1,en,ndcg10,absent-minus-english_translation,0.041886277807999715,-0.006954356786151756,0.09187641847116082
+un,e5-large-instruct,de,68,1,en,hit10,absent-minus-original,-0.1323529411764706,-0.25,-0.014705882352941176
+un,e5-large-instruct,de,68,1,en,hit10,absent-minus-english_translation,-0.1323529411764706,-0.25,-0.014705882352941176
+un,e5-large-instruct,de,68,1,en,recall10,absent-minus-original,0.08455882352941177,0.025735294117647058,0.14338235294117646
+un,e5-large-instruct,de,68,1,en,recall10,absent-minus-english_translation,0.08455882352941177,0.025735294117647058,0.14338235294117646
+un,e5-large-instruct,de,57,1,es,ndcg10,absent-minus-original,-0.00044193034460125714,-0.04547743818569291,0.047214509973171365
+un,e5-large-instruct,de,57,1,es,ndcg10,absent-minus-english_translation,0.025118505221965313,-0.016811210870461772,0.06735231521147331
+un,e5-large-instruct,de,57,1,es,hit10,absent-minus-original,-0.12280701754385964,-0.22807017543859648,-0.017543859649122806
+un,e5-large-instruct,de,57,1,es,hit10,absent-minus-english_translation,-0.07017543859649122,-0.19298245614035087,0.05263157894736842
+un,e5-large-instruct,de,57,1,es,recall10,absent-minus-original,0.04824561403508772,0.0,0.09649122807017543
+un,e5-large-instruct,de,57,1,es,recall10,absent-minus-english_translation,0.06140350877192982,0.013157894736842105,0.10964912280701754
+un,e5-large-instruct,de,72,1,fr,ndcg10,absent-minus-original,0.07335861596903591,0.037547584731161564,0.11085428856881545
+un,e5-large-instruct,de,72,1,fr,ndcg10,absent-minus-english_translation,0.04760424131341827,0.0034634618274837978,0.09237712081492583
+un,e5-large-instruct,de,72,1,fr,hit10,absent-minus-original,-0.013888888888888888,-0.1111111111111111,0.08333333333333333
+un,e5-large-instruct,de,72,1,fr,hit10,absent-minus-english_translation,-0.05555555555555555,-0.1527777777777778,0.041666666666666664
+un,e5-large-instruct,de,72,1,fr,recall10,absent-minus-original,0.09027777777777778,0.041666666666666664,0.1388888888888889
+un,e5-large-instruct,de,72,1,fr,recall10,absent-minus-english_translation,0.0798611111111111,0.03125,0.13194444444444445
+un,e5-large-instruct,de,50,1,zh,ndcg10,absent-minus-original,0.037079380013415104,-0.025303464344123876,0.10135086423463928
+un,e5-large-instruct,de,50,1,zh,ndcg10,absent-minus-english_translation,0.03400193656941912,-0.009092709079277384,0.07794990450876614
+un,e5-large-instruct,de,50,1,zh,hit10,absent-minus-original,0.0,-0.16,0.16
+un,e5-large-instruct,de,50,1,zh,hit10,absent-minus-english_translation,-0.1,-0.24,0.04
+un,e5-large-instruct,de,50,1,zh,recall10,absent-minus-original,0.085,0.025,0.145
+un,e5-large-instruct,de,50,1,zh,recall10,absent-minus-english_translation,0.055,0.0,0.115
+un,embeddinggemma,de,68,1,en,ndcg10,absent-minus-original,0.028515745362759873,-0.016924645487948017,0.07756806643841756
+un,embeddinggemma,de,68,1,en,ndcg10,absent-minus-english_translation,0.028515745362759873,-0.016924645487948017,0.07756806643841756
+un,embeddinggemma,de,68,1,en,hit10,absent-minus-original,-0.10294117647058823,-0.20588235294117646,0.0
+un,embeddinggemma,de,68,1,en,hit10,absent-minus-english_translation,-0.10294117647058823,-0.20588235294117646,0.0
+un,embeddinggemma,de,68,1,en,recall10,absent-minus-original,0.04044117647058824,-0.01838235294117647,0.10294117647058823
+un,embeddinggemma,de,68,1,en,recall10,absent-minus-english_translation,0.04044117647058824,-0.01838235294117647,0.10294117647058823
+un,embeddinggemma,de,57,1,es,ndcg10,absent-minus-original,0.04023076313668448,-0.013622141851624267,0.09587463243185557
+un,embeddinggemma,de,57,1,es,ndcg10,absent-minus-english_translation,0.006676864088157615,-0.046594731697877444,0.05835601024999038
+un,embeddinggemma,de,57,1,es,hit10,absent-minus-original,-0.03508771929824561,-0.17543859649122806,0.10526315789473684
+un,embeddinggemma,de,57,1,es,hit10,absent-minus-english_translation,-0.07017543859649122,-0.15789473684210525,0.017543859649122806
+un,embeddinggemma,de,57,1,es,recall10,absent-minus-original,0.10087719298245613,0.03508771929824561,0.16666666666666666
+un,embeddinggemma,de,57,1,es,recall10,absent-minus-english_translation,0.013157894736842105,-0.043859649122807015,0.07017543859649122
+un,embeddinggemma,de,72,1,fr,ndcg10,absent-minus-original,0.07566554386147842,0.032367521457269545,0.11838512227956098
+un,embeddinggemma,de,72,1,fr,ndcg10,absent-minus-english_translation,0.02833060474459335,-0.007946787491732794,0.06288324688037415
+un,embeddinggemma,de,72,1,fr,hit10,absent-minus-original,0.0,-0.06944444444444445,0.06944444444444445
+un,embeddinggemma,de,72,1,fr,hit10,absent-minus-english_translation,-0.027777777777777776,-0.09722222222222222,0.041666666666666664
+un,embeddinggemma,de,72,1,fr,recall10,absent-minus-original,0.08680555555555555,0.034722222222222224,0.1388888888888889
+un,embeddinggemma,de,72,1,fr,recall10,absent-minus-english_translation,0.03819444444444445,-0.006944444444444444,0.0798611111111111
+un,embeddinggemma,de,50,1,zh,ndcg10,absent-minus-original,0.10839208446687568,0.039299455794368075,0.1814674257261234
+un,embeddinggemma,de,50,1,zh,ndcg10,absent-minus-english_translation,0.03432180308041885,-0.014978307673577638,0.08670011494235065
+un,embeddinggemma,de,50,1,zh,hit10,absent-minus-original,-0.18,-0.3,-0.06
+un,embeddinggemma,de,50,1,zh,hit10,absent-minus-english_translation,-0.14,-0.24,-0.06
+un,embeddinggemma,de,50,1,zh,recall10,absent-minus-original,0.15,0.065,0.24
+un,embeddinggemma,de,50,1,zh,recall10,absent-minus-english_translation,0.035,-0.025,0.1
+un,granite-278m,de,68,1,en,ndcg10,absent-minus-original,-0.01501173893328233,-0.0536136213753443,0.022458587842355528
+un,granite-278m,de,68,1,en,ndcg10,absent-minus-english_translation,-0.01501173893328233,-0.0536136213753443,0.022458587842355528
+un,granite-278m,de,68,1,en,hit10,absent-minus-original,-0.08823529411764706,-0.17647058823529413,-0.014705882352941176
+un,granite-278m,de,68,1,en,hit10,absent-minus-english_translation,-0.08823529411764706,-0.17647058823529413,-0.014705882352941176
+un,granite-278m,de,68,1,en,recall10,absent-minus-original,-0.03676470588235294,-0.08088235294117647,0.003676470588235294
+un,granite-278m,de,68,1,en,recall10,absent-minus-english_translation,-0.03676470588235294,-0.08088235294117647,0.003676470588235294
+un,granite-278m,de,57,1,es,ndcg10,absent-minus-original,0.010485954407199998,-0.027906037687083093,0.05397916070301987
+un,granite-278m,de,57,1,es,ndcg10,absent-minus-english_translation,0.02262382076649603,-0.02261350424917896,0.0706770709793599
+un,granite-278m,de,57,1,es,hit10,absent-minus-original,-0.03508771929824561,-0.12280701754385964,0.05263157894736842
+un,granite-278m,de,57,1,es,hit10,absent-minus-english_translation,0.0,-0.10526315789473684,0.08771929824561403
+un,granite-278m,de,57,1,es,recall10,absent-minus-original,0.03508771929824561,-0.017543859649122806,0.09210526315789473
+un,granite-278m,de,57,1,es,recall10,absent-minus-english_translation,0.04824561403508772,-0.017543859649122806,0.11842105263157894
+un,granite-278m,de,72,1,fr,ndcg10,absent-minus-original,0.005788889310682126,-0.042885872962294805,0.05219477260513421
+un,granite-278m,de,72,1,fr,ndcg10,absent-minus-english_translation,-0.03836953921333415,-0.0844470088791012,0.005917902678569048
+un,granite-278m,de,72,1,fr,hit10,absent-minus-original,-0.09722222222222222,-0.19444444444444445,0.0
+un,granite-278m,de,72,1,fr,hit10,absent-minus-english_translation,-0.1111111111111111,-0.2222222222222222,0.0
+un,granite-278m,de,72,1,fr,recall10,absent-minus-original,0.020833333333333332,-0.03819444444444445,0.0763888888888889
+un,granite-278m,de,72,1,fr,recall10,absent-minus-english_translation,-0.027777777777777776,-0.0798611111111111,0.027777777777777776
+un,granite-278m,de,50,1,zh,ndcg10,absent-minus-original,0.11717274982435337,0.053171020398926586,0.18070557989912492
+un,granite-278m,de,50,1,zh,ndcg10,absent-minus-english_translation,-0.04586110260939475,-0.10389315259431874,0.014167599457494956
+un,granite-278m,de,50,1,zh,hit10,absent-minus-original,0.16,0.02,0.3
+un,granite-278m,de,50,1,zh,hit10,absent-minus-english_translation,-0.02,-0.12,0.08
+un,granite-278m,de,50,1,zh,recall10,absent-minus-original,0.175,0.1,0.25
+un,granite-278m,de,50,1,zh,recall10,absent-minus-english_translation,-0.03,-0.095,0.035
+un,nomic-v2-moe,de,68,1,en,ndcg10,absent-minus-original,0.025416038397458512,-0.017928296492791977,0.07035855197235276
+un,nomic-v2-moe,de,68,1,en,ndcg10,absent-minus-english_translation,0.025416038397458512,-0.017928296492791977,0.07035855197235276
+un,nomic-v2-moe,de,68,1,en,hit10,absent-minus-original,-0.22058823529411764,-0.3235294117647059,-0.1323529411764706
+un,nomic-v2-moe,de,68,1,en,hit10,absent-minus-english_translation,-0.22058823529411764,-0.3235294117647059,-0.1323529411764706
+un,nomic-v2-moe,de,68,1,en,recall10,absent-minus-original,0.03676470588235294,-0.01838235294117647,0.09191176470588236
+un,nomic-v2-moe,de,68,1,en,recall10,absent-minus-english_translation,0.03676470588235294,-0.01838235294117647,0.09191176470588236
+un,nomic-v2-moe,de,57,1,es,ndcg10,absent-minus-original,0.002634320169339303,-0.04665562471353559,0.050886790018017256
+un,nomic-v2-moe,de,57,1,es,ndcg10,absent-minus-english_translation,-0.0069786682589157885,-0.05238711799449049,0.0386744894773061
+un,nomic-v2-moe,de,57,1,es,hit10,absent-minus-original,-0.03508771929824561,-0.14035087719298245,0.07017543859649122
+un,nomic-v2-moe,de,57,1,es,hit10,absent-minus-english_translation,-0.08771929824561403,-0.19298245614035087,0.017543859649122806
+un,nomic-v2-moe,de,57,1,es,recall10,absent-minus-original,0.043859649122807015,-0.017543859649122806,0.10964912280701754
+un,nomic-v2-moe,de,57,1,es,recall10,absent-minus-english_translation,0.017543859649122806,-0.039473684210526314,0.07456140350877193
+un,nomic-v2-moe,de,72,1,fr,ndcg10,absent-minus-original,0.02927559122179894,-0.021977683826575195,0.08194696690679687
+un,nomic-v2-moe,de,72,1,fr,ndcg10,absent-minus-english_translation,0.014793204755481022,-0.02617985121593925,0.05763145199957383
+un,nomic-v2-moe,de,72,1,fr,hit10,absent-minus-original,0.0,-0.09722222222222222,0.09722222222222222
+un,nomic-v2-moe,de,72,1,fr,hit10,absent-minus-english_translation,-0.06944444444444445,-0.1527777777777778,0.013888888888888888
+un,nomic-v2-moe,de,72,1,fr,recall10,absent-minus-original,0.052083333333333336,0.0,0.1076388888888889
+un,nomic-v2-moe,de,72,1,fr,recall10,absent-minus-english_translation,0.024305555555555556,-0.017361111111111112,0.06597222222222222
+un,nomic-v2-moe,de,50,1,zh,ndcg10,absent-minus-original,0.04324655263908351,-0.02125915917709201,0.110709367178147
+un,nomic-v2-moe,de,50,1,zh,ndcg10,absent-minus-english_translation,-0.04183312817668933,-0.08267443015118944,0.000587100844449642
+un,nomic-v2-moe,de,50,1,zh,hit10,absent-minus-original,-0.02,-0.18,0.14
+un,nomic-v2-moe,de,50,1,zh,hit10,absent-minus-english_translation,-0.14,-0.28,0.0
+un,nomic-v2-moe,de,50,1,zh,recall10,absent-minus-original,0.08,0.01,0.15
+un,nomic-v2-moe,de,50,1,zh,recall10,absent-minus-english_translation,-0.03,-0.08,0.02
+un,qwen3-0.6B,de,68,1,en,ndcg10,absent-minus-original,0.0004889164690940212,-0.03948824094611135,0.042257566510025345
+un,qwen3-0.6B,de,68,1,en,ndcg10,absent-minus-english_translation,0.0004889164690940212,-0.03948824094611135,0.042257566510025345
+un,qwen3-0.6B,de,68,1,en,hit10,absent-minus-original,-0.04411764705882353,-0.14705882352941177,0.07352941176470588
+un,qwen3-0.6B,de,68,1,en,hit10,absent-minus-english_translation,-0.04411764705882353,-0.14705882352941177,0.07352941176470588
+un,qwen3-0.6B,de,68,1,en,recall10,absent-minus-original,0.007352941176470588,-0.04044117647058824,0.05514705882352941
+un,qwen3-0.6B,de,68,1,en,recall10,absent-minus-english_translation,0.007352941176470588,-0.04044117647058824,0.05514705882352941
+un,qwen3-0.6B,de,57,1,es,ndcg10,absent-minus-original,-0.025100059979109492,-0.0583609054527955,0.007028744946406765
+un,qwen3-0.6B,de,57,1,es,ndcg10,absent-minus-english_translation,-0.03780878892716836,-0.07909987240025403,-0.00012949049510179038
+un,qwen3-0.6B,de,57,1,es,hit10,absent-minus-original,-0.08771929824561403,-0.17543859649122806,0.0
+un,qwen3-0.6B,de,57,1,es,hit10,absent-minus-english_translation,-0.05263157894736842,-0.15789473684210525,0.05263157894736842
+un,qwen3-0.6B,de,57,1,es,recall10,absent-minus-original,0.0,-0.043859649122807015,0.043859649122807015
+un,qwen3-0.6B,de,57,1,es,recall10,absent-minus-english_translation,-0.04824561403508772,-0.10087719298245613,0.0043859649122807015
+un,qwen3-0.6B,de,72,1,fr,ndcg10,absent-minus-original,0.03292358341497911,-0.017746656284994156,0.08421890115363151
+un,qwen3-0.6B,de,72,1,fr,ndcg10,absent-minus-english_translation,-0.0398886052102883,-0.08470600599950355,0.004812332027300446
+un,qwen3-0.6B,de,72,1,fr,hit10,absent-minus-original,-0.16666666666666666,-0.2777777777777778,-0.05555555555555555
+un,qwen3-0.6B,de,72,1,fr,hit10,absent-minus-english_translation,-0.16666666666666666,-0.2638888888888889,-0.06944444444444445
+un,qwen3-0.6B,de,72,1,fr,recall10,absent-minus-original,0.052083333333333336,-0.006944444444444444,0.1111111111111111
+un,qwen3-0.6B,de,72,1,fr,recall10,absent-minus-english_translation,-0.05555555555555555,-0.10416666666666667,-0.006944444444444444
+un,qwen3-0.6B,de,50,1,zh,ndcg10,absent-minus-original,-0.04808138349274388,-0.10284082470853176,0.009917633429037145
+un,qwen3-0.6B,de,50,1,zh,ndcg10,absent-minus-english_translation,-0.061333339880288607,-0.10695757511425125,-0.017593853334792863
+un,qwen3-0.6B,de,50,1,zh,hit10,absent-minus-original,-0.2,-0.32,-0.08
+un,qwen3-0.6B,de,50,1,zh,hit10,absent-minus-english_translation,-0.08,-0.2,0.02
+un,qwen3-0.6B,de,50,1,zh,recall10,absent-minus-original,-0.02,-0.075,0.04
+un,qwen3-0.6B,de,50,1,zh,recall10,absent-minus-english_translation,-0.04,-0.08,0.0

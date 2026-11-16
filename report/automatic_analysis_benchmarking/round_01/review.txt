@@ -1,0 +1,56 @@
+ROUND 1 — COVERAGE AND CONTROL CHOICE
+
+Question
+What can be compared, and what broad patterns require an explanation?
+
+Generated and visually inspected
+fig_01_mixed_landscape: three model-by-variant nDCG heatmaps.
+fig_02_cohort_coverage: original-query-language by searched-language cohorts.
+fig_03_control_choice_changes_conclusion: paired HyDE contrasts for two metrics.
+All three PNGs were opened and inspected. Labels and cells are legible, coverage
+gaps are shown as unavailable rather than zero performance. Inspection caught a
+color-scale saturation at -42.9 points; the difference scale was extended to
+plus/minus 45 points. Raw numbers are retained in the five CSV/LaTeX tables.
+
+Findings supported by these figures and tables
+1. The domain-average mixed nDCG values for original / translation / HyDE are:
+   chemistry .6049 / .5057 / .4590;
+   EUR-Lex   .4052 / .3858 / .4168;
+   UN        .2120 / .2097 / .1763.
+   Translation and HyDE numbers average five output languages; models are fixed
+   and equally weighted. This is a diagnostic average, not a selected-language
+   deployment or a claim about an optimal policy.
+2. HyDE beats translation on EUR-Lex for seven of eight models by nDCG, but some
+   of those improvements merely recover losses relative to the original query.
+   Example: chemistry E5 shows +0.3 nDCG points for HyDE over translation while
+   losing 27.0 points relative to the original. A translation-only control and
+   an original-query control answer different questions; both are necessary.
+3. LaBSE's EUR-Lex gain is unusually large (+13.5 nDCG points over translation),
+   whereas its chemistry change is negative (-7.0). This is not a universal
+   property of hypothetical passage generation or of weak retrievers.
+4. Output-language effects vary substantially within each row. Notably, German
+   translation is strong for several UN encoders despite German being absent
+   from the searched UN corpus and the selected UN query languages. This is an
+   observed pivot candidate, not evidence of a language-independent mechanism.
+5. The corpus is not a balanced five-by-five benchmark. EUR-Lex has no Chinese
+   target or selected Chinese questions; UN has no German target or selected
+   German questions. Chemistry has sparse accepted translation pairs, including
+   one cross-language cell with one question. Do not infer robust language-pair
+   effects from that cell or pool such cells as independent replications.
+
+What is missing / questions for Round 2
+- Would target-language-matched translation work better in genuinely
+  cross-language single-target search than the five-language mixed average?
+- Does HyDE add anything after holding its output language equal to the
+  translated-query control? Is the EUR-Lex benefit stable across languages?
+- Does the surprising UN German pivot improve finding the source, recovering
+  more language versions, or both? Is it consistent across original languages?
+- Is the original query unusually strong only because mixed search includes a
+  source version in the original language?
+
+Limitations carried forward
+These are exploratory results on score-selected synthetic questions. The audit
+found 26 identity-control discrepancies around duplicate-text near-ties, four
+models with different query/document encoder adapters, and nonuniform source
+granularity (abstract, legal article, whole UN document). No causal domain or
+novelty claim follows from the heatmaps. Missing evidence spans remain included.

@@ -1,0 +1,10 @@
+corpus,metric,n_queries,contrast,interpretation,estimate,ci_low,ci_high
+chemistry,ndcg10,197,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,-0.021337210368683458,-0.041870867969834163,-0.0001872997688142288
+chemistry,hit10,197,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,-0.00951776649746193,-0.031725888324873094,0.0133248730964467
+chemistry,recall10,197,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,-0.00951776649746193,-0.031725888324873094,0.0133248730964467
+eurlex,ndcg10,194,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,0.04977846893102395,0.029039786594687613,0.06955089930754317
+eurlex,hit10,194,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,0.04553264604810997,0.022766323024054985,0.06829896907216494
+eurlex,recall10,194,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,0.04553264604810997,0.022766323024054985,0.06829896907216494
+un,ndcg10,247,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,0.03719374163993629,0.021139328469551893,0.05395953871308846
+un,hit10,247,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,0.043184885290148446,0.019568151147098516,0.06646423751686908
+un,recall10,247,same-prefix-fixed-four-minus-changed-prefix-fixed-four,descriptive difference between fixed model sets; not causal prefix effect,0.043184885290148446,0.019568151147098516,0.06646423751686908

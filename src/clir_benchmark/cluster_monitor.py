@@ -143,6 +143,10 @@ def _expected_reports(job: dict, journal: dict, journal_path: Path) -> int:
         return len({"dense", "hybrid"} & baselines)
     if job["kind"] == "bm25":
         return 1
+    if job["kind"] == "rerank":
+        if baselines != {"rerank-dense"}:
+            raise ValidationError("Rerank cluster jobs currently require only rerank-dense")
+        return 1
     if job["kind"] != "variant-score":
         return 0
     # The plan records resolved output languages, including defaults derived from

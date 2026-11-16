@@ -1,0 +1,285 @@
+INDEPENDENT CLAIM-RISK REVIEW AFTER ACCEPTED ROUNDS 1 AND 2
+Reviewed 2026-11-15. No Round 4+ analysis or new benchmark execution performed.
+
+Materials inspected
+round_01/review.txt; round_02/review.txt and review_draft.txt;
+scripts/common.py; scripts/round01_landscape.py bootstrap call sites;
+scripts/round02_language_controls.py through its analysis functions;
+literature/review_notes.txt and claim_novelty_map.csv;
+audit/READ_ME.txt, comparison_integrity_audit.json, cohort_schema_audit.json,
+encoder_role_audit.json, identity_control_diagnosis.json, source_granularity.json,
+quality_audit_flags.json; data/validation.json; selected_queries.parquet metadata.
+Existing audit summaries were inspected, not independently recomputed from every
+raw ranking. This review adds claim constraints, not a new experiment.
+
+Strongest defensible contribution framing at this stage
+
+A controlled empirical diagnosis of dense cross-lingual retrieval that separates
+the incremental value of hypothetical passage generation from query translation,
+and separates finding a known source from recovering its language versions.
+The evidence spans eight fixed encoders and three curated source-grounded query
+collections with matched cohorts, preserved qrels, and explicit language coverage.
+
+The accepted findings support three concrete statements:
+1. For the eligible cross-language single-target settings, translating into the
+   searched language improves the fixed-encoder average over original queries
+   in all three corpora. The comparison within each setting is matched. It does
+   not imply that translation improves every query, encoder, or retrieval regime.
+2. The implemented HyDE pipeline adds value over same-output-language translation
+   in the EUR-Lex average, but loses in chemistry and UN. This is a corpus- and
+   pipeline-dependent interaction, not a causal explanation involving legal
+   reasoning, model strength, or hypothetical content alone.
+3. In mixed UN search, German translation versus the original produces a
+   positive version-nDCG mean difference and a negative source-Hit difference.
+   Versus English translation, the pooled nDCG difference is uncertain while
+   the Hit difference is negative. The latter comparison must not be summarized
+   as an established pooled nDCG improvement. The sign pattern across encoders
+   is descriptive and helps delimit the finding.
+
+A useful ACL contribution would connect these controlled contrasts to ranking-
+level explanations and reproducible evaluation choices. A new method, a new
+metric, a universal language recommendation, and downstream answer quality are
+not established. Any practical routing or cost conclusions remain conditional
+on later accepted analysis; do not anticipate those results in the abstract.
+
+Close prior work and precise overlap
+
+HyDE: Gao et al., ACL 2023.
+https://aclanthology.org/2023.acl-long.99/
+Generated hypothetical documents embedded for retrieval are established, as are
+non-English experiments. Our implementation and its controls should be described
+precisely; this is not the first generative dense or multilingual retrieval setup.
+
+Generative Query Expansion with Multilingual LLMs for Cross-Lingual Information
+Retrieval: Macmillan-Scott et al., arXiv 2025.
+https://arxiv.org/abs/2511.19325
+https://arxiv.org/html/2511.19325v1
+The work studies multilingual generation, translation/expansion ordering, and
+query formats. Its stated BM25 and original-query-only baseline limitations
+leave room for our matched same-language dense comparison. That distinction
+supports an empirical extension, not priority over multilingual expansion.
+
+When do Generative Query and Document Expansions Fail?: Weller et al., 2024.
+https://aclanthology.org/2024.findings-eacl.134/
+Expansion failures and dependence on baseline strength are already established.
+Our eight fixed models cannot independently identify model scale or training
+strength as the cause; those factors covary with architecture and supervision.
+
+LAReQA: Roy et al., EMNLP 2020.
+https://aclanthology.org/2020.emnlp-main.477/
+Mixed-language equivalent-answer retrieval and language-sensitive alignment are
+central to this benchmark. It rewards multiple language-equivalent answers and
+also studies a single-correct-target condition. Merely distinguishing equivalent
+coverage from a single target is not new.
+
+SHIFT: Jang et al., Findings EMNLP 2026.
+https://aclanthology.org/2026.findings-emnlp.109/
+https://arxiv.org/html/2606.18801v1
+Its Target-Languages Recall explicitly isolates coverage beyond the query
+language, and its parallel pools include translated gold versions. Our source-
+success versus version-nDCG contrast is a different diagnostic, not the first
+argument that ordinary aggregate metrics can conceal language coverage.
+
+When Does Mixing Help?: Zhu et al., ACL 2026, section 4.5.
+https://aclanthology.org/2026.acl-long.1455/
+The paper already reports language-interpolation settings with higher Recall
+and lower nDCG. A broad claim of the first multilingual metric reversal is
+untenable. Our possible distinction is fixed-pool translated queries, canonical-
+source success, and multiple parallel positives with an explicit decomposition.
+
+Enhancing Multilingual RAG Systems with Debiased Language Preference-Guided
+Query Fusion: Park et al., Findings ACL 2026.
+https://aclanthology.org/2026.findings-acl.1353/
+Corpus evidence distribution and query-document language alignment are already
+identified as important confounds. English preference cannot be interpreted as
+intrinsic model bias without availability and composition controls.
+
+Better Together: Complementary Query Rewriting Under a Strong RAG Baseline,
+Shanian et al., EMNLP Industry 2026.
+https://aclanthology.org/2026.emnlp-industry.143/
+Complementary rewriting errors, fusion failures, and cost-aware gating already
+have precedent. Any later oracle or selector needs held-out evidence and an
+explicit cost boundary; hindsight headroom is not a deployable baseline.
+
+Current statistical implementation: what is valid and what is conditional
+
+common.paired_bootstrap resamples one-dimensional finite values with replacement
+and returns the mean and percentile 2.5/97.5 quantiles from 5,000 draws, seed 42.
+It has no cluster identifiers: caller aggregation determines independence.
+
+R1 averages the five generated-language outputs within each query/model/method
+before forming its paired per-model contrasts. R2 target_matched first pairs
+original, translation, and HyDE on the identical query-target-model settings;
+then averages eligible targets within each question and fixed encoders within
+that question. R2 language surfaces and absent-language contrasts also retain
+one paired value per question after encoder averaging. Paired_wide asserts
+unique condition keys and complete data; add_fixed_model_mean asserts all eight
+encoders are present. These operations preserve shared-query dependence rather
+than treating model-language rows as independent observations.
+
+I independently inspected selected_queries.parquet: chemistry has 197 query IDs
+and 197 canonical sources; EUR-Lex 194 and 194; UN 247 and 247. Thus question
+resampling is canonical-source resampling for this selected cohort. The source-
+granularity audit also reports one distinct parent per selected EUR-Lex article,
+so this sample does not contain multiple selected article queries from the same
+parent. This does not establish independence of similar legal templates or
+related sources, but no repeated-source pseudoreplication was found here.
+
+The interval population is question/source variation conditional on the fixed
+models, existing generated outputs, configured corpus, and curated selection
+procedure. It is not variability over encoders, new generator samples, domains,
+question generators, translation systems, model training, or random users.
+The 638 selected questions were not randomly sampled from natural user demand;
+bootstrap intervals do not repair this selection limitation or provide causal
+identification. Averaging eight encoders before resampling does not justify an
+eight-replication significance test.
+
+The primary current estimator gives equal weight to questions after averaging
+their available target settings. This differs from the report's setting-macro
+estimator, which equally weights original-language/target-setting cells. Both
+are legitimate declared estimands; neither should silently replace the other.
+Chemistry's unequal target availability makes the distinction consequential.
+Cross-corpus means, if later used, need an explicit corpus weighting rule and
+within-corpus source resampling rather than indiscriminate row pooling.
+
+Two helper limitations deserve attention in final reporting:
+- Nonfinite input values are silently dropped by paired_bootstrap. Current
+  paired_wide assertions and finite-value audit prevent silent arm differences,
+  but any new caller must preserve these checks and report the actual sample n.
+- A cell with one source receives a zero-width percentile interval. This is a
+  degenerate resampling result, not precise evidence about a population. Tiny
+  chemistry cells should remain descriptive, with n visible.
+
+Intervals are unadjusted and contrasts were selected adaptively over rounds.
+They can characterize the observed contrasts but are not a familywise confirmatory
+test. Do not count five language signs, eight encoders, and repeated cutoffs as
+independent confirmations. If a small final claim family is examined with a
+multiplicity sensitivity, label it retrospective; correction cannot undo every
+unrecorded analytic choice or supply an unseen test set.
+
+Unit, cohort, and causal interpretation risks
+
+1. Source success is an objective at the current document-version cutoff.
+   All 638 queries have one accepted canonical source, so Hit, SourceRecall,
+   and AllSourceSuccess are exactly equal. Pairwise Recall also equals Hit.
+   Counting these as multiple supporting metrics is invalid. Mixed Recall and
+   nDCG reward two/three chemistry versions or four legal versions. Their
+   disagreement with Hit is meaningful empirically, while the underlying
+   mathematical distinction is already implied by the metric definitions.
+
+2. Source collapse changes the ranked units and cutoff interpretation.
+   Collapsing a saved top-100 version list yields a prefix of a canonical-source
+   ranking, not necessarily 100 canonical sources. A top-k collapsed analysis
+   can be exact when at least k unique sources are observed, or a relevant
+   source's rank is already observed; disclose boundary censoring otherwise.
+   Keep the version-cutoff analysis separate. Do not create chemistry positives
+   using transitive translation closure or unrestricted source-ID equality.
+
+3. The control switch between R1 and R2 changes pool, output-language policy,
+   and aggregation. Its absolute-score difference is not the causal effect of
+   matching query language to the target. R2's within-setting original-versus-
+   translated contrast is the valid matched effect for the specified pipeline.
+   Labels called cross_language refer to the ORIGINAL query language; the
+   translated query may already be in the target language.
+
+4. HyDE versus translation changes text and, for four encoders, encoder role.
+   Gemma/Nomic change prefixes; Qwen/E5 remove query instructions. A restricted
+   same-adapter analysis is informative but cannot identify the isolated causal
+   adapter effect, because the model groups themselves differ. No offline
+   association can replace an authorized re-encoding ablation if that stronger
+   claim is desired.
+
+5. Unequal documents and relevance definitions preclude a clean domain cause.
+   The units are chemistry patent abstracts, EUR-Lex articles/annexes, and whole
+   UN documents. Max-over-chunks scoring gives different opportunity counts.
+   Available versions and pool sizes also differ. Thus a corpus interaction
+   cannot alone demonstrate that legal reasoning is the mechanism.
+
+6. Known-source judgments are deliberately nonexhaustive. A different document
+   with identical text need not be semantically wrong; source/citation identity
+   can still be the intended target. Missing evidence spans do not automatically
+   invalidate source association. Conversely, accepted language versions are
+   not independently human-confirmed answer-bearing passages. Retain all 638
+   as primary; quality restrictions are explicit sensitivity subsets.
+
+7. Identity translations expose numerical and judgment sensitivity. The audit
+   attributes 26 changed query-setting rows to near-equal scores crossing exact
+   duplicate winning texts with different accepted source identities. This does
+   not justify silently correcting saved scores or relabeling duplicates. It
+   does motivate identifying whether small headline effects depend on those
+   questions and on hard cutoffs near score ties.
+
+8. Selection is highest PROVIDED numeric grade, not objectively best question.
+   Candidate counts are not uniformly 30; ties are frequent and prefer named
+   generators. Winning-language or generator shares cannot be treated as a
+   controlled generator-quality result. Query-only generation includes fixed
+   corpus/domain instructions, and does not establish absence of pretraining
+   exposure to public source documents. Actual translation faithfulness remains
+   a separate question from prompt intent.
+
+Concrete falsification priorities for the final robustness round
+These are proposed checks, not results or permission for new inference.
+
+A. Exact objective decomposition and matched success strata.
+   After Round 3 is accepted, verify from saved ranks that first-version and
+   additional-version discounted contributions sum exactly to nDCG. Check both-
+   hit questions separately from each method's own hit subset. A failure of the
+   proposed explanation on both-hit cases falsifies a simple "more versions of
+   the same recovered sources" account, even if the aggregate reversal remains.
+
+B. Weighting and model influence.
+   Re-express the narrow headline contrasts under query weighting and original-
+   language/setting weighting, keeping pairings intact; inspect fixed-model
+   leave-one-out means and model-specific deltas. If the claimed cross-corpus
+   sign changes under a reasonable estimand or depends on one model, narrow the
+   claim to that weighting/model instead of declaring robust generalization.
+
+C. Cutoff dependence and ranking-unit boundaries.
+   Inspect the same contrast at already saved cutoffs, with the cutoffs treated
+   as correlated sensitivity checks. State whether source collapse has enough
+   unique entries to identify each reported cutoff. If the reversal appears
+   only at k=10 or disappears after source collapse, report that as an operating-
+   point/objective property rather than a general retrieval improvement.
+
+D. Identity/quality sensitivity without replacing the main cohort.
+   Retain full-cohort results, then separately exclude audited identity-affected
+   source questions and examine clear-quality/no-exact-span strata. Removing
+   flagged items must use the same source IDs across all arms. If signs hinge
+   on ambiguous identities or flagged queries, disclose that dependence. Do not
+   infer that dropping difficult questions improves the benchmark itself.
+
+E. Encoder roles, length and truncation as boundaries, not causes.
+   Check whether the HyDE sign pattern is present in the four encoders whose
+   query/document adapters coincide, and whether truncated inputs dominate
+   gains/losses. If absent, retract a content-only account. A surviving pattern
+   still does not isolate role, length, architecture or generation semantics.
+
+F. Original-language composition and semantic examples.
+   Keep the UN German contrast stratified by original language and display n;
+   compare against both English and original. Inspect representative losses,
+   gains and unchanged cases without selecting only vivid confirmations. If
+   translated questions alter constraints/entities, describe semantic drift;
+   no paid grader or new model run is needed or authorized by this review.
+
+G. Honest selection and uncertainty boundaries.
+   Freeze the small final claim set only after describing how exploration found
+   it. Any learned rule must use source-grouped held-out splits and avoid test
+   qrels during choice. Failure to beat a fixed policy out of sample falsifies a
+   deployment recommendation while leaving an oracle upper bound descriptive.
+   No correction should be portrayed as converting these six adaptive rounds
+   into independent preregistered confirmations.
+
+H. Costs and timings if included in the final contribution.
+   Keep measured API accounting distinct from configured price estimates,
+   unique shared generation expenses, hypothetical cold deployment cost, and
+   cached reuse. Unknown compute prices remain unknown. If comparable endpoint
+   timing is unavailable, drop the measured-online-latency claim instead of
+   adding scheduler wall times or unrelated batch timings.
+
+Overall assessment
+The accepted reviews already reject the largest overclaims and use valid paired
+cohorts. The current strongest result is an interpretable evaluation/control
+diagnostic. Its value depends on the coming ranking-level explanation, clearly
+stated estimands, and preserved contradictory evidence. There is presently no
+basis for an unconditional German-pivot recommendation, universal HyDE verdict,
+new-metric claim, or causal language/domain mechanism.

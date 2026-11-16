@@ -264,6 +264,8 @@ def _dependencies(config: Config, corpus: str, run_dir: Path, report: dict) -> l
     def inspect(value, key=""):
         if isinstance(value, dict):
             for name, item in value.items():
+                if name == "score_keys" and report["run"].get("pair_scores_file"):
+                    continue  # All immutable pair records are already inside this run.
                 inspect(item, name)
         elif isinstance(value, (list, tuple)):
             for item in value:

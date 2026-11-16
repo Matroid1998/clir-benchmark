@@ -1,0 +1,63 @@
+ROUND 5 — THE TRAINING OBJECTIVE CHANGES HELD-OUT RETRIEVAL
+
+Visual inspection
+Root opened all three PNGs. Figure 1 uses common metric scales across corpora
+and explicitly labels conditional source-bootstrap intervals. Figure 2 shows
+all training-fold choices rather than an in-sample best variant. Figure 3's
+policy legend initially covered the original-query cost line; it was moved
+below the panels, rerendered and reopened. All three final figures are accepted.
+Fold/source disjointness, shared folds across encoders, complete held-out cohorts
+and oracle upper bounds were checked by executable assertions.
+
+Accepted findings
+The objective reversal is consequential in internal selection, not only in
+in-sample leaderboard ordering. On UN, choosing a static variant per encoder
+and fold to maximize training nDCG gives +2.86 held-out nDCG points over the
+original query, but -2.73 source Hit points. Choosing for training Hit gives
++0.90 nDCG points and an uncertain +0.30 Hit points. Directly comparing the two
+learned choices, nDCG selection yields +1.96 nDCG points [1.17,2.76] but -3.04
+source Hit points [-4.71,-1.42]. This is a trade-off between retrieval objectives.
+
+On EUR-Lex, the two selection objectives give nearly the same nDCG: nDCG choice
+minus Hit choice is +0.10 points [-0.84,1.00]. The nDCG choice nevertheless loses
+2.77 Hit points [-4.45,-1.16] relative to Hit choice. Hit-trained selection
+improves both nDCG (+3.40) and source Hit (+3.16) versus original in this split.
+For mixed chemistry, Hit selection keeps the original query in every training
+fold/model; nDCG selection changes Qwen in two folds and slightly worsens the
+fixed-model mean. This does not contradict target-matched cross-language gains:
+the mixed pool also contains original-language source versions.
+
+The per-query oracles are much higher than learned static choices, but they
+use held-out labels. Their scores are upper bounds on this variant pool, not a
+retrieval method, evidence for an effective router, or a cost-free improvement.
+
+Accounting reconciles $0.72763552 total configured-price generation expense:
+translation $0.230011 and HyDE $0.49762452, including four failed attempts.
+The selected outputs used by nDCG and Hit policies have union historical
+attributions $0.19023366 and $0.18652140 across all eight encoders. These are not
+measured savings: the training/exploration procedure used the full pool, and
+every source appears in training in other folds. Prompt-cache discounts are
+retained; these are not fully cold price forecasts or invoice totals. Timings
+remain separated into API attempt duration and amortized offline components.
+Compute prices and online end-to-end latency are unknown.
+
+Questions driving Round 6
+1. Does the primary translation/HyDE corpus pattern survive clear-quality-only
+   and identity-affected-source exclusions, and original-language/setting weights?
+2. Is the UN source-success versus version-coverage trade-off confined to top 10,
+   or visible across the already saved cutoffs?
+3. Can one encoder account for the fixed-model mean? Examine leave-one-encoder-out
+   point estimates without treating eight encoders as a random model sample.
+4. Refit the simple selectors with seeds 0-8 as well as the existing seed 42.
+   Does the UN nDCG-versus-Hit selection trade-off survive different source folds?
+   Report the range across splits as sensitivity, not independent replications.
+5. Which conclusions can be retained, narrowed or rejected before the final
+   literature-bounded contribution statement and before-submission checklist?
+
+Inference limits
+These policies were designed after exploration of the same selected synthetic
+questions. Training excludes held-out outcomes, but internal cross-validation
+is not an untouched external test. The intervals resample scored held-out
+questions conditional on the fitted choices; they do not refit policies or fully
+capture dependence from overlapping training folds. No new method superiority,
+external transfer, downstream answer quality or causal domain effect is claimed.

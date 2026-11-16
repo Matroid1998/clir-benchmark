@@ -1,0 +1,5 @@
+policy,corpus_scope,encoders,unique_selected_outputs,unique_selected_request_keys,union_historical_api_usd,interpretation
+cv_hit,all three corpora,8,1617,1461,0.1865214,Attribution to selected outputs; training/exploration still requires the full pool
+cv_ndcg,all three corpora,8,1725,1593,0.19023366000000003,Attribution to selected outputs; training/exploration still requires the full pool
+english,all three corpora,8,638,469,0.0376502,Attribution to selected outputs; training/exploration still requires the full pool
+original,all three corpora,8,0,0,0.0,Attribution to selected outputs; training/exploration still requires the full pool

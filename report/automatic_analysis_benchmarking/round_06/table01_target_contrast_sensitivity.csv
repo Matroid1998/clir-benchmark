@@ -1,0 +1,31 @@
+corpus,contrast,estimator,n_questions,mean,ci_low,ci_high,ci_note
+chemistry,H − T,all,197,-0.032102335895546424,-0.045848303080527904,-0.018277689659111748,Paired source bootstrap; original-language stratified for language macro
+chemistry,H − T,clear,182,-0.03483993981877649,-0.04852035984448968,-0.021181468629049485,Paired source bootstrap; original-language stratified for language macro
+chemistry,H − T,no_identity,188,-0.030979728326464052,-0.044914204180445436,-0.016928774623385195,Paired source bootstrap; original-language stratified for language macro
+chemistry,H − T,language_macro,197,-0.036119418789874104,-0.049497276438554,-0.0224345161393224,Paired source bootstrap; original-language stratified for language macro
+chemistry,H − T,setting_macro,197,-0.02969439142964301,,,No interval: descriptive setting macro
+chemistry,T − original,all,197,0.0828535659085935,0.06436884661684572,0.10173086488321222,Paired source bootstrap; original-language stratified for language macro
+chemistry,T − original,clear,182,0.08448248166178046,0.0651775168128202,0.10458021196064708,Paired source bootstrap; original-language stratified for language macro
+chemistry,T − original,no_identity,188,0.0859620563629213,0.06651092156450791,0.10638200404188493,Paired source bootstrap; original-language stratified for language macro
+chemistry,T − original,language_macro,197,0.08412925708851718,0.06623125662501524,0.10222657966775461,Paired source bootstrap; original-language stratified for language macro
+chemistry,T − original,setting_macro,197,0.06904411014505492,,,No interval: descriptive setting macro
+eurlex,H − T,all,194,0.042553757207546616,0.019734817568562144,0.06635013304343808,Paired source bootstrap; original-language stratified for language macro
+eurlex,H − T,clear,163,0.04503271568431171,0.01892962135714759,0.07135335359825835,Paired source bootstrap; original-language stratified for language macro
+eurlex,H − T,no_identity,189,0.039511343117360764,0.0159984822855649,0.06341776039330864,Paired source bootstrap; original-language stratified for language macro
+eurlex,H − T,language_macro,194,0.044312560110153006,0.020846764747729927,0.06785225073632123,Paired source bootstrap; original-language stratified for language macro
+eurlex,H − T,setting_macro,194,0.044312560110153,,,No interval: descriptive setting macro
+eurlex,T − original,all,194,0.09837776683747515,0.08162756635550768,0.11450007917727004,Paired source bootstrap; original-language stratified for language macro
+eurlex,T − original,clear,163,0.1023867303409022,0.08382090511825599,0.12047782290173532,Paired source bootstrap; original-language stratified for language macro
+eurlex,T − original,no_identity,189,0.10060037955099936,0.08444205809363936,0.1176025259910269,Paired source bootstrap; original-language stratified for language macro
+eurlex,T − original,language_macro,194,0.09718816260064957,0.0814043393257238,0.11338509796132216,Paired source bootstrap; original-language stratified for language macro
+eurlex,T − original,setting_macro,194,0.09718816260064955,,,No interval: descriptive setting macro
+un,H − T,all,247,-0.04223718023762335,-0.061747081913113,-0.022481954807137376,Paired source bootstrap; original-language stratified for language macro
+un,H − T,clear,236,-0.0384510827437866,-0.058301038243836506,-0.018741165397634093,Paired source bootstrap; original-language stratified for language macro
+un,H − T,no_identity,247,-0.04223718023762335,-0.061747081913113,-0.022481954807137376,Paired source bootstrap; original-language stratified for language macro
+un,H − T,language_macro,247,-0.041169303778869605,-0.06084566979166255,-0.02189589414358355,Paired source bootstrap; original-language stratified for language macro
+un,H − T,setting_macro,247,-0.041169303778869605,,,No interval: descriptive setting macro
+un,T − original,all,247,0.0627386597773781,0.05106687922335059,0.07478514076548222,Paired source bootstrap; original-language stratified for language macro
+un,T − original,clear,236,0.06219377268166442,0.05046348475515355,0.07438021546235514,Paired source bootstrap; original-language stratified for language macro
+un,T − original,no_identity,247,0.0627386597773781,0.05106687922335059,0.07478514076548222,Paired source bootstrap; original-language stratified for language macro
+un,T − original,language_macro,247,0.06657348869657155,0.05501689243422639,0.07881247088732847,Paired source bootstrap; original-language stratified for language macro
+un,T − original,setting_macro,247,0.06657348869657155,,,No interval: descriptive setting macro

@@ -1,0 +1,57 @@
+ROUND 3 — WHY MORE RELEVANT VERSIONS CAN MEAN FEWER SOURCES
+
+Visual inspection
+Root opened all four PNGs and inspected labels, count denominators, uncertainty
+and the definition of each objective. Figure 3 initially clipped a +9 rank
+displacement at a color limit of +8; it was regenerated at +/-10 and reopened.
+The corrected figures are accepted. The two highlighted model counts and exact
+nDCG decompositions were independently recomputed from saved top-10 ranks and
+agree with the round script. The full numerical review is review_draft.txt.
+
+Accepted findings
+For UN E5, German versus English translation gains 18 source hits but loses 40,
+for 22 fewer recovered sources among 247 questions. It retrieves 71 additional
+relevant language versions. Version nDCG nevertheless rises 3.81 points:
+the first relevant version contributes -2.18 points and additional versions
+contribute +5.99. EmbeddingGemma similarly loses 20 source hits while adding
+32 version hits; its +2.46 nDCG points decompose into -1.94 first and +4.40 extra.
+The all-model German-versus-English nDCG contrast remains uncertain; the above
+model examples do not turn it into a pooled gain.
+
+On the SAME questions where both translations recover a source, E5 gains
+0.706 versions per question (n=126), and Gemma gains 0.316 (n=171). Thus the
+extra-version pattern is not solely an artifact of comparing different hit
+subsets. These conditional subsets are descriptive and differ across models.
+
+Selecting a best variant from all available questions gives disjoint winners
+under version nDCG and source Hit in 10 of 24 corpus/encoder comparisons: 1/8
+chemistry, 4/8 EUR-Lex, 5/8 UN. This is in-sample descriptive selection, not a
+deployable policy. Some mean differences are small; do not claim every winner
+is statistically distinguished from its alternatives.
+
+After collapsing legal rankings to distinct canonical sources, German versus
+English is lower in all three fixed-model source metrics: Hit -6.58, MRR -3.18,
+and nDCG -3.98 points. The saved top-100 versions contain at least 29 distinct
+sources, so the collapsed top 10 is observed exactly. Collapsing changes the
+ranked unit and objective; it does not show that version nDCG was erroneous.
+Chemistry is excluded from collapse because direct accepted translations do
+not license treating every shared source ID as an accepted positive.
+
+Questions driving Round 4
+1. Which questions benefit and lose under the language-controlled HyDE contrast?
+   Do favorable means hide substantial losses for individual source questions?
+2. Does the corpus pattern persist in the four encoders with identical query
+   and document prefixes? This can qualify, but not isolate, the adapter confound.
+3. In the UN translation reversal, how does the language of the first relevant
+   result change, including questions with no relevant top-10 result? Describe
+   the observed distribution without claiming an intrinsic semantic bridge.
+4. Can rule-selected examples show what actually changed in the generated text,
+   including a gain, a loss, and increased version coverage on a shared source?
+   Inspect text without treating lexical additions as proven hallucinations.
+5. Is truncation a plausible boundary for expansion effects in the saved runs?
+   Distinguish aggregate association from a causal generation/length ablation.
+
+Later falsification needs
+Before a final claim, revisit quality flags, identity-control exclusions,
+aggregation weights and saved cutoffs. Practical variant choice needs a held-out
+source split and generation-cost accounting, not the in-sample winners above.

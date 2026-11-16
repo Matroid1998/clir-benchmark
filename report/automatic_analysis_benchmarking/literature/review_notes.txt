@@ -1,0 +1,433 @@
+LITERATURE REVIEW FOR THE SIX-ROUND CLIR ANALYSIS
+Reviewed: 2026-11-15
+Scope: primary papers on generated queries, multilingual retrieval, language
+alignment, query selection, and evaluation. This is a focused review, not an
+exhaustive novelty search. The suggestions below are hypotheses for analysis,
+not findings from this experiment. Paper-specific evidence and our proposed
+extensions are distinguished throughout. Bibliography: references.bib.
+
+1. Gao et al. (ACL 2023): Precise Zero-Shot Dense Retrieval without Relevance Labels
+https://aclanthology.org/2023.acl-long.99/
+Evidence inspected: abstract; PDF Sections 3, 4.1, 4.4, and 5.3.
+Known: HyDE generates hypothetical documents from a query and retrieves using
+their embeddings. The paper studies averaging multiple generated-document
+embeddings, optionally including the query embedding. Its non-English tests
+use Mr.TyDi; they should not be described as equivalent to our multilingual
+candidate-pool evaluation. Contriever/mContriever are central encoders, with
+additional supervised-encoder experiments.
+Implication: identify our exact single-passage, output-language-controlled
+implementation. A result with our settings is not a verdict on every HyDE
+variant. Generation-only-from-query is an established property, not novelty.
+Potential extension: measure the marginal effect of hypothetical content over
+a same-language translation, across heterogeneous contemporary encoders.
+
+2. Wang et al. (EMNLP 2023): Query2doc: Query Expansion with Large Language Models
+https://aclanthology.org/2023.emnlp-main.585/
+Evidence inspected: abstract; PDF introduction.
+Known: query2doc generates pseudo-documents and combines them with the original
+query, improving sparse and dense retrieval in its experiments. This differs
+from replacing the query with a single hypothetical document. Its principal
+in-domain tests include MS MARCO and TREC DL, with out-of-domain experiments.
+Implication: do not conflate query2doc, query rewriting, translation, and the
+implemented HyDE baseline. Benefits of generated information, including with
+strong dense encoders, already have precedents.
+Potential extension: report where replacement loses useful query constraints;
+such an explanation requires inspecting original and generated texts.
+
+3. Weller et al. (Findings EACL 2024): When do Generative Query and Document
+Expansions Fail? A Comprehensive Study Across Methods, Retrievers, and Datasets
+https://aclanthology.org/2024.findings-eacl.134/
+Evidence inspected: abstract.
+Known: across eleven expansion techniques, twelve datasets, and twenty-four
+retrievers, expansion benefits are negatively associated with baseline strength.
+The authors discuss extra information versus added noise as an explanation.
+Implication: neither "expansion can hurt" nor "weak retrievers benefit more"
+is a new contribution by itself. A correlation across our eight encoders is
+also not causal evidence that model size determines expansion utility.
+Potential extension: test whether this pattern remains after controlling output
+language, corpus, and availability, and whether translation has a different
+strength-dependent response from hypothetical passage generation.
+
+4. Roy et al. (EMNLP 2020): LAReQA: Language-Agnostic Answer Retrieval from a
+Multilingual Pool
+https://aclanthology.org/2020.emnlp-main.477/
+Evidence inspected: abstract; paper discussion of language bias.
+Known: mixed-language candidate pools require stronger alignment than retrieval
+into a single-language pool. Same-language preference can outrank cross-language
+relevance, and performance under weaker alignment tests does not necessarily
+predict multilingual-pool performance.
+Implication: distinguish monolingual, cross-lingual target-language, and pooled
+multilingual settings. Same-language bias and the need for pooled evaluation
+are established findings.
+Potential extension: quantify how output language changes recovery of the
+canonical source versus coverage of its accepted language versions. Interpret
+differences in light of the explicit relevance unit and number of positives.
+
+5. Yang, Jiang, and Baldwin (MRL 2024): Language Bias in Multilingual Information
+Retrieval: The Nature of the Beast and Mitigation Methods
+https://aclanthology.org/2024.mrl-1.23/
+Evidence inspected: abstract.
+Known: semantically equivalent queries in different languages can yield
+different rankings over a common multilingual collection. The work compares
+traditional and neural retrieval and proposes a training loss for mitigation.
+Implication: ranking instability across translation languages is not itself
+new. A macro mean can conceal language-conditioned disparities.
+Potential extension: quantify both effectiveness and ranked-result overlap,
+and distinguish a changed language-version ranking from a changed underlying
+source-document ranking. Do not assume a translation is perfectly equivalent
+without checking examples and entity/constraint preservation.
+
+6. Park et al. (Findings ACL 2026): Enhancing Multilingual RAG Systems with
+Debiased Language Preference-Guided Query Fusion
+https://aclanthology.org/2026.findings-acl.1353/
+Evidence inspected: abstract.
+Known: DeLP explicitly accounts for exposure, gold availability, and cultural
+priors when evaluating language preference. In their setting, apparent English
+advantage is substantially explained by evidence distribution. DELTA exploits
+query-document language alignment in multilingual retrieval and generation.
+Implication: claiming that English is not always the best pivot, or that
+same-language alignment matters, is insufficient novelty. Corpus composition
+and relevance availability must be accounted for before calling a pattern
+intrinsic model bias.
+Potential extension: our parallel legal sources and accepted chemistry pairs
+may support a narrower controlled diagnostic, provided matched-language
+availability is explicitly enforced and domain differences are retained.
+
+7. Zhu, Ming, and Kan (ACL 2026): When Does Mixing Help? Analyzing Query
+Embedding Interpolation in Multilingual Dense Retrieval
+https://aclanthology.org/2026.acl-long.1455/
+Evidence inspected: abstract.
+Known: interpolation of parallel query-language embeddings on mMARCO produces
+structured target-language-dependent effects. The main BGE-M3 analysis finds
+English-related asymmetry; the paper also reports robustness across model
+families and scales.
+Implication: language mixtures, English asymmetry, and multilingual query
+complementarity already have direct prior art. Our independently evaluated
+translation languages are not an implemented fusion algorithm.
+Potential extension: examine whether the best single language changes with
+domain and encoder, and compare any retrospective language oracle with a
+fixed policy and a genuinely held-out selection policy.
+
+8. Macmillan-Scott, Goworek, and Ozyigit (arXiv 2025): Generative Query Expansion
+with Multilingual LLMs for Cross-Lingual Information Retrieval
+https://arxiv.org/abs/2511.19325
+https://arxiv.org/html/2511.19325v1
+Evidence inspected: experimental outline; results; limitations.
+Known: three multilingual generators, multiple prompting strategies, translation
+versus expansion ordering, and query-plus-expansion versus expansion alone are
+studied on CLIRMatrix and mMARCO. Query format, language, and script matter.
+Crucial scope: its stated limitations identify BM25 as the evaluated retriever
+and the original query as the sole baseline; translation and expansion effects
+are therefore not independently isolated.
+Potential extension: directly address that limitation with our paired
+HyDE-minus-translation comparison in the SAME output language across eight
+dense encoders. Do not claim the first multilingual generative expansion study.
+
+9. Valentini, Kozlowski, and Lariviere (MRL 2025): CLIRudit: Cross-Lingual
+Information Retrieval of Scientific Documents
+https://aclanthology.org/2025.mrl-main.16/
+Evidence inspected: abstract.
+Known: an English-French academic benchmark uses author-written keywords and
+abstracts. Dense retrieval without translation is competitive in that setting;
+document translation and sparse methods also offer useful alternatives.
+Implication: academic CLIR, translation ablations, and effectiveness-efficiency
+tradeoffs have prior art. Its human-authored keyword queries and its document
+translation condition differ from our selected synthetic questions and fixed
+corpus embeddings; raw scores should not be compared across the datasets.
+Potential extension: compare specialist versus general-purpose encoders within
+our own matched chemistry, legal, and institutional corpora, with explicit
+limits on transferring conclusions to real academic search.
+
+10. Shanian et al. (EMNLP Industry 2026): Better Together: Complementary Query
+Rewriting Under a Strong RAG Baseline
+https://aclanthology.org/2026.emnlp-industry.143/
+Evidence inspected: abstract.
+Known: a fixed BGE/reranking/diversification pipeline is studied on three
+datasets. Rewriting strategies can make complementary errors, fusion can also
+hurt, and confidence-gated rewriting is evaluated as a cost-aware simulation.
+Implication: oracle complementarity, query routing, and reducing generation
+calls by selective rewriting are established ideas. Post-hoc unions are not
+equivalent to a deployable top-k ranking or an implemented budget-aware router.
+Potential extension: evaluate whether cheap pre-generation features can choose
+between original, translation, and HyDE on held-out source documents. Count
+all variants that must be generated or embedded to obtain a routing feature.
+
+11. Zhang et al. (Findings EMNLP 2024): Exploring the Best Practices of Query
+Expansion with Large Language Models
+https://aclanthology.org/2024.findings-emnlp.103/
+Evidence inspected: abstract and PDF introduction.
+Known: MuGI integrates multiple generated references with the original query
+and studies weighting, integration, additional samples, and feedback. It reports
+benefits over a range of model sizes, including small retrievers.
+Implication: a blanket conclusion that stronger models never benefit from
+expansion would conflict with other experimental evidence. The expansion
+formulation and integration procedure matter; our single-passage experiment
+does not test MuGI's complete method.
+Potential extension: position strong-model degradation as conditional on the
+implemented replacement strategy, corpus, and language rather than a universal
+law about LLM augmentation.
+
+12. Enevoldsen et al. (2025): MMTEB: Massive Multilingual Text Embedding Benchmark
+https://arxiv.org/abs/2502.13595
+Evidence inspected: abstract and arXiv version metadata.
+Known: broad embedding evaluation spans hundreds of tasks and many languages,
+including long-document and instruction-following settings. Model size alone
+does not establish uniformly superior performance across the benchmark.
+Implication: MTEB-style result serialization does not make these custom tasks
+an official MTEB leaderboard submission. Three corpora and five query output
+languages do not establish universal multilingual model rankings.
+Potential extension: provide a reproducible complementary retrieval diagnostic
+with explicit corpus composition, task definitions, model revisions, and
+per-query outputs, suitable for later integration into broader benchmarks.
+
+PRIORITY QUESTIONS FOR THE SIX ROUNDS (PROPOSED ANALYSIS, NOT RESULTS)
+
+A. Separate translation from hypothetical content.
+   Primary contrast: HyDE(language L) minus translated-query(language L), with
+   the same question, encoder, candidate pool, qrels, k, and eligible cohort.
+   Secondary contrasts: both variants versus the original query. A gain over
+   the original alone cannot identify whether translation or extra content
+   supplies the gain. Report identity translations separately when applicable.
+
+B. Separate information recovery from language-version coverage.
+   Derive the relation between Hit@k, source recall, and document-version
+   recall from the qrels. If each query has exactly one canonical gold source,
+   source Recall@k may equal source Hit@k by definition. That equality is not
+   a discovered empirical law. Plot version coverage conditional on recovering
+   the source, and stratify by the number of available relevant versions.
+   Compare source-level and version-level ranking overlap as descriptive
+   diagnostics. Do not label unjudged non-source documents semantically
+   irrelevant without additional relevance annotation.
+
+C. Diagnose language alignment with availability controls.
+   For fixed target-language retrieval, compare query output matching the
+   target language against nonmatching outputs on identical questions. For
+   pooled retrieval, examine both all eligible data and the subset with the
+   same accepted gold-language availability. Keep corpus-specific results:
+   legal parallel documents and directly accepted chemistry translation pairs
+   need not induce equivalent positive sets. A pooled English advantage can
+   reflect composition; a within-question output-language intervention is
+   stronger evidence than comparing different original-language questions.
+
+D. Find useful heterogeneity, not just a large mean gain.
+   Show paired win/tie/loss rates and the severity of losses. Test whether
+   method rankings reverse by corpus, target language, model, baseline
+   difficulty, or original-query language. Large relative gains near a weak
+   baseline require absolute percentage-point changes alongside denominators.
+   Model size, training objective, architecture, and language coverage are
+   confounded among the eight models; observed associations are not causal
+   scaling laws. Generated length is also not an exogenous intervention.
+
+E. Turn oracle headroom into a realistic decision problem.
+   An oracle selecting the best method/language using test qrels is an upper
+   bound, not a retriever that can be deployed. A fixed language/model policy
+   selected on the full test set is also optimistically biased. Prefer
+   question/document-grouped cross-validation, or leave-one-corpus-out checks,
+   with policy fitting and threshold choice entirely inside training folds.
+   Report the oracle separately and do not call its score a new baseline.
+   A router using generated-text properties has already incurred generation
+   cost. Score scales are not automatically comparable across encoders.
+
+F. Preserve cost and latency interpretation.
+   Distinguish generation calls, cold encoder work, cached reuse, and shared
+   corpus preparation. The same generated text reused by eight retrievers is
+   one actual generation expense, but its original cost remains relevant to
+   an independently deployed pipeline. Include failed attempts in paid-call
+   accounting. Scheduler wait and retry wall-clock time are not intrinsic
+   retrieval latency. Unknown GPU prices cannot become zero monetary cost.
+   A Pareto frontier is conditional on the measured/configured cost boundary.
+
+RESEARCH CLAIMS TO AVOID WITHOUT FURTHER EVIDENCE
+
+- First demonstration that LLM expansion, translation, or English pivoting can
+  fail; first observation of same-language bias; first query-routing oracle.
+- Treating any new combination of existing components as a novel algorithm
+  when the contribution actually consists of controlled empirical diagnosis.
+- Calling the five output languages representative of low-resource languages;
+  most are high-resource, and Chinese also differs in script.
+- Claiming downstream answer quality, factuality, or hallucination reduction
+  from retrieval-only metrics. This experiment evaluates retrieved documents.
+- Treating the selected highest-score synthetic questions as a random sample
+  of user information needs. The quality score, generator tie preference, and
+  source-document construction should be disclosed as sampling choices.
+- Calling six adaptive exploratory rounds six independent confirmations.
+  Distinguish exploration from confirmation, retain negative findings, and
+  disclose which comparisons were chosen after inspecting earlier figures.
+- Claiming robust across-domain generalization from only three corpora, or
+  independent observations from repeated views of the same 638 questions.
+
+POTENTIALLY USEFUL CONTRIBUTION FRAMING, CONDITIONAL ON THE RESULTS
+
+A controlled diagnostic of what generation adds beyond translation in dense
+cross-lingual retrieval, showing how conclusions depend on the relevance unit,
+available language versions, retriever family, and corpus. Pair this with
+transparent cost accounting and practical, held-out selection rules if they
+actually transfer. The value would be the controlled contrasts and actionable
+failure boundaries, not an unqualified claim that one baseline is universally
+best. Novelty should be rechecked against the concrete final claims after all
+six rounds, including the 2026 papers above.
+
+FOLLOW-UP AFTER ROUND 1: NON-INDEX QUERY LANGUAGE AND METRIC REVERSAL
+Added 2026-11-15. This section supersedes a language-bridge interpretation of
+the initial German-translation heatmap pattern.
+
+Question and current observation
+The first-round UN heatmap suggested that German translation can improve
+nDCG@10 for several encoders even though the searched UN corpus and selected
+original queries have no German versions. The subsequent paired analysis
+reported by the analysis lead gives a critical qualification: German-versus-
+English translation has lower Hit@10 for all eight encoders. For E5, the
+reported nDCG@10 is .2142 versus .1761 while Hit@10 is .5830 versus .6721;
+for Gemma, nDCG@10 is .3976 versus .3730 while Hit@10 is .7166 versus .7976.
+These are descriptive values, not significance claims. There are four positive
+language versions per UN query. The proposed claim is therefore about system
+selection changing with the retrieval objective, not a discovered German
+semantic-bridge mechanism. Cite the round tables as the numerical authority.
+
+Bounded literature check and close precedents
+The search covered dense-retrieval pivot/query-language terms, transitive CLIR,
+language bias, multilingual equivalent-answer evaluation, and parallel-corpus
+metrics. This is a bounded review, not evidence that no exact precedent exists.
+
+1. Classical pivot CLIR: Kishida and Kando, CLEF working notes 2003.
+https://ceur-ws.org/Vol-1169/CLEF2003wn-adhoc-KishidaEt2003.pdf
+The experiment translates German queries through English into Italian and
+retrieves Italian documents, with feedback to refine translation. It does not
+directly embed a third-language query against unchanged target-language
+documents. Thus third-language bridging has longstanding precedent, but this
+particular implementation is not a direct precedent for our observed pattern.
+Prefer the literal phrase "query translation into a language absent from the
+index" over an unqualified claim about discovering pivot retrieval.
+
+2. LAReQA, Roy et al., EMNLP 2020, sections 3.2 and 5.
+https://aclanthology.org/2020.emnlp-main.477/
+The evaluation rewards multiple correct language-equivalent answers using
+mAP; it also examines a pool with all but one correct target removed. This is
+close prior for explicitly distinguishing multilingual-equivalent coverage
+from single-target retrieval, although it does not establish our translation-
+language/source-success reversal.
+
+3. SHIFT, Jang et al., Findings EMNLP 2026, section 4.3.
+https://aclanthology.org/2026.findings-emnlp.109/
+https://arxiv.org/html/2606.18801v1
+SHIFT evaluates translated gold-context versions as positives and introduces
+Target-Languages Recall@k: recall restricted to relevant documents whose
+language differs from the query. This isolates cross-language coverage from
+query-language dominance. The method shifts document embeddings at indexing;
+our experiment instead changes query language. Its coverage metric does not
+measure whether any one version of the canonical source was found. For our
+translation comparison, a language-relative gold subset would change with
+the treatment: German has no same-language positive, whereas English does.
+Consequently, applying that metric naively to compare output languages would
+introduce changing denominators. Retain fixed source and version qrels for the
+main comparison; describe any target-only subset by a fixed language rule.
+
+4. Query embedding interpolation, Zhu et al., ACL 2026, section 4.5.
+https://aclanthology.org/2026.acl-long.1455/
+The paper reports 11 settings where mixing improves Recall@10 but lowers
+nDCG@10. Metric-dependent effects of language intervention are therefore
+already reported. Their contrast concerns coverage versus ordering; ours
+concerns any-source success versus multiple parallel gold versions. Do not
+claim the first multilingual metric reversal or the first useful query mix.
+
+5. Park and Lee, Findings ACL 2025: Investigating Language Preference of
+Multilingual RAG Systems.
+https://aclanthology.org/2025.findings-acl.295/
+The paper separates retrieval language preferences from downstream answer
+quality and reports that stronger language preference need not imply better
+generation. It reinforces objective separation, but is not evidence for our
+specific retrieval-only reversal. Our study cannot infer answer quality.
+
+Useful algebra and interpretation (derived from our evaluation definitions)
+Let N_q be the number of accepted source-language versions retrieved in the
+same top-k document-version ranking, and m_q the available positive count.
+With one canonical gold source, H_q = 1[N_q > 0] and R_q = N_q / m_q.
+For a fixed m, mean(R) = mean(H) * mean(N | H=1) / m. More generally,
+mean(R) = mean(H) * mean(N/m_q | H=1). The latter remains valid when positive
+counts vary. This identity explains how lower source success and greater
+conditional coverage can coexist; the identity is not a research discovery.
+nDCG also equals zero on misses, so its mean is Hit times mean(nDCG | Hit=1).
+Its conditional component combines relevant-version count and rank discounts.
+Do not attribute an nDCG reversal to count alone without checking positions.
+
+If source recall is computed by mapping the SAME top-k version list to source
+IDs, it equals Hit here because each query has one accepted source. Ranking
+all canonical sources after deduplicating both relevant and irrelevant versions
+defines a different task and cutoff. Do not silently switch these definitions,
+or infer a complete top-100 source ranking from only 100 saved version results.
+
+Most useful next evidence
+- Show paired German-minus-English deltas with source-cluster uncertainty for
+  both objectives, and the full eight-model sign pattern without calling the
+  models independent replications. State that German was selected after
+  inspecting the language heatmaps.
+- Decompose outcomes into both-hit, German-only-hit, English-only-hit, neither;
+  report conditional version count and discounted gain within the both-hit
+  subset. Comparing each method's own hit subset alone mixes different questions.
+- Check first relevant rank, second/third/fourth relevant ranks, and version
+  language distribution. This separates lost source coverage from greater
+  multilingual replication on sources already found.
+- Keep four-gold UN comparisons separate from sparse chemistry translation
+  pairs; include positive-count strata if combining corpora.
+- Preserve fixed settings, same questions, shared translated strings across
+  encoders, and the same qrels. A non-index language advantage in nDCG is not
+  intrinsic language neutrality, especially with one translation sample per
+  language and no independent human check of semantic preservation.
+
+INDEPENDENT CRITIQUE OF THE ROUND 1 REVIEW AND PROTOCOL
+
+The review appropriately labels five-language averages as diagnostics, retains
+original and translation controls, exposes missing language cells, and limits
+claims to synthetic score-selected questions. The protocol already specifies
+paired source-cluster analysis and oracle separation. The following points
+should remain explicit in later synthesis:
+
+A. "German is strong" needs an objective in the sentence. The new Hit reversal
+   makes "German improves UN retrieval" too broad. A useful narrower finding
+   is that language choice can redistribute success across questions versus
+   language equivalents; which outcome matters depends on the application.
+
+B. HyDE-minus-same-language-translation is an essential baseline contrast,
+   but it is not a pure causal effect of hypothetical content. The audit shows
+   that HyDE uses document encoding while original/translation use query
+   encoding, with different adapters or prefixes for four encoders. That is
+   the implemented pipeline comparison; isolate encoder role only in a later
+   authorized ablation. German-versus-English translation uses the same role,
+   so this particular role confound does not explain that language contrast.
+
+C. Translation into the original language may be an identity/no-op control,
+   not a newly generated paraphrase. Language-averaged changes then mix true
+   translation with no-op cases in proportions set by the selected-query
+   distribution. Keep these strata visible; do not silently drop them.
+   Near-tie identity discrepancies should be shown as a sensitivity analysis,
+   not treated as independent language effects or hidden by rounding.
+
+D. Legal whole-document/section units and chemistry abstracts differ in length
+   and chunk count. Max-chunk scoring introduces different numbers of chances
+   for a high score. A corpus-level reversal is descriptive; it does not prove
+   that legal reasoning benefits more from HyDE. Report the granularity and
+   discuss chunk-count distributions before supplying a domain mechanism.
+
+E. Top-score question selection and unequal original-language cohorts limit
+   comparisons across original languages. Within-question output-language
+   contrasts are stronger. Preferred-generator ties can also shift query
+   style and should remain part of sampling provenance.
+
+F. Known source association is a valid declared retrieval target but does not
+   exhaust semantic relevance. It also does not guarantee that every accepted
+   source version contains an identical answer-bearing span. Retain the
+   requested 638-question cohort; report quality-flag and no-span sensitivity
+   without using it to replace winners or imply the main experiment is invalid.
+
+G. Eight fixed models, five output languages, three corpora, and repeated metrics
+   create many exploratory choices. Paired confidence intervals quantify
+   uncertainty for a contrast but do not undo post-selection. Preserve the
+   contradictory encoders and both control contrasts in the final claim.
+
+Suggested cautious claim, pending the complete robustness checks:
+"In a parallel UN document pool, selecting a translated query language by
+language-version nDCG can favor a different choice from selecting it by
+canonical-source success. The difference reflects both the fraction of
+questions whose source is recovered and coverage/rank of its language versions."
+This is a diagnostic claim, not a new metric, universal language recommendation,
+or causal account of embedding geometry.

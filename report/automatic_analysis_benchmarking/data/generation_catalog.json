@@ -1,0 +1,1097 @@
+[
+  {
+    "key": [
+      "chemistry",
+      "hyde",
+      "de"
+    ],
+    "summary": {
+      "api_attempts": 197,
+      "cached_input_tokens": 234024,
+      "estimated_cost_usd": 0.02664064,
+      "generation_seconds": 706.0174373025075,
+      "input_tokens": 250063,
+      "output_tokens": 45393,
+      "query_count": 197
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/chemistry/de/49ca52bcbec288b996c99909d2745331281f8b9c7e6de80ca4490d922ee40e54",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "184bcad786bde7019862622a4b127ad7daee0bff210b19258b5ae4f7c3100d22"
+  },
+  {
+    "key": [
+      "chemistry",
+      "hyde",
+      "zh"
+    ],
+    "summary": {
+      "api_attempts": 197,
+      "cached_input_tokens": 235218,
+      "estimated_cost_usd": 0.03097268,
+      "generation_seconds": 667.8922554987948,
+      "input_tokens": 250063,
+      "output_tokens": 54272,
+      "query_count": 197
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/chemistry/zh/5aed507b5b27eeff5d0fa77dba05f61f34d145252091e5362904c3be007812f4",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "b281202e5c25e7c6eea101efaa7342ae51e59c5f214fa9dd9fabe38bce4f35ac"
+  },
+  {
+    "key": [
+      "chemistry",
+      "translate",
+      "zh"
+    ],
+    "summary": {
+      "api_attempts": 159,
+      "cached_input_tokens": 0,
+      "estimated_cost_usd": 0.0259508,
+      "identity_query_count": 38,
+      "input_tokens": 158943,
+      "output_tokens": 20113,
+      "query_count": 197,
+      "translated_query_count": 159,
+      "translation_seconds": 376.125855342485
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/chemistry/zh/df010bddea003f5ccb9246b61c7e7201fc7050f46db44b0c357ef229d4d7ce2f",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "72e2ff6cce35569f3a9d4db7abdca5a6270eba798e42671047c17237baf49f83"
+  },
+  {
+    "key": [
+      "chemistry",
+      "translate",
+      "de"
+    ],
+    "summary": {
+      "api_attempts": 182,
+      "cached_input_tokens": 0,
+      "estimated_cost_usd": 0.029463200000000002,
+      "identity_query_count": 15,
+      "input_tokens": 181812,
+      "output_tokens": 22564,
+      "query_count": 197,
+      "translated_query_count": 182,
+      "translation_seconds": 440.4723941721022
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/chemistry/de/49300dd5fb79897bb37d2ca9d84ac290b978fc1d3adbd0d61607b390b1d7c5d4",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "b3bdfde6e3ef6e76af51d812a73e9296b86f29090b26d7eda204166185360707"
+  },
+  {
+    "key": [
+      "chemistry",
+      "hyde",
+      "es"
+    ],
+    "summary": {
+      "api_attempts": 198,
+      "cached_input_tokens": 235218,
+      "estimated_cost_usd": 0.02499718,
+      "generation_seconds": 574.9723553340882,
+      "input_tokens": 251373,
+      "output_tokens": 42059,
+      "query_count": 197
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/chemistry/es/640101d3f6b280bdac38abc3bb8c04af9d4d3a54d54100ca3b5140f4bfc10356",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "eb2737eaa545bca6c8f4c939a3a7ce7025b3709e5890870117dcac4764b09637"
+  },
+  {
+    "key": [
+      "chemistry",
+      "translate",
+      "es"
+    ],
+    "summary": {
+      "api_attempts": 162,
+      "cached_input_tokens": 0,
+      "estimated_cost_usd": 0.0250119,
+      "identity_query_count": 35,
+      "input_tokens": 161924,
+      "output_tokens": 17639,
+      "query_count": 197,
+      "translated_query_count": 162,
+      "translation_seconds": 322.41502772830427
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/chemistry/es/96bfefd1743477590317d6c3bb73c0975bf8367094820aff3a3f09d2da369496",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "a76824ab07fd3953f5ea49403b7d2abff80805b0aff8ebe4a94a9b189cc16dab"
+  },
+  {
+    "key": [
+      "chemistry",
+      "translate",
+      "fr"
+    ],
+    "summary": {
+      "api_attempts": 134,
+      "cached_input_tokens": 0,
+      "estimated_cost_usd": 0.02246,
+      "identity_query_count": 63,
+      "input_tokens": 133400,
+      "output_tokens": 18240,
+      "query_count": 197,
+      "translated_query_count": 134,
+      "translation_seconds": 306.0545489285141
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/chemistry/fr/159e82130d3f04bdb72f177b9ce14fccc41dbbbde5120f7be7db8b843e31a535",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "a7c5d38ffada9100c7b386831a9067c92c9c0695119bfd04c0087b5e865843c9"
+  },
+  {
+    "key": [
+      "chemistry",
+      "hyde",
+      "fr"
+    ],
+    "summary": {
+      "api_attempts": 197,
+      "cached_input_tokens": 234024,
+      "estimated_cost_usd": 0.03083914,
+      "generation_seconds": 647.9923057940323,
+      "input_tokens": 250063,
+      "output_tokens": 53790,
+      "query_count": 197
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/chemistry/fr/980217bab2a8473b1f0d4af5573ce2bb268dc8a2bca2858c054180a3535f7f49",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "cd82412ddbcb5b816c66dd5fcad9a4784d826c60c08988e84e7e68342368f803"
+  },
+  {
+    "key": [
+      "chemistry",
+      "hyde",
+      "en"
+    ],
+    "summary": {
+      "api_attempts": 197,
+      "cached_input_tokens": 235218,
+      "estimated_cost_usd": 0.02323468,
+      "generation_seconds": 651.8309455551207,
+      "input_tokens": 250063,
+      "output_tokens": 38796,
+      "query_count": 197
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/chemistry/en/cd5c4540fa408cdbda73b5ed825b81cc51ea3cb2faba831515651be239e3895d",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "5414406787de09ef11d2916d6fbd022736289ae0dda76cde605a3065b1353fc4"
+  },
+  {
+    "key": [
+      "chemistry",
+      "translate",
+      "en"
+    ],
+    "summary": {
+      "api_attempts": 151,
+      "cached_input_tokens": 0,
+      "estimated_cost_usd": 0.021367300000000002,
+      "identity_query_count": 46,
+      "input_tokens": 151413,
+      "output_tokens": 12452,
+      "query_count": 197,
+      "translated_query_count": 151,
+      "translation_seconds": 269.2415809901431
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/chemistry/en/8d042e0239fd97579a0fe4a54f866184fa39cfbc755fc6c7d3dd42a71f6df2f6",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "8d2258020ae07db6ce6e3077ee29a7aba2cbe3c6a1473bddb31bc239af523efd"
+  },
+  {
+    "key": [
+      "eurlex",
+      "translate",
+      "de"
+    ],
+    "summary": {
+      "api_attempts": 144,
+      "cached_input_tokens": 163735,
+      "estimated_cost_usd": 0.00796045,
+      "identity_query_count": 50,
+      "input_tokens": 174026,
+      "output_tokens": 10588,
+      "query_count": 194,
+      "translated_query_count": 144,
+      "translation_seconds": 246.13631856348366
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/eurlex/de/b274861da0c5505079af75c815f085b37ba50bbaefcecb94ae868c040bb4744c",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "611fa883de326bf2a14972be864d479b029765b2c3f61ffd13103c438dca7510"
+  },
+  {
+    "key": [
+      "eurlex",
+      "translate",
+      "zh"
+    ],
+    "summary": {
+      "api_attempts": 194,
+      "cached_input_tokens": 220985,
+      "estimated_cost_usd": 0.01526095,
+      "identity_query_count": 0,
+      "input_tokens": 234691,
+      "output_tokens": 23361,
+      "query_count": 194,
+      "translated_query_count": 194,
+      "translation_seconds": 395.25459269282874
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/eurlex/zh/19fc9cfd5074cc7dde25c3de9281d7e58b175e4457a90d83ca32f94a95b411d1",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "e19d412a0176aecf4f48a569bf4581f73b8c411cd6c2fb348c1a9361f7159611"
+  },
+  {
+    "key": [
+      "eurlex",
+      "translate",
+      "en"
+    ],
+    "summary": {
+      "api_attempts": 139,
+      "cached_input_tokens": 159155,
+      "estimated_cost_usd": 0.00667215,
+      "identity_query_count": 55,
+      "input_tokens": 168841,
+      "output_tokens": 8224,
+      "query_count": 194,
+      "translated_query_count": 139,
+      "translation_seconds": 229.4398125540465
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/eurlex/en/3c5f381bc1d19f6f01778b00ed2125e8e0a85574416375e4ba3800e9386970a8",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "23423b9c7a299175901c905214a1fab2fa2e8de33b2c7d47c7b8447f4b476f23"
+  },
+  {
+    "key": [
+      "eurlex",
+      "hyde",
+      "en"
+    ],
+    "summary": {
+      "api_attempts": 194,
+      "cached_input_tokens": 286538,
+      "estimated_cost_usd": 0.02787798,
+      "generation_seconds": 660.3517283366527,
+      "input_tokens": 300069,
+      "output_tokens": 47319,
+      "query_count": 194
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/eurlex/en/984f49c994b9dddc9924cc2d5c50931770e90b53929ea2c5c365b6a60a4bd034",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "75c09582dcf0aa686c6447aa973d63c272f07456d53f389f371b3a2c01e29517"
+  },
+  {
+    "key": [
+      "eurlex",
+      "hyde",
+      "de"
+    ],
+    "summary": {
+      "api_attempts": 196,
+      "cached_input_tokens": 288114,
+      "estimated_cost_usd": 0.03535864,
+      "generation_seconds": 857.1336582730291,
+      "input_tokens": 303169,
+      "output_tokens": 61944,
+      "query_count": 194
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/eurlex/de/be665ffc20fb06151348241fa699aec916ea5b19545ee19055ac7dd1507cf979",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "8a23d433d57fbb36594b1c0c9d6364d9695ac768f87257488ccb9f76001f3113"
+  },
+  {
+    "key": [
+      "eurlex",
+      "translate",
+      "fr"
+    ],
+    "summary": {
+      "api_attempts": 143,
+      "cached_input_tokens": 163735,
+      "estimated_cost_usd": 0.00781045,
+      "identity_query_count": 51,
+      "input_tokens": 172591,
+      "output_tokens": 10575,
+      "query_count": 194,
+      "translated_query_count": 143,
+      "translation_seconds": 310.7134632123634
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/eurlex/fr/f98e8a735db0465f2e410fd42302d52b6b5453d872e7e6eddbbc2fe50d45f427",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "b4010cb6f548f7079b734e9096db86a6c7036bfb9dd75cc522de886a0d530f31"
+  },
+  {
+    "key": [
+      "eurlex",
+      "translate",
+      "es"
+    ],
+    "summary": {
+      "api_attempts": 156,
+      "cached_input_tokens": 178620,
+      "estimated_cost_usd": 0.0076492,
+      "identity_query_count": 38,
+      "input_tokens": 188615,
+      "output_tokens": 9727,
+      "query_count": 194,
+      "translated_query_count": 156,
+      "translation_seconds": 307.8611815851182
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/eurlex/es/dc1a643ae0ad7e532e6fe4f19fc6751885fe77d1d5096299e6f77bd42e3f307b",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "4b1cb00e8e9433ca6a95f7d3b99422b77d40b3873bf0195b0e221a52fdfd80e2"
+  },
+  {
+    "key": [
+      "eurlex",
+      "hyde",
+      "zh"
+    ],
+    "summary": {
+      "api_attempts": 194,
+      "cached_input_tokens": 286538,
+      "estimated_cost_usd": 0.03267448,
+      "generation_seconds": 940.9162992674392,
+      "input_tokens": 300069,
+      "output_tokens": 56912,
+      "query_count": 194
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/eurlex/zh/078549fba19aa554d7815fdb125dec262c619e67e3ec94ea48b2b48272bca9f1",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "33c64015fd40d28801c8da5567e2ef4ac62eb89d5e7c051b694a16956e39b4ff"
+  },
+  {
+    "key": [
+      "eurlex",
+      "hyde",
+      "es"
+    ],
+    "summary": {
+      "api_attempts": 194,
+      "cached_input_tokens": 285061,
+      "estimated_cost_usd": 0.03288691,
+      "generation_seconds": 736.4728192585753,
+      "input_tokens": 300069,
+      "output_tokens": 57071,
+      "query_count": 194
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/eurlex/es/8e819e2d56533c7d614185f07d1dcb771e0c52d452728cbe9bbace4c995e145b",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "0f17f97799848ff42e13c7f2f4392c487d6a37717bd4fe27da243e1bb990fe18"
+  },
+  {
+    "key": [
+      "eurlex",
+      "hyde",
+      "fr"
+    ],
+    "summary": {
+      "api_attempts": 194,
+      "cached_input_tokens": 286538,
+      "estimated_cost_usd": 0.03368748,
+      "generation_seconds": 737.6354234626051,
+      "input_tokens": 300069,
+      "output_tokens": 58938,
+      "query_count": 194
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/eurlex/fr/b8c59249bb9bea585f4d6a729852d9f73f2670f3d52fd7842ae1e50715782015",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "971f7b21e205fce80056a8bd84567fed98a9800bb0aff7abde186d46d638134b"
+  },
+  {
+    "key": [
+      "un",
+      "hyde",
+      "es"
+    ],
+    "summary": {
+      "api_attempts": 247,
+      "cached_input_tokens": 363342,
+      "estimated_cost_usd": 0.03804192,
+      "generation_seconds": 958.7820946099237,
+      "input_tokens": 381627,
+      "output_tokens": 65160,
+      "query_count": 247
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/un/es/30ab952472718978b027402dceffe3be8c424544bff4e81dfa67e5ea828e722a",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "348bf50bfb59a541d1f85434e8276a5d21302e3b0f106ec158b3e6e471cd6671"
+  },
+  {
+    "key": [
+      "un",
+      "hyde",
+      "zh"
+    ],
+    "summary": {
+      "api_attempts": 247,
+      "cached_input_tokens": 364819,
+      "estimated_cost_usd": 0.04346549,
+      "generation_seconds": 989.7421887737,
+      "input_tokens": 381627,
+      "output_tokens": 76273,
+      "query_count": 247
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/un/zh/de9aa54a56adca8925924560f6cf912acac99b3e4b526b550cb3f3ed4c717f20",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "8b4d10a5f565602ebd500a7bd40fc990871f550290b0bedb2c06c8462fa0cf65"
+  },
+  {
+    "key": [
+      "un",
+      "translate",
+      "de"
+    ],
+    "summary": {
+      "api_attempts": 247,
+      "cached_input_tokens": 282815,
+      "estimated_cost_usd": 0.01535165,
+      "identity_query_count": 0,
+      "input_tokens": 298635,
+      "output_tokens": 21883,
+      "query_count": 247,
+      "translated_query_count": 247,
+      "translation_seconds": 486.943024023436
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/un/de/adb2dd2f5c8dc56edad2b551b41f10d16f17f8796edd697dc430bf98799ad087",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "f8e0cd1df2e2a3049ef01ad17488d754ce1dc806fa55e4895c9354eba66b921b"
+  },
+  {
+    "key": [
+      "un",
+      "translate",
+      "en"
+    ],
+    "summary": {
+      "api_attempts": 179,
+      "cached_input_tokens": 204955,
+      "estimated_cost_usd": 0.00961075,
+      "identity_query_count": 68,
+      "input_tokens": 216967,
+      "output_tokens": 12720,
+      "query_count": 247,
+      "translated_query_count": 179,
+      "translation_seconds": 348.3061299948022
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/un/en/e3bd329facd3f103a966b96a984ac328219c9396d112ca6b3180d20cddbf93d1",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "a2efdb389c0dc2eea34fa28fb833ed22822df35eda38779cf6fc0c5f47eba333"
+  },
+  {
+    "key": [
+      "un",
+      "translate",
+      "zh"
+    ],
+    "summary": {
+      "api_attempts": 197,
+      "cached_input_tokens": 225565,
+      "estimated_cost_usd": 0.01359135,
+      "identity_query_count": 50,
+      "input_tokens": 238177,
+      "output_tokens": 20149,
+      "query_count": 247,
+      "translated_query_count": 197,
+      "translation_seconds": 453.1433968655765
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/un/zh/b3987168e702cad560afced19b5fe2c51c2523a166b2419cf53b7a6521866797",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "d25e7989b89fb152ddd630643daceb819b65d3f10b67ea40276f20fd8cbccc87"
+  },
+  {
+    "key": [
+      "un",
+      "hyde",
+      "en"
+    ],
+    "summary": {
+      "api_attempts": 247,
+      "cached_input_tokens": 364819,
+      "estimated_cost_usd": 0.03811399,
+      "generation_seconds": 961.9576789382845,
+      "input_tokens": 381627,
+      "output_tokens": 65570,
+      "query_count": 247
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/un/en/86d123049ec79721633a680717a0ef5b0aa224a9f508fc94139ce5ea4716cc99",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "06ed06ec21b9cc6c7af3ec42d810f296bc9d4e8beed56df2a2dae67b10b828a8"
+  },
+  {
+    "key": [
+      "un",
+      "hyde",
+      "fr"
+    ],
+    "summary": {
+      "api_attempts": 248,
+      "cached_input_tokens": 364819,
+      "estimated_cost_usd": 0.039785890000000004,
+      "generation_seconds": 898.7249772865325,
+      "input_tokens": 383156,
+      "output_tokens": 68608,
+      "query_count": 247
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/un/fr/67f876ef4982b08a8574a5cdb0a00180fd56b639fe1227a51270abd56ebebc8b",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "3ec68a37a1750b9ac5b5119cb7d4670b9c04ca140e87d48ec05799cbb3474149"
+  },
+  {
+    "key": [
+      "un",
+      "hyde",
+      "de"
+    ],
+    "summary": {
+      "api_attempts": 247,
+      "cached_input_tokens": 363342,
+      "estimated_cost_usd": 0.03904742,
+      "generation_seconds": 1027.3279718849808,
+      "input_tokens": 381627,
+      "output_tokens": 67171,
+      "query_count": 247
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/hyde/un/de/9dded16ce00749d182641c7b357aa0d0cf48178b9d987d19806054da1a274e99",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_languages": [
+        "en",
+        "de",
+        "es",
+        "fr",
+        "zh"
+      ],
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "2ed97560d253153c4e697eb1b88640c318c1054c9e65f3d2f06e3e07643522c1"
+  },
+  {
+    "key": [
+      "un",
+      "translate",
+      "es"
+    ],
+    "summary": {
+      "api_attempts": 190,
+      "cached_input_tokens": 217550,
+      "estimated_cost_usd": 0.0103556,
+      "identity_query_count": 57,
+      "input_tokens": 229491,
+      "output_tokens": 13972,
+      "query_count": 247,
+      "translated_query_count": 190,
+      "translation_seconds": 384.3652870254591
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/un/es/f2cc503849443f6f5887386163a43e04fad6867482093b067b797d44598f7958",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "20a7cbe210fec856ba2c729d52e3614d4fa29c2f01423ca60aab1b57ceb2b44c"
+  },
+  {
+    "key": [
+      "un",
+      "translate",
+      "fr"
+    ],
+    "summary": {
+      "api_attempts": 175,
+      "cached_input_tokens": 200375,
+      "estimated_cost_usd": 0.01149525,
+      "identity_query_count": 72,
+      "input_tokens": 211270,
+      "output_tokens": 16804,
+      "query_count": 247,
+      "translated_query_count": 175,
+      "translation_seconds": 353.7400368191302
+    },
+    "artifact_path": "artifacts/fir-20261109-all-questions/artifacts/translations/un/fr/366269633f4b4f4c740e9fa52d1b6e708694d44b148150506827dda2da977e72",
+    "configuration": {
+      "api_key_env": "OPENAI_API_KEY",
+      "cached_input_usd_per_million": 0.01,
+      "endpoint": "https://api.openai.com/v1/chat/completions",
+      "input_usd_per_million": 0.1,
+      "model": "gpt-6-luna",
+      "output_usd_per_million": 0.5,
+      "request_options": {
+        "max_completion_tokens": 8192,
+        "reasoning_effort": "low"
+      },
+      "response_format": "json_schema",
+      "timeout_seconds": 120
+    },
+    "manifest_sha256": "28b48d2b2d366e62e7465706893acb63dfdabed720e93d6f2d0d1dbbd9bd5136"
+  }
+]

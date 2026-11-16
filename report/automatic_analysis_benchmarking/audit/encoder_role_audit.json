@@ -1,0 +1,79 @@
+{
+  "models": {
+    "embeddinggemma": {
+      "repo_id": "google/embeddinggemma-300m",
+      "max_length": 2048,
+      "pooling": "mean+dense+dense+normalize",
+      "query_prefix": "task: search result | query: ",
+      "document_prefix": "title: none | text: ",
+      "dimension": 768
+    },
+    "bge-m3": {
+      "repo_id": "BAAI/bge-m3",
+      "max_length": 8192,
+      "pooling": "cls",
+      "query_prefix": "",
+      "document_prefix": "",
+      "dimension": 1024
+    },
+    "qwen3-0.6B": {
+      "repo_id": "Qwen/Qwen3-Embedding-0.6B",
+      "max_length": 32768,
+      "pooling": "last_token",
+      "query_prefix": "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery:",
+      "document_prefix": "",
+      "dimension": 1024
+    },
+    "nomic-v2-moe": {
+      "repo_id": "nomic-ai/nomic-embed-text-v2-moe",
+      "max_length": 512,
+      "pooling": "mean",
+      "query_prefix": "search_query: ",
+      "document_prefix": "search_document: ",
+      "dimension": 768
+    },
+    "granite-278m": {
+      "repo_id": "ibm-granite/granite-embedding-278m-multilingual",
+      "max_length": 512,
+      "pooling": "cls",
+      "query_prefix": "",
+      "document_prefix": "",
+      "dimension": 768
+    },
+    "LaBSE": {
+      "repo_id": "sentence-transformers/LaBSE",
+      "max_length": 256,
+      "pooling": "cls+dense+normalize",
+      "query_prefix": "",
+      "document_prefix": "",
+      "dimension": 768
+    },
+    "SapBERT": {
+      "repo_id": "cambridgeltl/SapBERT-UMLS-2020AB-all-lang-from-XLMR",
+      "max_length": 512,
+      "pooling": "cls",
+      "query_prefix": "",
+      "document_prefix": "",
+      "dimension": 768
+    },
+    "e5-large-instruct": {
+      "repo_id": "intfloat/multilingual-e5-large-instruct",
+      "max_length": 512,
+      "pooling": "mean",
+      "query_prefix": "Instruct: Given a web search query, retrieve relevant passages that answer the query\nQuery: ",
+      "document_prefix": "",
+      "dimension": 1024
+    }
+  },
+  "hyde_encoder_kind": "document",
+  "original_translation_encoder_kind": "query",
+  "max_length_role_specific": false,
+  "normalization": "L2 float32",
+  "right_truncation": true,
+  "role_diff_models": [
+    "embeddinggemma",
+    "qwen3-0.6B",
+    "nomic-v2-moe",
+    "e5-large-instruct"
+  ]
+}

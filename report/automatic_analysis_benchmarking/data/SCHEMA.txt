@@ -1,0 +1,66 @@
+Offline ACL analysis dataset
+============================
+Rebuild from the repository root:
+  .venv/bin/python report/acl_analysis_20261115/scripts/build_dataset.py
+
+Scope: 264 document-level reports for the 638 best-per-document questions.
+Legacy chunk-level/all-question results are excluded. Original artifacts are read-only.
+
+per_query.parquet: 247,192 rows. Unique key is
+(corpus, model, method, output_language, setting_id, query_id).
+method is original, translate, or hyde; output_language is original/de/en/es/fr/zh.
+variant is original or method_language (e.g., translate_en, hyde_de).
+query_language always describes the ORIGINAL question. target_language is the
+searched collection language or mixed. regime likewise uses the original question
+language; translating a query does not redefine its saved regime.
+
+Metric columns: ndcg10, mrr10; recallK, hitK, source_recallK, and
+all_source_successK for K in 1,5,10,20,100. Canonical metric names are recorded in
+dataset_manifest.json. source_recallK equals hitK for these single-source queries.
+relevant_document_count counts gold document-language versions in the setting.
+required_source_count is always one in this selected cohort.
+
+selected_queries.parquet: 638 rows, with question text, original provenance,
+canonical_source_id, score, generator, source ID, answer/evidence, and language.
+Aliases query_id, query_language, and generator accompany the original fields.
+Answers/evidence are included for analysis only, not generation inputs.
+selection_audit.parquet/csv: one selected document, tie pool and candidate counts.
+qrels.parquet and eligibility.parquet preserve the source judgments and exclusions.
+settings.parquet/csv and cohort_coverage.parquet/csv explicitly retain empty cohorts.
+
+report_catalog.parquet/csv: report paths, pinned model settings, corpus/query/qrel
+identities, report summary timings, generation summaries, and source file hashes.
+reported_setting_metrics.parquet and reported_macro_metrics.parquet/csv preserve
+saved aggregate metrics. Saved macro values average settings equally; they are
+not automatically equal-query averages. validation.json independently reconstructs
+all 5,720 nonempty setting rows and 792 macro rows from the extracted query rows.
+truncation.parquet/csv gives saved aggregate token/truncation counts by scope.
+
+Generation and cost accounting
+-----------------------------
+generation.parquet contains 6,380 unique query/method/output-language records,
+including text, request keys, attempts, tokens, API cost estimates, and generation
+timing. These records are shared across retrieval models and target settings.
+There are 638 exact same-language identity translations with zero API cost.
+No non-null request key is shared across distinct generation records in this run.
+Use this table rather than summing repeated per_query costs to estimate spend.
+generation_catalog.json identifies the 30 exact generation artifact configurations.
+Per-query added_api_cost_usd and added_generation_seconds harmonize translation
+and HyDE. The original baseline has known zero added paid generation work.
+Other unavailable measurements remain null. Local compute costs are unpriced.
+query_encoding_seconds_amortized and retrieval_seconds_amortized are amortized
+batch timings, not measured end-to-end response latency.
+
+Identity control and pairing
+----------------------------
+All 11 variants have identical eligible query-setting keys for each corpus/model,
+and all eight models share those cohorts. cohort_exceptions.json is empty.
+identity_control.parquet/csv compares each same-language translation to the
+original for 22,472 query-setting-model pairs. The column matches_within_1e10
+means tolerance 1e-10 (not ten billion). There are 26 exceptions, retained in
+identity_exceptions.json, rather than silently corrected. All 638 corresponding
+identity texts match their original strings exactly. Consult the separate audit
+for their saved-vector and near-tie ranking diagnosis.
+
+Rows are repeated measures, not independent samples. Resample or partition at
+canonical source-document/question level and retain matching configurations.

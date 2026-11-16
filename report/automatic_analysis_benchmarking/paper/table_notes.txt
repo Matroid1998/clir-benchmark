@@ -1,0 +1,3 @@
+Table 1: absolute nDCG is on [0,1]; paired differences are percentage points. Targets and fixed encoders are averaged within questions before source averaging.
+Table 2: all model-specific H-T differences are target-matched cross-language nDCG percentage points. Intervals are exploratory paired source bootstrap, not multiplicity adjusted.
+Table 3: internal five-fold policy changes relative to original mixed retrieval, seed42; intervals condition on fitted choices. Round6 provides split sensitivity. These are not an untouched external evaluation.

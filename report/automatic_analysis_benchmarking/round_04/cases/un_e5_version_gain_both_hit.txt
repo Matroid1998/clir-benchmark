@@ -1,0 +1,35 @@
+un_e5_version_gain_both_hit
+Rule: Among both-hit at 10, maximize Tde-minus-Ten relevant-version count, then nDCG@10; break ties by query ID.
+Corpus/model: un/e5-large-instruct
+Query ID: q_db24165b1a872216cc32f5ca1ec0bbd756e6170dd7adcfa40137eef1d815c121
+Original language: en
+Quality: clear
+Canonical source: 2013/a/res/67/100
+Source unit: un:2013/a/res/67/100:en
+Query generator: gpt-5.6-luna
+Provenance: {"file": "data/legal/qac/generation_600_20261008_model_comparison/un_parallel/run.sqlite", "outcome_error": "", "outcome_status": "completed", "position": 0, "task": "7a1cea85b57254a166ac3999fd4fe366713d0762d558098190680adee602eb5e"}
+
+ORIGINAL QUESTION
+What visa-related concerns and anticipated host-country measures did the General Assembly record in its 14 December 2012 consideration of relations with the United Nations host country?
+
+SAVED ANSWER (not provided to generation)
+5. Notes the concerns expressed by some delegations concerning the denial and delay of entry visas to representatives of Member States;
+6. Also notes that the Committee anticipates that the host country will continue to enhance its efforts to ensure the issuance of entry visas to representatives of Member States in a timely manner, pursuant to article IV, section 11, of the Agreement between the United Nations and the United States of America regarding the Headquarters of the United Nations to travel to New York on United Nations business and that the Committee anticipates that the host country will continue to enhance efforts, including visa issuance, to facilitate the participation of representatives of Member States in other United Nations meetings, as appropriate;
+
+SAVED EVIDENCE (not provided to generation)
+
+
+original
+What visa-related concerns and anticipated host-country measures did the General Assembly record in its 14 December 2012 consideration of relations with the United Nations host country?
+Metrics: {"ndcg10": 0.3903800499921017, "hit10": 1.0, "recall10": 0.25, "mrr10": 1.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 1, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [1], "relevant_languages_within10": ["en"], "relevant_versions10": 1, "relevant_ranks_within100": [1], "top10_language_counts": {"en": 10}}
+
+translate_en
+What visa-related concerns and anticipated host-country measures did the General Assembly record in its 14 December 2012 consideration of relations with the United Nations host country?
+Metrics: {"ndcg10": 0.3903800499921017, "hit10": 1.0, "recall10": 0.25, "mrr10": 1.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 1, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [1], "relevant_languages_within10": ["en"], "relevant_versions10": 1, "relevant_ranks_within100": [1], "top10_language_counts": {"en": 10}}
+
+translate_de
+Welche visumbezogenen Bedenken und erwarteten Maßnahmen des Gastlandes hielt die Generalversammlung bei ihrer Beratung der Beziehungen zum Gastland der Vereinten Nationen am 14. Dezember 2012 fest?
+Metrics: {"ndcg10": 0.9108532513310018, "hit10": 1.0, "recall10": 1.0, "mrr10": 1.0, "relevant_document_count": 4}
+Ranks: {"first_relevant_rank_within_saved100": 1, "first_relevant_language_within_saved100": "en", "relevant_ranks_within10": [1, 2, 5, 8], "relevant_languages_within10": ["en", "fr", "es", "zh"], "relevant_versions10": 4, "relevant_ranks_within100": [1, 2, 5, 8], "top10_language_counts": {"en": 4, "es": 2, "fr": 3, "zh": 1}}

@@ -1,0 +1,35 @@
+{
+  "input_ranking_rows": 5614400,
+  "input_row_groups": 264,
+  "query_configurations": 56144,
+  "legal_ranking_rows_qrel_consistency_checked": 3880800,
+  "reconstruction_max_absolute_error": {
+    "ndcg10": 2.220446049250313e-16,
+    "mrr10": 0.0,
+    "hit10": 0.0,
+    "recall10": 0.0
+  },
+  "legal_collapsed_min_distinct_sources": 29,
+  "legal_collapsed_max_distinct_sources": 100,
+  "legal_collapsed_top10_censored_configurations": 0,
+  "unique_sources_per_selected_query": 1,
+  "text_columns_read": [],
+  "ranking_projection": [
+    "corpus",
+    "model",
+    "variant",
+    "setting_id",
+    "query_id",
+    "rank",
+    "relevance",
+    "source_id",
+    "document_id",
+    "document_language"
+  ],
+  "ranking_input_sha256": "898ce176e4b3e6b7e44fb701cb0ba73eb23efd507ded7200089c2eddf1b0ef50",
+  "source_collapse_scope": "EUR-Lex articles/annexes and UN documents only; chemistry excluded",
+  "all_contrast_decompositions_sum_exactly": true,
+  "fixed_model_bootstrap_unit": "one question after averaging eight encoders",
+  "both_hit_bootstrap_unit": "one question within an encoder-specific paired both-hit subset",
+  "peak_process_memory_mib": 516.44140625
+}

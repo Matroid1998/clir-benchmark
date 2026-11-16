@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "verified_at": "2026-11-16T00:45:35.750828+00:00",
+  "rounds_completed_and_visually_reviewed": 6,
+  "round_figure_triplets_validated": 22,
+  "round_csv_latex_table_pairs": 40,
+  "compact_paper_figure_triplets": 2,
+  "paper_csv_latex_table_pairs": 3,
+  "total_figure_triplets": 24,
+  "total_csv_latex_table_pairs": 43,
+  "manifest_hashes_verified": 180,
+  "inventory_files": 301,
+  "matched_reports": 264,
+  "selected_questions": 638,
+  "per_query_setting_variant_rows": 247192,
+  "generation_records": 6380,
+  "benchmark_execution": false,
+  "paid_api_calls_in_analysis": 0,
+  "raw_results_modified": false,
+  "note": "Figure visual review is the recorded analyst inspection; this script checks completeness, file structure and provenance."
+}

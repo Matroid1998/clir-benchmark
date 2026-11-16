@@ -1,0 +1,184 @@
+Candidate-pool provenance audit
+Audited 2026-11-15/16 using local files only.
+
+Conclusion
+
+The best-per-document selection saw every candidate row in the three pinned
+published QA datasets. The entire chain also matches the original generation
+CSVs/SQLite outcome rows available in the sibling clir-dataset-creation project.
+No is_best filter, candidate-rank filter, or question-text deduplication removed
+candidates before this experiment's selection. Chemistry's smaller pool already
+exists in its generation outputs; three candidates was a maximum, not a fixed
+quota. There are TEN question-generator IDs in every corpus, distinct from the
+EIGHT embedding models used in the retrieval experiment.
+
+Observed counts (before maximum-score selection)
+
+Corpus       Candidate rows  Canonical winners  Pool min/median/max  Missing scores
+Chemistry             1,950                197             4/10/20               0
+EUR-Lex               4,050                194             8/22/30              69
+UN                    4,691                247             1/20/30              66
+Total                10,691                638                                   135
+
+Successful/exported generation task sizes, grouped by the benchmark's exact
+file + task/routing task + generator identity:
+
+Corpus       Tasks with 1 candidate  Tasks with 2  Tasks with 3  Total tasks
+Chemistry                    1,840            31            16        1,887
+EUR-Lex                        348           492           906        1,746
+UN                             395           549         1,066        2,010
+
+Chemistry therefore has 1,887 first-ranked rows, 47 second-ranked rows and 16
+third-ranked rows. 1,840 / 1,887 = 97.5% of its nonempty task groups supplied one
+candidate. 114 of its 197 canonical documents have exactly ten candidates.
+Only 133/197 chemistry documents have all ten generators represented; the rest
+have 4-9. The corresponding all-ten counts are 27/194 EUR-Lex and 38/247 UN.
+It is inaccurate to describe this experiment as choosing from 30 questions for
+every document.
+
+Chemistry has 200 distinct source-language units but only 197 canonical patent
+IDs. Three patents each contribute two input language versions, which selection
+correctly merges: CN-115917719-A (en,zh), EP-1812498-A2 (en,fr), and
+EP-4081386-A1 (en,fr). Each of these merged groups has 20 candidates. This
+explains 197 rather than 200 winners. EUR-Lex/UN input source-language unit
+counts equal their canonical winner counts (194/247).
+
+Confirmed checks and evidence
+
+1. Pinned dataset -> experiment input -> selection audit, with exact equality.
+
+For each corpus, loaded every locally cached data/qas/*.parquet shard at the
+manifest's exact QA revision, compared complete dictionaries by _id against
+input_qas.jsonl, and compared IDs with multiplicities against both
+input_queries.parquet and every selection.json candidate entry. All 10,691
+complete published rows match; zero extra, missing, duplicate-ID or changed rows.
+Every saved winner has its canonical group's maximum nonmissing numeric score.
+The saved dataset cards independently list 1,950/4,050/4,691 rows and state:
+"All supplied generator candidates are retained, including low-scoring and
+unmatched evidence."
+
+QA revisions:
+  chemistry: bb2657593e877d75e747a4602468eb0add634895
+  eurlex:    c924c03d0ac73ee45a3b6910d420fe523e433d2d
+  un:        677117c2e82908933821ba68dfd122d273c20be0
+
+Saved inputs and audits, relative to this repository:
+  artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/
+    f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/
+  artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/
+    edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/
+  artifacts/fir-20261109-all-questions/artifacts/relevance/un/
+    790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/
+Each contains manifest.json, input_qas.jsonl, input_queries.parquet,
+selection.json and queries.parquet.
+
+Cached cards and Parquets are under:
+  /home/mehdi/.cache/huggingface/hub/
+    datasets--MehdiAstaraki--{corpus}-generated-qa/snapshots/{revision}/
+
+2. Benchmark code does not apply an upstream winner filter.
+
+src/clir_benchmark/adapters.py:22, DatasetReader.read, streams every matching
+Parquet row. src/clir_benchmark/pipeline.py:145, prepare_relevance, reads all qas
+rows at line 157 and calls select_candidates at line 170. The best-per-document
+branch in adapters.py:338 immediately dispatches to _select_per_document at
+line 231, grouping by canonical document and selecting maximum score. The
+is_best/rank handling at lines 354-376 belongs to the separate legacy best mode.
+Evidence overlays preserve list membership; the experiment config has no overlay.
+
+Current adapters.py and pipeline.py are byte-identical to their archived copies
+in artifacts/fir-20261109-all-questions/selected-document-20261110/project/.
+Thus this conclusion is supported by the saved execution code, not just a later
+implementation. The accompanying JSON records SHA-256 hashes.
+
+All chemistry input is_best fields are null. All EUR-Lex/UN input is_best fields
+are false. Selection retained all of them as candidates regardless. Selected
+rank-2/rank-3 questions also occur: chemistry 3/0, EUR-Lex 48/8, UN 44/11.
+Missing-score candidates remain in the audit but cannot win; none won. Exact
+question strings repeated within a source remain separate candidate records
+(excess duplicate rows: chemistry 3, EUR-Lex 20, UN 13).
+
+3. Original generation files -> publication: every supplied row survives.
+
+The source project is /home/mehdi/Projects/clir-dataset-creation.
+All ten chemistry provenance CSVs exist under:
+  data/chemistry/ai4chem_abstract_pairs/qac/
+    chemistry_google_patents_model_comparison_generator/
+They are generator_compare_200_{model}_gemini38.csv files, not the separately
+written *_best.csv files. Each CSV has exactly its number of published rows.
+Every saved metadata_json equals the original CSV dictionary at its recorded
+line, and the provenance lines cover 2 through N+1 without gaps. Aggregate:
+1,950/1,950 original CSV rows reproduced exactly.
+
+The legal source SQLite files are under:
+  data/legal/qac/generation_600_20261008_model_comparison/
+    eurlex/run.sqlite
+    un_parallel/run.sqlite
+    continuation_de_zh_50_20261012/eurlex/run.sqlite
+    continuation_de_zh_50_20261012/un_parallel/run.sqlite
+Opened with SQLite mode=ro. Enumerated each outcomes.rows JSON payload and
+matched by (task,position). Every published metadata_json equals its original
+payload row, with exact key coverage: EUR-Lex 4,050/4,050; UN 4,691/4,691.
+
+The legal outcome tables also contain explicit no_candidates and failed tasks:
+  EUR-Lex main:         completed 1,273; no_candidates 721; failed 160
+  EUR-Lex continuation: completed   450; no_candidates   2; failed  48
+  UN main:              completed 1,551; no_candidates 339; failed 219
+  UN continuation:      completed   437; no_candidates  25; failed  38
+These are outcome-table counts, not counts of omitted scored questions. The
+audit establishes retention of every row actually stored in outcome payloads.
+
+Publisher source evidence (paths relative to the source project):
+  src/clir_bench/publishing/records.py:40 streams all SQLite outcome rows;
+  line 59 streams every CSV row. There is no is_best filter.
+  src/clir_bench/publishing/generations.py:182 normalizes and publishes rows;
+  its duplicate safeguard skips only repeated candidate IDs with identical
+  metadata, and fails on conflicting versions. The exact source-row coverage
+  checks establish that this safeguard removed zero rows in these supplied files.
+
+4. Chemistry generation explicitly allows fewer than three candidates.
+
+Source src/clir_bench/core/qagen.py:42 sets CANDIDATES_PER_DOCUMENT=3;
+generate_candidates at line 154 truncates to this maximum and does not pad a
+short output. generate_for_document ranks and returns all retained candidates.
+src/clir_bench/cli/qac.py:365 extends the full generated row lists into the main
+CSV, then writes the separate *_best.csv at line 384. Completion export follows
+the same convention in reports/qa_generation_model_comparison/
+complete_chemistry_20261103.py:170-191.
+
+Direct saved prompt evidence is in the chemistry output folder's
+completion_20261103/manifest.json, key prompt_texts.generation/lookup/en:
+  "One strong candidate is enough; no additional weak candidate is needed to
+  fill a quota."
+  "Return only one to three distinct objects in the exact schema below, or
+  exactly [{\"skip_reason\":\"A brief, specific source-based reason\"}]."
+This saved completion manifest covers Mistral, NVIDIA, MiniMax and Upstage.
+Its summary.json reconciles their final candidate counts:
+  Mistral: 201 rows, 199 documents with questions,  1 abstention, 0 failures
+  NVIDIA:  182 rows, 182 documents with questions, 18 abstentions, 0 failures
+  MiniMax: 181 rows, 168 documents with questions, 32 abstentions, 0 failures
+  Upstage: 189 rows, 188 documents with questions, 11 abstentions, 1 failure
+These explanations agree with the exact original CSVs used in publication.
+
+Publication wording and remaining limits
+
+Suggested factual wording: "We selected one maximum-scoring question per
+canonical source document from all candidates in fixed published QA snapshots,
+covering ten question generators. Candidate-pool sizes vary: median 10 (range
+4-20) for chemistry, 22 (8-30) for EUR-Lex and 20 (1-30) for UN. All 638 selected
+questions were retained for document-level evaluation."
+
+The audit verifies completeness relative to pinned published datasets and their
+identified supplied generation outputs. It does not establish completeness over
+all historical/raw API responses, parser rejects, unpublished runs, other files
+or later revisions. It does not prove that every historical chemistry task used
+a byte-identical saved completion prompt. Candidate counts and upstream failure
+or abstention rates differ by corpus/model, so this is not a balanced 30-way
+selection design. The generator grader scores are accepted as upstream labels;
+their calibration across languages, personas and generators was not validated
+here. These are publication limitations, not reasons to alter saved cohorts.
+
+No selection, experiment configuration, benchmark result, source file or model
+was changed. No network, paid API, generation or cluster execution occurred.
+The companion candidate_pool_provenance.json contains full counts, source paths,
+hashes, equality checks and explicitly separated unknowns.

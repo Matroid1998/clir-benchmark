@@ -1,0 +1,117 @@
+GENERATION AND TIMING ACCOUNTING AUDIT — 15 NOVEMBER 2026
+
+Scope
+This audit reads existing local records, all selected generation manifests,
+request journals, HyDE invocation journals, embedding manifests and retrieval
+timing files. It makes no provider/server calls and reads no credentials.
+All 6,380 extracted query-language records match the 30 selected source artifacts
+and summaries. All 264 reports' encoding and retrieval timing fields reconcile
+to their saved source measurements. Provenance and per-file hashes are in the
+accompanying generation_accounting.json.
+
+Recorded API cost, not provider-invoiced spend
+Translation: 3,190 records = 638 identity bypasses + 2,552 successful calls.
+Input 2,920,796 tokens, of which 2,017,490 cached; output 239,011 tokens.
+Configured estimate: USD 0.230011; summed attempt durations: 5,230.212650 seconds.
+HyDE: 3,190 generated records; 3,194 physical attempts = 3,190 successes + 4 failures.
+Input 4,664,734 tokens, of which 4,427,632 cached; output 859,276 tokens.
+Configured estimate: USD 0.49762452; summed attempt durations: 12,017.750140 seconds.
+Combined recorded generation estimate: USD 0.72763552.
+Configured USD/million rates are input 0.10, cached input 0.01, output 0.50.
+All selected configurations and response model identifiers say gpt-6-luna.
+Pricing was not externally verified; no provider invoice was accessed.
+No recorded usage, prices, costs or attempt durations are null in this scope.
+
+Failures and retry completeness
+Every physical attempt in the 2,552 translation and 3,193 HyDE request files
+appears exactly once in a final successful record's accounting lineage. There
+are no unreferenced physical attempts, pending attempts, or duplicate charges
+in the final selected records. Three failed HyDE request states at budget 2,048
+are explicitly inherited by successful requests at 8,192. A fourth failure at
+8,192 precedes success in the same request file. All four returned finish_reason
+length and completion-token usage consisting of reasoning tokens.
+Those failed physical calls contribute USD 0.00725565 and 99.566322 seconds,
+already included in the HyDE total. Do not add them again.
+The 24 HyDE invocation journals independently reconcile all 3,194 attempts:
+20 successful invocations: 2,996 attempts, USD 0.46013020;
+4 failed invocations: 198 attempts, USD 0.03749432.
+A failed invocation can contain successful calls made before its failing call.
+Summing only successful-invocation new_work would omit that USD 0.03749432.
+All of it is already retained in the final successful artifact summary.
+There is no translation invocation journal; its complete request cache contains
+all 2,552 successful calls and independently matches final-record accounting.
+This proves reconciliation within the saved local scope, not completeness of
+any provider account history or an invoice total outside that scope.
+
+Compatible artifacts and reuse
+The local tree contains 49 generation manifests: 29 translation and 20 HyDE,
+including older completed artifacts reused by the 30 selected final artifacts.
+Naively summing all manifests' historical summaries would yield translation
+USD 0.44476105 and HyDE USD 0.66270317, double-counting compatible cached work.
+Use generation.parquet once per corpus/method/output_language/query_id, or unique
+physical request/attempt identities, to reproduce recorded generation spend.
+The final artifacts all permit reuse from budget 2,048 while configured at 8,192.
+Translation request files: 2,358 at 2,048; 194 at 8,192.
+HyDE request files: 1,283 at 2,048 (including 3 failed states); 1,910 at 8,192.
+Selected translation materialization made 194 new calls (USD 0.01526095) and
+reused 2,358 requests. Selected HyDE materialization made 1,861 new calls
+(USD 0.29505155) and reused 1,329 requests. These final-invocation new_work values
+are not the complete cost of producing the underlying generated inputs.
+
+Per-query cost semantics for later policy comparisons
+A recorded per-query generation cost includes its original attempts, failures,
+retries and observed provider prompt-cache discounts. It can be used to estimate
+what the selected query generation historically cost at configured rates.
+Call it 'recorded historical API cost', not fully cold generation cost.
+Reusing a completed local generation artifact makes no new paid call. Its
+historical cost/duration remains attached for fair mode comparisons. Lookup and
+local I/O overhead are not estimated by the historical API duration.
+Same-language translation is an exact identity bypass: known zero API calls,
+tokens, cost and API duration. Encoding/search costs remain unpriced.
+Generation is shared across eight retrievers and multiple target settings.
+Do not sum repeated per_query rows or report summaries to estimate a bill.
+A policy's stand-alone per-encoder cost can be reported separately. If evaluating
+several policies or encoders together, count their union of needed generation
+keys once. Training/tuning costs and all-language oracle availability must be
+separated from the cost of selected test-query generation.
+The pricing-only sensitivity of charging every observed input token at the
+standard uncached rate would be USD 0.41158510 translation and USD 0.89611140 HyDE.
+These are counterfactual prices on the recorded token traces, not measured cold
+runs or a latency forecast. They do not include compute or rerunning tuning.
+
+Timing definitions and limits
+Generation_seconds sums perf_counter durations around each non-streaming HTTP
+call and JSON decoding. Successful-call duration excludes local schema parsing;
+failed-call duration includes the failing parse/validation path. It excludes
+Slurm waiting, inter-job/manual retry gaps, request-cache lookup, model loading,
+embedding, retrieval, and serialization of the finished artifact. Summed call
+seconds across concurrently executing jobs are not elapsed campaign duration.
+Query_encoding_seconds_amortized is the original embedding artifact build wall
+time divided by its input row count. Its timer starts after encoder construction
+and includes batching, token/truncation audit work, normalization and embedding/
+metadata writes and flush. The exact same value is assigned to every query in a
+report, and all 264 report values match their embedding manifests. It is not an
+individually measured query latency; model download/loading are excluded.
+Retrieval_seconds_amortized is measured search/fusion wall time divided by the
+actual query batch size. All saved values match their timings.parquet sources.
+It includes exact NumPy matrix scoring and document aggregation, and excludes
+index loading and result serialization. Runtime device=cuda describes the
+embedding configuration; DenseIndex retrieval itself uses NumPy CPU arrays.
+All selected runtime configurations use embedding batch size 32, query batch
+size 32 and corpus block size 16,384. GPU model/slice and comparable hardware
+service rates are not supplied by these embedding/report metadata fields.
+API durations, amortized encoding, and amortized search should be reported as
+separate measurements. Their sum is an offline component estimate, not measured
+online end-to-end response latency. Cache reuse must not erase historical work
+or be presented as the measured cost of a new uncached generation.
+GPU/CPU/memory/storage, corpus preparation/embedding, model loading/downloads,
+Slurm resource allocations/queues, networking and question-dataset creation
+have no price accounting here. Their cost is unknown, not zero.
+
+Validation
+30 selected manifests and source Parquet records reconcile with generation.parquet.
+5,746 physical attempts reconcile with final successful records exactly once.
+4 failed physical calls and 4 failed HyDE invocations are fully retained.
+264 embedding amortization values and 247,192 retrieval per-query timings match.
+No model execution, API calls, retrieval reruns, figures, or policy analysis were
+performed for this audit.

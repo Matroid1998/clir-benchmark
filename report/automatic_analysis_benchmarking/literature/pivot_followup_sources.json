@@ -1,0 +1,16 @@
+{
+  "accessed": "2026-11-15",
+  "sources": [
+    {
+      "url": "https://aclanthology.org/2026.findings-emnlp.109.bib",
+      "metadata_sha256": "434251a69aedf232f03ea187642939b7dddb09aa4a3f02dfa285278294c30832",
+      "citation_key": "jang-etal-2026-shift"
+    },
+    {
+      "url": "https://aclanthology.org/2025.findings-acl.295.bib",
+      "metadata_sha256": "4c6ba12646ddbfa34cb13b550e8295bc267f2f7d2a726e26b0e92bce3ecb94e1",
+      "citation_key": "park-lee-2025-investigating"
+    }
+  ],
+  "manual_entry": "kishida-kando-2003-pivot"
+}

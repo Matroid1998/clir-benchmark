@@ -1,0 +1,17 @@
+{
+  "round": 1,
+  "question": "What coverage and broad patterns must later analyses explain?",
+  "source": "data/per_query.parquet",
+  "reports": 264,
+  "queries": 638,
+  "primary_estimand": "Within-corpus mixed retrieval; equal source-question weight; model-specific results; diagnostic means give each of five output languages equal weight.",
+  "bootstrap": "5000 paired query/source resamples within each corpus and model; intervals are exploratory; no independent replication claimed across model/language rows.",
+  "figures": [
+    "fig_01_mixed_landscape",
+    "fig_02_cohort_coverage",
+    "fig_03_control_choice_changes_conclusion"
+  ],
+  "tables": 5,
+  "visual_review": "completed; see review.txt",
+  "reviewed_at_utc": "2026-11-15T23:53:33.828879+00:00"
+}

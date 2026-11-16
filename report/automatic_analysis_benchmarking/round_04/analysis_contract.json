@@ -1,0 +1,67 @@
+{
+  "round": 4,
+  "root_previous_review": "round_03/review.txt",
+  "source_sha256": {
+    "round_03/review.txt": "03c60c2bc0cb5f8cda8f899990de9f0e24c806bef4fba675dabb3e87af25f4b3",
+    "round_02/target_matched_query_scores.parquet": "3d315466155c065534d6b25dad4df3638d1842e89d4d8ffe068e4d6bb50e3de3",
+    "round_03/ranking_features.parquet": "504776ecf8cee9dda977e35f3574525ead9b6510b2e6fd47331b5befd7e5bb13",
+    "audit/encoder_role_audit.json": "fdd8a212630bb4e743ae1d69a7f1eaca34237b641aa13dcdcb78e12d117d9d83",
+    "data/truncation.parquet": "32f54cb59410e6a3be66f441ea2c78354139674fb1252a344f6729a5436c909e",
+    "data/settings.parquet": "33b118b6ac52fb704fe618f0b7379fa81297bd42250bb2faf9943ed28efcc1e4",
+    "scripts/common.py": "7c8db44768d2ed1a5719f734b2c81cfdea4f59335d6cdd29cf15ec4c56457bde"
+  },
+  "estimand": "HyDE-minus-translation, same output==target language, cross-language; average targets within question before summaries",
+  "independent_unit": "selected canonical source question; fixed models averaged within question for encoder groups",
+  "tie_tolerance": 1e-10,
+  "severe_absolute_delta_threshold": 0.25,
+  "bootstrap": {
+    "draws": 5000,
+    "seed": 42,
+    "interval": "percentile95",
+    "multiplicity_adjustment": null
+  },
+  "encoder_groups": {
+    "all_eight": [
+      "embeddinggemma",
+      "bge-m3",
+      "qwen3-0.6B",
+      "nomic-v2-moe",
+      "granite-278m",
+      "LaBSE",
+      "SapBERT",
+      "e5-large-instruct"
+    ],
+    "same_prefix_four": [
+      "bge-m3",
+      "granite-278m",
+      "LaBSE",
+      "SapBERT"
+    ],
+    "changed_prefix_four": [
+      "embeddinggemma",
+      "qwen3-0.6B",
+      "nomic-v2-moe",
+      "e5-large-instruct"
+    ]
+  },
+  "encoder_group_comparison": "descriptive fixed-model subset robustness, not causal role/prefix effect",
+  "first_language_denominator": "same247 UN questions for each model and variant, including no-hit",
+  "first_language_definition": "language at minimum relevant rank if rank<=10, else no_hit",
+  "query_truncation": {
+    "original_truncated": 0,
+    "translation_truncated": 0,
+    "hyde_truncated": 3,
+    "hyde_encoding_rows": 25520,
+    "nonzero_only": {
+      "corpus": "eurlex",
+      "model": "LaBSE",
+      "output_language": "zh",
+      "truncated": 3,
+      "inputs": 194
+    },
+    "target_matched_cross_language_truncated": 0,
+    "note": "The only three HyDE truncations are EUR-Lex Chinese outputs, absent from target-matched single-target comparisons because no searched Chinese target is available. Corpus-document truncation rows are excluded."
+  },
+  "case_directory": "round_04/cases is separate and not written or hashed by this script",
+  "visual_review_status": "pending_root"
+}

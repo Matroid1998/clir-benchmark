@@ -1,0 +1,33 @@
+\begin{tabular}{lllrlrrrr}
+\toprule
+corpus & encoder\_group & encoders & fixed\_encoders & metric & n\_queries & estimate & ci\_low & ci\_high \\
+\midrule
+chemistry & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & ndcg10 & 197 & -0.0321 & -0.0458 & -0.0183 \\
+chemistry & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & hit10 & 197 & -0.0206 & -0.0336 & -0.0079 \\
+chemistry & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & recall10 & 197 & -0.0206 & -0.0336 & -0.0079 \\
+chemistry & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & ndcg10 & 197 & -0.0214 & -0.0380 & -0.0056 \\
+chemistry & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & hit10 & 197 & -0.0159 & -0.0273 & -0.0057 \\
+chemistry & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & recall10 & 197 & -0.0159 & -0.0273 & -0.0057 \\
+chemistry & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & ndcg10 & 197 & -0.0428 & -0.0610 & -0.0245 \\
+chemistry & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & hit10 & 197 & -0.0254 & -0.0470 & -0.0038 \\
+chemistry & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & recall10 & 197 & -0.0254 & -0.0470 & -0.0038 \\
+eurlex & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & ndcg10 & 194 & 0.0426 & 0.0197 & 0.0664 \\
+eurlex & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & hit10 & 194 & 0.0490 & 0.0234 & 0.0760 \\
+eurlex & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & recall10 & 194 & 0.0490 & 0.0234 & 0.0760 \\
+eurlex & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & ndcg10 & 194 & 0.0177 & -0.0054 & 0.0414 \\
+eurlex & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & hit10 & 194 & 0.0262 & 0.0026 & 0.0520 \\
+eurlex & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & recall10 & 194 & 0.0262 & 0.0026 & 0.0520 \\
+eurlex & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & ndcg10 & 194 & 0.0674 & 0.0400 & 0.0960 \\
+eurlex & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & hit10 & 194 & 0.0717 & 0.0408 & 0.1035 \\
+eurlex & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & recall10 & 194 & 0.0717 & 0.0408 & 0.1035 \\
+un & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & ndcg10 & 247 & -0.0422 & -0.0617 & -0.0225 \\
+un & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & hit10 & 247 & -0.0253 & -0.0467 & -0.0039 \\
+un & all\_eight & embeddinggemma;bge-m3;qwen3-0.6B;nomic-v2-moe;granite-278m;LaBSE;SapBERT;e5-large-instruct & 8 & recall10 & 247 & -0.0253 & -0.0467 & -0.0039 \\
+un & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & ndcg10 & 247 & -0.0608 & -0.0848 & -0.0364 \\
+un & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & hit10 & 247 & -0.0469 & -0.0732 & -0.0209 \\
+un & changed\_prefix\_four & embeddinggemma;qwen3-0.6B;nomic-v2-moe;e5-large-instruct & 4 & recall10 & 247 & -0.0469 & -0.0732 & -0.0209 \\
+un & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & ndcg10 & 247 & -0.0236 & -0.0414 & -0.0057 \\
+un & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & hit10 & 247 & -0.0037 & -0.0260 & 0.0189 \\
+un & same\_prefix\_four & bge-m3;granite-278m;LaBSE;SapBERT & 4 & recall10 & 247 & -0.0037 & -0.0260 & 0.0189 \\
+\bottomrule
+\end{tabular}

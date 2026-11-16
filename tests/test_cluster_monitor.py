@@ -8,6 +8,7 @@ from types import SimpleNamespace
 import pytest
 
 from clir_benchmark.cluster_monitor import (
+    _expected_reports,
     fetch_status,
     main,
     monitor,
@@ -16,6 +17,14 @@ from clir_benchmark.cluster_monitor import (
 )
 from clir_benchmark.errors import ValidationError
 from clir_benchmark.util import file_digest, read_json, write_json
+
+
+def test_document_rerank_job_requires_one_complete_report(tmp_path):
+    assert _expected_reports(
+        {"kind": "rerank"}, {"configuration": {"baselines": ["rerank-dense"]}}, tmp_path
+    ) == 1
+    with pytest.raises(ValidationError, match="require only rerank-dense"):
+        _expected_reports({"kind": "rerank"}, {"configuration": {"baselines": []}}, tmp_path)
 
 
 def test_remote_status_only_runs_read_only_command_and_quotes_paths():

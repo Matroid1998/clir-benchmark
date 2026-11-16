@@ -1,0 +1,63 @@
+ROUND 4 — AVERAGES HIDE LOSSES, AND TWO SIMPLE EXPLANATIONS FAIL
+
+Visual and text inspection
+Root opened all four PNGs. Gain/loss bars have a common 0-100% scale, ECDFs
+retain the full effect range, encoder-subset intervals are paired by source,
+and the first-hit language plot keeps no-hit questions in its denominator.
+Labels, legends and captions are readable without clipping or overlap. Root
+also read all six deterministically selected text cases. The numerical draft,
+case selection rules and separate analyst notes are accepted with their limits.
+
+Accepted findings
+Positive EUR-Lex HyDE means coexist with question-level losses in every encoder:
+21-35% of source questions lose nDCG after averaging their eligible targets.
+LaBSE's +13.82-point mean includes 57 gains of at least 25 points and 19 losses
+of at least 25 points among 194 questions. This diagnoses heterogeneity; it does
+not establish that a query-level router can predict those outcomes.
+
+The corpus mean sign pattern survives among the four encoders with equal query
+and document prefixes: HyDE-minus-translation is -4.28 chemistry, +6.74 EUR-Lex
+and -2.36 UN nDCG points. These intervals exclude zero in this exploratory
+analysis. The changed-prefix group also has the same mean signs, but its EUR-Lex
+interval includes zero. A prefix change is therefore not necessary for the
+observed EUR-Lex improvement. Between-group differences are not causal prefix
+effects because the encoder sets differ in other ways.
+
+None of the query encodings in the primary target-matched comparison was
+truncated. The only three truncated HyDE query encodings are LaBSE EUR-Lex
+Chinese outputs, outside that comparison because no Chinese target is indexed.
+We reject query truncation as the explanation for the primary corpus pattern.
+This says nothing causal about length, max-over-chunk scoring or corpus chunking.
+
+UN's first relevant language changes with translation. For E5, English
+translation's 166 successful questions all first find the English version.
+German translation first finds English for 92, Spanish for 5, French for 45 and
+Chinese for 2; no-hit questions increase from 81 to 103. This describes joint
+source success and first-language outcomes over the same 247 questions. It does
+not prove an intrinsic language preference or a superior non-indexed pivot.
+
+The paired-version example keeps the first accepted source at rank 1 but changes
+accepted version coverage from 1 to 4, raising nDCG .390 to .911. The chemistry
+HyDE failure supplies an upper-transverse inlet location broadly consistent
+with the saved answer, yet moves the first source from rank 1 to 19 for BGE.
+Conversely, the EUR-Lex HyDE gain adds the saved answer's network name and moves
+the first source from rank 17 to 1. These extremes illustrate possible behavior;
+they do not estimate prevalence, factuality or the cause of ranking changes.
+
+Questions driving Round 5
+1. Can a simple variant choice learned on other source questions improve held-out
+   results, rather than reporting an in-sample or per-query oracle winner?
+2. Does choosing by nDCG versus source Hit change the held-out trade-off? Keep
+   original and fixed-English controls, report losses as well as means, and
+   separate mixed-pool policies from target-known cross-language policies.
+3. What cost belongs to choosing one reusable generated output, versus the
+   experimental cost of exploring all ten outputs? Preserve retries/cache
+   history and do not charge shared generation eight times across encoders.
+4. What do saved durations actually measure? Avoid converting amortized offline
+   components into claims of measured online end-to-end latency.
+
+Limits for the next round
+Use source-grouped training folds only for the selection rule. The policy design
+itself follows this exploratory analysis, so internal cross-validation is not an
+independent untouched external test. Oracle headroom is an upper bound, not a
+recommendation. Record unknown compute prices rather than assigning them zero.

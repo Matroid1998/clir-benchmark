@@ -1,0 +1,63 @@
+ROUND 6 — RETAINED CLAIMS AND FAILED ALTERNATIVE EXPLANATIONS
+
+Visual inspection
+Root opened all four PNGs and checked their tables. Figure 1 initially had
+overlapping panel titles; these were shortened, rerendered and reopened. Figure
+3's raw metric names were replaced with readable labels and reopened. The final
+heatmap, cutoff curves, model-influence ranges and split-sensitivity scatter are
+accepted. Sensitivity ranges and alternative folds are explicitly distinguished
+from confidence intervals and independent replications.
+
+What survives
+Target-matched translation's mean gain and HyDE-minus-translation's corpus sign
+pattern survive all five displayed cohort/weighting choices. Clear-only HyDE
+differences are -3.48 chemistry (n=182), +4.50 EUR-Lex (n=163), and -3.85 UN
+(n=236) points. Excluding 14 identity-affected sources gives -3.10, +3.95 and
+-4.22 points. Language-balanced and setting-macro estimates preserve these
+directions. The original 638 questions remain the primary cohort.
+
+No single omitted encoder reverses the target-matched mean signs. HyDE-minus-
+translation ranges over -3.63 to -2.41 chemistry, +2.89 to +4.75 EUR-Lex, and
+-5.15 to -3.74 UN points across eight leave-one-encoder-out estimates. These
+ranges are influence diagnostics, not uncertainty over a population of models.
+
+The UN source-loss/version-coverage trade-off extends beyond top 10. German
+versus English translation has lower source Hit at each saved cutoff in its
+point estimate; the interval includes zero at k=1. At k=20, source Hit is -7.03
+points [-9.21,-5.01] while version Recall is +1.44 [.14,2.72]. At k=100 the
+changes are -3.49 [-5.36,-1.62] and +2.15 [.84,3.44]. Increasing the cutoff
+does not make source success and version coverage interchangeable.
+
+The training-objective trade-off survives ten alternative fold assignments.
+On UN, nDCG-selected versus Hit-selected choices give +1.41 to +2.26 nDCG points
+and -3.54 to -1.92 source Hit points. Every split has both directions. Against
+original, nDCG selection improves nDCG by +2.48 to +2.97 but loses -3.14 to
+-1.97 Hit points. This remains an internal, adaptively designed experiment.
+
+EUR-Lex demonstrates why the original split should not be overinterpreted.
+nDCG selection's Hit change versus original ranges from -1.61 to +0.39 across
+splits; the sole positive point is seed 42. Hit selection improves nDCG by
++2.93 to +3.40 and Hit by +2.38 to +3.41 across all ten splits. Relative to Hit
+selection, nDCG selection buys +0.10 to +1.42 nDCG points at a cost of -4.77 to
+-2.77 source Hit points. These ranges do not prove external transfer.
+
+What is narrowed or rejected
+The fixed-model UN German-versus-English nDCG mean is small and uncertain;
+leave-one-encoder-out means range from -0.29 to +0.72. We reject a general
+German-pivot recommendation. We also reject universal HyDE benefit, query
+truncation as the primary explanation, a content-only causal interpretation
+across all encoders, and treating oracle headroom as a deployable gain.
+
+Synthesis and remaining research questions
+The strongest paper framing is a controlled empirical diagnosis: distinguish
+translation from additional hypothetical content, distinguish source finding
+from language-version recovery, and choose validation objectives accordingly.
+The exact ranking decomposition explains the observed trade-off without
+claiming a new metric. The six rounds and bounded literature review support
+specific findings on these fixed corpora and selected synthetic questions.
+
+Before broad generalization, use independent human-authored questions, broader
+relevance judgments, another generation model, controlled adapter-role ablations,
+and an untouched external test for any selection policy. These are future
+validation needs, not experiments executed or claimed by this report. The final
+claim/evidence table records supported, narrowed and unsupported interpretations.

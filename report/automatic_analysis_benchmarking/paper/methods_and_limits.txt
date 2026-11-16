@@ -1,0 +1,73 @@
+Study scope and interpretation
+
+The primary analysis uses the 264 completed selected-question, document-level
+reports: 3 corpora x 8 fixed encoders x 11 query variants. Variants are the
+original question, translation into each of English/German/Spanish/French/Chinese,
+and one hypothetical passage in each of those languages. The generation model
+is gpt-6-luna. Each language is evaluated separately; there is no query-language
+fusion. The 638 source-grounded synthetic questions comprise 197 chemistry,
+194 EUR-Lex and 247 UN questions. Older all-question, chunk-level, BM25 and hybrid
+runs have different experimental units and are excluded from these comparisons.
+
+Question selection takes the highest available numeric score for each canonical
+source across generators and languages, with equal preference among tied
+Haiku/Luna/Qwen candidates and seeded tie breaking (42). This is a selected,
+synthetic question population, not a sample of independent real-user queries.
+Candidate pool sizes vary and must be reported from the saved selection audits;
+do not describe every source as offering 30 candidates. The candidate-pool
+provenance audit records what is established by the available local artifacts.
+
+Retrieval ranks each source-language version as a separate document by its
+maximum chunk similarity, aggregating all searched chunks before retaining the
+top 100 unique documents. Source units differ: patent abstracts for chemistry,
+articles for the selected EUR-Lex questions, and full UN documents. Domain,
+source length and source granularity therefore cannot be causally separated.
+Relevance is the saved source association, not an independent comprehensive
+relevance judgment. Legal language variants share a canonical source; chemistry
+uses directly accepted translation relationships. Unjudged near-duplicates are
+not automatically made relevant by this analysis.
+
+Each question has one required canonical source. Hit@k, SourceRecall@k and
+AllSourceSuccess@k are consequently identical in this study. Document Recall
+and nDCG can additionally reward retrieving several accepted language versions
+of that source. They measure different objectives from finding any source
+version. Pairwise single-target and mixed-language settings must be labeled
+separately because their relevance denominators and candidate pools differ.
+EUR-Lex has no Chinese target pool; UN has no German target pool. Chemistry
+language coverage is uneven, including some very small language-pair cells.
+
+The closest controlled expansion contrast is HyDE minus translation into the
+same output language, on identical questions, encoders, target settings and
+qrels. Four encoders use different query/document prefixes: original and
+translated questions use the query role, while hypothetical passages use the
+document role. Thus the treatment bundles passage generation and an adapter
+change in those four encoders. The other four use equal empty prefixes. This
+study's single-passage replacement is not every configuration of the original
+HyDE algorithm, which can average multiple passages and include the query.
+
+All 638 selected questions remain in the primary analysis, including questions
+without exact evidence spans; source-level judgments do not require such spans.
+Saved quality flags (581 clear, 42 repair, 13 blocking, 2 minor issues) support
+sensitivity analyses, not post-hoc replacement of questions or source labels.
+There are 26 same-language identity-control metric discrepancies among 22,472
+paired query-setting rows. The diagnosed cases have near-identical vectors and
+crossed relevant/unjudged winning chunks with identical text at float-scale
+score gaps. Raw rankings are retained, with exclusion sensitivity reported
+separately; a no-op translation is not interpreted as a semantic improvement.
+
+Analysis uses paired question/source clusters within each corpus. Repeated
+encoders, settings and variants for the same question are not independent
+samples. Eight encoders and three corpora are fixed study choices, not random
+samples of all architectures or domains. Model means average encoders within
+each question before question-level resampling. Confidence intervals are
+exploratory paired percentile bootstrap intervals, not multiplicity-adjusted
+confirmatory tests. Internal policy evaluation trains selection only on other
+source-document folds; it does not establish external-domain generalization.
+
+Generation costs are estimates at recorded configured prices, not verified API
+invoices. Shared generation artifacts are counted once across encoders and
+settings; failed/retried attempts and retained cached work remain in accounting.
+Generation attempt duration, amortized offline encoding/retrieval time, scheduler
+waiting and measured online end-to-end latency are distinct. The last is not
+measured here. Cluster computation has unknown monetary cost, not zero cost.
+No new benchmark execution, generation or paid calls occur in this analysis.

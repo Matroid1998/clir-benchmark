@@ -1,0 +1,26 @@
+Generation input contract
+
+The saved experiment request builders supply the original question text and
+language metadata, together with fixed translation/HyDE instructions. HyDE also
+supplies the collection name and its fixed domain/style prompt. They do not pass
+the saved answer, evidence spans, source-document text, retrieved passages or
+candidate score to the generation request.
+
+Evidence inspected locally:
+  src/clir_benchmark/hyde.py: request_payload formats collection,
+    source_language, output_language and query=row['question'].
+  src/clir_benchmark/prompts/hyde_query.txt: corresponding user-template fields.
+  src/clir_benchmark/translation.py: request_payload formats source_language,
+    target_language and query=row['question'].
+
+Both request-builder files and the HyDE user template were compared byte for
+byte with the archived copies under:
+  artifacts/narval-20261111-selected-document/project/
+  artifacts/fir-20261109-all-questions/selected-document-20261110/project/
+All six comparisons matched. This checks the executed code snapshots as well as
+the current source. The generation manifests retain their prompt templates.
+
+This is a source-code/input-contract audit. It does not establish absence of
+pretraining exposure to public source documents, or independently grade the
+faithfulness or factuality of any generated output. The original questions are
+themselves source-derived synthetic questions, as disclosed in the study scope.

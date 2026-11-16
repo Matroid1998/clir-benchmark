@@ -5,6 +5,7 @@ import pytest
 import yaml
 from conftest import FixtureEncoder
 from test_adore_pipeline import FixtureADORE, prepared_adore
+from test_document_pipeline import document_fixture
 from test_hyde import FixtureGenerator
 from test_hyde_pipeline import fixture_hyde
 from test_pipeline import fixture_config
@@ -117,6 +118,87 @@ def grouped_rankings(path):
     for row in rows(path / "run.parquet"):
         result.setdefault((row["setting_id"], row["query_id"]), []).append(row)
     return {key: sorted(value, key=lambda row: row["rank"]) for key, value in result.items()}
+
+
+@pytest.mark.parametrize("parent", ["dense", "translate-dense", "hyde-dense"])
+def test_document_reranker_preserves_winning_chunks_and_matched_cohorts(
+    tmp_path, tokenizer, monkeypatch, parent
+):
+    _, config = document_fixture(tmp_path, tokenizer)
+    prepare_relevance(config, "eurlex")
+    languages = {}
+    if parent == "translate-dense":
+        prepare_translations(config, "eurlex", "fr", translator_factory=FixtureTranslator().factory)
+        languages = {"translation_language": "fr"}
+    elif parent == "hyde-dense":
+        prepare_hyde(config, "eurlex", "fr", generator_factory=FixtureGenerator("preuve").factory)
+        languages = {"hyde_language": "fr"}
+    embed(config, "eurlex", "bge-m3", encoder_factory=FixtureEncoder, **languages)
+    parent_run = retrieve(config, "eurlex", "bge-m3", baseline=parent, **languages)
+    parent_report = evaluate(config, "eurlex", "bge-m3", baseline=parent, **languages)
+    original_hash = file_digest(parent_run / "run.parquet")
+    for target in (
+        "clir_benchmark.generation.ChatCompletionsClient.complete",
+        "clir_benchmark.retrieval.DenseIndex.search_documents",
+        "clir_benchmark.encoders.HuggingFaceEncoder.__init__",
+    ):
+        monkeypatch.setattr(target, forbidden)
+    baseline = "rerank-" + parent
+    config = replace(config, baselines=(baseline,))
+    model = FixtureReranker(score=0.5)
+    output = rerank(
+        config,
+        "eurlex",
+        "bge-m3",
+        baseline=baseline,
+        reranker_factory=model.factory,
+        **languages,
+    )
+    originals, ranked = grouped_rankings(parent_run), grouped_rankings(output)
+    assert originals.keys() == ranked.keys()
+    for key, candidates in originals.items():
+        # Equal reranker scores retain deterministic parent ordering and its winning chunk.
+        assert [(r["document_id"], r["winning_chunk_id"]) for r in ranked[key]] == [
+            (r["document_id"], r["winning_chunk_id"]) for r in candidates
+        ]
+    query = next(rows(config.relevance_dir("eurlex") / "queries.parquet"))
+    assert query["id"] == "qdrop"  # Highest score, despite having no evidence spans.
+    assert all(pair[0] == query["question"] for pair in model.calls)
+    assert file_digest(parent_run / "run.parquet") == original_hash
+    pair_records = list(rows(output / "pair_scores.parquet"))
+    assert pair_records and all(json.loads(r["result_json"])["identity"] for r in pair_records)
+    assert not (config.output_dir / "reranking_pairs").exists()
+    report_dir = evaluate(config, "eurlex", "bge-m3", baseline=baseline, **languages)
+    report = read_json(report_dir / "report.json")
+    assert report["retrieval_unit"] == "document"
+    assert report["metrics"] == read_json(parent_report / "report.json")["metrics"]
+    assert read_json(report_dir / "mteb.json")["task_name"].endswith("_Document")
+    assert all(r["winning_chunk_id"] for r in rows(report_dir / "analysis/rankings.parquet"))
+    assert any(
+        r["path"].endswith("pair_scores.parquet")
+        for r in read_json(report_dir / "analysis_manifest.json")["files"]
+    )
+    comparison = compare_rerank(config, "eurlex", "bge-m3", baseline=baseline, **languages)
+    assert read_json(comparison / "report.json")["retrieval_unit"] == "document"
+    # Repeated work and a smaller candidate prefix reuse all stored inference.
+    assert (
+        rerank(
+            config, "eurlex", "bge-m3", baseline=baseline, reranker_factory=forbidden, **languages
+        )
+        == output
+    )
+    restricted = replace(config, reranker=replace(config.reranker, candidate_k=1))
+    assert (
+        rerank(
+            restricted,
+            "eurlex",
+            "bge-m3",
+            baseline=baseline,
+            reranker_factory=forbidden,
+            **languages,
+        )
+        != output
+    )
 
 
 def test_reranker_reorders_only_parent_candidates_and_preserves_sources(tmp_path, tokenizer):

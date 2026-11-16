@@ -1,0 +1,330 @@
+\begin{tabular}{lllrlrrr}
+\toprule
+corpus & model & variant & n\_queries & metric & estimate & ci\_low & ci\_high \\
+\midrule
+eurlex & SapBERT & translate\_de & 194 & ndcg10 & 0.1880 & 0.1561 & 0.2226 \\
+eurlex & SapBERT & translate\_de & 194 & hit10 & 0.5103 & 0.4381 & 0.5773 \\
+eurlex & SapBERT & translate\_de & 194 & mrr10 & 0.3341 & 0.2748 & 0.3933 \\
+eurlex & SapBERT & translate\_de & 194 & collapsed\_hit10 & 0.5155 & 0.4433 & 0.5825 \\
+eurlex & SapBERT & translate\_de & 194 & collapsed\_mrr10 & 0.3372 & 0.2785 & 0.3965 \\
+eurlex & SapBERT & translate\_de & 194 & collapsed\_ndcg10 & 0.3795 & 0.3213 & 0.4383 \\
+eurlex & granite-278m & original & 194 & ndcg10 & 0.4372 & 0.3894 & 0.4864 \\
+eurlex & granite-278m & original & 194 & hit10 & 0.7990 & 0.7423 & 0.8557 \\
+eurlex & granite-278m & original & 194 & mrr10 & 0.5589 & 0.5019 & 0.6191 \\
+eurlex & granite-278m & original & 194 & collapsed\_hit10 & 0.8093 & 0.7526 & 0.8608 \\
+eurlex & granite-278m & original & 194 & collapsed\_mrr10 & 0.5735 & 0.5183 & 0.6327 \\
+eurlex & granite-278m & original & 194 & collapsed\_ndcg10 & 0.6315 & 0.5802 & 0.6854 \\
+eurlex & granite-278m & translate\_en & 194 & ndcg10 & 0.4497 & 0.4013 & 0.5003 \\
+eurlex & granite-278m & translate\_en & 194 & hit10 & 0.8093 & 0.7526 & 0.8608 \\
+eurlex & granite-278m & translate\_en & 194 & mrr10 & 0.5876 & 0.5296 & 0.6471 \\
+eurlex & granite-278m & translate\_en & 194 & collapsed\_hit10 & 0.8196 & 0.7629 & 0.8711 \\
+eurlex & granite-278m & translate\_en & 194 & collapsed\_mrr10 & 0.5998 & 0.5430 & 0.6575 \\
+eurlex & granite-278m & translate\_en & 194 & collapsed\_ndcg10 & 0.6535 & 0.6003 & 0.7077 \\
+eurlex & e5-large-instruct & translate\_de & 194 & ndcg10 & 0.2776 & 0.2546 & 0.2992 \\
+eurlex & e5-large-instruct & translate\_de & 194 & hit10 & 0.8454 & 0.7938 & 0.8918 \\
+eurlex & e5-large-instruct & translate\_de & 194 & mrr10 & 0.6449 & 0.5857 & 0.7013 \\
+eurlex & e5-large-instruct & translate\_de & 194 & collapsed\_hit10 & 0.8454 & 0.7938 & 0.8918 \\
+eurlex & e5-large-instruct & translate\_de & 194 & collapsed\_mrr10 & 0.6449 & 0.5857 & 0.7013 \\
+eurlex & e5-large-instruct & translate\_de & 194 & collapsed\_ndcg10 & 0.6934 & 0.6383 & 0.7450 \\
+eurlex & nomic-v2-moe & translate\_en & 194 & ndcg10 & 0.4929 & 0.4477 & 0.5380 \\
+eurlex & nomic-v2-moe & translate\_en & 194 & hit10 & 0.8660 & 0.8144 & 0.9124 \\
+eurlex & nomic-v2-moe & translate\_en & 194 & mrr10 & 0.7118 & 0.6555 & 0.7649 \\
+eurlex & nomic-v2-moe & translate\_en & 194 & collapsed\_hit10 & 0.8763 & 0.8299 & 0.9175 \\
+eurlex & nomic-v2-moe & translate\_en & 194 & collapsed\_mrr10 & 0.7137 & 0.6579 & 0.7666 \\
+eurlex & nomic-v2-moe & translate\_en & 194 & collapsed\_ndcg10 & 0.7534 & 0.7021 & 0.8012 \\
+eurlex & LaBSE & original & 194 & ndcg10 & 0.2966 & 0.2477 & 0.3449 \\
+eurlex & LaBSE & original & 194 & hit10 & 0.5206 & 0.4485 & 0.5876 \\
+eurlex & LaBSE & original & 194 & mrr10 & 0.3745 & 0.3122 & 0.4363 \\
+eurlex & LaBSE & original & 194 & collapsed\_hit10 & 0.5722 & 0.5000 & 0.6392 \\
+eurlex & LaBSE & original & 194 & collapsed\_mrr10 & 0.3863 & 0.3250 & 0.4481 \\
+eurlex & LaBSE & original & 194 & collapsed\_ndcg10 & 0.4307 & 0.3707 & 0.4912 \\
+eurlex & e5-large-instruct & original & 194 & ndcg10 & 0.3025 & 0.2813 & 0.3228 \\
+eurlex & e5-large-instruct & original & 194 & hit10 & 0.8918 & 0.8454 & 0.9330 \\
+eurlex & e5-large-instruct & original & 194 & mrr10 & 0.7085 & 0.6532 & 0.7605 \\
+eurlex & e5-large-instruct & original & 194 & collapsed\_hit10 & 0.8918 & 0.8454 & 0.9330 \\
+eurlex & e5-large-instruct & original & 194 & collapsed\_mrr10 & 0.7085 & 0.6532 & 0.7605 \\
+eurlex & e5-large-instruct & original & 194 & collapsed\_ndcg10 & 0.7528 & 0.7026 & 0.7996 \\
+eurlex & bge-m3 & translate\_de & 194 & ndcg10 & 0.4854 & 0.4373 & 0.5331 \\
+eurlex & bge-m3 & translate\_de & 194 & hit10 & 0.8454 & 0.7938 & 0.8918 \\
+eurlex & bge-m3 & translate\_de & 194 & mrr10 & 0.6411 & 0.5834 & 0.6965 \\
+eurlex & bge-m3 & translate\_de & 194 & collapsed\_hit10 & 0.8505 & 0.7990 & 0.8969 \\
+eurlex & bge-m3 & translate\_de & 194 & collapsed\_mrr10 & 0.6458 & 0.5889 & 0.7004 \\
+eurlex & bge-m3 & translate\_de & 194 & collapsed\_ndcg10 & 0.6962 & 0.6442 & 0.7462 \\
+eurlex & qwen3-0.6B & translate\_de & 194 & ndcg10 & 0.3756 & 0.3314 & 0.4212 \\
+eurlex & qwen3-0.6B & translate\_de & 194 & hit10 & 0.7577 & 0.6959 & 0.8144 \\
+eurlex & qwen3-0.6B & translate\_de & 194 & mrr10 & 0.5446 & 0.4853 & 0.6056 \\
+eurlex & qwen3-0.6B & translate\_de & 194 & collapsed\_hit10 & 0.7732 & 0.7165 & 0.8299 \\
+eurlex & qwen3-0.6B & translate\_de & 194 & collapsed\_mrr10 & 0.5517 & 0.4930 & 0.6118 \\
+eurlex & qwen3-0.6B & translate\_de & 194 & collapsed\_ndcg10 & 0.6050 & 0.5500 & 0.6611 \\
+eurlex & LaBSE & translate\_de & 194 & ndcg10 & 0.2781 & 0.2326 & 0.3233 \\
+eurlex & LaBSE & translate\_de & 194 & hit10 & 0.5309 & 0.4588 & 0.5981 \\
+eurlex & LaBSE & translate\_de & 194 & mrr10 & 0.3799 & 0.3175 & 0.4416 \\
+eurlex & LaBSE & translate\_de & 194 & collapsed\_hit10 & 0.5825 & 0.5103 & 0.6546 \\
+eurlex & LaBSE & translate\_de & 194 & collapsed\_mrr10 & 0.3944 & 0.3335 & 0.4562 \\
+eurlex & LaBSE & translate\_de & 194 & collapsed\_ndcg10 & 0.4389 & 0.3789 & 0.5008 \\
+eurlex & SapBERT & original & 194 & ndcg10 & 0.2548 & 0.2131 & 0.2979 \\
+eurlex & SapBERT & original & 194 & hit10 & 0.5258 & 0.4588 & 0.5979 \\
+eurlex & SapBERT & original & 194 & mrr10 & 0.3925 & 0.3321 & 0.4547 \\
+eurlex & SapBERT & original & 194 & collapsed\_hit10 & 0.5464 & 0.4794 & 0.6186 \\
+eurlex & SapBERT & original & 194 & collapsed\_mrr10 & 0.3965 & 0.3362 & 0.4582 \\
+eurlex & SapBERT & original & 194 & collapsed\_ndcg10 & 0.4325 & 0.3722 & 0.4942 \\
+eurlex & embeddinggemma & original & 194 & ndcg10 & 0.5348 & 0.4847 & 0.5830 \\
+eurlex & embeddinggemma & original & 194 & hit10 & 0.8608 & 0.8093 & 0.9072 \\
+eurlex & embeddinggemma & original & 194 & mrr10 & 0.6880 & 0.6317 & 0.7440 \\
+eurlex & embeddinggemma & original & 194 & collapsed\_hit10 & 0.8608 & 0.8093 & 0.9072 \\
+eurlex & embeddinggemma & original & 194 & collapsed\_mrr10 & 0.6933 & 0.6381 & 0.7479 \\
+eurlex & embeddinggemma & original & 194 & collapsed\_ndcg10 & 0.7346 & 0.6821 & 0.7857 \\
+eurlex & nomic-v2-moe & original & 194 & ndcg10 & 0.4723 & 0.4300 & 0.5157 \\
+eurlex & nomic-v2-moe & original & 194 & hit10 & 0.8763 & 0.8298 & 0.9227 \\
+eurlex & nomic-v2-moe & original & 194 & mrr10 & 0.7266 & 0.6709 & 0.7789 \\
+eurlex & nomic-v2-moe & original & 194 & collapsed\_hit10 & 0.8814 & 0.8351 & 0.9227 \\
+eurlex & nomic-v2-moe & original & 194 & collapsed\_mrr10 & 0.7310 & 0.6757 & 0.7833 \\
+eurlex & nomic-v2-moe & original & 194 & collapsed\_ndcg10 & 0.7681 & 0.7169 & 0.8146 \\
+eurlex & qwen3-0.6B & original & 194 & ndcg10 & 0.4406 & 0.3964 & 0.4845 \\
+eurlex & qwen3-0.6B & original & 194 & hit10 & 0.8299 & 0.7732 & 0.8814 \\
+eurlex & qwen3-0.6B & original & 194 & mrr10 & 0.6436 & 0.5860 & 0.7013 \\
+eurlex & qwen3-0.6B & original & 194 & collapsed\_hit10 & 0.8402 & 0.7887 & 0.8866 \\
+eurlex & qwen3-0.6B & original & 194 & collapsed\_mrr10 & 0.6479 & 0.5910 & 0.7049 \\
+eurlex & qwen3-0.6B & original & 194 & collapsed\_ndcg10 & 0.6950 & 0.6417 & 0.7470 \\
+eurlex & embeddinggemma & translate\_en & 194 & ndcg10 & 0.5588 & 0.5083 & 0.6079 \\
+eurlex & embeddinggemma & translate\_en & 194 & hit10 & 0.8505 & 0.7990 & 0.8969 \\
+eurlex & embeddinggemma & translate\_en & 194 & mrr10 & 0.7052 & 0.6469 & 0.7605 \\
+eurlex & embeddinggemma & translate\_en & 194 & collapsed\_hit10 & 0.8711 & 0.8247 & 0.9175 \\
+eurlex & embeddinggemma & translate\_en & 194 & collapsed\_mrr10 & 0.7135 & 0.6558 & 0.7675 \\
+eurlex & embeddinggemma & translate\_en & 194 & collapsed\_ndcg10 & 0.7516 & 0.6992 & 0.8006 \\
+eurlex & granite-278m & translate\_de & 194 & ndcg10 & 0.4235 & 0.3705 & 0.4762 \\
+eurlex & granite-278m & translate\_de & 194 & hit10 & 0.7216 & 0.6598 & 0.7835 \\
+eurlex & granite-278m & translate\_de & 194 & mrr10 & 0.5229 & 0.4608 & 0.5849 \\
+eurlex & granite-278m & translate\_de & 194 & collapsed\_hit10 & 0.7526 & 0.6907 & 0.8144 \\
+eurlex & granite-278m & translate\_de & 194 & collapsed\_mrr10 & 0.5367 & 0.4755 & 0.5975 \\
+eurlex & granite-278m & translate\_de & 194 & collapsed\_ndcg10 & 0.5884 & 0.5300 & 0.6461 \\
+eurlex & qwen3-0.6B & translate\_en & 194 & ndcg10 & 0.4667 & 0.4185 & 0.5144 \\
+eurlex & qwen3-0.6B & translate\_en & 194 & hit10 & 0.7990 & 0.7423 & 0.8505 \\
+eurlex & qwen3-0.6B & translate\_en & 194 & mrr10 & 0.6490 & 0.5888 & 0.7068 \\
+eurlex & qwen3-0.6B & translate\_en & 194 & collapsed\_hit10 & 0.8299 & 0.7732 & 0.8814 \\
+eurlex & qwen3-0.6B & translate\_en & 194 & collapsed\_mrr10 & 0.6558 & 0.5971 & 0.7128 \\
+eurlex & qwen3-0.6B & translate\_en & 194 & collapsed\_ndcg10 & 0.6979 & 0.6425 & 0.7503 \\
+eurlex & embeddinggemma & translate\_de & 194 & ndcg10 & 0.4724 & 0.4217 & 0.5236 \\
+eurlex & embeddinggemma & translate\_de & 194 & hit10 & 0.8093 & 0.7526 & 0.8608 \\
+eurlex & embeddinggemma & translate\_de & 194 & mrr10 & 0.6045 & 0.5437 & 0.6632 \\
+eurlex & embeddinggemma & translate\_de & 194 & collapsed\_hit10 & 0.8247 & 0.7680 & 0.8763 \\
+eurlex & embeddinggemma & translate\_de & 194 & collapsed\_mrr10 & 0.6110 & 0.5516 & 0.6684 \\
+eurlex & embeddinggemma & translate\_de & 194 & collapsed\_ndcg10 & 0.6638 & 0.6084 & 0.7168 \\
+eurlex & nomic-v2-moe & translate\_de & 194 & ndcg10 & 0.3957 & 0.3518 & 0.4397 \\
+eurlex & nomic-v2-moe & translate\_de & 194 & hit10 & 0.8196 & 0.7629 & 0.8711 \\
+eurlex & nomic-v2-moe & translate\_de & 194 & mrr10 & 0.6192 & 0.5602 & 0.6777 \\
+eurlex & nomic-v2-moe & translate\_de & 194 & collapsed\_hit10 & 0.8299 & 0.7732 & 0.8814 \\
+eurlex & nomic-v2-moe & translate\_de & 194 & collapsed\_mrr10 & 0.6220 & 0.5630 & 0.6800 \\
+eurlex & nomic-v2-moe & translate\_de & 194 & collapsed\_ndcg10 & 0.6725 & 0.6171 & 0.7252 \\
+eurlex & SapBERT & translate\_en & 194 & ndcg10 & 0.2658 & 0.2224 & 0.3103 \\
+eurlex & SapBERT & translate\_en & 194 & hit10 & 0.5567 & 0.4845 & 0.6289 \\
+eurlex & SapBERT & translate\_en & 194 & mrr10 & 0.3653 & 0.3080 & 0.4247 \\
+eurlex & SapBERT & translate\_en & 194 & collapsed\_hit10 & 0.5670 & 0.4948 & 0.6392 \\
+eurlex & SapBERT & translate\_en & 194 & collapsed\_mrr10 & 0.3710 & 0.3139 & 0.4301 \\
+eurlex & SapBERT & translate\_en & 194 & collapsed\_ndcg10 & 0.4184 & 0.3606 & 0.4771 \\
+eurlex & bge-m3 & original & 194 & ndcg10 & 0.5031 & 0.4562 & 0.5498 \\
+eurlex & bge-m3 & original & 194 & hit10 & 0.8660 & 0.8196 & 0.9124 \\
+eurlex & bge-m3 & original & 194 & mrr10 & 0.6884 & 0.6327 & 0.7445 \\
+eurlex & bge-m3 & original & 194 & collapsed\_hit10 & 0.8866 & 0.8402 & 0.9278 \\
+eurlex & bge-m3 & original & 194 & collapsed\_mrr10 & 0.6954 & 0.6415 & 0.7500 \\
+eurlex & bge-m3 & original & 194 & collapsed\_ndcg10 & 0.7419 & 0.6920 & 0.7907 \\
+eurlex & bge-m3 & translate\_en & 194 & ndcg10 & 0.5006 & 0.4508 & 0.5496 \\
+eurlex & bge-m3 & translate\_en & 194 & hit10 & 0.8454 & 0.7938 & 0.8969 \\
+eurlex & bge-m3 & translate\_en & 194 & mrr10 & 0.6707 & 0.6134 & 0.7285 \\
+eurlex & bge-m3 & translate\_en & 194 & collapsed\_hit10 & 0.8660 & 0.8144 & 0.9124 \\
+eurlex & bge-m3 & translate\_en & 194 & collapsed\_mrr10 & 0.6768 & 0.6204 & 0.7337 \\
+eurlex & bge-m3 & translate\_en & 194 & collapsed\_ndcg10 & 0.7225 & 0.6698 & 0.7739 \\
+eurlex & LaBSE & translate\_en & 194 & ndcg10 & 0.3089 & 0.2561 & 0.3615 \\
+eurlex & LaBSE & translate\_en & 194 & hit10 & 0.5206 & 0.4485 & 0.5928 \\
+eurlex & LaBSE & translate\_en & 194 & mrr10 & 0.3525 & 0.2925 & 0.4119 \\
+eurlex & LaBSE & translate\_en & 194 & collapsed\_hit10 & 0.5722 & 0.5000 & 0.6443 \\
+eurlex & LaBSE & translate\_en & 194 & collapsed\_mrr10 & 0.3700 & 0.3103 & 0.4281 \\
+eurlex & LaBSE & translate\_en & 194 & collapsed\_ndcg10 & 0.4188 & 0.3590 & 0.4774 \\
+eurlex & e5-large-instruct & translate\_en & 194 & ndcg10 & 0.3013 & 0.2793 & 0.3232 \\
+eurlex & e5-large-instruct & translate\_en & 194 & hit10 & 0.8969 & 0.8505 & 0.9381 \\
+eurlex & e5-large-instruct & translate\_en & 194 & mrr10 & 0.6866 & 0.6302 & 0.7404 \\
+eurlex & e5-large-instruct & translate\_en & 194 & collapsed\_hit10 & 0.8969 & 0.8505 & 0.9381 \\
+eurlex & e5-large-instruct & translate\_en & 194 & collapsed\_mrr10 & 0.6866 & 0.6302 & 0.7404 \\
+eurlex & e5-large-instruct & translate\_en & 194 & collapsed\_ndcg10 & 0.7375 & 0.6886 & 0.7844 \\
+un & qwen3-0.6B & original & 247 & ndcg10 & 0.2340 & 0.2083 & 0.2608 \\
+un & qwen3-0.6B & original & 247 & hit10 & 0.7247 & 0.6680 & 0.7814 \\
+un & qwen3-0.6B & original & 247 & mrr10 & 0.4179 & 0.3684 & 0.4694 \\
+un & qwen3-0.6B & original & 247 & collapsed\_hit10 & 0.7368 & 0.6802 & 0.7895 \\
+un & qwen3-0.6B & original & 247 & collapsed\_mrr10 & 0.4234 & 0.3741 & 0.4742 \\
+un & qwen3-0.6B & original & 247 & collapsed\_ndcg10 & 0.4984 & 0.4509 & 0.5471 \\
+un & nomic-v2-moe & translate\_de & 247 & ndcg10 & 0.2732 & 0.2392 & 0.3090 \\
+un & nomic-v2-moe & translate\_de & 247 & hit10 & 0.6356 & 0.5749 & 0.6964 \\
+un & nomic-v2-moe & translate\_de & 247 & mrr10 & 0.3663 & 0.3173 & 0.4163 \\
+un & nomic-v2-moe & translate\_de & 247 & collapsed\_hit10 & 0.6680 & 0.6113 & 0.7247 \\
+un & nomic-v2-moe & translate\_de & 247 & collapsed\_mrr10 & 0.3808 & 0.3323 & 0.4315 \\
+un & nomic-v2-moe & translate\_de & 247 & collapsed\_ndcg10 & 0.4493 & 0.4024 & 0.4977 \\
+un & SapBERT & translate\_en & 247 & ndcg10 & 0.0231 & 0.0138 & 0.0337 \\
+un & SapBERT & translate\_en & 247 & hit10 & 0.1053 & 0.0688 & 0.1457 \\
+un & SapBERT & translate\_en & 247 & mrr10 & 0.0332 & 0.0192 & 0.0499 \\
+un & SapBERT & translate\_en & 247 & collapsed\_hit10 & 0.1093 & 0.0729 & 0.1498 \\
+un & SapBERT & translate\_en & 247 & collapsed\_mrr10 & 0.0344 & 0.0202 & 0.0516 \\
+un & SapBERT & translate\_en & 247 & collapsed\_ndcg10 & 0.0520 & 0.0330 & 0.0729 \\
+un & qwen3-0.6B & translate\_de & 247 & ndcg10 & 0.2282 & 0.1968 & 0.2607 \\
+un & qwen3-0.6B & translate\_de & 247 & hit10 & 0.6032 & 0.5385 & 0.6680 \\
+un & qwen3-0.6B & translate\_de & 247 & mrr10 & 0.3435 & 0.2947 & 0.3932 \\
+un & qwen3-0.6B & translate\_de & 247 & collapsed\_hit10 & 0.6397 & 0.5789 & 0.7004 \\
+un & qwen3-0.6B & translate\_de & 247 & collapsed\_mrr10 & 0.3539 & 0.3057 & 0.4030 \\
+un & qwen3-0.6B & translate\_de & 247 & collapsed\_ndcg10 & 0.4216 & 0.3732 & 0.4692 \\
+un & nomic-v2-moe & translate\_en & 247 & ndcg10 & 0.2720 & 0.2445 & 0.2998 \\
+un & nomic-v2-moe & translate\_en & 247 & hit10 & 0.7652 & 0.7126 & 0.8178 \\
+un & nomic-v2-moe & translate\_en & 247 & mrr10 & 0.4545 & 0.4048 & 0.5047 \\
+un & nomic-v2-moe & translate\_en & 247 & collapsed\_hit10 & 0.7814 & 0.7287 & 0.8300 \\
+un & nomic-v2-moe & translate\_en & 247 & collapsed\_mrr10 & 0.4604 & 0.4113 & 0.5102 \\
+un & nomic-v2-moe & translate\_en & 247 & collapsed\_ndcg10 & 0.5373 & 0.4906 & 0.5838 \\
+un & granite-278m & original & 247 & ndcg10 & 0.2936 & 0.2573 & 0.3321 \\
+un & granite-278m & original & 247 & hit10 & 0.6559 & 0.5951 & 0.7166 \\
+un & granite-278m & original & 247 & mrr10 & 0.4179 & 0.3668 & 0.4739 \\
+un & granite-278m & original & 247 & collapsed\_hit10 & 0.6842 & 0.6275 & 0.7449 \\
+un & granite-278m & original & 247 & collapsed\_mrr10 & 0.4260 & 0.3752 & 0.4813 \\
+un & granite-278m & original & 247 & collapsed\_ndcg10 & 0.4874 & 0.4385 & 0.5408 \\
+un & LaBSE & translate\_en & 247 & ndcg10 & 0.0832 & 0.0640 & 0.1040 \\
+un & LaBSE & translate\_en & 247 & hit10 & 0.2955 & 0.2429 & 0.3522 \\
+un & LaBSE & translate\_en & 247 & mrr10 & 0.1317 & 0.0992 & 0.1675 \\
+un & LaBSE & translate\_en & 247 & collapsed\_hit10 & 0.3117 & 0.2551 & 0.3725 \\
+un & LaBSE & translate\_en & 247 & collapsed\_mrr10 & 0.1357 & 0.1033 & 0.1711 \\
+un & LaBSE & translate\_en & 247 & collapsed\_ndcg10 & 0.1771 & 0.1414 & 0.2164 \\
+un & qwen3-0.6B & translate\_en & 247 & ndcg10 & 0.2609 & 0.2297 & 0.2926 \\
+un & qwen3-0.6B & translate\_en & 247 & hit10 & 0.6923 & 0.6356 & 0.7490 \\
+un & qwen3-0.6B & translate\_en & 247 & mrr10 & 0.3947 & 0.3454 & 0.4475 \\
+un & qwen3-0.6B & translate\_en & 247 & collapsed\_hit10 & 0.7368 & 0.6802 & 0.7895 \\
+un & qwen3-0.6B & translate\_en & 247 & collapsed\_mrr10 & 0.4053 & 0.3565 & 0.4575 \\
+un & qwen3-0.6B & translate\_en & 247 & collapsed\_ndcg10 & 0.4838 & 0.4370 & 0.5323 \\
+un & SapBERT & translate\_de & 247 & ndcg10 & 0.0099 & 0.0050 & 0.0158 \\
+un & SapBERT & translate\_de & 247 & hit10 & 0.0567 & 0.0283 & 0.0891 \\
+un & SapBERT & translate\_de & 247 & mrr10 & 0.0159 & 0.0068 & 0.0280 \\
+un & SapBERT & translate\_de & 247 & collapsed\_hit10 & 0.0567 & 0.0283 & 0.0891 \\
+un & SapBERT & translate\_de & 247 & collapsed\_mrr10 & 0.0159 & 0.0068 & 0.0280 \\
+un & SapBERT & translate\_de & 247 & collapsed\_ndcg10 & 0.0252 & 0.0128 & 0.0405 \\
+un & bge-m3 & original & 247 & ndcg10 & 0.2906 & 0.2592 & 0.3241 \\
+un & bge-m3 & original & 247 & hit10 & 0.7368 & 0.6802 & 0.7895 \\
+un & bge-m3 & original & 247 & mrr10 & 0.4501 & 0.3995 & 0.5028 \\
+un & bge-m3 & original & 247 & collapsed\_hit10 & 0.7652 & 0.7124 & 0.8138 \\
+un & bge-m3 & original & 247 & collapsed\_mrr10 & 0.4601 & 0.4109 & 0.5116 \\
+un & bge-m3 & original & 247 & collapsed\_ndcg10 & 0.5333 & 0.4862 & 0.5814 \\
+un & embeddinggemma & translate\_en & 247 & ndcg10 & 0.3730 & 0.3366 & 0.4118 \\
+un & embeddinggemma & translate\_en & 247 & hit10 & 0.7976 & 0.7490 & 0.8462 \\
+un & embeddinggemma & translate\_en & 247 & mrr10 & 0.5243 & 0.4724 & 0.5767 \\
+un & embeddinggemma & translate\_en & 247 & collapsed\_hit10 & 0.8421 & 0.7976 & 0.8866 \\
+un & embeddinggemma & translate\_en & 247 & collapsed\_mrr10 & 0.5383 & 0.4880 & 0.5896 \\
+un & embeddinggemma & translate\_en & 247 & collapsed\_ndcg10 & 0.6111 & 0.5656 & 0.6576 \\
+un & embeddinggemma & original & 247 & ndcg10 & 0.3364 & 0.3044 & 0.3701 \\
+un & embeddinggemma & original & 247 & hit10 & 0.7895 & 0.7368 & 0.8381 \\
+un & embeddinggemma & original & 247 & mrr10 & 0.5278 & 0.4771 & 0.5792 \\
+un & embeddinggemma & original & 247 & collapsed\_hit10 & 0.8178 & 0.7692 & 0.8623 \\
+un & embeddinggemma & original & 247 & collapsed\_mrr10 & 0.5347 & 0.4857 & 0.5852 \\
+un & embeddinggemma & original & 247 & collapsed\_ndcg10 & 0.6030 & 0.5575 & 0.6489 \\
+un & LaBSE & translate\_de & 247 & ndcg10 & 0.0823 & 0.0628 & 0.1031 \\
+un & LaBSE & translate\_de & 247 & hit10 & 0.2753 & 0.2186 & 0.3320 \\
+un & LaBSE & translate\_de & 247 & mrr10 & 0.1436 & 0.1075 & 0.1823 \\
+un & LaBSE & translate\_de & 247 & collapsed\_hit10 & 0.2794 & 0.2227 & 0.3360 \\
+un & LaBSE & translate\_de & 247 & collapsed\_mrr10 & 0.1445 & 0.1083 & 0.1832 \\
+un & LaBSE & translate\_de & 247 & collapsed\_ndcg10 & 0.1769 & 0.1375 & 0.2177 \\
+un & nomic-v2-moe & original & 247 & ndcg10 & 0.2483 & 0.2203 & 0.2773 \\
+un & nomic-v2-moe & original & 247 & hit10 & 0.7085 & 0.6518 & 0.7652 \\
+un & nomic-v2-moe & original & 247 & mrr10 & 0.4283 & 0.3778 & 0.4803 \\
+un & nomic-v2-moe & original & 247 & collapsed\_hit10 & 0.7287 & 0.6761 & 0.7854 \\
+un & nomic-v2-moe & original & 247 & collapsed\_mrr10 & 0.4337 & 0.3839 & 0.4847 \\
+un & nomic-v2-moe & original & 247 & collapsed\_ndcg10 & 0.5038 & 0.4564 & 0.5517 \\
+un & granite-278m & translate\_en & 247 & ndcg10 & 0.3367 & 0.2978 & 0.3779 \\
+un & granite-278m & translate\_en & 247 & hit10 & 0.6883 & 0.6316 & 0.7490 \\
+un & granite-278m & translate\_en & 247 & mrr10 & 0.4409 & 0.3892 & 0.4964 \\
+un & granite-278m & translate\_en & 247 & collapsed\_hit10 & 0.7287 & 0.6721 & 0.7854 \\
+un & granite-278m & translate\_en & 247 & collapsed\_mrr10 & 0.4512 & 0.4003 & 0.5053 \\
+un & granite-278m & translate\_en & 247 & collapsed\_ndcg10 & 0.5178 & 0.4692 & 0.5692 \\
+un & bge-m3 & translate\_en & 247 & ndcg10 & 0.2958 & 0.2621 & 0.3316 \\
+un & bge-m3 & translate\_en & 247 & hit10 & 0.7126 & 0.6559 & 0.7692 \\
+un & bge-m3 & translate\_en & 247 & mrr10 & 0.4309 & 0.3783 & 0.4834 \\
+un & bge-m3 & translate\_en & 247 & collapsed\_hit10 & 0.7530 & 0.7003 & 0.8057 \\
+un & bge-m3 & translate\_en & 247 & collapsed\_mrr10 & 0.4435 & 0.3919 & 0.4951 \\
+un & bge-m3 & translate\_en & 247 & collapsed\_ndcg10 & 0.5168 & 0.4682 & 0.5653 \\
+un & e5-large-instruct & translate\_de & 247 & ndcg10 & 0.2142 & 0.1854 & 0.2445 \\
+un & e5-large-instruct & translate\_de & 247 & hit10 & 0.5830 & 0.5223 & 0.6438 \\
+un & e5-large-instruct & translate\_de & 247 & mrr10 & 0.3361 & 0.2879 & 0.3882 \\
+un & e5-large-instruct & translate\_de & 247 & collapsed\_hit10 & 0.6032 & 0.5425 & 0.6640 \\
+un & e5-large-instruct & translate\_de & 247 & collapsed\_mrr10 & 0.3433 & 0.2955 & 0.3948 \\
+un & e5-large-instruct & translate\_de & 247 & collapsed\_ndcg10 & 0.4045 & 0.3572 & 0.4552 \\
+un & granite-278m & translate\_de & 247 & ndcg10 & 0.3173 & 0.2770 & 0.3595 \\
+un & granite-278m & translate\_de & 247 & hit10 & 0.6275 & 0.5668 & 0.6923 \\
+un & granite-278m & translate\_de & 247 & mrr10 & 0.4073 & 0.3541 & 0.4620 \\
+un & granite-278m & translate\_de & 247 & collapsed\_hit10 & 0.6923 & 0.6316 & 0.7530 \\
+un & granite-278m & translate\_de & 247 & collapsed\_mrr10 & 0.4248 & 0.3729 & 0.4784 \\
+un & granite-278m & translate\_de & 247 & collapsed\_ndcg10 & 0.4879 & 0.4377 & 0.5397 \\
+un & SapBERT & original & 247 & ndcg10 & 0.0291 & 0.0186 & 0.0413 \\
+un & SapBERT & original & 247 & hit10 & 0.1255 & 0.0850 & 0.1700 \\
+un & SapBERT & original & 247 & mrr10 & 0.0526 & 0.0306 & 0.0790 \\
+un & SapBERT & original & 247 & collapsed\_hit10 & 0.1255 & 0.0850 & 0.1700 \\
+un & SapBERT & original & 247 & collapsed\_mrr10 & 0.0534 & 0.0313 & 0.0797 \\
+un & SapBERT & original & 247 & collapsed\_ndcg10 & 0.0699 & 0.0452 & 0.0985 \\
+un & e5-large-instruct & translate\_en & 247 & ndcg10 & 0.1761 & 0.1568 & 0.1961 \\
+un & e5-large-instruct & translate\_en & 247 & hit10 & 0.6721 & 0.6113 & 0.7328 \\
+un & e5-large-instruct & translate\_en & 247 & mrr10 & 0.3822 & 0.3314 & 0.4346 \\
+un & e5-large-instruct & translate\_en & 247 & collapsed\_hit10 & 0.6721 & 0.6113 & 0.7328 \\
+un & e5-large-instruct & translate\_en & 247 & collapsed\_mrr10 & 0.3822 & 0.3314 & 0.4346 \\
+un & e5-large-instruct & translate\_en & 247 & collapsed\_ndcg10 & 0.4499 & 0.4007 & 0.5005 \\
+un & e5-large-instruct & original & 247 & ndcg10 & 0.1739 & 0.1550 & 0.1939 \\
+un & e5-large-instruct & original & 247 & hit10 & 0.6518 & 0.5911 & 0.7126 \\
+un & e5-large-instruct & original & 247 & mrr10 & 0.3816 & 0.3314 & 0.4343 \\
+un & e5-large-instruct & original & 247 & collapsed\_hit10 & 0.6518 & 0.5911 & 0.7126 \\
+un & e5-large-instruct & original & 247 & collapsed\_mrr10 & 0.3816 & 0.3314 & 0.4343 \\
+un & e5-large-instruct & original & 247 & collapsed\_ndcg10 & 0.4454 & 0.3972 & 0.4967 \\
+un & embeddinggemma & translate\_de & 247 & ndcg10 & 0.3976 & 0.3549 & 0.4418 \\
+un & embeddinggemma & translate\_de & 247 & hit10 & 0.7166 & 0.6599 & 0.7733 \\
+un & embeddinggemma & translate\_de & 247 & mrr10 & 0.4847 & 0.4307 & 0.5399 \\
+un & embeddinggemma & translate\_de & 247 & collapsed\_hit10 & 0.7571 & 0.7045 & 0.8097 \\
+un & embeddinggemma & translate\_de & 247 & collapsed\_mrr10 & 0.5048 & 0.4531 & 0.5584 \\
+un & embeddinggemma & translate\_de & 247 & collapsed\_ndcg10 & 0.5657 & 0.5176 & 0.6169 \\
+un & bge-m3 & translate\_de & 247 & ndcg10 & 0.3157 & 0.2781 & 0.3553 \\
+un & bge-m3 & translate\_de & 247 & hit10 & 0.6761 & 0.6194 & 0.7328 \\
+un & bge-m3 & translate\_de & 247 & mrr10 & 0.4140 & 0.3624 & 0.4674 \\
+un & bge-m3 & translate\_de & 247 & collapsed\_hit10 & 0.7126 & 0.6559 & 0.7692 \\
+un & bge-m3 & translate\_de & 247 & collapsed\_mrr10 & 0.4286 & 0.3778 & 0.4807 \\
+un & bge-m3 & translate\_de & 247 & collapsed\_ndcg10 & 0.4961 & 0.4477 & 0.5458 \\
+un & LaBSE & original & 247 & ndcg10 & 0.0903 & 0.0699 & 0.1121 \\
+un & LaBSE & original & 247 & hit10 & 0.3036 & 0.2470 & 0.3644 \\
+un & LaBSE & original & 247 & mrr10 & 0.1552 & 0.1183 & 0.1950 \\
+un & LaBSE & original & 247 & collapsed\_hit10 & 0.3158 & 0.2591 & 0.3765 \\
+un & LaBSE & original & 247 & collapsed\_mrr10 & 0.1575 & 0.1208 & 0.1975 \\
+un & LaBSE & original & 247 & collapsed\_ndcg10 & 0.1947 & 0.1554 & 0.2374 \\
+eurlex & All fixed models & original & 194 & ndcg10 & 0.4052 & 0.3705 & 0.4406 \\
+eurlex & All fixed models & original & 194 & hit10 & 0.7713 & 0.7307 & 0.8099 \\
+eurlex & All fixed models & original & 194 & mrr10 & 0.5976 & 0.5532 & 0.6419 \\
+eurlex & All fixed models & original & 194 & collapsed\_hit10 & 0.7861 & 0.7461 & 0.8241 \\
+eurlex & All fixed models & original & 194 & collapsed\_mrr10 & 0.6040 & 0.5595 & 0.6481 \\
+eurlex & All fixed models & original & 194 & collapsed\_ndcg10 & 0.6484 & 0.6064 & 0.6895 \\
+eurlex & All fixed models & translate\_de & 194 & ndcg10 & 0.3620 & 0.3273 & 0.3964 \\
+eurlex & All fixed models & translate\_de & 194 & hit10 & 0.7300 & 0.6869 & 0.7726 \\
+eurlex & All fixed models & translate\_de & 194 & mrr10 & 0.5364 & 0.4898 & 0.5809 \\
+eurlex & All fixed models & translate\_de & 194 & collapsed\_hit10 & 0.7468 & 0.7036 & 0.7887 \\
+eurlex & All fixed models & translate\_de & 194 & collapsed\_mrr10 & 0.5430 & 0.4966 & 0.5873 \\
+eurlex & All fixed models & translate\_de & 194 & collapsed\_ndcg10 & 0.5922 & 0.5480 & 0.6345 \\
+eurlex & All fixed models & translate\_en & 194 & ndcg10 & 0.4181 & 0.3817 & 0.4557 \\
+eurlex & All fixed models & translate\_en & 194 & hit10 & 0.7680 & 0.7268 & 0.8073 \\
+eurlex & All fixed models & translate\_en & 194 & mrr10 & 0.5911 & 0.5462 & 0.6362 \\
+eurlex & All fixed models & translate\_en & 194 & collapsed\_hit10 & 0.7874 & 0.7474 & 0.8254 \\
+eurlex & All fixed models & translate\_en & 194 & collapsed\_mrr10 & 0.5984 & 0.5538 & 0.6430 \\
+eurlex & All fixed models & translate\_en & 194 & collapsed\_ndcg10 & 0.6442 & 0.6015 & 0.6861 \\
+un & All fixed models & original & 247 & ndcg10 & 0.2120 & 0.1931 & 0.2321 \\
+un & All fixed models & original & 247 & hit10 & 0.5870 & 0.5506 & 0.6230 \\
+un & All fixed models & original & 247 & mrr10 & 0.3539 & 0.3222 & 0.3876 \\
+un & All fixed models & original & 247 & collapsed\_hit10 & 0.6032 & 0.5683 & 0.6387 \\
+un & All fixed models & original & 247 & collapsed\_mrr10 & 0.3588 & 0.3273 & 0.3922 \\
+un & All fixed models & original & 247 & collapsed\_ndcg10 & 0.4170 & 0.3862 & 0.4495 \\
+un & All fixed models & translate\_de & 247 & ndcg10 & 0.2298 & 0.2065 & 0.2541 \\
+un & All fixed models & translate\_de & 247 & hit10 & 0.5218 & 0.4848 & 0.5587 \\
+un & All fixed models & translate\_de & 247 & mrr10 & 0.3139 & 0.2815 & 0.3471 \\
+un & All fixed models & translate\_de & 247 & collapsed\_hit10 & 0.5511 & 0.5152 & 0.5870 \\
+un & All fixed models & translate\_de & 247 & collapsed\_mrr10 & 0.3246 & 0.2925 & 0.3574 \\
+un & All fixed models & translate\_de & 247 & collapsed\_ndcg10 & 0.3784 & 0.3463 & 0.4107 \\
+un & All fixed models & translate\_en & 247 & ndcg10 & 0.2276 & 0.2063 & 0.2494 \\
+un & All fixed models & translate\_en & 247 & hit10 & 0.5911 & 0.5552 & 0.6265 \\
+un & All fixed models & translate\_en & 247 & mrr10 & 0.3490 & 0.3163 & 0.3831 \\
+un & All fixed models & translate\_en & 247 & collapsed\_hit10 & 0.6169 & 0.5830 & 0.6508 \\
+un & All fixed models & translate\_en & 247 & collapsed\_mrr10 & 0.3564 & 0.3242 & 0.3897 \\
+un & All fixed models & translate\_en & 247 & collapsed\_ndcg10 & 0.4182 & 0.3868 & 0.4511 \\
+\bottomrule
+\end{tabular}

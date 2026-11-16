@@ -12,11 +12,12 @@ from pathlib import Path
 
 import pyarrow as pa
 
-from .artifacts import RUN_SCHEMA, CorpusStore, ParquetSink, rows
+from .artifacts import DOCUMENT_RUN_SCHEMA, RUN_SCHEMA, CorpusStore, ParquetSink, rows
 from .config import RERANK_BASELINES, Config
 from .errors import ValidationError
 from .generation import nullable_sum
 from .metrics import aggregate, score_query
+from .rerank_cache import SQLitePairCache
 from .reranking import Qwen3Reranker, scoring_identity
 from .results import export_result
 from .util import (
@@ -38,6 +39,23 @@ CANDIDATE_SCHEMA = pa.schema(
     + [(name, pa.int64()) for name in ("parent_rank", "rank")]
     + [(name, pa.float64()) for name in ("parent_score", "score", "seconds_amortized")]
 )
+
+DOCUMENT_CANDIDATE_SCHEMA = pa.schema(
+    [field for field in CANDIDATE_SCHEMA if field.name != "chunk_id"]
+    + [("document_id", pa.string()), ("winning_chunk_id", pa.string())]
+)
+
+
+def _document_metadata(config):
+    if config.retrieval_unit != "document":
+        return {}
+    return {
+        "retrieval_unit": "document",
+        "document_identity": "source_unit_id",
+        "relevance_basis": "known_source_associations",
+        "document_text_policy": "parent_winning_chunk",
+    }
+
 
 TIMING_NOTES = (
     "Reranking time is measured over each uncached inference batch, including tokenization and "
@@ -93,6 +111,8 @@ def _parent(config, corpus, spec, baseline, translation_language, hyde_language)
             raise ValidationError(
                 f"Parent retrieval {name} does not match this reranking experiment"
             )
+    if manifest.get("retrieval_unit", "chunk") != config.retrieval_unit:
+        raise ValidationError("Parent retrieval unit does not match this reranking experiment")
     hashes = {
         name: file_digest(path / name)
         for name in ("manifest.json", "run.parquet", "timings.parquet")
@@ -134,6 +154,7 @@ def rerank_run_path(
         "translation_language": translation_language,
         "hyde_language": hyde_language,
         "tie_policy": "parent_rank_then_chunk_id",
+        **_document_metadata(config),
     }
     return config.output_dir / "runs" / corpus / digest(identity)
 
@@ -150,7 +171,7 @@ def load_rerank_run(path: Path) -> dict:
     return manifest
 
 
-def _rankings(path: Path) -> dict:
+def _rankings(path: Path, result_id="chunk_id") -> dict:
     result = defaultdict(list)
     for row in rows(path / "run.parquet"):
         result[(row["setting_id"], row["query_id"])].append(row)
@@ -158,7 +179,7 @@ def _rankings(path: Path) -> dict:
         ranking.sort(key=lambda row: row["rank"])
         if (
             [row["rank"] for row in ranking] != list(range(1, len(ranking) + 1))
-            or len({row["chunk_id"] for row in ranking}) != len(ranking)
+            or len({row[result_id] for row in ranking}) != len(ranking)
             or any(not math.isfinite(row["score"]) for row in ranking)
         ):
             raise ValidationError(f"Invalid retrieval ranks, duplicates, or scores for {key}")
@@ -178,6 +199,10 @@ def _eligible(config, corpus):
 
 def _pair_result(path, identity):
     result = read_json(path / "result.json")
+    return _validate_pair_result(result, identity, path)
+
+
+def _validate_pair_result(result, identity, location):
     if (
         result.get("identity") != identity
         or result.get("result_digest")
@@ -187,7 +212,7 @@ def _pair_result(path, identity):
         or not math.isfinite(result["score"])
         or not 0 <= result["score"] <= 1
     ):
-        raise ValidationError(f"Corrupt reranking pair artifact: {path}")
+        raise ValidationError(f"Corrupt reranking pair artifact: {location}")
     return result
 
 
@@ -242,6 +267,10 @@ def rerank(
         "reranking_cost_usd": None,
     }
     started = time.perf_counter()
+    document_mode = config.retrieval_unit == "document"
+    result_id = "document_id" if document_mode else "chunk_id"
+    chunk_id = "winning_chunk_id" if document_mode else "chunk_id"
+    pair_cache = SQLitePairCache(config.output_dir / "reranking_cache") if document_mode else None
     model = None
     used = {}
     try:
@@ -254,7 +283,7 @@ def rerank(
             )
             return destination
         settings, eligible = _eligible(config, corpus)
-        rankings = _rankings(parent)
+        rankings = _rankings(parent, result_id)
         if set(rankings) - set(eligible):
             raise ValidationError("Parent run contains query/settings outside the eligible cohort")
         queries = {
@@ -271,8 +300,13 @@ def rerank(
             new_directory(destination) as temporary,
         ):
             with (
-                ParquetSink(temporary / "run.parquet", RUN_SCHEMA) as sink,
-                ParquetSink(temporary / "candidates.parquet", CANDIDATE_SCHEMA) as candidates,
+                ParquetSink(
+                    temporary / "run.parquet", DOCUMENT_RUN_SCHEMA if document_mode else RUN_SCHEMA
+                ) as sink,
+                ParquetSink(
+                    temporary / "candidates.parquet",
+                    DOCUMENT_CANDIDATE_SCHEMA if document_mode else CANDIDATE_SCHEMA,
+                ) as candidates,
             ):
                 handles = {}
                 try:
@@ -287,7 +321,7 @@ def rerank(
                         selected = rankings[key][: config.reranker.candidate_k]
                         pair_keys, missing = [], {}
                         for candidate in selected:
-                            chunk = store.chunk(candidate["chunk_id"])
+                            chunk = store.chunk(candidate[chunk_id])
                             if (
                                 chunk is None
                                 or chunk["language"] not in settings[setting_id]["target_languages"]
@@ -298,6 +332,10 @@ def rerank(
                             source = store.get_source(chunk["source_unit_id"])
                             if source is None:
                                 raise ValidationError(f"Missing source for chunk {chunk['id']}")
+                            if document_mode and source.id != candidate["document_id"]:
+                                raise ValidationError(
+                                    "Winning chunk does not belong to the ranked document"
+                                )
                             document = source.text[chunk["start"] : chunk["end"]]
                             identity = {
                                 "scoring": score_identity,
@@ -316,7 +354,14 @@ def rerank(
                                 used[pair_key] = _pair_result(path, identity)
                                 invocation["cached_pairs"] += 1
                             else:
-                                missing[pair_key] = identity
+                                cached = pair_cache.get(pair_key, identity) if pair_cache else None
+                                if cached is not None:
+                                    used[pair_key] = _validate_pair_result(
+                                        cached, identity, pair_key
+                                    )
+                                    invocation["cached_pairs"] += 1
+                                else:
+                                    missing[pair_key] = identity
                         pending = list(missing.items())
                         for offset in range(0, len(pending), config.reranker.batch_size):
                             batch = pending[offset : offset + config.reranker.batch_size]
@@ -351,6 +396,7 @@ def rerank(
                                 raise ValidationError(
                                     "Reranker returned an inconsistent score/audit batch"
                                 )
+                            batch_results = []
                             for (pair_key, identity), score, audit in zip(
                                 batch, scored.scores, scored.audits, strict=True
                             ):
@@ -372,18 +418,27 @@ def rerank(
                                     "model_metadata": model.metadata,
                                 }
                                 result["result_digest"] = digest(result)
-                                with new_directory(
-                                    config.output_dir / "reranking_pairs" / pair_key
-                                ) as pair_tmp:
-                                    write_json(pair_tmp / "result.json", result)
-                                used[pair_key] = result
+                                if pair_cache:
+                                    batch_results.append((pair_key, result))
+                                else:
+                                    with new_directory(
+                                        config.output_dir / "reranking_pairs" / pair_key
+                                    ) as pair_tmp:
+                                        write_json(pair_tmp / "result.json", result)
+                                    used[pair_key] = result
                                 invocation["new_pairs"] += 1
+                            if pair_cache:
+                                stored = pair_cache.put_batch(batch_results)
+                                for pair_key, result in batch_results:
+                                    used[pair_key] = _validate_pair_result(
+                                        stored[pair_key], result["identity"], pair_key
+                                    )
                         reranked = sorted(
                             zip(selected, pair_keys, strict=True),
                             key=lambda item: (
                                 -used[item[1]]["score"],
                                 item[0]["rank"],
-                                item[0]["chunk_id"],
+                                item[0][chunk_id],
                             ),
                         )
                         for rank, (candidate, pair_key) in enumerate(reranked, 1):
@@ -391,7 +446,8 @@ def rerank(
                             row = {
                                 "setting_id": setting_id,
                                 "query_id": query_id,
-                                "chunk_id": candidate["chunk_id"],
+                                result_id: candidate[result_id],
+                                **({chunk_id: candidate[chunk_id]} if document_mode else {}),
                                 "rank": rank,
                                 "score": score["score"],
                             }
@@ -407,7 +463,7 @@ def rerank(
                                 }
                             )
                             handles[setting_id].write(
-                                f"{query_id}\tQ0\t{candidate['chunk_id']}\t{rank}\t{score['score']:.17g}\t{baseline}\n"
+                                f"{query_id}\tQ0\t{candidate[result_id]}\t{rank}\t{score['score']:.17g}\t{baseline}\n"
                             )
                         traces.append(
                             {
@@ -427,6 +483,13 @@ def rerank(
                     for handle in handles.values():
                         handle.close()
             write_json(temporary / "traces.json", traces)
+            if pair_cache:
+                with ParquetSink(
+                    temporary / "pair_scores.parquet",
+                    pa.schema([("score_key", pa.string()), ("result_json", pa.string())]),
+                ) as pairs:
+                    for pair_key, result in sorted(used.items()):
+                        pairs.append({"score_key": pair_key, "result_json": json_dumps(result)})
             summary = {
                 **_summary(used.values()),
                 "pair_count": sum(row["candidate_count"] for row in traces),
@@ -436,6 +499,7 @@ def rerank(
                 {
                     "schema": 1,
                     "baseline": baseline,
+                    **_document_metadata(config),
                     "parent_baseline": _base(baseline),
                     "parent_run": str(parent),
                     "parent_files": parent_hashes,
@@ -456,6 +520,7 @@ def rerank(
                     "tie_policy": "parent_rank_then_chunk_id",
                     "reranking_summary": summary,
                     "score_keys": sorted(used),
+                    **({"pair_scores_file": "pair_scores.parquet"} if pair_cache else {}),
                     "timing_notes": TIMING_NOTES,
                     "model_metadata": model.metadata
                     if model
@@ -478,6 +543,8 @@ def rerank(
         invocation["error_type"] = type(exc).__name__
         raise
     finally:
+        if pair_cache:
+            pair_cache.close()
         invocation["seconds"] = time.perf_counter() - started
         write_json(
             config.output_dir / "reranking_invocations" / f"{uuid.uuid4().hex}.json", invocation
@@ -546,16 +613,19 @@ def evaluate_rerank(
         hyde_language=hyde_language,
     )
     manifest = load_rerank_run(run_dir)
+    result_id = "document_id" if config.retrieval_unit == "document" else "chunk_id"
     destination = config.output_dir / "reports" / corpus / run_dir.name
     base = _base(baseline)
-    parent_report_dir = evaluate(
-        config,
-        corpus,
-        alias,
-        baseline=base,
-        translation_language=translation_language,
-        hyde_language=hyde_language,
-    )
+    parent_report_dir = config.output_dir / "reports" / corpus / Path(manifest["parent_run"]).name
+    if not all((parent_report_dir / name).is_file() for name in ("report.json", "per_query.json")):
+        parent_report_dir = evaluate(
+            config,
+            corpus,
+            alias,
+            baseline=base,
+            translation_language=translation_language,
+            hyde_language=hyde_language,
+        )
     parent_report = read_json(parent_report_dir / "report.json")
     if parent_report.get("run") != manifest["parent_manifest"]:
         raise ValidationError("Parent evaluation report is stale: its run manifest differs")
@@ -592,10 +662,11 @@ def evaluate_rerank(
         ):
             raise ValidationError("Corrupt cached reranking evaluation rows")
         return export_result(config, corpus, run_dir, destination)
-    parent_rankings, rankings = _rankings(Path(manifest["parent_run"])), _rankings(run_dir)
+    parent_rankings = _rankings(Path(manifest["parent_run"]), result_id)
+    rankings = _rankings(run_dir, result_id)
     qrels = defaultdict(lambda: defaultdict(set))
     for row in rows(config.relevance_dir(corpus) / "qrels.parquet"):
-        qrels[(row["setting_id"], row["query_id"])][row["chunk_id"]].add(row["required_source_id"])
+        qrels[(row["setting_id"], row["query_id"])][row[result_id]].add(row["required_source_id"])
     records = []
     for key in sorted(eligible):
         original, trace = originals[key], traces[key]
@@ -612,15 +683,13 @@ def evaluate_rerank(
         for name, value in expected.items():
             if original.get(name) != value:
                 raise ValidationError(f"Parent evaluation {name} differs for {key}")
-        candidates = [
-            row["chunk_id"] for row in parent_rankings[key][: config.reranker.candidate_k]
-        ]
-        reranked = [row["chunk_id"] for row in rankings[key]]
+        candidates = [row[result_id] for row in parent_rankings[key][: config.reranker.candidate_k]]
+        reranked = [row[result_id] for row in rankings[key]]
         if set(candidates) != set(reranked) or len(candidates) != len(reranked):
             raise ValidationError(f"Reranked candidate set differs from parent for {key}")
         required = set(eligible[key]["required_source_ids"])
         full_parent_metrics = score_query(
-            [row["chunk_id"] for row in parent_rankings[key]], qrels[key], required
+            [row[result_id] for row in parent_rankings[key]], qrels[key], required
         )
         if original["metrics"] != full_parent_metrics:
             raise ValidationError(f"Parent evaluation report is stale: metrics differ for {key}")
@@ -660,6 +729,7 @@ def evaluate_rerank(
         "schema": 1,
         "corpus": corpus,
         "baseline": baseline,
+        **_document_metadata(config),
         "model": alias,
         "parent_baseline": base,
         "parent_report": str(parent_report_dir),
@@ -796,6 +866,7 @@ def compare_rerank(
         "schema": 1,
         "corpus": corpus,
         "baseline": baseline,
+        **_document_metadata(config),
         "parent_baseline": _base(baseline),
         "model": alias,
         "reranker": asdict(config.reranker),
