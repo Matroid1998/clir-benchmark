@@ -1,0 +1,36 @@
+eurlex / EmbeddingGemma / original English query / English target
+Seed 20261116; sample up to four English-native hits per corpus
+Query ID: q_8af55c3d4227b3bc25c42bf081072720398e8c447ff0d88ee76d9d2b86bd124d
+First relevant rank (saved top100): 2
+Quality: clear; alignment: eligible
+
+QUESTION
+How must the region of origin of a conservation variety be identified when it is located in more than one Member State?
+
+SAVED ANSWER
+it shall be identified by all Member States concerned by common accord
+
+COMPLETE RELEVANT SOURCE eurlex:http://data.europa.eu/eli/dir/2008/62/art_8/oj:en
+Region of origin
+
+1. When a Member State accepts a conservation variety, it shall identify the region or regions in which the variety has historically been grown and to which it is naturally adapted, hereinafter ‘region of origin’. It shall take into account information from plant genetic resource authorities or from organisations recognised for that purpose by the Member States.Where the region of origin is located in more than one Member States, it shall be identified by all Member States concerned by common accord.
+
+2. The Member State or Member States performing the identification of the region of origin shall notify the identified region to the Commission.
+
+RETRIEVED RANK 1 / relevance=0 / eurlex:http://data.europa.eu/eli/dir/2009/145/art_8/oj:en / score=0.76203752
+Region of origin
+
+1. When a Member State accepts a conservation variety, it shall identify the locality or localities, region or regions, in which the variety has historically been grown and to which it is naturally adapted, hereinafter ‘region of origin’. It shall take into account information from plant genetic resource authorities or from organisations recognised for that purpose by the Member States.Where the region of origin is located in more than one Member States, it shall be identified by all Member States concerned by common accord.
+
+2. The Member State or Member States performing the identification of the region of origin shall notify the identified region to the Commission.
+
+RETRIEVED RANK 2 / relevance=1 / eurlex:http://data.europa.eu/eli/dir/2008/62/art_8/oj:en / score=0.75758982
+Region of origin
+
+1. When a Member State accepts a conservation variety, it shall identify the region or regions in which the variety has historically been grown and to which it is naturally adapted, hereinafter ‘region of origin’. It shall take into account information from plant genetic resource authorities or from organisations recognised for that purpose by the Member States.Where the region of origin is located in more than one Member States, it shall be identified by all Member States concerned by common accord.
+
+2. The Member State or Member States performing the identification of the region of origin shall notify the identified region to the Commission.
+
+RETRIEVED RANK 3 / relevance=0 / eurlex:http://data.europa.eu/eli/dir/2010/60/art_3/oj:en / score=0.68640476
+Region of origin
+When a Member State authorises the marketing of a preservation mixture, it shall define the region with which that mixture is naturally associated, hereinafter referred to as ‘region of origin’. It shall take into account information from plant genetic resource authorities or organisations recognised for this purpose by the Member States. Where the region of origin is located in more than one Member State, it shall be identified by all Member States concerned by common accord.

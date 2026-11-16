@@ -1,0 +1,43 @@
+ORIGINAL-QUERY DENSE RETRIEVAL ONLY
+
+Recall@10 (%); equal weight per nonempty original-query-language/target setting.
+638 selected questions: chemistry 197, EUR-Lex 194, UN 247.
+Original queries are embedded directly. No translation or HyDE.
+Mixed search counts relevant document-language versions; single-target search has one relevant version.
+Regime scores have different denominators and should be read separately.
+
+MIXED
+corpus             chemistry  eurlex    un
+model                                     
+embeddinggemma         86.43   57.02 35.06
+bge-m3                 78.92   52.22 31.51
+qwen3-0.6B             87.04   46.87 24.77
+nomic-v2-moe           74.84   47.42 26.01
+granite-278m           77.54   47.79 30.84
+LaBSE                  52.24   30.92 10.17
+SapBERT                32.31   26.13  3.71
+e5-large-instruct      50.00   23.63 16.28
+
+CROSS_LANGUAGE
+corpus             chemistry  eurlex    un
+model                                     
+embeddinggemma         94.11   79.28 73.49
+bge-m3                 85.85   75.31 63.02
+qwen3-0.6B             93.94   72.04 60.34
+nomic-v2-moe           87.56   71.03 54.84
+granite-278m           85.91   66.26 53.42
+LaBSE                  71.15   51.46 22.25
+SapBERT                45.19   40.14  4.55
+e5-large-instruct      79.73   65.80 44.81
+
+MONOLINGUAL
+corpus             chemistry  eurlex    un
+model                                     
+embeddinggemma         94.26   85.67 79.41
+bge-m3                 96.23   89.19 75.15
+qwen3-0.6B             95.98   83.40 72.52
+nomic-v2-moe           95.56   88.72 70.82
+granite-278m           91.87   79.85 67.43
+LaBSE                  71.23   54.17 28.22
+SapBERT                53.69   55.25 11.78
+e5-large-instruct      94.13   89.08 65.11

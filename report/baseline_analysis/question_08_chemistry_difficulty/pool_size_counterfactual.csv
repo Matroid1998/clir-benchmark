@@ -1,0 +1,4 @@
+corpus,original_pool_versions,retained_pool_versions,forced_evaluation_source_units,english_questions,measured_original_hit_pct,counterfactual_expected_hit_lower_pct,counterfactual_expected_hit_upper_pct,questions_censored_beyond100
+chemistry,5829,5829,46,46,86.95652173913044,86.95652173913044,86.95652173913044,1
+eurlex,85346,5829,55,55,98.18181818181819,99.99962539998202,99.99962539998202,0
+un,14689,5829,68,68,83.82352941176471,92.1018730625513,92.10187306255366,2

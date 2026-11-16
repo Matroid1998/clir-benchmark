@@ -1,0 +1,113 @@
+eurlex / EmbeddingGemma / original English query / English target
+Seed 20261116; sample up to four English-native hits per corpus
+Query ID: q_b084a8aff2bf1b8cebf7baf77f53ee28711f26ce9636071e5e3e394c82b5eec5
+First relevant rank (saved top100): 1
+Quality: clear; alignment: eligible
+
+QUESTION
+Is it true that competent authorities under EU seafarer minimum-training rules may grant a dispensation to a ship's master on grounds of exceptional necessity alone?
+
+SAVED ANSWER
+However, dispensations shall not be granted to a master or chief engineer officer, except in circumstances of force majeure and then only for the shortest possible period.
+
+COMPLETE RELEVANT SOURCE eurlex:http://data.europa.eu/eli/dir/2008/106/art_16/oj:en
+Dispensation
+
+1. In circumstances of exceptional necessity, competent authorities may, if in their opinion this does not cause danger to persons, property or the environment, issue a dispensation permitting a specified seafarer to serve in a specified ship for a specified period not exceeding six months in a capacity, other than that of the radio operator, except as provided by the relevant Radio Regulations, for which he or she does not hold the appropriate certificate, provided that the person to whom the dispensation is issued shall be adequately qualified to fill the vacant post in a safe manner to the satisfaction of the competent authorities. However, dispensations shall not be granted to a master or chief engineer officer, except in circumstances of force majeure and then only for the shortest possible period.
+
+2. Any dispensation granted for a post shall be granted only to a person properly certificated to fill the post immediately below. Where certification of the post below is not required, a dispensation may be issued to a person whose qualification and experience are, in the opinion of the competent authorities, of a clear equivalence to the requirements for the post to be filled, provided that, if such a person holds no appropriate certificate, he or she shall be required to pass a test accepted by the competent authorities as demonstrating that such a dispensation may safely be issued. In addition, the competent authorities shall ensure that the post in question is filled by the holder of an appropriate certificate as soon as possible.
+
+RETRIEVED RANK 1 / relevance=1 / eurlex:http://data.europa.eu/eli/dir/2008/106/art_16/oj:en / score=0.60320050
+Dispensation
+
+1. In circumstances of exceptional necessity, competent authorities may, if in their opinion this does not cause danger to persons, property or the environment, issue a dispensation permitting a specified seafarer to serve in a specified ship for a specified period not exceeding six months in a capacity, other than that of the radio operator, except as provided by the relevant Radio Regulations, for which he or she does not hold the appropriate certificate, provided that the person to whom the dispensation is issued shall be adequately qualified to fill the vacant post in a safe manner to the satisfaction of the competent authorities. However, dispensations shall not be granted to a master or chief engineer officer, except in circumstances of force majeure and then only for the shortest possible period.
+
+2. Any dispensation granted for a post shall be granted only to a person properly certificated to fill the post immediately below. Where certification of the post below is not required, a dispensation may be issued to a person whose qualification and experience are, in the opinion of the competent authorities, of a clear equivalence to the requirements for the post to be filled, provided that, if such a person holds no appropriate certificate, he or she shall be required to pass a test accepted by the competent authorities as demonstrating that such a dispensation may safely be issued. In addition, the competent authorities shall ensure that the post in question is filled by the holder of an appropriate certificate as soon as possible.
+
+RETRIEVED RANK 2 / relevance=0 / eurlex:http://data.europa.eu/eli/dir/2012/35/art_1/oj:en / score=0.54625040
+ standardised format, in the working language or languages of the ship and in English, to allow monitoring and verification of compliance with this Article. Seafarers shall receive a copy of the records pertaining to them, which shall be endorsed by the master, or by a person authorised by the master, and by the seafarers.
+
+10. Notwithstanding the rules laid down in paragraphs 3 to 9, the master of a ship shall be entitled to require a seafarer to perform any hours of work necessary for the immediate safety of the ship, persons on board or cargo, or for the purpose of giving assistance to other ships or persons in distress at sea. Accordingly, the master may suspend the schedule of hours of rest and require a seafarer to perform any hours of work necessary until the normal situation has been restored. As soon as practicable after the normal situation has been restored, the master shall ensure that any seafarers who have performed work in a scheduled rest period are provided with an adequate period of rest.
+
+11. With due regard for the general principles of the protection of the health and safety of workers and in line with Directive 1999/63/EC Member States may, by means of national laws, regulations or a procedure for the competent authority, authorise or register collective agreements permitting exceptions to the required hours of rest set out in point (b) of paragraph 4 and in paragraph 5 of this Article provided that the rest period is no less than 70 hours in any seven-day period and respects the limits set out in paragraphs 12 and 13 of this Article. Such exceptions shall, as far as possible, follow the standards set out but may take account of more frequent or longer leave periods, or the granting of compensatory leave for watchkeeping seafarers or seafarers working on board ships on short voyages. Exceptions shall, as far as possible, take into account the guidance regarding prevention of fatigue laid down in Section B-VIII/1 of the STCW Code. Exceptions to the minimum hours of rest provided for in point (a) of paragraph 4 of this Article shall not be allowed.
+
+12. Exceptions referred to in paragraph 11 to the weekly rest period provided for in point (b) of paragraph 4 shall not be allowed for more than two consecutive weeks. The intervals between two periods of exceptions on board shall
+
+RETRIEVED RANK 3 / relevance=0 / eurlex:http://data.europa.eu/eli/dir/2012/35/anx_1/oj:en / score=0.53440952
+tions
+
+7.
+
+The Administration, if it considers that a ship’s size and the conditions of its voyage are such as to render the application of the full requirements of this regulation and Section A-II/3 of the STCW Code unreasonable or impracticable, may to that extent exempt the master and the officer in charge of a navigational watch on such a ship or class of ships from some of the requirements, bearing in mind the safety of all ships which may be operating in the same waters.
+
+Regulation II/4
+
+Mandatory minimum requirements for certification of ratings forming part of a navigational watch
+
+1.
+
+Every rating forming part of a navigational watch on a seagoing ship of 500 gross tonnage or more, other than ratings under training and ratings whose duties while on watch are of an unskilled nature, shall be duly certificated to perform such duties.
+
+2.
+
+Every candidate for certification shall:
+
+2.1.
+
+be not less than 16 years of age;
+
+2.2.
+
+have completed:
+
+2.2.1.
+
+approved seagoing service including not less than six months training and experience; or
+
+2.2.2.
+
+special training, either pre-sea or on board ship, including an approved period of seagoing service which shall not be less than two months; and
+
+2.3.
+
+meet the standard of competence specified in Section A-II/4 of the STCW Code.
+
+3.
+
+The seagoing service, training and experience required by points 2.2.1 and 2.2.2 shall be associated with navigational watchkeeping functions and involve the performance of duties carried out under the direct supervision of the master, the officer in charge of the navigational watch or a qualified rating.
+
+Regulation II/5
+
+Mandatory minimum requirements for certification of ratings as able seafarer deck
+
+1.
+
+Every able seafarer deck serving on a seagoing ship of 500 gross tonnage or more shall be duly certificated.
+
+2.
+
+Every candidate for certification shall:
+
+2.1.
+
+be not less than 18 years of age;
+
+2.2.
+
+meet the requirements for certification as a rating forming part of a navigational watch;
+
+2.3.
+
+while qualified to serve as a rating forming part of a navigational watch, have approved seagoing service in the deck department of:
+
+2.3.1.
+
+not less than 18 months; or
+
+2.3.2.
+
+not less than 12 months and have completed approved training; and
+
+2.4.
+
+meet the standard of competence specified in Section A-II/5

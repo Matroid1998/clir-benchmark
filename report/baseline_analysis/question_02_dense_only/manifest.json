@@ -1,0 +1,20 @@
+{
+  "baseline": "dense",
+  "input_language": "original",
+  "cohort": "selected_documents",
+  "report_count": 24,
+  "regime_rows": 72,
+  "source_table_sha256": {
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/question_01_recall_at_10/tables/recall_at_10_by_regime.csv": "09c0ced52558ec006aa12fb2e4db1d3a619c19352d513c85994be4d99060d107",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/question_01_recall_at_10/tables/recall_at_10_by_setting.csv": "9175dde1f4723e7bd4f70bfde6766db90c52bdcb54d68eab0a907b279027f584"
+  },
+  "script_sha256": "558b17e173ff1d41e318124b9b6bf2fbea255bcaedc094695aa1d65da6a9963b",
+  "methodology": [
+    "Recall@10 (%); equal weight per nonempty original-query-language/target setting.",
+    "638 selected questions: chemistry 197, EUR-Lex 194, UN 247.",
+    "Original queries are embedded directly. No translation or HyDE.",
+    "Mixed search counts relevant document-language versions; single-target search has one relevant version.",
+    "Regime scores have different denominators and should be read separately.",
+    ""
+  ]
+}

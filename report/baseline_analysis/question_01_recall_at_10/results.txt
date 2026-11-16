@@ -1,0 +1,108 @@
+QUESTION 1: RECALL@10
+
+All values below are percentages.
+Full breakdowns and matching-control deltas are in tables/; figure gallery: index.html.
+Selected-document and earlier all-question/chunk reports are separate cohorts.
+Mixed recall measures version coverage, not the probability of finding any source.
+All summaries use equal weights per nonempty setting, matching the saved reports.
+Generated de/en/es/fr/zh inputs remain five separate runs; no language fusion or best-language selection.
+Regime labels compare ORIGINAL query language to searched language, not generated language.
+Single-target language coverage: EUR-Lex has no zh targets; UN has no de targets.
+Grey cells have no eligible queries; zero is an observed retrieval score. Chemistry has cells with n=1.
+No corpus-level or across-model grand mean is used. Figures label their denominators.
+Changes are descriptive; no uncertainty intervals or significance claims are made.
+This analysis uses saved results only and incurs no inference or paid model calls.
+
+REPORT AND ELIGIBLE-QUERY COUNTS
+                                       reports  unique_questions
+cohort                      corpus                              
+legacy_all_questions_chunks chemistry       17              1522
+                            eurlex          17              3078
+selected_documents          chemistry       88               197
+                            eurlex          88               194
+                            un              88               247
+
+SELECTED DOCUMENTS: mixed
+variant                      Original  Translate de  Translate en  Translate es  Translate fr  Translate zh  HyDE de  HyDE en  HyDE es  HyDE fr  HyDE zh
+corpus    model                                                                                                                                         
+chemistry LaBSE                 52.24         38.91         52.81         43.12         44.27         48.59    37.85    36.91    36.77    38.64    32.19
+          SapBERT               32.31         20.32         31.55         28.49         20.19         20.09    16.53    28.73    25.42    17.09    16.59
+          bge-m3                78.92         73.44         76.75         76.40         73.73         54.74    66.88    67.69    67.28    65.50    43.78
+          e5-large-instruct     50.00         24.03         41.39         24.24         31.53         17.30    27.17    44.01    22.07    31.02    17.74
+          embeddinggemma        86.43         83.78         86.77         88.04         85.46         79.87    83.34    84.01    85.53    81.78    71.30
+          granite-278m          77.54         75.35         78.52         76.55         78.49         48.43    75.07    75.87    74.45    72.47    41.29
+          nomic-v2-moe          74.84         68.02         74.87         71.74         70.19         44.57    59.67    69.24    66.11    61.43    31.78
+          qwen3-0.6B            87.04         86.03         90.12         87.14         81.07         82.34    81.75    85.22    84.49    74.54    74.71
+eurlex    LaBSE                 30.92         28.71         34.68         32.28         30.29         30.77    46.38    46.75    49.97    48.11    44.14
+          SapBERT               26.13         18.82         28.93         28.97         21.46         17.95    22.13    33.77    29.77    25.82    22.53
+          bge-m3                52.22         52.64         52.54         54.97         55.51         48.94    51.37    55.18    54.78    55.35    54.37
+          e5-large-instruct     23.63         22.28         24.56         21.45         22.09         28.58    24.88    27.45    22.28    25.36    35.36
+          embeddinggemma        57.02         52.65         59.29         54.86         57.61         58.04    56.42    62.13    57.25    58.21    62.05
+          granite-278m          47.79         47.10         49.18         48.46         49.32         31.96    51.06    52.74    53.01    51.40    32.78
+          nomic-v2-moe          47.42         40.60         50.55         48.60         47.97         42.18    38.55    51.89    45.32    47.85    43.03
+          qwen3-0.6B            46.87         40.69         48.68         49.23         43.92         50.71    44.24    51.40    50.65    41.66    49.66
+un        LaBSE                 10.17          8.73          9.84         11.60          9.11          8.34    12.24     9.98    12.07    13.25     9.09
+          SapBERT                3.71          1.49          3.19          2.27          1.89          2.79     1.60     4.47     3.51     2.71     3.37
+          bge-m3                31.51         35.75         33.77         33.92         35.26         21.41    27.23    26.64    28.48    26.20    20.38
+          e5-large-instruct     16.28         23.98         16.96         16.90         15.64         16.43    21.44    14.72    15.27    16.53    15.35
+          embeddinggemma        35.06         44.51         41.34         33.76         36.58         26.10    38.76    32.11    28.45    31.09    20.66
+          granite-278m          30.84         35.69         36.85         35.93         36.20         14.99    28.15    28.92    30.83    30.76    13.71
+          nomic-v2-moe          26.01         31.33         30.11         28.26         27.39         16.85    26.30    24.14    22.60    23.59    14.50
+          qwen3-0.6B            24.77         25.76         29.17         23.45         21.19         24.08    23.35    28.12    22.51    19.90    20.77
+
+SELECTED DOCUMENTS: cross_language
+variant                      Original  Translate de  Translate en  Translate es  Translate fr  Translate zh  HyDE de  HyDE en  HyDE es  HyDE fr  HyDE zh
+corpus    model                                                                                                                                         
+chemistry LaBSE                 71.15         68.52         71.22         69.74         73.30         69.02    65.01    61.74    63.08    64.47    56.83
+          SapBERT               45.19         41.50         54.20         50.59         46.57         41.60    39.30    51.40    47.66    43.43    29.11
+          bge-m3                85.85         85.34         86.83         86.86         89.09         80.63    82.59    86.35    83.80    83.93    77.89
+          e5-large-instruct     79.73         86.12         87.03         84.91         86.49         57.50    85.61    87.56    88.37    85.99    67.60
+          embeddinggemma        94.11         93.43         94.42         94.09         95.27         92.26    92.85    94.14    93.42    92.02    90.94
+          granite-278m          85.91         86.49         89.03         86.79         89.32         70.20    87.99    89.75    86.29    87.66    68.89
+          nomic-v2-moe          87.56         87.94         89.88         87.32         91.28         71.13    83.32    88.24    84.60    84.21    69.15
+          qwen3-0.6B            93.94         94.61         95.40         94.66         94.31         93.34    93.52    91.22    93.22    92.94    90.57
+eurlex    LaBSE                 51.46         50.96         52.61         55.91         51.23         51.81    67.02    66.45    68.94    69.00    62.52
+          SapBERT               40.14         38.03         46.28         46.71         37.58         32.98    45.40    56.29    53.41    48.69    39.52
+          bge-m3                75.31         76.44         77.40         78.61         77.32         67.28    78.55    82.87    82.78    81.73    74.79
+          e5-large-instruct     65.80         66.98         67.52         70.35         69.50         42.33    74.64    74.55    75.66    78.13    54.43
+          embeddinggemma        79.28         78.46         81.37         81.87         80.73         77.10    83.63    87.02    84.05    85.15    82.99
+          granite-278m          66.26         66.86         69.68         68.71         71.24         45.66    70.23    75.19    72.13    72.51    52.06
+          nomic-v2-moe          71.03         70.07         75.95         73.93         76.39         62.22    76.54    78.52    77.55    79.90    63.66
+          qwen3-0.6B            72.04         69.92         72.97         73.91         73.01         71.98    75.15    79.08    76.47    78.06    71.13
+un        LaBSE                 22.25         21.35         22.42         24.63         23.24         19.28    31.97    22.76    31.29    30.79    21.70
+          SapBERT                4.55          4.02          8.38          6.88          5.02          3.36     5.28    11.63    10.37     6.93     6.45
+          bge-m3                63.02         65.16         67.95         67.49         68.24         60.17    54.91    59.50    61.10    62.05    57.02
+          e5-large-instruct     44.81         52.02         54.67         54.89         54.22         39.45    49.13    52.30    52.43    55.83    43.98
+          embeddinggemma        73.49         71.58         75.94         74.78         75.47         68.40    67.86    69.42    70.54    69.45    64.62
+          granite-278m          53.42         59.21         61.92         61.22         59.62         43.00    52.71    53.20    55.20    55.97    41.40
+          nomic-v2-moe          54.84         56.98         63.25         61.82         61.92         49.34    53.86    59.97    57.78    59.34    46.92
+          qwen3-0.6B            60.34         53.70         65.49         62.42         61.25         59.73    53.47    58.44    60.27    58.81    57.54
+
+SELECTED DOCUMENTS: monolingual
+variant                      Original  Translate de  Translate en  Translate es  Translate fr  Translate zh  HyDE de  HyDE en  HyDE es  HyDE fr  HyDE zh
+corpus    model                                                                                                                                         
+chemistry LaBSE                 71.23         64.62         68.90         67.79         65.41         69.12    61.12    64.00    63.07    63.10    55.05
+          SapBERT               53.69         40.81         47.86         43.57         43.17         38.12    35.87    48.84    39.86    35.98    32.16
+          bge-m3                96.23         88.30         91.56         90.53         91.83         80.68    86.21    85.25    85.02    85.13    75.13
+          e5-large-instruct     94.13         88.79         86.30         88.08         84.96         65.20    84.64    83.24    88.86    85.90    72.33
+          embeddinggemma        94.26         92.98         93.74         93.30         94.26         92.01    92.02    92.40    93.51    92.46    90.72
+          granite-278m          91.87         87.11         89.13         86.06         86.90         68.78    87.89    85.32    85.18    87.16    72.18
+          nomic-v2-moe          95.56         86.63         91.97         86.27         90.11         72.38    83.59    85.61    84.33    82.67    70.43
+          qwen3-0.6B            95.98         93.74         94.24         94.70         95.24         91.94    91.85    92.51    92.00    92.17    92.83
+eurlex    LaBSE                 54.17         47.29         52.83         52.74         49.60         51.39    67.39    65.52    70.12    68.08    62.79
+          SapBERT               55.25         37.14         45.99         49.69         40.54         31.88    46.74    56.22    50.51    47.07    43.57
+          bge-m3                89.19         77.93         80.10         80.94         81.35         74.74    81.17    83.50    83.02    82.16    76.12
+          e5-large-instruct     89.08         75.57         70.25         75.37         73.00         43.62    80.34    78.39    78.65    81.99    58.57
+          embeddinggemma        85.67         76.76         83.04         84.70         83.71         77.83    84.89    86.27    86.77    86.28    83.89
+          granite-278m          79.85         70.27         74.21         70.78         75.60         50.03    70.29    79.72    71.86    70.86    51.85
+          nomic-v2-moe          88.72         69.12         80.17         78.58         76.95         63.19    79.23    81.70    78.41    81.76    64.36
+          qwen3-0.6B            83.40         71.28         78.14         78.11         76.86         75.80    80.72    81.64    82.88    80.20    73.01
+un        LaBSE                 28.22         19.21         25.21         28.35         23.67         21.94    29.85    22.64    32.35    33.07    19.46
+          SapBERT               11.78          4.17          8.26          8.13          6.41          4.71     8.02    12.02    10.03     6.24     7.65
+          bge-m3                75.15         66.61         70.29         66.79         67.23         63.63    54.46    61.66    61.30    61.85    60.24
+          e5-large-instruct     65.11         48.26         54.64         52.02         50.66         38.62    51.79    55.87    54.81    58.23    47.75
+          embeddinggemma        79.41         72.79         77.43         73.64         75.63         70.42    69.60    74.03    71.35    68.74    64.06
+          granite-278m          67.43         58.21         67.02         63.53         62.17         44.00    51.81    56.66    55.44    57.83    38.69
+          nomic-v2-moe          70.82         57.93         63.57         60.53         59.21         49.87    54.64    59.51    58.93    57.53    48.09
+          qwen3-0.6B            72.52         58.85         66.41         63.33         62.97         61.43    50.93    62.65    58.72    59.97    56.29
+

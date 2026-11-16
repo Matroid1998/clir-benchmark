@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "report_count": 298,
+  "per_query_rows_checked": 572028,
+  "setting_rows": 6485,
+  "macro_rows": 894,
+  "max_per_query_to_report_error": 0.0,
+  "max_per_query_to_mteb_error": 0.0,
+  "max_saved_macro_error": 0.0,
+  "max_reconstructed_macro_error": 2.220446049250313e-16,
+  "cohort_and_setting_keys_match_within_corpus": true,
+  "corpus_query_qrel_fingerprints_and_model_specs_match": true,
+  "report_counts_by_cohort": {
+    "selected_documents": 264,
+    "legacy_all_questions_chunks": 34
+  }
+}

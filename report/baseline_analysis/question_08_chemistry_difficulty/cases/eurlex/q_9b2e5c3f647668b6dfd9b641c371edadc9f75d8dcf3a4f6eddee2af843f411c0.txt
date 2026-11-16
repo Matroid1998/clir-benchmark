@@ -1,0 +1,127 @@
+eurlex / EmbeddingGemma / original English query / English target
+Seed 20261116; sample up to four English-native hits per corpus
+Query ID: q_9b2e5c3f647668b6dfd9b641c371edadc9f75d8dcf3a4f6eddee2af843f411c0
+First relevant rank (saved top100): 1
+Quality: clear; alignment: eligible
+
+QUESTION
+A credit institution holds exchange-traded equity exposures outside its trading book, and their market price is materially different from fair value. What must it disclose about that market price?
+
+SAVED ANSWER
+for those exchange-traded, a comparison to the market price where it is materially different from the fair value
+
+COMPLETE RELEVANT SOURCE eurlex:http://data.europa.eu/eli/reg/2013/575/art_447/oj:en
+Exposures in equities not included in the trading book
+
+Institutions shall disclose the following information regarding the exposures in equities not included in the trading book:
+
+(a)
+the differentiation between exposures based on their objectives, including for capital gains relationship and strategic reasons, and an overview of the accounting techniques and valuation methodologies used, including key assumptions and practices affecting valuation and any significant changes in these practices;
+
+(b)
+the balance sheet value, the fair value and, for those exchange-traded, a comparison to the market price where it is materially different from the fair value;
+
+(c)
+the types, nature and amounts of exchange-traded exposures, private equity exposures in sufficiently diversified portfolios, and other exposures;
+
+(d)
+the cumulative realised gains or losses arising from sales and liquidations in the period; and
+
+(e)
+the total unrealised gains or losses, the total latent revaluation gains or losses, and any of these amounts included in the original or additional own funds.
+
+RETRIEVED RANK 1 / relevance=1 / eurlex:http://data.europa.eu/eli/reg/2013/575/art_447/oj:en / score=0.58155227
+Exposures in equities not included in the trading book
+
+Institutions shall disclose the following information regarding the exposures in equities not included in the trading book:
+
+(a)
+the differentiation between exposures based on their objectives, including for capital gains relationship and strategic reasons, and an overview of the accounting techniques and valuation methodologies used, including key assumptions and practices affecting valuation and any significant changes in these practices;
+
+(b)
+the balance sheet value, the fair value and, for those exchange-traded, a comparison to the market price where it is materially different from the fair value;
+
+(c)
+the types, nature and amounts of exchange-traded exposures, private equity exposures in sufficiently diversified portfolios, and other exposures;
+
+(d)
+the cumulative realised gains or losses arising from sales and liquidations in the period; and
+
+(e)
+the total unrealised gains or losses, the total latent revaluation gains or losses, and any of these amounts included in the original or additional own funds.
+
+RETRIEVED RANK 2 / relevance=0 / eurlex:http://data.europa.eu/eli/reg/2008/1126/anx_pos52/oj:en / score=0.55476677
+fully represents the amount of change in its fair value that is attributable to changes in the credit risk of the asset.
+
+Changes in market conditions that give rise to market risk include changes in an observed (benchmark) interest rate, commodity price, foreign exchange rate or index of prices or rates;
+
+(d)
+
+the amount of the change in the fair value of any related credit derivatives or similar instruments that has occurred during the period and cumulatively since the loan or receivable was designated.
+
+10
+
+If the entity has designated a financial liability as at fair value through profit or loss in accordance with paragraph 9 of IAS 39, it shall disclose:
+
+(a)
+
+the amount of change, during the period and cumulatively, in the fair value of the financial liability that is attributable to changes in the credit risk of that liability determined either:
+
+(i)
+
+as the amount of change in its fair value that is not attributable to changes in market conditions that give rise to market risk (see Appendix B, paragraph B4); or
+
+(ii)
+
+using an alternative method the entity believes more faithfully represents the amount of change in its fair value that is attributable to changes in the credit risk of the liability.
+
+Changes in market conditions that give rise to market risk include changes in a benchmark interest rate, the price of another entity's financial instrument, a commodity price, a foreign exchange rate or an index of prices or rates. For contracts that include a unit-linking feature, changes in market conditions include changes in the performance of the related internal or external investment fund;
+
+(b)
+
+the difference between the financial liability's carrying amount and the amount the entity would be contractually required to pay at maturity to the holder of the obligation.
+
+11
+
+The entity shall disclose:
+
+(a)
+
+the methods used to comply with the requirements in paragraphs 9(c) and 10(a);
+
+(b)
+
+if the entity believes that the disclosure it has given to comply with the requirements in paragraph 9(c) or 10(a) does not faithfully represent the change in the fair value of the financial asset or financial liability attributable to changes in its credit risk, the reasons for reaching this conclusion and the factors it believes are relevant.
+
+Reclassification
+
+12
+
+If the entity has reclassified
+
+RETRIEVED RANK 3 / relevance=0 / eurlex:http://data.europa.eu/eli/reg/2004/2237/anx_pos3/oj:en / score=0.55388010
+, although an entity may indicate in addition the nature of the relationship between the individual instruments (see paragraph 65).
+
+Disclosure
+
+Financial Assets and Financial Liabilities at Fair Value Through Profit or Loss (paragraph 94(f))
+
+AG40.
+
+If an entity designates a financial liability as at fair value through profit or loss, it is required to disclose the amount of change in the fair value of the liability that is not attributable to changes in a benchmark interest rate (eg LIBOR). For a liability whose fair value is determined on the basis of an observed market price, this amount can be estimated as follows:
+
+(a)
+
+First, the entity computes the liability’s internal rate of return at the start of the period using the observed market price of the liability and the liability’s contractual cash flows at the start of the period. It deducts from this rate of return the benchmark interest rate at the start of the period, to arrive at an instrument- specific component of the internal rate of return.
+
+(b)
+
+Next, the entity calculates the present value of the liability using the liability’s contractual cash flows at the start of the period and a discount rate equal to the sum of the benchmark interest rate at the end of the period and the instrument-specific component of the internal rate of return at the start of the period as determined in (a).
+
+(c)
+
+The amount determined in (b) is then decreased for any cash paid on the liability during the period and increased to reflect the increase in fair value that arises because the contractual cash flows are one period closer to their due date.
+
+(d)
+
+The difference between the observed market price of the liability at the end of the period and the amount determined in (c) is the change in fair value that is not attributable to changes in the benchmark interest rate. This is the amount to be disclosed.

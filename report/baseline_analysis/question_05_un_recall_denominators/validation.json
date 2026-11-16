@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "model": "embeddinggemma",
+  "baseline": "dense",
+  "corpus": "un",
+  "methodology": "Saved per-query recall multiplied by independently counted qrels; equal setting macros checked against report.json. No new retrieval or inference.",
+  "mixed_retrieved_version_distribution": {
+    "0": 52,
+    "1": 96,
+    "2": 50,
+    "3": 38,
+    "4": 11
+  },
+  "source_sha256": {
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/report.json": "937e602946ab40682906fe4bcf9cd7f5fab856dd0b9fd52d37259f3dcfa766cf",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/per_query.json": "c2ecc3a115b4fc06522a85d1b63ff69845c83f893fbf93a5f8c08c4a1bd8fd34",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/qrels.parquet": "525ee7a909167d1c6de4ab2e366f90536fc8a078f2fb069130cc0aaebf371323",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/un_recall_denominators.py": "80571e15491c2d9af8176182fd7317de6034c107ef7a98ffef6aca480ce6fec6"
+  }
+}

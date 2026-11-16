@@ -1,0 +1,38 @@
+Offline corpus difficulty analysis
+=================================
+
+From the repository root:
+
+  .venv/bin/python report/baseline_analysis/inspect_corpus_difficulty.py
+  .venv/bin/python report/baseline_analysis/explain_corpus_difficulty.py
+  .venv/bin/python report/baseline_analysis/pool_size_counterfactual.py
+  .venv/bin/python report/baseline_analysis/validate_corpus_difficulty.py
+
+The first script reads the Question 1 selected-report catalog and original saved
+source tables, questions, qrels and rankings. It computes all 638 query features,
+English corpus term frequencies, all-model dense controls and 21 seeded cases.
+The second checks saved text/rankings for answer-bearing unjudged passages and
+creates numeric controls, scientific figures (PNG/PDF/SVG) and index.html.
+The third computes a uniform-pool-thinning expectation from saved English ranks,
+with all evaluation sources forced to remain and bounds for top100 censoring.
+None performs new retrieval, inference, generation, job submission or paid calls.
+
+Open index.html for figures and full text cases. Read findings.txt for manually
+reviewed interpretation. The seeded sample is not weighted to estimate prevalence;
+the CSV features and diagnostics use their documented complete query cohorts.
+Rank 101 in the feature files means censored beyond saved100, never exact rank101.
+
+Tests (offline fixtures plus exact small-pool enumeration):
+
+  .venv/bin/python -m pytest -q report/baseline_analysis/test_pool_size_counterfactual.py report/baseline_analysis/test_recall_at_10.py
+
+The extraction and pool scripts record source hashes and methods. The final
+manifest captures the delivered outputs and the manually authored findings.
+If raw results change, regenerate the diagnostics and manually review the findings
+again; fixed prose is a historical interpretation, not automatic validation of
+changed inputs. English tokenization/stopwords are diagnostics, not the embedding
+tokenizer, and are not applied as cross-language lexical comparators.
+
+Dependencies: the baseline_analysis requirements plus pyarrow and scipy; exact
+versions are recorded in environment.json. Prepared source texts are public
+benchmark inputs already present locally; no network is required.

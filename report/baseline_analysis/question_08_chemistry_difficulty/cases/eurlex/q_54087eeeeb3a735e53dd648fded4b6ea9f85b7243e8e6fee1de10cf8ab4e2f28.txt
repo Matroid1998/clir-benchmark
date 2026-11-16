@@ -1,0 +1,28 @@
+eurlex / EmbeddingGemma / original English query / English target
+Seed 20261116; sample up to four English-native hits per corpus
+Query ID: q_54087eeeeb3a735e53dd648fded4b6ea9f85b7243e8e6fee1de10cf8ab4e2f28
+First relevant rank (saved top100): 1
+Quality: clear; alignment: no_exact_source_passage
+
+QUESTION
+Under EU good clinical practice rules for clinical trials, must the sponsor and investigator retain essential trial documents for at least five years after the trial is completed?
+
+SAVED ANSWER
+The sponsor and the investigator shall retain the essential documents relating to a clinical trial for at least five years after its completion. They shall retain the documents for a longer period, where so required by other applicable requirements or by an agreement between the sponsor and the investigator.
+
+COMPLETE RELEVANT SOURCE eurlex:http://data.europa.eu/eli/dir/2005/28/art_17/oj:en
+The sponsor and the investigator shall retain the essential documents relating to a clinical trial for at least five years after its completion.They shall retain the documents for a longer period, where so required by other applicable requirements or by an agreement between the sponsor and the investigator.Essential documents shall be archived in a way that ensures that they are readily available, upon request, to the competent authorities.The medical files of trial subjects shall be retained in accordance with national legislation and in accordance with the maximum period of time permitted by the hospital, institution or private practice.
+
+RETRIEVED RANK 1 / relevance=1 / eurlex:http://data.europa.eu/eli/dir/2005/28/art_17/oj:en / score=0.74913985
+The sponsor and the investigator shall retain the essential documents relating to a clinical trial for at least five years after its completion.They shall retain the documents for a longer period, where so required by other applicable requirements or by an agreement between the sponsor and the investigator.Essential documents shall be archived in a way that ensures that they are readily available, upon request, to the competent authorities.The medical files of trial subjects shall be retained in accordance with national legislation and in accordance with the maximum period of time permitted by the hospital, institution or private practice.
+
+RETRIEVED RANK 2 / relevance=0 / eurlex:http://data.europa.eu/eli/reg/2014/536/art_58/oj:en / score=0.61180496
+Archiving of the clinical trial master file
+Unless other Union law requires archiving for a longer period, the sponsor and the investigator shall archive the content of the clinical trial master file for at least 25 years after the end of the clinical trial. However, the medical files of subjects shall be archived in accordance with national law.The content of the clinical trial master file shall be archived in a way that ensures that it is readily available and accessible, upon request, to the competent authorities.Any transfer of ownership of the content of the clinical trial master file shall be documented. The new owner shall assume the responsibilities set out in this Article.The sponsor shall appoint individuals within its organisation to be responsible for archives. Access to archives shall be restricted to those individuals.The media used to archive the content of the clinical trial master file shall be such that the content remains complete and legible throughout the period referred to in the first paragraph.Any alteration to the content of the clinical trial master file shall be traceable.
+
+RETRIEVED RANK 3 / relevance=0 / eurlex:http://data.europa.eu/eli/dir/2005/28/art_6/oj:en / score=0.60128981
+1. Each Ethics Committee established under Article 6(1) of Directive 2001/20/EC shall adopt the relevant rules of procedure necessary to implement the requirements set out in that Directive and, in particular, in Articles 6 and 7 thereof.
+
+2. The Ethics Committees shall, in every case, retain the essential documents relating to a clinical trial, as referred to in Article 15(5) of Directive 2001/20/EC, for at least three years after completion of that trial. They shall retain the documents for a longer period, where so required under other applicable requirements.
+
+3. Communication of information between the Ethics Committees and the competent authorities of the Member States shall be ensured through appropriate and efficient systems.

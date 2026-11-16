@@ -1,0 +1,105 @@
+{
+  "status": "passed",
+  "saved_contracts": [
+    {
+      "corpus": "chemistry",
+      "document_scoring": "maximum_chunk_similarity_before_top_k",
+      "retrieval_unit": "document",
+      "document_identity": "source_unit_id",
+      "truncated_document_chunks": 0,
+      "report_path": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3ca01f8930c83c237aef2276011a5f41f454678aff02bd7529158d99803716a5/report.json"
+    },
+    {
+      "corpus": "eurlex",
+      "document_scoring": "maximum_chunk_similarity_before_top_k",
+      "retrieval_unit": "document",
+      "document_identity": "source_unit_id",
+      "truncated_document_chunks": 0,
+      "report_path": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/5efd98afb265d51f58f246ce7751f96ef88a3575611a272f362fd8362c4db62e/report.json"
+    },
+    {
+      "corpus": "un",
+      "document_scoring": "maximum_chunk_similarity_before_top_k",
+      "retrieval_unit": "document",
+      "document_identity": "source_unit_id",
+      "truncated_document_chunks": 0,
+      "report_path": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/report.json"
+    }
+  ],
+  "inspected_example": {
+    "question": "In the Security Council's 2011 resolution on the Taliban sanctions regime, what was the Monitoring Team's mandate regarding implementation of the measures?",
+    "relevant_source_id": "un:2011/s/res/1988_2011_:en",
+    "source_header": "Resolution 1988 (2011)\nThe Security Council,\nRecalling its previous resolutions extending through Ma",
+    "document_rank": 11,
+    "winning_chunk_start_character": 21725,
+    "winning_chunk_contains_2011": false,
+    "winning_chunk_text": " List;\n(f) To make periodic reports to the Council on information submitted to the Committee regarding the implementation of the resolution, including regarding noncompliance with the measures imposed by the resolution;\n(g) To ensure that fair and clear procedures exist for placing individuals and entities on the List and for removing them as well as for granting humanitarian exemptions;\n(h) To examine the reports presented by the Monitoring Team;\n(i) To monitor implementation of the measures imposed in paragraph 1;\n(j) To consider requests for exemptions in accordance with paragraph 1 and 9;\n(k) To establish such guidelines as may be necessary to facilitate the implementation of the measures imposed above;\n(l) To encourage a dialogue between the Committee and interested Member States, in particular those in the region, including by inviting representatives of such States to meet with the Committee to discuss implementation of the measures;\n(m) To seek from all States whatever information it may consider useful regarding the actions taken by them to implement effectively the measures imposed above;\n(n) To examine and take appropriate action on information regarding alleged violations or non-compliance with the measures contained in this resolution;\n(o) To facilitate, through the Monitoring Team and specialized UN agencies, assistance in capacity building for enhancing implementation of the measures, upon request by Member States; and,\n(p) To cooperate with other relevant Security Council Sanctions Committees, in particular the Committee established pursuant to resolution 1267 (1999).\nMonitoring Team\n31. Decides, in order to assist the Committee in fulfilling its mandate, that the 1267 Monitoring Team, established pursuant to paragraph 7 of resolution 1526 (2004), shall also support the Committee for a period of 18 months, with the mandate set forth in Annex A of this resolution, and requests the Secretary-General to make any necessary arrangements to this effect;\nCoordination and Outreach\n32. Recognizes the need to maintain contact with relevant UN Security Council Committees, international organizations and expert groups, including the Committee established pursuant to resolution 1267 (1999), the Counter Terrorism Committee (CTC), the United Nations Office of Drugs and Crime, the Counter-Terrorism Executive Directorate (CTED), and the Committee established pursuant to resolution 1540 (2004), particularly given the continuing presence and negative influence on",
+    "interpretation": "The document header supplies the year, but this winning chunk does not. This illustrates context fragmentation, not proof that missing header context caused the ranking failure."
+  },
+  "synthetic_illustrations_not_measurements": [
+    {
+      "scenario": "Initial chunks",
+      "relevant_chunks": [
+        0.8,
+        0.2
+      ],
+      "distractor_chunks": [
+        0.75
+      ],
+      "relevant_document_score": 0.8,
+      "distractor_document_score": 0.75,
+      "relevant_ranks_first": true
+    },
+    {
+      "scenario": "More low-scoring relevant chunks",
+      "relevant_chunks": [
+        0.8,
+        0.2,
+        0.01,
+        0.03
+      ],
+      "distractor_chunks": [
+        0.75
+      ],
+      "relevant_document_score": 0.8,
+      "distractor_document_score": 0.75,
+      "relevant_ranks_first": true
+    },
+    {
+      "scenario": "More chunks help the relevant document",
+      "relevant_chunks": [
+        0.8,
+        0.2,
+        0.9
+      ],
+      "distractor_chunks": [
+        0.75
+      ],
+      "relevant_document_score": 0.9,
+      "distractor_document_score": 0.75,
+      "relevant_ranks_first": true
+    },
+    {
+      "scenario": "A high-scoring distractor chunk changes the order",
+      "relevant_chunks": [
+        0.8,
+        0.2
+      ],
+      "distractor_chunks": [
+        0.75,
+        0.85
+      ],
+      "relevant_document_score": 0.8,
+      "distractor_document_score": 0.85,
+      "relevant_ranks_first": false
+    }
+  ],
+  "source_sha256": {
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/question_01_recall_at_10/tables/report_catalog.csv": "90d73ccf34d8122fb11d690623bb744bc0084af177c32f9411e7af73e5ea8d70",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/chunking_length_effects.py": "bfcb1f9d53ae8a0f781e4d034627953f22de1fa285bb453ea4966818bb0114f8",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3ca01f8930c83c237aef2276011a5f41f454678aff02bd7529158d99803716a5/report.json": "02c4be6e701a4246d63399989a9322ea2f5d89936d11e1a95ce1dd7f8eaca995",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/5efd98afb265d51f58f246ce7751f96ef88a3575611a272f362fd8362c4db62e/report.json": "2ab12c0da3c57321f79e88099c66619b4bde93f9ba51d59404a8b4a4188eae51",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/report.json": "937e602946ab40682906fe4bcf9cd7f5fab856dd0b9fd52d37259f3dcfa766cf",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/question_08_chemistry_difficulty/cases/un/q_204bb5965a47b606176a76657963071a20a1bdbbc496e939a4f23ee2b337ff34.json": "920d20e9bdf9a031fed5a8d23abc2c1443df5b78b33423bb1bb2140a82778863"
+  }
+}

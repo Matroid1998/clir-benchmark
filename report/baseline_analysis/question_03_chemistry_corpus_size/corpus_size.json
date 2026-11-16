@@ -1,0 +1,27 @@
+{
+  "prepared_abstract_language_versions": 20283,
+  "prepared_canonical_patent_ids": 9432,
+  "prepared_chunks": 35626,
+  "searched_languages": [
+    "de",
+    "en",
+    "es",
+    "fr",
+    "zh"
+  ],
+  "searched_abstract_language_versions": 16879,
+  "searched_canonical_patent_ids": 9432,
+  "selected_evaluation_questions": 197,
+  "language_version_counts": {
+    "de": 1240,
+    "en": 5829,
+    "es": 1990,
+    "fr": 5823,
+    "ja": 1407,
+    "ru": 1997,
+    "zh": 1997
+  },
+  "source_manifest": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/chemistry/2ec10d7c759931311a567ed63fde045e1f7716aad01d296e3d2fae8caa8b67f1/manifest.json",
+  "source_table": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/chemistry/2ec10d7c759931311a567ed63fde045e1f7716aad01d296e3d2fae8caa8b67f1/sources.parquet",
+  "corpus_fingerprint": "2ff3a8be4c94cef9be9b8306e0dacac1f50b4e380a3595e8479cee445ea00dcc"
+}

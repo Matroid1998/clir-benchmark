@@ -1,0 +1,243 @@
+WHY THE CHEMISTRY EXPERIMENT SCORES HIGHER
+Reviewed 2026-11-16. Original-query dense retrieval; no paid calls or new retrieval.
+
+Main finding
+------------
+The large aggregate chemistry advantage combines a different version-coverage
+objective, a smaller pool, distinctive technical question wording, and different
+language/question cohorts. The evidence does not identify one universal domain
+effect. English-to-English EUR-Lex is actually better than chemistry for seven
+of the eight embedding models. UN samples additionally show substantial source
+identity ambiguity among closely related resolutions and longer retrieval units.
+
+What was inspected
+------------------
+Computed features for all 638 selected source questions and their same-language
+relevant texts. Checked all eight dense retrievers under language and quality
+controls. For English text diagnostics, used all 46 chemistry, 55 EUR-Lex and
+68 UN questions and their native relevant units. English source-frequency counts
+use all 5,829 / 85,346 / 14,689 English units respectively.
+
+Manually reviewed 21 seeded question/source/retrieval cases: eight chemistry,
+five EUR-Lex and eight UN. The selection rule samples up to four English-native
+hits and four misses per corpus (seed 20261116, sorted query IDs first). EUR-Lex
+has only one English-native miss. These cases deliberately overrepresent failures
+and are not a prevalence estimate. Inspection includes question, saved answer,
+relevant source text and top-three/first-positive saved winning passages. Complete
+source texts and inspection files are retained under cases/, with case_index.csv.
+
+1. Most of the visual mixed-recall gap shrinks when measuring source success
+-------------------------------------------------------------------------
+EmbeddingGemma, all selected questions, equal original-language setting weights:
+
+                         Chemistry     EUR-Lex        UN
+Mixed Recall@10             86.43%       57.02%      35.06%
+Mixed Hit@10                94.26%       85.67%      78.95%
+Relevant versions/query       2-3            4           4
+
+Chemistry has 184 questions with two relevant versions and 13 with three.
+Both legal corpora have four for every question. Recall rewards recovering each
+version; Hit rewards finding at least one. The chemistry-minus-EUR-Lex gap is
+29.41 recall points but 8.60 hit points; chemistry-minus-UN is 51.38 versus 15.31.
+About 70% of the numerical gap disappears under this change of objective. This
+is not a causal percentage attributable to denominator alone: version count,
+retrieval outcomes and pool construction differ together.
+
+Evidence: mixed_version_and_source_scores.csv; fig01_metric_definition.*.
+
+2. The blanket claim that chemistry is easier does not survive language control
+----------------------------------------------------------------------------
+English original question -> English target, one relevant unit, EmbeddingGemma:
+
+                  Questions       Hit@10 / Recall@10
+Chemistry              46                   86.96%
+EUR-Lex                55                   98.18%
+UN                     68                   83.82%
+
+EUR-Lex beats chemistry in this setting for seven of eight encoders, including
+BGE-M3, Qwen, Nomic, Granite and E5. LaBSE is the exception. Corpus size and domain
+therefore cannot by themselves predict the observed ordering.
+
+For EmbeddingGemma, restricting both query and target languages to en/es/fr
+reduces the native-language chemistry/EUR-Lex gap from 8.60 to 3.98 points
+(93.54 vs 89.56). The cross-language gap reduces from 14.83 to 7.04 points
+(91.79 vs 84.75). This does not make question cohorts identical; it standardizes
+the language settings. UN retains a larger deficit on these settings.
+
+Changing setting-macro to query-setting-weighted recall changes the original
+chemistry scores by less than one point. The n=1 chemistry cross-language cell
+is a limitation, but equal-setting weighting alone is not the main explanation.
+
+Evidence: english_native_all_models.csv; language_and_weighting_sensitivity.csv;
+embeddinggemma_language_settings.csv; fig02_english_controls.*.
+
+3. Many chemistry questions provide unusually selective retrieval clues
+--------------------------------------------------------------------
+One seeded example asks:
+"Which patent publication describes a pyrethrin-loaded nanoemulsion prepared
+by a low-energy oil-in-water method using a Tween 80 and Span 80 surfactant blend
+at HLB 13?"
+
+The accepted source MX-2025007921-A_en contains this precise recipe and ranks 1.
+In the complete English chemistry pool, 'nanoemulsion' occurs in one unit,
+'pyrethrin' in two and 'span' in five. The question supplies a very selective
+combination of technical terms and numbers. Another rank-1 question names an
+oligohydroxy compound; that word occurs in two English chemistry units.
+
+With one comparable definition of rare (a nonnumeric content token present in
+the relevant unit and in <=0.1% of the corpus's English units), the share of
+questions with a rare matching term is chemistry 54.35%, EUR-Lex 40.00%, UN 0%.
+The relative-frequency threshold avoids using the same absolute count against
+very different pool sizes. It does not match document lengths or query topics,
+and is not an estimate of the causal effect of terminology.
+
+This collection called chemistry includes patent abstracts about materials,
+mechanical components and devices as well as chemical compounds. The marble
+decoration-plate example names PVC, heavy calcium carbonate and cooling warpage;
+the accepted abstract ranks 2. These are specific invention descriptions.
+
+There are also hard chemistry samples. A question asking which categories R1
+and R2 may take finds the accepted formula patent only at rank 27. A question
+about R12 in CH2OR12 ranks its source 66; another ring/formula specification
+ranks 97. Similar Markush-variable lists recur across many patents, and the
+questions can omit a more distinctive scaffold or identity. These counterexamples
+fit a specificity/ambiguity explanation better than a universal domain advantage.
+
+Examples: cases/chemistry/q_8c7ce71f837fa2fb5e07516daa6df08d7dc33e9b301c9084f9e36b3d18acd103.txt
+          cases/chemistry/q_fb37e254eb120ceaaa2de1e8396ac151f49cad892f856864834e57af89b5b25f.txt
+          cases/chemistry/q_3e0ce0ef198a26acd1ea9af95a875814e13062762a2e38870edea7fed1dc01d0.txt
+          cases/chemistry/q_ef3a1be0ca994c0e850e701d70914e67edc15aa8b4478b760519a72b6dc3e341.txt
+          cases/chemistry/q_f1342e01453c2c33a90531cb8c3179f6519733abb14ecc54017200289f7902d5.txt
+Counts: english_query_term_frequencies_*.csv; query_features.csv.
+
+4. UN requires distinguishing many closely related institutional sources
+-----------------------------------------------------------------------
+The Haiti example asks what donors should do with pledges from the 2010 New York
+Conference. Its designated source is resolution 2180 (2014), which ranks 30.
+Rank 1 is resolution 1927 (2010): it explicitly mentions that conference and
+urges donors to fulfil their pledges in a timely manner. Rank 3 is an earlier
+Haiti resolution encouraging accelerated disbursement of pledges. The question
+does not identify resolution 2180 or the year 2014. This is genuine competition
+between closely related texts and a possible source-identification ambiguity;
+the saved known-source qrels alone do not establish that each alternative is
+semantically irrelevant or legally interchangeable.
+
+These topics are widespread: 'haiti' occurs in 1,243 English UN units, 'pledges'
+in 899, 'myanmar' in 1,103 and 'taliban' in 292. These are document-frequency
+counts in the searched English corpus, not model explanations.
+
+In the Taliban example, the question explicitly asks about a 2011 resolution,
+but the accepted 1988 (2011) source ranks 11 and a 2014 resolution ranks 1.
+The relevant source's winning chunk begins at character 21,725 in a 29,358-
+character document; it contains Monitoring Team language and older resolution
+references but omits the 2011 heading. Maximum-over-chunk scoring can select a
+topically close passage without the distinguishing document header. This is
+observed context in the saved passage, not proof that the omitted header caused
+the ranking failure.
+
+A Myanmar child-soldier question ranks its designated 2002 resolution 30, with
+a later government letter's discussion/denial of recruitment ranked first.
+Conversely, a question specifying the fifty-third session and Myanmar jails
+finds its designated resolution at rank 1. The Ukraine question, which names
+the resolution's territorial-integrity topic, also succeeds at rank 1.
+
+An exhaustive English top10 passage scan finds a >=6-token saved-answer string
+in an unjudged passage ABOVE the first accepted version for 9/68 UN questions,
+4/55 EUR-Lex and 5/46 chemistry. Only 2 of UN's 11 English misses satisfy that
+strict exact-string condition; the other seven are already top10 successes.
+Do not misstate the count as nine failures explained or silently relabel qrels.
+
+Examples: cases/un/q_c738132560256e7e0a97cb6518aa3f7b8cda1532570c4755cf449c88c54e68a5.txt
+          cases/un/q_204bb5965a47b606176a76657963071a20a1bdbbc496e939a4f23ee2b337ff34.txt
+          cases/un/q_325409a0ac23ef16bbb1b1c4b9ce33d55257d9c0db74a4a7163aff4a17ce14db.txt
+          cases/un/q_5519188066ae87f40890af6d37e833bb407e89c5dac267acfe2d58fb54e89a47.txt
+Counts: answer_bearing_unjudged_chunks.csv; answer_ambiguity_summary.csv.
+
+5. EUR-Lex can have source ambiguity too, but its English queries are often easy
+-----------------------------------------------------------------------------
+A question about identifying a conservation variety's region of origin across
+Member States finds directive 2009/145 Article 8 at rank 1; the designated source
+2008/62 Article 8 is rank 2. Both contain the saved answer that the Member States
+must identify it by common accord. The question does not identify the directive.
+
+However, four of the five sampled English EUR-Lex questions succeed, reflecting
+its measured 54/55 English successes. Good-clinical-practice document retention,
+equity market-price disclosure and seafarer dispensations map directly to compact
+articles. The one English miss asks about recourse after refusal to open a Union
+Registry account: account-opening articles occupy ranks 1-3, while the accepted
+refusal/appeal article ranks 40. This illustrates related-topic confusion, not
+evidence that all legal questions require harder reasoning.
+
+Examples: cases/eurlex/q_8af55c3d4227b3bc25c42bf081072720398e8c447ff0d88ee76d9d2b86bd124d.txt
+          cases/eurlex/q_3218fbfa8ca7570ac93510165131f29e944f0e2c66b245ebe19e18e079baa2a1.txt
+          cases/eurlex/q_54087eeeeb3a735e53dd648fded4b6ea9f85b7243e8e6fee1de10cf8ab4e2f28.txt
+
+6. Pool size makes a measurable difference under a defined counterfactual
+----------------------------------------------------------------------
+Using the saved original English scores/rankings, uniformly remove ordinary
+corpus units until each pool has 5,829 units (chemistry's size). Keep EVERY
+evaluated English source unit, not merely the positive for one query. All
+questions in each corpus therefore share a pool containing their relevant units.
+The exact expected top10 success under this sampling follows a hypergeometric
+distribution. No embeddings or retrieval are rerun. Absent positives in saved
+top100 are conservatively bounded rather than assigned a fabricated exact rank.
+
+                 Original pool   Measured Hit@10   Expected after thinning
+Chemistry               5,829            86.96%                    86.96%
+EUR-Lex                85,346            98.18%                 ~100.00%
+UN                     14,689            83.82%                    92.10%
+
+For these inputs the censoring bounds agree at two-decimal precision. This
+demonstrates the effect of deleting competitors while keeping queries, labels
+and model scores fixed. It is an expected score under uniform corpus thinning,
+not a new benchmark run, a hard-negative-matched experiment or a decomposition
+of the original three-corpus score gap. These English cohorts have different
+questions and keeping all evaluation units is an explicit sampling condition.
+
+Evidence: pool_size_counterfactual.csv; pool_size_counterfactual_method.json.
+The probability code passes exhaustive small-pool enumeration tests.
+
+7. Factors checked that do not explain the gap on their own
+---------------------------------------------------------
+- "Chemistry simply copies the text more": not supported by the English
+  diagnostic. Median question-content-word coverage is 75.34% chemistry,
+  68.75% EUR-Lex and 90.48% UN. UN also has the highest question-trigram coverage.
+  Term distinctiveness is a different property from raw overlap.
+- "Chemistry has shorter documents than both": false. Median selected English
+  relevant-unit length is 355.5 word tokens for chemistry, 153 for EUR-Lex and
+  1,752.5 for UN; median chunk counts are 2, 1 and 6 respectively. Length/context
+  fragmentation is plausible for UN, not an explanation of chemistry vs EUR-Lex.
+  Document retrieval uses maximum chunk similarity; these are not whole-document
+  single-vector embeddings. Do not infer that long UN documents were truncated
+  wholesale or that length alone caused failure.
+- "UN's questions are lower quality": simple audit flags do not support this.
+  Clear-status fractions are 92.39% chemistry, 84.02% EUR-Lex and 95.55% UN.
+  On clear-only questions, mixed Hit@10 is still 93.55%, 83.54%, 78.70%.
+  Upstream grades/statuses are not independent calibrated difficulty measurements.
+- "Chemistry benefited from selecting among more candidates": incorrect.
+  Median candidate pools were 10 chemistry, 22 EUR-Lex and 20 UN. Persona and
+  source-selection designs differ; this remains a synthetic selected-query study.
+- "Chemistry has no duplicate distractors": false. Seventeen of its 46 selected
+  English relevant units have another normalized exact-text English copy, and
+  the highest-ranked unjudged result has identical normalized full text for
+  13/46 questions. Similar patents/publication stages can compete too; do not
+  merge or promote them without checking the source-association relevance rule.
+
+Interpretation and limits
+-------------------------
+The defensible conclusion is that this patent-abstract benchmark offers a smaller
+search space and many highly selective technical clues, while its mixed recall
+requires fewer accepted language versions. UN frequently requires finding one
+designated institutional source among related/repeated resolutions, with longer
+units and less selective question vocabulary. EUR-Lex's lower aggregate does not
+mean its questions are universally harder: English retrieval reverses the order,
+and language availability/cohort composition affect the aggregate substantially.
+
+Only the metric definitions and within-score corpus-thinning calculation have
+direct mathematical attribution here. Content-based mechanisms are supported
+by observed text cases and descriptive features, not an identified causal model.
+There are no new significance claims. The original questions, qrels, rankings
+and experiment settings remain unchanged. To assign residual effects causally,
+use a prespecified matched-pool evaluation and independently adjudicate additional
+answer-bearing sources; keep original results as controls and any new evaluation
+or retrieval variants explicitly selectable.

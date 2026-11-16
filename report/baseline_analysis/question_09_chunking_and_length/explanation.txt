@@ -1,0 +1,27 @@
+CHUNKING AND DOCUMENT LENGTH
+
+The selected dense experiments rank each document-language version by the maximum
+query similarity of ALL its chunks, then take the top unique versions. They do
+not average chunks into a diluted whole-document score. One long version cannot
+occupy multiple top-k positions. The saved contracts confirm this for all three
+EmbeddingGemma corpora, with zero truncated document chunks recorded.
+
+Length can matter indirectly:
+- More chunks provide more chances for a high maximum, for relevant documents
+  and distractors alike. Adding chunks while retaining all existing scores cannot
+  lower a document's own maximum. Its rank can fall if competitors' maxima rise.
+- A chunk can omit the title, year, scope or definitions needed to interpret a
+  passage. Overlap helps nearby boundaries; it does not attach a distant heading
+  to every chunk, and maximum scoring does not combine evidence across chunks.
+- More chunks increase embedding/search work. This is an efficiency consideration,
+  not evidence that longer units caused lower retrieval quality.
+
+The saved Taliban example's relevant document ranks 11. Its header says 2011;
+its winning chunk starts at character 21,725 and contains no 2011. This shows
+fragmented distinguishing context, without establishing the cause of its rank.
+
+The earlier document-length association is a hypothesis about chunk count and
+context, not a demonstrated explanation for the chemistry score advantage.
+Establishing its contribution needs an explicitly selected comparison with
+different chunk context/aggregation while preserving queries, qrels and controls.
+No retrieval settings or benchmark outputs have been changed here.

@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "feature_rows": 638,
+  "english_rows": 169,
+  "seeded_cases": 21,
+  "case_sampling_reconstructed": true,
+  "native_english_scores_reconstructed": true,
+  "gallery_links_resolve": true,
+  "recorded_source_hashes_match": true,
+  "counterfactual_bounds_and_monotonicity_valid": true,
+  "manual_review": "findings.txt records inspected examples and separates mathematical effects, counterfactual estimates and observational explanations."
+}

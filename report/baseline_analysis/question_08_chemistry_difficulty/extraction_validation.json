@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "query_count": 638,
+  "english_query_count": 169,
+  "source_sha256": {
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/question_01_recall_at_10/tables/report_catalog.csv": "90d73ccf34d8122fb11d690623bb744bc0084af177c32f9411e7af73e5ea8d70",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3ca01f8930c83c237aef2276011a5f41f454678aff02bd7529158d99803716a5/report.json": "02c4be6e701a4246d63399989a9322ea2f5d89936d11e1a95ce1dd7f8eaca995",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3ca01f8930c83c237aef2276011a5f41f454678aff02bd7529158d99803716a5/per_query.json": "d93a7bcd3a629fbbbcacd03b1e424d47028f1b660eb24cacbb8953f2c7f92ba9",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/queries.parquet": "6502f7ed5df453c1047b76627294d603f52793072d4ce0f5fc47d2fd2b3f373d",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/qrels.parquet": "af884910423b00d4e22375e86c10b0212e27b9d96bd74d06a1f40cc86d978cb6",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/selection.json": "69e8559a1eedf4faf9656c9e075359d900300edd19a1a97eef34615a75cf3678",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/chemistry/2ec10d7c759931311a567ed63fde045e1f7716aad01d296e3d2fae8caa8b67f1/manifest.json": "bc9a3fcf4a2b4cecff6757d16a0299270992e70c631ceba733c42e35c6a488e4",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/5efd98afb265d51f58f246ce7751f96ef88a3575611a272f362fd8362c4db62e/report.json": "2ab12c0da3c57321f79e88099c66619b4bde93f9ba51d59404a8b4a4188eae51",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/5efd98afb265d51f58f246ce7751f96ef88a3575611a272f362fd8362c4db62e/per_query.json": "9531167bcc046f000c6083dc63dfe979ff313009c4d9e409e677b8be8e108551",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/queries.parquet": "25c18e5c9ca0d3de37c51d13ca0ca07e04d9edf01376035e5314ece1fce3ba72",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/qrels.parquet": "d454cdec373e29dc6d4eeb86d6e331b2345c4dcfb1a1205cbba5493412ef96e8",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/eurlex/edf9a51b5b308378188d5b430892735d84b96e0edb23a7f8f30d258ec4f83955/selection.json": "d12bed9f77bf1985c060bb5c850c94332df25a161b5eea4403e57bff51169348",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/eurlex/970d304c540274e12e387b1aa6a48df05a3e5dafcae9526a3d060ca6a64e0ce6/manifest.json": "6ff7b2f5942ac5988c1cdeac711e28fa964716b9e2d004e1cd487b0290da445d",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/report.json": "937e602946ab40682906fe4bcf9cd7f5fab856dd0b9fd52d37259f3dcfa766cf",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/per_query.json": "c2ecc3a115b4fc06522a85d1b63ff69845c83f893fbf93a5f8c08c4a1bd8fd34",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/queries.parquet": "077f7f66ab40c2c93a29d43ed10cc080ad1aff1a14b48f7adddd93e693b97cbd",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/qrels.parquet": "525ee7a909167d1c6de4ab2e366f90536fc8a078f2fb069130cc0aaebf371323",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/un/790fc372e1e83b00600a2e7104eb67043dfd2807c0a0cdf6db4d2f6a49cf96ab/selection.json": "00a1870af89564d76433ea3f2bb6ccb1dbec64b6074243433f834a869d541722",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/un/34b1a5cbc5bd9d29193004d32ccd9a34449e3e5dcebe123a0ec94afdad09c327/manifest.json": "a310a92fd6701645105e3774a3dac6d1188c117f1b4b5859459265ff894368c9",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/inspect_corpus_difficulty.py": "c1fbaacf9873e5104180aa3b0b5321e5344039b29a6d6c995f6e384c78421adb"
+  },
+  "methods": {
+    "ranking": "Saved original-query EmbeddingGemma rankings; >100 is censored. No new retrieval.",
+    "lexical": "English original questions and same-language relevant units only. NFKC lowercase alphanumeric tokens; fixed stopword list; corpus document-frequency computed on English units.",
+    "rare_terms": "Non-numeric overlapping content tokens appearing in at most five English source units; descriptive diagnostic, not an independent retrieval score.",
+    "sampling": "Seed 20261116; four English-native hits and four misses per corpus, sampled before reading texts. Not a prevalence-weighted sample."
+  }
+}

@@ -1,0 +1,114 @@
+[
+  {
+    "corpus": "chemistry",
+    "prepared_language_versions": 20283,
+    "prepared_distinct_source_ids": 9432,
+    "prepared_distinct_parent_ids": 9432,
+    "prepared_chunks": 35626,
+    "searched_language_versions": 16879,
+    "searched_distinct_source_ids": 9432,
+    "unit_types": {
+      "abstract": 20283
+    },
+    "configured_search_languages": [
+      "de",
+      "en",
+      "es",
+      "fr",
+      "zh"
+    ],
+    "available_search_languages": [
+      "de",
+      "en",
+      "es",
+      "fr",
+      "zh"
+    ],
+    "selected_evaluation_questions": 197,
+    "language_version_counts": {
+      "de": 1240,
+      "en": 5829,
+      "es": 1990,
+      "fr": 5823,
+      "ja": 1407,
+      "ru": 1997,
+      "zh": 1997
+    },
+    "source_manifest": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/chemistry/2ec10d7c759931311a567ed63fde045e1f7716aad01d296e3d2fae8caa8b67f1/manifest.json",
+    "source_table": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/chemistry/2ec10d7c759931311a567ed63fde045e1f7716aad01d296e3d2fae8caa8b67f1/sources.parquet",
+    "corpus_fingerprint": "2ff3a8be4c94cef9be9b8306e0dacac1f50b4e380a3595e8479cee445ea00dcc"
+  },
+  {
+    "corpus": "eurlex",
+    "prepared_language_versions": 340833,
+    "prepared_distinct_source_ids": 85509,
+    "prepared_distinct_parent_ids": 14580,
+    "prepared_chunks": 674055,
+    "searched_language_versions": 340833,
+    "searched_distinct_source_ids": 85509,
+    "unit_types": {
+      "article": 266494,
+      "annex": 74339
+    },
+    "configured_search_languages": [
+      "de",
+      "en",
+      "es",
+      "fr",
+      "zh"
+    ],
+    "available_search_languages": [
+      "de",
+      "en",
+      "es",
+      "fr"
+    ],
+    "selected_evaluation_questions": 194,
+    "language_version_counts": {
+      "de": 85243,
+      "en": 85346,
+      "es": 84893,
+      "fr": 85351
+    },
+    "source_manifest": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/eurlex/970d304c540274e12e387b1aa6a48df05a3e5dafcae9526a3d060ca6a64e0ce6/manifest.json",
+    "source_table": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/eurlex/970d304c540274e12e387b1aa6a48df05a3e5dafcae9526a3d060ca6a64e0ce6/sources.parquet",
+    "corpus_fingerprint": "35a91089434791d70579ec20ec151e9b0d50023763246407687978a9313197cb"
+  },
+  {
+    "corpus": "un",
+    "prepared_language_versions": 88134,
+    "prepared_distinct_source_ids": 14689,
+    "prepared_distinct_parent_ids": 14689,
+    "prepared_chunks": 1083284,
+    "searched_language_versions": 58756,
+    "searched_distinct_source_ids": 14689,
+    "unit_types": {
+      "document": 88134
+    },
+    "configured_search_languages": [
+      "de",
+      "en",
+      "es",
+      "fr",
+      "zh"
+    ],
+    "available_search_languages": [
+      "en",
+      "es",
+      "fr",
+      "zh"
+    ],
+    "selected_evaluation_questions": 247,
+    "language_version_counts": {
+      "ar": 14689,
+      "en": 14689,
+      "es": 14689,
+      "fr": 14689,
+      "ru": 14689,
+      "zh": 14689
+    },
+    "source_manifest": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/un/34b1a5cbc5bd9d29193004d32ccd9a34449e3e5dcebe123a0ec94afdad09c327/manifest.json",
+    "source_table": "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/un/34b1a5cbc5bd9d29193004d32ccd9a34449e3e5dcebe123a0ec94afdad09c327/sources.parquet",
+    "corpus_fingerprint": "9aa2285000a6c180ccf768509f60492556008d377260f38489fd184227691cbb"
+  }
+]

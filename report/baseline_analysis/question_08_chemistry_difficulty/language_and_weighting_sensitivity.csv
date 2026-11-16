@@ -1,0 +1,16 @@
+corpus,selection,regime,settings,equal_setting_recall_pct,query_setting_weighted_recall_pct,smallest_setting_n
+chemistry,original_settings,cross_language,15,94.11306014247191,94.28571428571428,1
+chemistry,original_settings,mixed,5,86.43375346579008,85.61759729272418,15
+chemistry,original_settings,monolingual,5,94.2618139551778,93.90862944162437,15
+chemistry,common_en_es_fr_query_and_target_languages,cross_language,6,91.78517560870503,94.11764705882352,7
+chemistry,common_en_es_fr_query_and_target_languages,monolingual,3,93.53577179664136,93.05555555555556,35
+eurlex,original_settings,cross_language,12,79.27921631172406,79.20962199312714,38
+eurlex,original_settings,mixed,4,57.02340744910405,57.21649484536082,38
+eurlex,original_settings,monolingual,4,85.6667135753823,86.08247422680412,38
+eurlex,common_en_es_fr_query_and_target_languages,cross_language,6,84.7476311098602,84.72222222222221,38
+eurlex,common_en_es_fr_query_and_target_languages,monolingual,3,89.55561810050975,90.27777777777779,38
+un,original_settings,cross_language,12,73.48569544776976,73.95411605937922,50
+un,original_settings,mixed,4,35.05700679394565,35.82995951417004,50
+un,original_settings,monolingual,4,79.41275369797042,79.35222672064778,50
+un,common_en_es_fr_query_and_target_languages,cross_language,6,80.10764247219355,80.20304568527918,57
+un,common_en_es_fr_query_and_target_languages,monolingual,3,78.55033826396055,78.68020304568529,57

@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "reports": 11,
+  "unique_questions": 247,
+  "cohorts_and_settings_match": true,
+  "per_query_aggregates_match_saved_reports": true,
+  "methodology": "Equal setting means; deltas in percentage points; generated languages evaluated separately; no inference or paid calls.",
+  "source_sha256": {
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/82a5e40b730a6ae39c48304b2925d2402c1a7d4fe87b3c3a312734322b53092c/report.json": "3f3f28c0b4fd41ffbeec9441876392c24e4ca4dbbbb9262d5e7f4b203b001ff1",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/82a5e40b730a6ae39c48304b2925d2402c1a7d4fe87b3c3a312734322b53092c/per_query.json": "9cecfa75a66e0d36acbcbedc0ba59d909e02edcaefb21114a776773d4e6c0d9c",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/report.json": "937e602946ab40682906fe4bcf9cd7f5fab856dd0b9fd52d37259f3dcfa766cf",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/per_query.json": "c2ecc3a115b4fc06522a85d1b63ff69845c83f893fbf93a5f8c08c4a1bd8fd34",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/c818d2211d9b52aa978491c5ff7d68171d1d0ec5c7939de4a6d6fe30e2ee57c9/report.json": "0a0459fcb1661276dd60ce8917ee940dd21b575c1ea2b7a95de6737f579e8a0c",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/c818d2211d9b52aa978491c5ff7d68171d1d0ec5c7939de4a6d6fe30e2ee57c9/per_query.json": "4eec04bd7abc43f78fa7a774914679a1896d7023899bbf1a40fd3b34fe2eac03",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/d2ab075871e52ed640b9f67b9001e5f595bd924b56ad4e357525ee2e9001c21f/report.json": "2cf670f3afb77d60611f1d5fa07acdbd127e752ad80d71b1a50daff399837a3e",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/d2ab075871e52ed640b9f67b9001e5f595bd924b56ad4e357525ee2e9001c21f/per_query.json": "d4236acd61139ca47641a89c9dc5aa0e2799557aab0abd858245c98833a8b6ec",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/d60adedd6caf270c1175e869e0baaf5d598903bdb5ed2abdb31ea8505de9351d/report.json": "9825233a44277872d8d9a2524b407f3888aff7f0b6f431e780cf41097f9626ba",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/d60adedd6caf270c1175e869e0baaf5d598903bdb5ed2abdb31ea8505de9351d/per_query.json": "f61df9ac72832a9c385c6258d0d2a08ce4ebd063bbad1a4ffab3d689193583af",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/e4efd76c404e375085c0be9eee3584939ed56c049662cb4303f2592990c2d16e/report.json": "261870c8259b38bb342d34d46817f1455118100c33fbab5eeb00a76499c6b7b9",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/e4efd76c404e375085c0be9eee3584939ed56c049662cb4303f2592990c2d16e/per_query.json": "534175ba83f17e8517ffa1a115f01584b9afea07d77e056de4a09f877dbfc213",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/e8c676fed105fc2ecf88dc5bd89e19499ca5804cb0af2ce704642c57d3612177/report.json": "64838b3a6bf42a7b2426f1c943a70bf59acd40239bc62b0403cf3486757e040b",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/e8c676fed105fc2ecf88dc5bd89e19499ca5804cb0af2ce704642c57d3612177/per_query.json": "6e91cdbe865ee9d9a7308eb549ef9f78f560f7824d3eb86bb5e039f4d83057ea",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/f072556a752cb9cf1160e7388ed108e4567116ae3044dc3961d6254610aab6b8/report.json": "bb5ef871a57e71443b8729b5ce4b514fb82440cdf5a99138f4500928a6a3a3a4",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/f072556a752cb9cf1160e7388ed108e4567116ae3044dc3961d6254610aab6b8/per_query.json": "4b03fdf0c5c5f47b7132999ef12a914f0df898b47af6d10941f5e0a0b7142097",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/f394d358877a7f6bfa6793759407491beed9c3ff833e603ffa6abc7359f2e8f8/report.json": "bd8f6da506a65d261f5219ce3aee017843cadf38e814d2f457550ff134c92131",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/f394d358877a7f6bfa6793759407491beed9c3ff833e603ffa6abc7359f2e8f8/per_query.json": "d5dceba4f19e25f018441ba72038cc67a23aebae0006f4c1a414b85ad0d3040e",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/f605d66e5d12c2d29f07b542fd731f06ce18f0375472085ae7e2e03d02101351/report.json": "0b75af0c41fe3946dddc7635df20fb70f030886b8559da90ce367828859ddae5",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/f605d66e5d12c2d29f07b542fd731f06ce18f0375472085ae7e2e03d02101351/per_query.json": "0ed2b8e40192a34a368a0c38fb6027ca2f7034facf79fc1f2ef3a558b534043f",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/f7639ec6b6c31f923099ad2c8a4e6e0b80b2b409579f5cfb29cf6ab7ea78c5dc/report.json": "d2210feb002789ba2929a99c940332e7ff81e5e7e16f7b52d97dd6015958f1e4",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/f7639ec6b6c31f923099ad2c8a4e6e0b80b2b409579f5cfb29cf6ab7ea78c5dc/per_query.json": "45f77aee30bd9b7ea16523d5c7f1a3dfe0bead9a89760e006aaf570f28c44270",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/un_generation_effects.py": "14d02be1661fb8f24daad417953bb067421560d89615ec56fcb572547cabeb4e"
+  }
+}

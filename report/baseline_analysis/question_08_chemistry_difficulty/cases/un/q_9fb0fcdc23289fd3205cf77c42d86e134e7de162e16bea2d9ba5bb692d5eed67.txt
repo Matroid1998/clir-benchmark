@@ -1,0 +1,80 @@
+un / EmbeddingGemma / original English query / English target
+Seed 20261116; sample up to four English-native hits per corpus
+Query ID: q_9fb0fcdc23289fd3205cf77c42d86e134e7de162e16bea2d9ba5bb692d5eed67
+First relevant rank (saved top100): 1
+Quality: clear; alignment: eligible
+
+QUESTION
+What does the General Assembly urge all parties to do regarding the situation with respect to Ukraine in its resolution on the territorial integrity of Ukraine?
+
+SAVED ANSWER
+pursue immediately the peaceful resolution of the situation with respect to Ukraine through direct political dialogue, to exercise restraint, to refrain from unilateral actions and inflammatory rhetoric that may increase tensions and to engage fully with international mediation efforts
+
+COMPLETE RELEVANT SOURCE un:2014/a/res/68/262:en
+[without reference to a Main Committee (A/68/L.39 and Add.1)]
+68/262. Territorial integrity of Ukraine
+The General Assembly,
+Reaffirming the paramount importance of the Charter of the United Nations in the promotion of the rule of law among nations,
+Recalling the obligations of all States under Article 2 of the Charter to refrain in their international relations from the threat or use of force against the territorial integrity or political independence of any State, and to settle their international disputes by peaceful means,
+Recalling also its resolution 2625 (XXV) of 24 October 1970, in which it approved the Declaration on Principles of International Law concerning Friendly Relations and Cooperation among States in accordance with the Charter of the United Nations, and reaffirming the principles contained therein that the territory of a State shall not be the object of acquisition by another State resulting from the threat or use of force, and that any attempt aimed at the partial or total disruption of the national unity and territorial integrity of a State or country or at its political independence is incompatible with the purposes and principles of the Charter,
+Recalling further the Final Act of the Conference on Security and Cooperation in Europe, signed in Helsinki on 1 August 1975, the Memorandum on Security Assurances in Connection with Ukraine's Accession to the Treaty on the Non-Proliferation of Nuclear Weapons (Budapest Memorandum) of 5 December 1994, the Treaty on Friendship, Cooperation and Partnership between Ukraine and the Russian Federation of 31 May 1997 and the Alma-Ata Declaration of 21 December 1991,
+Stressing the importance of maintaining the inclusive political dialogue in Ukraine that reflects the diversity of its society and includes representation from all parts of Ukraine,
+Welcoming the continued efforts by the Secretary-General and the Organization for Security and Cooperation in Europe and other international and regional organizations to support de-escalation of the situation with respect to Ukraine,
+Noting that the referendum held in the Autonomous Republic of Crimea and the city of Sevastopol on 16 March 2014 was not authorized by Ukraine,
+1. Affirms its commitment to the sovereignty, political independence, unity and territorial integrity of Ukraine within its internationally recognized borders;
+2. Calls upon all States to desist and refrain from actions aimed at the partial or total disruption of the national unity and territorial integrity of Ukraine, including any attempts to modify Ukraine's borders through the threat or use of force or other unlawful means;
+3. Urges all parties to pursue immediately the peaceful resolution of the situation with respect to Ukraine through direct political dialogue, to exercise restraint, to refrain from unilateral actions and inflammatory rhetoric that may increase tensions and to engage fully with international mediation efforts;
+4. Welcomes the efforts of the United Nations, the Organization for Security and Cooperation in Europe and other international and regional organizations to assist Ukraine in protecting the rights of all persons in Ukraine, including the rights of persons belonging to minorities;
+5. Underscores that the referendum held in the Autonomous Republic of Crimea and the city of Sevastopol on 16 March 2014, having no validity, cannot form the basis for any alteration of the status of the Autonomous Republic of Crimea or of the city of Sevastopol;
+6. Calls upon all States, international organizations and specialized agencies not to recognize any alteration of the status of the Autonomous Republic of Crimea and the city of Sevastopol on the basis of the above-mentioned referendum and to refrain from any action or dealing that might be interpreted as recognizing any such altered status. 80th plenary meeting
+
+RETRIEVED RANK 1 / relevance=1 / un:2014/a/res/68/262:en / score=0.71940261
+[without reference to a Main Committee (A/68/L.39 and Add.1)]
+68/262. Territorial integrity of Ukraine
+The General Assembly,
+Reaffirming the paramount importance of the Charter of the United Nations in the promotion of the rule of law among nations,
+Recalling the obligations of all States under Article 2 of the Charter to refrain in their international relations from the threat or use of force against the territorial integrity or political independence of any State, and to settle their international disputes by peaceful means,
+Recalling also its resolution 2625 (XXV) of 24 October 1970, in which it approved the Declaration on Principles of International Law concerning Friendly Relations and Cooperation among States in accordance with the Charter of the United Nations, and reaffirming the principles contained therein that the territory of a State shall not be the object of acquisition by another State resulting from the threat or use of force, and that any attempt aimed at the partial or total disruption of the national unity and territorial integrity of a State or country or at its political independence is incompatible with the purposes and principles of the Charter,
+Recalling further the Final Act of the Conference on Security and Cooperation in Europe, signed in Helsinki on 1 August 1975, the Memorandum on Security Assurances in Connection with Ukraine's Accession to the Treaty on the Non-Proliferation of Nuclear Weapons (Budapest Memorandum) of 5 December 1994, the Treaty on Friendship, Cooperation and Partnership between Ukraine and the Russian Federation of 31 May 1997 and the Alma-Ata Declaration of 21 December 1991,
+Stressing the importance of maintaining the inclusive political dialogue in Ukraine that reflects the diversity of its society and includes representation from all parts of Ukraine,
+Welcoming the continued efforts by the Secretary-General and the Organization for Security and Cooperation in Europe and other international and regional organizations to support de-escalation of the situation with respect to Ukraine,
+Noting that the referendum held in the Autonomous Republic of Crimea and the city of Sevastopol on 16 March 2014 was not authorized by Ukraine,
+1. Affirms its commitment to the sovereignty, political independence, unity and territorial integrity of Ukraine within its internationally recognized borders;
+2. Calls upon all States
+
+RETRIEVED RANK 2 / relevance=0 / un:2004/a/59/pv_19:en / score=0.58973080
+ United Nations and reaffirms our desire to enable it to play that role effectively.
+That should be the ultimate goal and major direction of the ongoing process of the revitalization of the General Assembly.
+Although many of us would like to see bolder steps to give new breath to the Assembly, in the current circumstances we consider it appropriate to focus our efforts on those proposals that could gain the wide support of the United Nations membership and that can be realistically expected to be implemented in the near future.
+Ukraine welcomed the General Assembly's adoption of resolutions 58/126 and 58/316, which were important steps forward.
+They set out a number of practical proposals aimed at enhancing the authority and the role of the General Assembly and improving its working methods.
+Their important feature -- establishing defined time frames -- has greatly contributed to the implementation of many of their provisions and laid down the framework for further consideration of others, including during this session of the Assembly.
+We are pleased to see that those resolutions are already at work.
+Let me just mention the new organization of agenda items under headings that correspond to the priorities of the work of the United Nations.
+Among other things, we believe it is also necessary to streamline the routine speeches delivered in this Hall.
+Ukraine fully supports the decision to strengthen the Office of the President.
+It goes without saying that regular consultations of the President of the General Assembly with the Presidents of the Security Council and Economic and Social Council, as well as with representatives of regional and other groups, would be very helpful to better plan and organize the work of the General Assembly.
+In that regard, we would also like to stress that it would be useful for the current President of the General Assembly to maintain close and regular contacts with the Council of Presidents of the General Assembly, so that he can take full advantage of its members' experience and advice.
+We hope that that idea will receive positive consideration in the course of further discussions during this session.
+We should not lose the momentum of reform.
+To a large extent our hopes in that regard rely on your leadership, Mr. President, and you may count on the full support and understanding of my delegation in your efforts to achieve tangible results.
+I would like to assure you that Ukraine, whose representative is chairing the Third Committee, is fully committed to transla
+
+RETRIEVED RANK 3 / relevance=0 / un:2006/a/61/pv_39:en / score=0.57401472
+ consistent supporters of the standard international instrument in the field.
+Ukraine reaffirms its determination to further contribute to the efforts to achieve the goals stipulated by the Treaty.
+The Acting President: We have heard the last speaker in the debate on this item for this meeting.
+Before we proceed further, I should like to consult the Assembly with a view to proceeding to consider draft resolutions A/61/L.6, as orally revised, and A/61/L.7, at the present meeting.
+In this connection, since the two draft resolutions were only circulated earlier today, it will be necessary to waive the relevant provisions of rule 78 of the rules of procedure.
+The relevant provision of rule 78 reads as follows:
+"As a general rule, no proposal shall be discussed or put to the vote at any meeting of the General Assembly unless copies of it have been circulated to all delegations not later than the day preceding the meeting".
+It was so decided.
+The Acting President: The Assembly will now take a decision on draft resolutions A/61/L.4, A/61/L.5, A/61/L.6, as orally revised, and A/61/L.7.
+Draft resolution A/61/L.4 is entitled "Cooperation between the United Nations and the Black Sea Economic Corporation Organizations".
+I should like to announce that, since the introduction of the draft resolution, the following countries have become sponsors of draft resolution A/61/L.4: Austria, Belarus and Kazakhstan.
+Draft resolution A/61/L.4 was adopted (resolution 61/4).
+The Acting President: Draft resolution A/61/L.5 is entitled "Cooperation between the United Nations and the Asian-African Legal Consultative Organization".
+I should like to announce that, since the introduction of the draft resolution, the following countries have become sponsors of draft resolution A/61/L.5: the Central African Republic, Madagascar, Mongolia, Sri Lanka and Thailand.
+Draft resolution A/61/L.5 was adopted (resolution 61/5).
+The Acting President: Draft resolution A/61/L.6, as orally revised, is entitled "Cooperation between the United Nations and the Inter-Parliamentary Union".
+May I take it that the Assembly decides to adopt draft resolution A/61/L.

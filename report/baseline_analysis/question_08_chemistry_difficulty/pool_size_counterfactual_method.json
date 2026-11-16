@@ -1,0 +1,13 @@
+{
+  "method": "Expected English Hit@10 after uniform corpus thinning, from saved ranks only.\n\nKeep every selected English question's relevant unit in one common pool, and\nuniformly sample the other units down to chemistry's English pool size. Scores\nand known-source qrels stay fixed. This is a counterfactual expectation, not a\nnewly measured benchmark run. Saved top100 censoring yields lower/upper bounds.\n",
+  "source_sha256": {
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/question_08_chemistry_difficulty/query_features.csv": "f73e511e13a760b750232972cdb4b7099ef5c027cc4f271ba29fc3a10602fdd0",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/chemistry/3ca01f8930c83c237aef2276011a5f41f454678aff02bd7529158d99803716a5/analysis/rankings.parquet": "898b458f58204eb9097f928ca222f10cff2a391c9e71c2f18a52f8db6eae3a43",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/eurlex/5efd98afb265d51f58f246ce7751f96ef88a3575611a272f362fd8362c4db62e/analysis/rankings.parquet": "331923beb009e2fb21e7af16a7983ff548fd2be4f5fe46715efb6cbae7239a14",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/reports/un/88149b4bcecb017305e8939e58380e7291c18c06a670c8dae9339a152be64660/analysis/rankings.parquet": "84d6dcd425f20cac1a992f44a09d9a741ac6564dfc8bc97a45c926ac093fcc18",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/pool_size_counterfactual.py": "b62583a839ca7589943555ff32e437d5537922bc10278724d8477ef86139a7ae"
+  },
+  "probability": "X ~ Hypergeometric(N - forced, random_higher_ranked, retained - forced); hit if forced_higher_ranked + X <= 9",
+  "censoring": "If original rank >100, lower=0; upper uses rank101 and known forced units above. Additional worse-ranked candidates cannot increase hit probability.",
+  "limitations": "Known-source relevance only; uniformly thinned shared pool conditional on all evaluation sources; fixed original scores. This is not a measured rerun, hard-negative-matched pool or a causal decomposition of corpus differences."
+}

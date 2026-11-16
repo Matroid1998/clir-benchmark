@@ -1,0 +1,12 @@
+baseline,input_language,monolingual_recall_at_10_score_and_delta_pp,cross_language_recall_at_10_score_and_delta_pp,mixed_recall_at_10_score_and_delta_pp,mixed_hit_at_10_score_and_delta_pp
+dense,original,94.26 (+0.00),94.11 (+0.00),86.43 (+0.00),94.26 (+0.00)
+translate-dense,de,92.98 (-1.28),93.43 (-0.69),83.78 (-2.65),90.33 (-3.93)
+translate-dense,en,93.74 (-0.53),94.42 (+0.30),86.77 (+0.34),93.59 (-0.67)
+translate-dense,es,93.30 (-0.96),94.09 (-0.02),88.04 (+1.61),94.43 (+0.17)
+translate-dense,fr,94.26 (+0.00),95.27 (+1.16),85.46 (-0.98),93.54 (-0.73)
+translate-dense,zh,92.01 (-2.26),92.26 (-1.85),79.87 (-6.57),88.86 (-5.40)
+hyde-dense,de,92.02 (-2.24),92.85 (-1.27),83.34 (-3.10),91.54 (-2.72)
+hyde-dense,en,92.40 (-1.86),94.14 (+0.03),84.01 (-2.42),90.23 (-4.03)
+hyde-dense,es,93.51 (-0.75),93.42 (-0.69),85.53 (-0.90),93.05 (-1.22)
+hyde-dense,fr,92.46 (-1.80),92.02 (-2.09),81.78 (-4.66),90.44 (-3.82)
+hyde-dense,zh,90.72 (-3.55),90.94 (-3.17),71.30 (-15.13),80.86 (-13.40)

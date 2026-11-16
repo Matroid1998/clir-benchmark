@@ -1,0 +1,28 @@
+Chemistry / EmbeddingGemma: Recall@10 (%)
+regime                          monolingual  cross_language  mixed
+baseline        input_language                                    
+dense           original              94.26           94.11  86.43
+hyde-dense      de                    92.02           92.85  83.34
+                en                    92.40           94.14  84.01
+                es                    93.51           93.42  85.53
+                fr                    92.46           92.02  81.78
+                zh                    90.72           90.94  71.30
+translate-dense de                    92.98           93.43  83.78
+                en                    93.74           94.42  86.77
+                es                    93.30           94.09  88.04
+                fr                    94.26           95.27  85.46
+                zh                    92.01           92.26  79.87
+
+MIXED SEARCH EFFECTS
+       baseline input_language  recall_at_10_pct  hit_at_10_pct  recall_at_10_delta_vs_original_pp  recall_at_10_delta_vs_same_language_translation_pp  hit_at_10_delta_vs_original_pp  hit_at_10_delta_vs_same_language_translation_pp
+     hyde-dense             es             85.53          93.05                              -0.90                                               -2.51                           -1.22                                            -1.39
+     hyde-dense             zh             71.30          80.86                             -15.13                                               -8.56                          -13.40                                            -8.00
+translate-dense             fr             85.46          93.54                              -0.98                                                 NaN                           -0.73                                              NaN
+          dense       original             86.43          94.26                               0.00                                                 NaN                            0.00                                              NaN
+translate-dense             de             83.78          90.33                              -2.65                                                 NaN                           -3.93                                              NaN
+translate-dense             zh             79.87          88.86                              -6.57                                                 NaN                           -5.40                                              NaN
+     hyde-dense             fr             81.78          90.44                              -4.66                                               -3.68                           -3.82                                            -3.09
+translate-dense             en             86.77          93.59                               0.34                                                 NaN                           -0.67                                              NaN
+     hyde-dense             en             84.01          90.23                              -2.42                                               -2.76                           -4.03                                            -3.36
+     hyde-dense             de             83.34          91.54                              -3.10                                               -0.44                           -2.72                                             1.21
+translate-dense             es             88.04          94.43                               1.61                                                 NaN                            0.17                                              NaN

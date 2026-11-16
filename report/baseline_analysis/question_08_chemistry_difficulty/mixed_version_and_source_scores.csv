@@ -1,0 +1,4 @@
+corpus,model,scope,regime,unique_queries,nonempty_settings,Recall@10,Hit@10
+chemistry,embeddinggemma,all_questions,mixed,197,5,86.43375346579008,94.2618139551778
+eurlex,embeddinggemma,all_questions,mixed,194,4,57.02340744910405,85.6667135753823
+un,embeddinggemma,all_questions,mixed,247,4,35.05700679394565,78.95373237014103
