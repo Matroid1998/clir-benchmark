@@ -4,7 +4,7 @@ import csv
 import hashlib
 import time
 from collections import Counter, defaultdict
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from contextlib import ExitStack
 from dataclasses import asdict
 from pathlib import Path
@@ -54,6 +54,7 @@ from .relevance import build_settings, judge, judge_documents
 from .results import export_result
 from .retrieval import DenseIndex, reciprocal_rank_fusion
 from .translation import load_translations, translation_summary
+from .types import SourceUnit
 from .util import (
     digest,
     hf_token,
@@ -63,6 +64,31 @@ from .util import (
     versions,
     write_json,
 )
+from .verified_corpora import iter_verified_units
+
+
+def _corpus_units(
+    reader: DatasetReader,
+    corpus: str,
+    corpus_format: str,
+    pair_sink: ParquetSink,
+    pairs: list[tuple[str, str]],
+) -> Iterator[SourceUnit]:
+    if corpus_format == "verified-multilingual-v1":
+        for unit in iter_verified_units(reader, corpus):
+            for target in unit.metadata.get("paired_document_ids", []):
+                pairs.append(tuple(sorted((unit.id, target))))
+            yield unit
+    elif corpus == "chemistry":
+        for row in reader.read("default"):
+            units, pair = chemistry_pair(row, reader.spec)
+            pair_sink.append({"record_json": json_dumps(row)})
+            if pair:
+                pairs.append(pair)
+            yield from units
+    else:
+        for row in reader.read("corpus"):
+            yield legal_unit(row, corpus)
 
 
 def prepare_corpus(config: Config, corpus: str, *, chunker: Chunker | None = None) -> Path:
@@ -86,26 +112,18 @@ def prepare_corpus(config: Config, corpus: str, *, chunker: Chunker | None = Non
             language_counts = Counter()
             pairs = []
             duplicate_count = 0
-            configuration = "default" if corpus == "chemistry" else "corpus"
-            for row in reader.read(configuration):
-                if corpus == "chemistry":
-                    units, pair = chemistry_pair(row, reader.spec)
-                    pair_sink.append({"record_json": json_dumps(row)})
-                    if pair:
-                        pairs.append(pair)
-                else:
-                    units = [legal_unit(row, corpus)]
-                for unit in units:
-                    if not store.add_source(unit):
-                        duplicate_count += 1
-                        continue
-                    source_sink.append(source_record(unit))
-                    language_counts[unit.language] += 1
-                    for chunk in chunker.split(unit):
-                        store.add_chunk(chunk)
-                        chunk_sink.append(asdict(chunk))
-                    if source_sink.count % 1000 == 0:
-                        store.db.commit()
+            corpus_format = config.datasets[corpus].corpus_format
+            for unit in _corpus_units(reader, corpus, corpus_format, pair_sink, pairs):
+                if not store.add_source(unit):
+                    duplicate_count += 1
+                    continue
+                source_sink.append(source_record(unit))
+                language_counts[unit.language] += 1
+                for chunk in chunker.split(unit):
+                    store.add_chunk(chunk)
+                    chunk_sink.append(asdict(chunk))
+                if source_sink.count % 1000 == 0:
+                    store.db.commit()
             if source_sink.count == 0:
                 raise ValidationError(f"{corpus}: source corpus is empty")
             store.add_pairs(pairs)
@@ -129,6 +147,7 @@ def prepare_corpus(config: Config, corpus: str, *, chunker: Chunker | None = Non
                 "corpus_fingerprint": fingerprint,
                 "config_hash": config.corpus_key(corpus),
                 "source": reader.spec.identity(),
+                "corpus_format": corpus_format,
                 "chunking": chunker.manifest,
                 "source_count": source_sink.count,
                 "chunk_count": chunk_sink.count,

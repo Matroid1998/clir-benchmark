@@ -1,0 +1,46 @@
+{
+  "date_field": "sources.metadata_json.publication_date (upstream pub_date)",
+  "cutoff_inclusive": "2021-01-01",
+  "after_year": 2020,
+  "counting_unit": "Distinct source_id / publication number, not patent families or language versions",
+  "total_distinct_publications": 9432,
+  "distinct_publications_after_cutoff": 2494,
+  "percent_of_all_publications": 26.441899915182358,
+  "abstract_language_versions_after_cutoff": 5439,
+  "searched_abstract_language_versions_after_cutoff": 4592,
+  "searched_distinct_publications_after_cutoff": 2494,
+  "language_version_counts_after_cutoff": {
+    "de": 176,
+    "en": 1247,
+    "es": 393,
+    "fr": 1924,
+    "ja": 551,
+    "ru": 296,
+    "zh": 852
+  },
+  "distinct_publications_by_year_after_cutoff": {
+    "2021": 485,
+    "2022": 453,
+    "2023": 448,
+    "2024": 437,
+    "2025": 525,
+    "2026": 146
+  },
+  "selected_evaluation_questions_after_cutoff": 55,
+  "total_selected_evaluation_questions": 197,
+  "publications_without_a_valid_date": 0,
+  "language_versions_with_missing_or_invalid_date": 0,
+  "date_conflicts": {},
+  "observed_publication_date_range": [
+    "1956-01-01",
+    "2026-04-15"
+  ],
+  "source_sha256": {
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/question_04_corpus_sizes/corpus_sizes.json": "ae629fdc00bf2cc3cec056b47f0d2410f5380c47a659035a4fed93e9fd2522f5",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/chemistry/2ec10d7c759931311a567ed63fde045e1f7716aad01d296e3d2fae8caa8b67f1/manifest.json": "bc9a3fcf4a2b4cecff6757d16a0299270992e70c631ceba733c42e35c6a488e4",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/corpus/chemistry/2ec10d7c759931311a567ed63fde045e1f7716aad01d296e3d2fae8caa8b67f1/sources.parquet": "310004a55bd758b2dcd5d39284daee422b2a9f789afb632ba09c344ede2e362a",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/question_01_recall_at_10/tables/report_catalog.csv": "90d73ccf34d8122fb11d690623bb744bc0084af177c32f9411e7af73e5ea8d70",
+    "/home/mehdi/Projects/clir-benchmark/artifacts/fir-20261109-all-questions/artifacts/relevance/chemistry/f3ddb58db23bbb3bc640c4d14a2eff27ccfdaf5369e3fdb73fb282ffaf36b59c/queries.parquet": "6502f7ed5df453c1047b76627294d603f52793072d4ce0f5fc47d2fd2b3f373d",
+    "/home/mehdi/Projects/clir-benchmark/report/baseline_analysis/chemistry_publication_dates.py": "996e710e7b2619054c40a618496a1868f18e3d07ace62dda404d98b11d8952af"
+  }
+}

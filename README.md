@@ -216,6 +216,38 @@ relative analysis inventories work in the local copy.
 
 ### Standard preparation commands
 
+The November 18 verified releases have one row per canonical source, with text
+and edition IDs keyed by language. Select `corpus_format: verified-multilingual-v1`
+for these releases. [The BM25 configuration](configs/verified-20261118-bm25.yaml)
+pins all three revisions and selects chunk retrieval. It indexes each published
+edition, including EUR-Lex annexes and the combined patent title/abstract text.
+For patents, a language edition may contain just a title. UN documents and
+individual EUR-Lex articles and annexes each keep their own chunk boundaries.
+
+On Narval, the campaign directory is
+`$SCRATCH/clir-benchmark/runs/narval-20261119-verified-bm25`. Place the checkout
+in `project/` and the pinned corpus shards in
+`inputs/{chemistry,eurlex,un}/data/corpus/`, plus `inputs/eurlex/data/annexes/`.
+From the campaign checkout, run:
+
+```bash
+bash scripts/submit_verified_bm25.sh
+```
+
+The three CPU jobs prepare the chunks and write one SQLite BM25 index per corpus
+under `artifacts/lexical/<corpus>/<fingerprint>/`. Job IDs, validated index
+paths, and logs are under the campaign's `job_status/` and `logs/`. Each index
+can be reused across QA cohorts that search the same chunks with the same
+analyzer. Reading the new release's QA evidence and scoring runs are later
+stages. To prepare a single corpus directly with the same checkout layout:
+
+```bash
+clir-benchmark --config configs/verified-20261118-bm25.yaml prepare-corpus --corpus chemistry
+clir-benchmark --config configs/verified-20261118-bm25.yaml index-bm25 --corpus chemistry
+```
+
+The original releases use the default corpus format and configuration:
+
 ```bash
 uv run clir-benchmark prepare-corpus --corpus eurlex
 uv run clir-benchmark prepare-relevance --corpus eurlex

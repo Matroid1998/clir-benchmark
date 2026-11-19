@@ -1,0 +1,40 @@
+# Layout on Narval: <campaign>/project/configs, <campaign>/inputs, <campaign>/artifacts.
+version: 1
+output_dir: ../../artifacts
+baselines: [bm25]
+retrieval_unit: chunk
+candidate_mode: all
+datasets:
+  chemistry:
+    corpus_format: verified-multilingual-v1
+    qa: &patents
+      repo_id: MehdiAstaraki/google-patents-generated-qa-verified-20261118
+      revision: 9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed
+    corpus:
+      <<: *patents
+      local_dir: ../../inputs/chemistry
+  eurlex:
+    corpus_format: verified-multilingual-v1
+    qa: &eurlex
+      repo_id: MehdiAstaraki/eurlex-generated-qa-verified-20261118
+      revision: e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede
+    corpus:
+      <<: *eurlex
+      local_dir: ../../inputs/eurlex
+  un:
+    corpus_format: verified-multilingual-v1
+    qa: &un
+      repo_id: MehdiAstaraki/un-generated-qa-verified-20261118
+      revision: 910ee8435bc4e5a41ccd5f913c30ebc1237eb130
+    corpus:
+      <<: *un
+      local_dir: ../../inputs/un
+chunking:
+  tokenizer_id: BAAI/bge-m3
+  revision: 5617a9f61b028005a4858fdac845db406aefb181
+  max_tokens: 512
+  overlap_tokens: 64
+bm25:
+  k1: 1.2
+  b: 0.75
+  analyzer: unicode-words-cjk-v1

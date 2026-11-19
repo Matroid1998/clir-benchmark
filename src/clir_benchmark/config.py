@@ -80,6 +80,11 @@ class SourceSpec:
 class DatasetSpec:
     qa: SourceSpec
     corpus: SourceSpec
+    corpus_format: str = "legacy"
+
+    def __post_init__(self) -> None:
+        if self.corpus_format not in ("legacy", "verified-multilingual-v1"):
+            raise ValidationError(f"Unknown corpus_format: {self.corpus_format}")
 
 
 @dataclass(frozen=True)
@@ -410,6 +415,11 @@ class Config:
                 "schema": 1,
                 "corpus": corpus,
                 "source": self.datasets[corpus].corpus.identity(),
+                **(
+                    {"corpus_format": self.datasets[corpus].corpus_format}
+                    if self.datasets[corpus].corpus_format != "legacy"
+                    else {}
+                ),
                 "chunking": asdict(self.chunking),
             }
         )
@@ -482,8 +492,14 @@ def load_config(path: str | Path) -> Config:
         if name not in {"eurlex", "un", "chemistry"}:
             raise ValidationError(f"Unknown corpus adapter: {name}")
         sources = {}
-        if not isinstance(spec, dict) or set(spec) != {"qa", "corpus"}:
-            raise ValidationError(f"{name}: provide exactly qa and corpus source specifications")
+        if (
+            not isinstance(spec, dict)
+            or set(spec) - {"qa", "corpus", "corpus_format"}
+            or not {"qa", "corpus"} <= spec.keys()
+        ):
+            raise ValidationError(
+                f"{name}: provide qa and corpus sources, optionally corpus_format"
+            )
         for kind in ("qa", "corpus"):
             if not isinstance(spec[kind], dict):
                 raise ValidationError(f"{name}.{kind}: expected a source specification")
@@ -497,7 +513,7 @@ def load_config(path: str | Path) -> Config:
                 raise ValidationError(
                     f"{name}.{kind}: invalid source specification: {exc}"
                 ) from exc
-        datasets[name] = DatasetSpec(**sources)
+        datasets[name] = DatasetSpec(**sources, corpus_format=spec.get("corpus_format", "legacy"))
     if not datasets:
         raise ValidationError("At least one dataset is required")
     for name in ("evidence_file", "model_registry", "env_file"):
