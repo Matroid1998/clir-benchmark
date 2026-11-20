@@ -1,0 +1,89 @@
+{
+  "boundary_policy": "shared-sentences-v1",
+  "budgets": {
+    "arctic-embed-l-v2": {
+      "code_revision": null,
+      "document_prefix": "",
+      "native_limit": 8192,
+      "repo_id": "Snowflake/snowflake-arctic-embed-l-v2.0",
+      "revision": "ac6544c8a46e00af67e330e85a9028c66b8cfd9a",
+      "trust_remote_code": false
+    },
+    "bge-m3": {
+      "code_revision": null,
+      "document_prefix": "",
+      "native_limit": 8192,
+      "repo_id": "BAAI/bge-m3",
+      "revision": "5617a9f61b028005a4858fdac845db406aefb181",
+      "trust_remote_code": false
+    },
+    "e5-large-instruct": {
+      "code_revision": null,
+      "document_prefix": "",
+      "native_limit": 512,
+      "repo_id": "intfloat/multilingual-e5-large-instruct",
+      "revision": "274baa43b0e13e37fafa6428dbc7938e62e5c439",
+      "trust_remote_code": false
+    },
+    "embeddinggemma": {
+      "code_revision": null,
+      "document_prefix": "title: none | text: ",
+      "native_limit": 2048,
+      "repo_id": "google/embeddinggemma-300m",
+      "revision": "57c266a740f537b4dc058e1b0cda161fd15afa75",
+      "trust_remote_code": false
+    },
+    "granite-278m": {
+      "code_revision": null,
+      "document_prefix": "",
+      "native_limit": 512,
+      "repo_id": "ibm-granite/granite-embedding-278m-multilingual",
+      "revision": "a9cb5338491faf32b73dd17b714a31821c021bbf",
+      "trust_remote_code": false
+    },
+    "gte-multilingual-base": {
+      "code_revision": "40ced75c3017eb27626c9d4ea981bde21a2662f4",
+      "document_prefix": "",
+      "native_limit": 8192,
+      "repo_id": "Alibaba-NLP/gte-multilingual-base",
+      "revision": "9bbca17d9273fd0d03d5725c7a4b0f6b45142062",
+      "trust_remote_code": true
+    },
+    "nomic-v2-moe": {
+      "code_revision": "7710840340a098cfb869c4f65e87cf2b1b70caca",
+      "document_prefix": "search_document: ",
+      "native_limit": 512,
+      "repo_id": "nomic-ai/nomic-embed-text-v2-moe",
+      "revision": "1066b6599d099fbb93dfcb64f9c37a7c9e503e85",
+      "trust_remote_code": true
+    },
+    "qwen3-0.6B": {
+      "code_revision": null,
+      "document_prefix": "",
+      "native_limit": 32768,
+      "repo_id": "Qwen/Qwen3-Embedding-0.6B",
+      "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+      "trust_remote_code": false
+    }
+  },
+  "end_exclusive": true,
+  "icu_version": "73.2",
+  "max_tokens": 512,
+  "max_words": 200,
+  "models": [
+    "arctic-embed-l-v2",
+    "bge-m3",
+    "e5-large-instruct",
+    "embeddinggemma",
+    "granite-278m",
+    "gte-multilingual-base",
+    "nomic-v2-moe",
+    "qwen3-0.6B"
+  ],
+  "offset_unit": "unicode_code_points",
+  "overlap_tokens": "largest token count of the repeated source text without specials",
+  "overlap_words": 64,
+  "token_count": "largest complete prefixed input with specials",
+  "tokenizers": "0.22.2+computecanada",
+  "transformers": "4.57.6+computecanada"
+}

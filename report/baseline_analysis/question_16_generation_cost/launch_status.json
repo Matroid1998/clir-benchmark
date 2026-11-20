@@ -1,0 +1,33 @@
+{
+  "checked_at_utc": "2026-11-20T04:13:17.264943+00:00",
+  "local_generation_services": [
+    "clir-verified-translate-20261119-v2.service",
+    "clir-verified-generate-hyde-20261119-v2.service"
+  ],
+  "generation_to_date": {
+    "translation": {
+      "provider_reported_usd": 0.4748635500000005,
+      "successes": 1827,
+      "priced_attempts": 1896,
+      "provider_declines": 69,
+      "unpriced_attempts": 8
+    },
+    "hyde": {
+      "provider_reported_usd": 0.6125311149999996,
+      "successes": 814,
+      "priced_attempts": 855,
+      "provider_declines": 41,
+      "unpriced_attempts": 8
+    }
+  },
+  "narval_index_campaign": "/scratch/matroid/clir-benchmark/runs/narval-20261119-shared-indexes",
+  "narval_generation_campaign": "/scratch/matroid/clir-benchmark/runs/narval-20261119-verified-query-generation",
+  "transferred_checkpoint_file_count": 3180,
+  "generation_transfer": "Each stage automatically copies complete verified outputs and request accounting to Narval after assembly.",
+  "slurm_index_jobs_by_stage": {
+    "chunks": 3,
+    "bm25": 3,
+    "dense_document": 24
+  },
+  "retrieval_jobs": 0
+}

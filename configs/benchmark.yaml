@@ -39,7 +39,7 @@ query_languages: []
 target_languages: [en, de, es, fr, zh]
 # Optional JSONL overlay: query_id + evidence_all_languages (+ alignment fields).
 evidence_file: null
-models: [embeddinggemma, bge-m3, qwen3-0.6B, nomic-v2-moe, granite-278m, LaBSE, SapBERT, e5-large-instruct]
+models: [embeddinggemma, bge-m3, qwen3-0.6B, nomic-v2-moe, granite-278m, gte-multilingual-base, arctic-embed-l-v2, e5-large-instruct]
 # retrieve/evaluate defaults; override with repeated --baseline flags.
 baselines: [dense]
 # Explicitly choose an endpoint and model before running `translate`.

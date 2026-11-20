@@ -1,0 +1,48 @@
+{
+  "sample_started": "2026-11-19T19:55:19-05:00",
+  "node": "nc11107",
+  "sample_elapsed_seconds": 20.01,
+  "workers": {
+    "chemistry": {
+      "pid": 4125156,
+      "wait_channel_samples": {
+        "cl_sync_io_wait": 4,
+        "osc_io_fsync_end": 12,
+        "osc_enter_cache": 5
+      },
+      "process_cpu_seconds": 226.95,
+      "cpu_seconds_during_sample": 0.07,
+      "open_preparation_database_files": [
+        "/scratch/matroid/clir-benchmark/runs/narval-20261119-verified-bm25/artifacts/corpus/chemistry/.a39fef6fd77a12fabd81265f373ce3b31bf229bd8b92f44e02cb989bfa5d0bc7-wt0wd22t/lookup.sqlite",
+        "/scratch/matroid/clir-benchmark/runs/narval-20261119-verified-bm25/artifacts/corpus/chemistry/.a39fef6fd77a12fabd81265f373ce3b31bf229bd8b92f44e02cb989bfa5d0bc7-wt0wd22t/lookup.sqlite-journal"
+      ]
+    },
+    "eurlex": {
+      "pid": 4125231,
+      "wait_channel_samples": {
+        "cl_sync_io_wait": 5,
+        "osc_io_fsync_end": 15,
+        "osc_enter_cache": 1
+      },
+      "process_cpu_seconds": 488.92,
+      "cpu_seconds_during_sample": 0.11,
+      "open_preparation_database_files": [
+        "/scratch/matroid/clir-benchmark/runs/narval-20261119-verified-bm25/artifacts/corpus/eurlex/.1895118bb3be88a39d0acb7c524cf117e6a1275e2528e0c21717fdbce5036f51-wava_yt2/lookup.sqlite",
+        "/scratch/matroid/clir-benchmark/runs/narval-20261119-verified-bm25/artifacts/corpus/eurlex/.1895118bb3be88a39d0acb7c524cf117e6a1275e2528e0c21717fdbce5036f51-wava_yt2/lookup.sqlite-journal"
+      ]
+    },
+    "un": {
+      "pid": 4125347,
+      "wait_channel_samples": {
+        "osc_enter_cache": 20,
+        "0": 1
+      },
+      "process_cpu_seconds": 1882.21,
+      "cpu_seconds_during_sample": 0.77,
+      "open_preparation_database_files": [
+        "/scratch/matroid/clir-benchmark/runs/narval-20261119-verified-bm25/artifacts/corpus/un/.7f26f26357214a48adc829563b182a51d915f7aa7f2f25a646a8289b70937eac-jslgoxga/lookup.sqlite",
+        "/scratch/matroid/clir-benchmark/runs/narval-20261119-verified-bm25/artifacts/corpus/un/.7f26f26357214a48adc829563b182a51d915f7aa7f2f25a646a8289b70937eac-jslgoxga/lookup.sqlite-journal"
+      ]
+    }
+  }
+}

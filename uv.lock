@@ -184,6 +184,9 @@ models = [
     { name = "sentencepiece" },
     { name = "torch" },
 ]
+shared-chunks = [
+    { name = "pyicu" },
+]
 test = [
     { name = "pytest" },
     { name = "ruff" },
@@ -196,6 +199,7 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.1,<3" },
     { name = "protobuf", marker = "extra == 'models'", specifier = ">=5,<7" },
     { name = "pyarrow", specifier = ">=19,<24" },
+    { name = "pyicu", marker = "extra == 'shared-chunks'", specifier = ">=2.10,<3" },
     { name = "pytest", marker = "extra == 'test'", specifier = ">=8,<10" },
     { name = "python-dotenv", specifier = ">=1,<2" },
     { name = "pyyaml", specifier = ">=6,<7" },
@@ -205,7 +209,7 @@ requires-dist = [
     { name = "torch", marker = "extra == 'models'", specifier = ">=2.6,<3" },
     { name = "transformers", specifier = ">=4.51,<5" },
 ]
-provides-extras = ["models", "test"]
+provides-extras = ["shared-chunks", "models", "test"]
 
 [[package]]
 name = "cloudpickle"
@@ -989,6 +993,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/49/2e/ced460408999b33da
 wheels = [
     { url = "https://files.pythonhosted.org/packages/71/46/17f022dd3e953bf20a04a028a21ec746d942f8d2af30fa0f124fa0e6a684/pygments-2.21.0-py3-none-any.whl", hash = "sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9", size = 1250147, upload-time = "2026-08-17T08:02:44.912Z" },
 ]
+
+[[package]]
+name = "pyicu"
+version = "2.17"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/b0/4e/e9537414644692b556b870716b47e43c54d9b8d314a2a004abca6f7492dd/pyicu-2.17.tar.gz", hash = "sha256:6138b95ac9592fa3983bf489e0c625e8fcfffd0c562a36a08269cecc4ffb48be", size = 270436, upload-time = "2026-10-23T12:25:55.596Z" }
 
 [[package]]
 name = "pytest"

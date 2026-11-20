@@ -1,0 +1,29 @@
+{
+  "sampled_at": "2026-11-19T19:53:35-05:00",
+  "corpora": {
+    "chemistry": {
+      "status": "preparing chunks",
+      "estimated_editions_written": 211000,
+      "total_editions": 574974,
+      "percent_editions": 36.7,
+      "minutes_writing_editions": 309.9,
+      "estimated_remaining_hours_at_average_edition_rate": 8.91
+    },
+    "eurlex": {
+      "status": "preparing chunks",
+      "estimated_editions_written": 279000,
+      "total_editions": 395525,
+      "percent_editions": 70.5,
+      "minutes_writing_editions": 309.5,
+      "estimated_remaining_hours_at_average_edition_rate": 2.15
+    },
+    "un": {
+      "status": "preparing chunks",
+      "estimated_editions_written": 34000,
+      "total_editions": 88134,
+      "percent_editions": 38.6,
+      "minutes_writing_editions": 309.5,
+      "estimated_remaining_hours_at_average_edition_rate": 8.21
+    }
+  }
+}

@@ -1,0 +1,5 @@
+overlap_words,annotated_edition_chunks,contained,crosses_boundary,span_exceeds_budget
+0,189,26,2,4
+32,208,26,2,4
+64,234,28,0,4
+96,272,27,1,4

@@ -26,7 +26,7 @@ from .adapters import (
     select_candidates,
 )
 from .artifacts import CorpusStore
-from .chunking import Chunker, load_tokenizer
+from .chunking import Chunker, make_chunker
 from .config import Config
 from .errors import ValidationError
 from .evidence import parse_annotations
@@ -228,7 +228,7 @@ def prepare_subset(
     targets = list(config.target_languages) or sorted(upstream_languages)
     for _, source_id, row in reservoir:
         raw_sources.setdefault(source_id, row)
-    chunker = chunker or Chunker(load_tokenizer(config.chunking, token), config.chunking)
+    chunker = chunker or make_chunker(config, token)
     config.output_dir.mkdir(parents=True, exist_ok=True)
     selected, selected_sources, skipped = [], set(), []
     selected_settings = {}

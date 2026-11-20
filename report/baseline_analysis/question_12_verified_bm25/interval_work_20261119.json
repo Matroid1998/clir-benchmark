@@ -1,0 +1,104 @@
+{
+  "sampled_at": [
+    "2026-11-19T15:32:24-05:00",
+    "2026-11-19T19:53:35-05:00"
+  ],
+  "interval_boundaries": "Approximate editions written at each sample, rounded to 1,000 by the job progress counter.",
+  "un_chunk_counts": "Previous completed run, matched on every edition ID, canonical and parent IDs, language, and SHA-256 of text.",
+  "corpora": {
+    "chemistry": {
+      "all": {
+        "editions": 574974,
+        "unicode_characters": 397104508,
+        "mean_characters": 690.6,
+        "median_characters": 556.0
+      },
+      "start_to_first_sample": {
+        "editions": 76000,
+        "unicode_characters": 48351961,
+        "mean_characters": 636.2,
+        "median_characters": 494.0,
+        "elapsed_minutes": 48.7,
+        "editions_per_hour": 93634
+      },
+      "between_samples": {
+        "editions": 135000,
+        "unicode_characters": 80379283,
+        "mean_characters": 595.4,
+        "median_characters": 441.0,
+        "elapsed_minutes": 261.18,
+        "editions_per_hour": 31013
+      },
+      "after_second_sample": {
+        "editions": 363974,
+        "unicode_characters": 268373264,
+        "mean_characters": 737.3,
+        "median_characters": 606.0
+      }
+    },
+    "eurlex": {
+      "all": {
+        "editions": 395525,
+        "unicode_characters": 936320526,
+        "mean_characters": 2367.3,
+        "median_characters": 627
+      },
+      "start_to_first_sample": {
+        "editions": 77000,
+        "unicode_characters": 82154445,
+        "mean_characters": 1066.9,
+        "median_characters": 450.0,
+        "elapsed_minutes": 48.3,
+        "editions_per_hour": 95652
+      },
+      "between_samples": {
+        "editions": 202000,
+        "unicode_characters": 228280757,
+        "mean_characters": 1130.1,
+        "median_characters": 517.0,
+        "elapsed_minutes": 261.18,
+        "editions_per_hour": 46404
+      },
+      "after_second_sample": {
+        "editions": 116525,
+        "unicode_characters": 625885324,
+        "mean_characters": 5371.3,
+        "median_characters": 950
+      }
+    },
+    "un": {
+      "all": {
+        "editions": 88134,
+        "unicode_characters": 1865170837,
+        "mean_characters": 21162.9,
+        "median_characters": 8738.5,
+        "chunks": 1083284
+      },
+      "start_to_first_sample": {
+        "editions": 17000,
+        "unicode_characters": 328816053,
+        "mean_characters": 19342.1,
+        "median_characters": 7056.5,
+        "chunks": 192476,
+        "elapsed_minutes": 48.4,
+        "editions_per_hour": 21074
+      },
+      "between_samples": {
+        "editions": 17000,
+        "unicode_characters": 320042914,
+        "mean_characters": 18826.1,
+        "median_characters": 7255.0,
+        "chunks": 186776,
+        "elapsed_minutes": 261.18,
+        "editions_per_hour": 3905
+      },
+      "after_second_sample": {
+        "editions": 54134,
+        "unicode_characters": 1216311870,
+        "mean_characters": 22468.5,
+        "median_characters": 10020.0,
+        "chunks": 704032
+      }
+    }
+  }
+}

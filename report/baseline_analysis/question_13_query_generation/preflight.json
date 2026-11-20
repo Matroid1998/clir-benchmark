@@ -1,0 +1,483 @@
+{
+  "summary": {
+    "qa_questions": 6000,
+    "translation_variants": 34000,
+    "translation_identity_variants": 6000,
+    "hyde_passages": 6000,
+    "planned_api_requests": 34000,
+    "planned_api_requests_by_model": {
+      "anthropic/claude-haiku-5.5": 26000,
+      "openai/gpt-5.6-luna": 2000,
+      "qwen/qwen3.8-27b": 6000
+    },
+    "qa_shard_sha256": {
+      "chemistry": {
+        "data/qas/train-00000.parquet": "f11fc169936c8096fc15ce9e8d9989959900904e3eca5ebc9466331b51a5a577"
+      },
+      "eurlex": {
+        "data/qas/train-00000.parquet": "a5458850c5d8fb62885fb72ec7ac2c683045114abb5e7f4f897acab2c402f22f"
+      },
+      "un": {
+        "data/qas/train-00000.parquet": "6f41f00b1179ad43b8f717b849f9c942368f964d5e488d640850765c7ef5d2b3"
+      }
+    }
+  },
+  "translation": {
+    "command": "translate",
+    "mode": "dry-run",
+    "jobs": [
+      {
+        "corpus": "chemistry",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/chemistry/de/4d2d60b37360df9520d145b61ab8775be84d1e83f43c3254cebcb62d4840f681",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+          "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed"
+        },
+        "input_fingerprint": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+        "prompt_fingerprint": "6b165b24308f10f0099633360186ba207c733d441ab681bdc429184bbb71c9d8",
+        "output_language": "de",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 286,
+        "requests_before_cache_or_retries": 1714
+      },
+      {
+        "corpus": "chemistry",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/chemistry/en/62913cfe3ab6146ccec7bf63d7647b8e1ceced6d7e88cc65c63dfe648f851269",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+          "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed"
+        },
+        "input_fingerprint": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+        "prompt_fingerprint": "6b165b24308f10f0099633360186ba207c733d441ab681bdc429184bbb71c9d8",
+        "output_language": "en",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 286,
+        "requests_before_cache_or_retries": 1714
+      },
+      {
+        "corpus": "chemistry",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/chemistry/es/41e564d8d74ea4bbadbc5c1869d8034dd6247f63d6a49937ff097b4d812b00c9",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+          "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed"
+        },
+        "input_fingerprint": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+        "prompt_fingerprint": "6b165b24308f10f0099633360186ba207c733d441ab681bdc429184bbb71c9d8",
+        "output_language": "es",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 286,
+        "requests_before_cache_or_retries": 1714
+      },
+      {
+        "corpus": "chemistry",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/chemistry/fr/a5fb484fdbc5c77a3753cf0ca889fd7e88bb68b145beda6357aa6b2c064042c1",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+          "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed"
+        },
+        "input_fingerprint": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+        "prompt_fingerprint": "6b165b24308f10f0099633360186ba207c733d441ab681bdc429184bbb71c9d8",
+        "output_language": "fr",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 286,
+        "requests_before_cache_or_retries": 1714
+      },
+      {
+        "corpus": "chemistry",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/chemistry/ja/3f5e31de15285a3c10986bedf196fab73ec36104aaac49443c8113d339128439",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+          "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed"
+        },
+        "input_fingerprint": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+        "prompt_fingerprint": "6b165b24308f10f0099633360186ba207c733d441ab681bdc429184bbb71c9d8",
+        "output_language": "ja",
+        "model": "qwen/qwen3.8-27b",
+        "variants": 2000,
+        "identity_variants": 285,
+        "requests_before_cache_or_retries": 1715
+      },
+      {
+        "corpus": "chemistry",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/chemistry/ru/bb33c85d1c60f98b0ec8b30146b9879a4ca939a04c85627beecfe965f804385a",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+          "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed"
+        },
+        "input_fingerprint": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+        "prompt_fingerprint": "6b165b24308f10f0099633360186ba207c733d441ab681bdc429184bbb71c9d8",
+        "output_language": "ru",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 285,
+        "requests_before_cache_or_retries": 1715
+      },
+      {
+        "corpus": "chemistry",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/chemistry/zh/7e6c463e2117df63b2f036a7903946b7c04ca7dd2bc84dc434cd929dd1dc586f",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+          "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed"
+        },
+        "input_fingerprint": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+        "prompt_fingerprint": "6b165b24308f10f0099633360186ba207c733d441ab681bdc429184bbb71c9d8",
+        "output_language": "zh",
+        "model": "qwen/qwen3.8-27b",
+        "variants": 2000,
+        "identity_variants": 286,
+        "requests_before_cache_or_retries": 1714
+      },
+      {
+        "corpus": "eurlex",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/eurlex/de/adaeb98bfc7eeb233d879ed00b8cedb49abd06469d81ffcfc8adf789c46c0e96",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/eurlex-generated-qa-verified-20261118",
+          "revision": "e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede"
+        },
+        "input_fingerprint": "c596e626a653de4444c2b95a2f2799f9398cb9fe2318c25e06e7b2b250c9f7fc",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "de",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 500,
+        "requests_before_cache_or_retries": 1500
+      },
+      {
+        "corpus": "eurlex",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/eurlex/en/91b878523a3f6f038ada87555f6cbc68b412823030d5847a68f0ca9293d28e0e",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/eurlex-generated-qa-verified-20261118",
+          "revision": "e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede"
+        },
+        "input_fingerprint": "c596e626a653de4444c2b95a2f2799f9398cb9fe2318c25e06e7b2b250c9f7fc",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "en",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 500,
+        "requests_before_cache_or_retries": 1500
+      },
+      {
+        "corpus": "eurlex",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/eurlex/es/31e2548a5228b8c3575cd2d4204e4317a601b95bd6b9e2c5058f28df7fdf7f75",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/eurlex-generated-qa-verified-20261118",
+          "revision": "e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede"
+        },
+        "input_fingerprint": "c596e626a653de4444c2b95a2f2799f9398cb9fe2318c25e06e7b2b250c9f7fc",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "es",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 500,
+        "requests_before_cache_or_retries": 1500
+      },
+      {
+        "corpus": "eurlex",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/eurlex/fr/5851a2e5ef96869014b8b9835b1788cb683ce1f8a33829153fb52f584331c965",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/eurlex-generated-qa-verified-20261118",
+          "revision": "e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede"
+        },
+        "input_fingerprint": "c596e626a653de4444c2b95a2f2799f9398cb9fe2318c25e06e7b2b250c9f7fc",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "fr",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 500,
+        "requests_before_cache_or_retries": 1500
+      },
+      {
+        "corpus": "un",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/un/ar/eebc7c3735e71d3aa08b6943e242c397d82abb426019fd986aba8aa1af56e518",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/un-generated-qa-verified-20261118",
+          "revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130"
+        },
+        "input_fingerprint": "d69658ca0c8a51f53f7d357e67e3b8d19150e77367d2e8f0da8a1fc26323dc51",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "ar",
+        "model": "openai/gpt-5.6-luna",
+        "variants": 2000,
+        "identity_variants": 333,
+        "requests_before_cache_or_retries": 1667
+      },
+      {
+        "corpus": "un",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/un/en/062f605141a7d141be7e04f5b4748987511f159680bf83cde127f6e40b7fbbcf",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/un-generated-qa-verified-20261118",
+          "revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130"
+        },
+        "input_fingerprint": "d69658ca0c8a51f53f7d357e67e3b8d19150e77367d2e8f0da8a1fc26323dc51",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "en",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 334,
+        "requests_before_cache_or_retries": 1666
+      },
+      {
+        "corpus": "un",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/un/es/582e96fa89582a194a8900b194e8a80007b19a8e115e4713b16513908a610da4",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/un-generated-qa-verified-20261118",
+          "revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130"
+        },
+        "input_fingerprint": "d69658ca0c8a51f53f7d357e67e3b8d19150e77367d2e8f0da8a1fc26323dc51",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "es",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 333,
+        "requests_before_cache_or_retries": 1667
+      },
+      {
+        "corpus": "un",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/un/fr/ba57a52c0e9844d2b86c29a1e1d67aa656d369ffa640c0220413e234dd6a2e67",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/un-generated-qa-verified-20261118",
+          "revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130"
+        },
+        "input_fingerprint": "d69658ca0c8a51f53f7d357e67e3b8d19150e77367d2e8f0da8a1fc26323dc51",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "fr",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 334,
+        "requests_before_cache_or_retries": 1666
+      },
+      {
+        "corpus": "un",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/un/ru/42e083af9fb8d49b290ac5ff471b3ff06616ac09c756805806aca51963b233c1",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/un-generated-qa-verified-20261118",
+          "revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130"
+        },
+        "input_fingerprint": "d69658ca0c8a51f53f7d357e67e3b8d19150e77367d2e8f0da8a1fc26323dc51",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "ru",
+        "model": "anthropic/claude-haiku-5.5",
+        "variants": 2000,
+        "identity_variants": 333,
+        "requests_before_cache_or_retries": 1667
+      },
+      {
+        "corpus": "un",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/translations/un/zh/e9e15b5b9c9857172ff4720d2e342ba1a926df869906ba456886f7e2c897c6b3",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/un-generated-qa-verified-20261118",
+          "revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130"
+        },
+        "input_fingerprint": "d69658ca0c8a51f53f7d357e67e3b8d19150e77367d2e8f0da8a1fc26323dc51",
+        "prompt_fingerprint": "091ec8cda1a376ef2eed3335e7bfadbdf832196ff425c3aa59df5fd1fdf3e321",
+        "output_language": "zh",
+        "model": "qwen/qwen3.8-27b",
+        "variants": 2000,
+        "identity_variants": 333,
+        "requests_before_cache_or_retries": 1667
+      }
+    ]
+  },
+  "hyde": {
+    "command": "generate-hyde",
+    "mode": "dry-run",
+    "jobs": [
+      {
+        "corpus": "chemistry",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/hyde/chemistry/question-language/7fe1d1faf15ba10219ca1ae0c603344411a71b5c01ee614dbfc80fdc0eef1b41",
+        "output_language_policy": "question-language",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+          "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed"
+        },
+        "input_fingerprint": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+        "prompt_fingerprint": "1680c53d80e4d54db643fb4f99b66b92f681c7876f94f2ed35f335dec4fe36ca",
+        "outputs": [
+          {
+            "output_language": "de",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 286,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 286
+          },
+          {
+            "output_language": "en",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 286,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 286
+          },
+          {
+            "output_language": "es",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 286,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 286
+          },
+          {
+            "output_language": "fr",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 286,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 286
+          },
+          {
+            "output_language": "ja",
+            "model": "qwen/qwen3.8-27b",
+            "variants": 285,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 285
+          },
+          {
+            "output_language": "ru",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 285,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 285
+          },
+          {
+            "output_language": "zh",
+            "model": "qwen/qwen3.8-27b",
+            "variants": 286,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 286
+          }
+        ]
+      },
+      {
+        "corpus": "eurlex",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/hyde/eurlex/question-language/84b34475a7511e1cf5817ea964f70aab333cc8d72bf2b9dfbd7ffcd44ff112b2",
+        "output_language_policy": "question-language",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/eurlex-generated-qa-verified-20261118",
+          "revision": "e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede"
+        },
+        "input_fingerprint": "c596e626a653de4444c2b95a2f2799f9398cb9fe2318c25e06e7b2b250c9f7fc",
+        "prompt_fingerprint": "9c433daba3dfed00832edb19a91ed0e43e425bcb77fcfe9152db45e23392474a",
+        "outputs": [
+          {
+            "output_language": "de",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 500,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 500
+          },
+          {
+            "output_language": "en",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 500,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 500
+          },
+          {
+            "output_language": "es",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 500,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 500
+          },
+          {
+            "output_language": "fr",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 500,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 500
+          }
+        ]
+      },
+      {
+        "corpus": "un",
+        "artifact": "/home/mehdi/Projects/clir-benchmark/artifacts/verified-20261118-query-generation/hyde/un/question-language/325204ef71ebb596fe2d15477192c8f626904267573d622170477406de372226",
+        "output_language_policy": "question-language",
+        "input_mode": "verified-qas",
+        "qa_release": {
+          "repo_id": "MehdiAstaraki/un-generated-qa-verified-20261118",
+          "revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130"
+        },
+        "input_fingerprint": "d69658ca0c8a51f53f7d357e67e3b8d19150e77367d2e8f0da8a1fc26323dc51",
+        "prompt_fingerprint": "9c433daba3dfed00832edb19a91ed0e43e425bcb77fcfe9152db45e23392474a",
+        "outputs": [
+          {
+            "output_language": "ar",
+            "model": "openai/gpt-5.6-luna",
+            "variants": 333,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 333
+          },
+          {
+            "output_language": "en",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 334,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 334
+          },
+          {
+            "output_language": "es",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 333,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 333
+          },
+          {
+            "output_language": "fr",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 334,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 334
+          },
+          {
+            "output_language": "ru",
+            "model": "anthropic/claude-haiku-5.5",
+            "variants": 333,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 333
+          },
+          {
+            "output_language": "zh",
+            "model": "qwen/qwen3.8-27b",
+            "variants": 333,
+            "identity_variants": 0,
+            "requests_before_cache_or_retries": 333
+          }
+        ]
+      }
+    ]
+  },
+  "offline_replay": {
+    "translation": {
+      "verified_variants": 34000,
+      "mock_requests": 28000,
+      "new_requests_on_verify_and_replay": 0
+    },
+    "hyde": {
+      "verified_variants": 6000,
+      "mock_requests": 6000,
+      "new_requests_on_verify_and_replay": 0
+    },
+    "provider_requests": 0
+  }
+}

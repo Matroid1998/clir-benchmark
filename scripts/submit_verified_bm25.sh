@@ -20,7 +20,8 @@ if [[ ${1:-} == --worker ]]; then
     export TOKENIZERS_PARALLELISM=false
     export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
     python_bin="$benchmark_root/venv/bin/python"
-    "$python_bin" -m clir_benchmark --config "$config" prepare-corpus --corpus "$corpus"
+    "$python_bin" -m clir_benchmark --config "$config" prepare-corpus --corpus "$corpus" \
+        --work-dir "$SLURM_TMPDIR"
     index_path=$("$python_bin" scripts/build_verified_bm25_index.py \
         --config "$config" --corpus "$corpus" \
         --build-temp "$SQLITE_TMPDIR" \

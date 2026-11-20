@@ -1,0 +1,20 @@
+{
+  "all_fit_512": 588,
+  "all_fit_native": 627,
+  "editions": 121,
+  "languages": [
+    "ar",
+    "de",
+    "en",
+    "es",
+    "fr",
+    "ja",
+    "ru",
+    "zh"
+  ],
+  "maximum_tokens": 625,
+  "source_records": 30,
+  "token_cap": 512,
+  "windows": 627,
+  "word_target": 200
+}

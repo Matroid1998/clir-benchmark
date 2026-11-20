@@ -1,26 +1,94 @@
 from __future__ import annotations
 
 import fcntl
+import http.client
 import json
+import math
 import os
 import re
 import time
 import urllib.error
 import urllib.request
-from collections.abc import Callable
+from collections import defaultdict
+from collections.abc import Callable, Iterable
 from contextlib import ExitStack
+from dataclasses import asdict, replace
 from pathlib import Path
 
-from .artifacts import rows
-from .config import Config, GenerationConfig
+import pyarrow as pa
+
+from .adapters import DatasetReader, required_string
+from .artifacts import ParquetSink, rows
+from .config import QUESTION_LANGUAGE, Config, GenerationConfig, language_tag
 from .errors import ValidationError
-from .util import read_json, write_json
+from .util import digest, hf_token, new_directory, read_json, write_json
+
+GENERATION_AUDIT_FIELDS = [
+    ("requested_model", pa.string()),
+    ("returned_model", pa.string()),
+    ("provider_cost_usd", pa.float64()),
+    ("api_cost_usd", pa.float64()),
+]
+IDENTITY_AUDIT = {
+    "requested_model": None,
+    "returned_model": None,
+    "provider_cost_usd": 0.0,
+    "api_cost_usd": 0.0,
+}
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         # Keep credentials and query text on the explicitly configured endpoint.
         raise urllib.error.HTTPError(req.full_url, code, "Redirect refused", headers, fp)
+
+
+class CompletionError(ValidationError):
+    def __init__(self, message, *, status=None):
+        super().__init__(message)
+        self.status = status
+
+
+def provider_refused(response):
+    choices = response.get("choices") if isinstance(response, dict) else None
+    if not isinstance(choices, list) or len(choices) != 1 or not isinstance(choices[0], dict):
+        return False
+    choice = choices[0]
+    message = choice.get("message")
+    return choice.get("finish_reason") == "content_filter" or (
+        isinstance(message, dict) and bool(message.get("refusal"))
+    )
+
+
+def with_refusal_policy(config, enabled):
+    if not enabled:
+        return config
+    return replace(config, query_generation=replace(config.query_generation, record_refusals=True))
+
+
+def retryable_completion_failure(error, response):
+    """Distinguish provider/network failures from validation of the request or file system."""
+    code = error.status if isinstance(error, CompletionError) else None
+    if isinstance(response, dict) and isinstance(response.get("error"), dict):
+        code = response["error"].get("code")
+        if not isinstance(code, int) and not (isinstance(code, str) and code.isdecimal()):
+            return False, None
+        code = int(code)
+    if code is not None:
+        return code in (408, 429) or 500 <= code <= 599, code
+    if isinstance(error, (CompletionError, TimeoutError, ConnectionError)):
+        return True, None
+    if isinstance(response, dict):
+        choices = response.get("choices")
+        for choice in choices if isinstance(choices, list) else []:
+            if isinstance(choice, dict) and (
+                choice.get("finish_reason") in ("content_filter", "length")
+                or isinstance(choice.get("message"), dict)
+                and choice["message"].get("refusal")
+            ):
+                return False, None
+        return True, None  # Malformed completion, e.g. JSON schema violation.
+    return False, None
 
 
 class ChatCompletionsClient:
@@ -60,12 +128,10 @@ class ChatCompletionsClient:
                 return json.load(response)
         except urllib.error.HTTPError as exc:
             # Do not log provider response bodies or headers, which may expose credentials.
-            raise ValidationError(
-                f"{self.label} HTTP error {exc.code}; no automatic retry"
-            ) from None
-        except (OSError, ValueError) as exc:
-            raise ValidationError(
-                f"{self.label} transport/response error ({type(exc).__name__}); no automatic retry"
+            raise CompletionError(f"{self.label} HTTP error {exc.code}", status=exc.code) from None
+        except (OSError, ValueError, http.client.HTTPException) as exc:
+            raise CompletionError(
+                f"{self.label} transport/response error ({type(exc).__name__})"
             ) from None
 
 
@@ -135,6 +201,249 @@ def eligible_inputs(config: Config, corpus: str, *, action: str) -> list[dict]:
         ),
         key=lambda row: row["id"],
     )
+
+
+def generation_inputs(config: Config, corpus: str, *, action: str) -> list[dict]:
+    if config.query_generation.input_mode != "verified-qas":
+        return eligible_inputs(config, corpus, action=action)
+
+    languages = config.query_generation.corpus_languages.get(corpus)
+    if not languages:
+        raise ValidationError(f"Set query_generation.corpus_languages for {corpus}")
+    qa = config.datasets[corpus].qa
+    reader = DatasetReader(qa, hf_token(config.env_file) if not qa.local_dir else None)
+    inputs = {}
+    for row in reader.read("qas", columns=["_id", "question", "question_language"]):
+        identifier = required_string(row, "_id", f"{corpus} verified QA")
+        label = f"{corpus} verified QA {identifier}"
+        language = language_tag(required_string(row, "question_language", label), label)
+        question = required_string(row, "question", label)
+        if any(c.isspace() for c in identifier) or identifier in inputs:
+            raise ValidationError(f"{label}: invalid or duplicate question ID")
+        if not question.strip() or language not in languages:
+            raise ValidationError(f"{label}: blank question or language outside {languages}")
+        inputs[identifier] = {"id": identifier, "question": question, "question_language": language}
+    if not inputs:
+        raise ValidationError(f"No verified questions found for {corpus}")
+    return [inputs[key] for key in sorted(inputs)]
+
+
+def generation_provenance(config: Config, corpus: str, inputs: list[dict], prompts: tuple) -> dict:
+    policy = {"record_refusals": True} if config.query_generation.record_refusals else {}
+    if config.query_generation.input_mode != "verified-qas":
+        return policy
+    qa = config.datasets[corpus].qa
+    return {
+        **policy,
+        "input_mode": "verified-qas",
+        "qa_release": {"repo_id": qa.repo_id, "revision": qa.revision},
+        "input_fingerprint": digest(inputs),
+        "prompt_fingerprint": digest(prompts),
+    }
+
+
+def generation_partition(destination, inputs, provenance, shard):
+    """Both verified and prepared inputs are already ordered by unique query ID."""
+    if shard is None:
+        return destination, inputs, provenance
+    index, size = shard
+    if size < 1 or index < 0 or index * size >= len(inputs):
+        raise ValidationError(f"Invalid shard {index} of size {size} for {len(inputs)} questions")
+    selected = inputs[index * size : (index + 1) * size]
+    path = destination.parent / "shards" / destination.name / str(size) / str(index)
+    return (
+        path,
+        selected,
+        {
+            **provenance,
+            "shard": {
+                "index": index,
+                "size": size,
+                "count": (len(inputs) + size - 1) // size,
+                "input_fingerprint": digest(selected),
+            },
+        },
+    )
+
+
+def assemble_generation_shards(
+    destination,
+    inputs,
+    provenance,
+    size,
+    language,
+    *,
+    loader,
+    configuration,
+    schema,
+    filename,
+    fingerprint_key,
+    summarize,
+    seconds_key,
+):
+    """Publish the canonical artifact from complete, validated local shards, without any client."""
+    if size < 1 or not inputs:
+        raise ValidationError("Shard size and question count must be positive")
+    if destination.exists():
+        loader(destination, language, inputs, provenance)
+        return destination
+    started = time.perf_counter()
+    records, fingerprints = [], []
+    for index in range((len(inputs) + size - 1) // size):
+        path, subset, expected = generation_partition(
+            destination, inputs, provenance, (index, size)
+        )
+        _, group, manifest = loader(path, language, subset, expected)
+        if digest(manifest.get("configuration")) != digest(configuration):
+            raise ValidationError(f"Generation model or options changed in shard {path}")
+        records.extend(group)
+        fingerprints.append(manifest[fingerprint_key])
+    verify_generation_inputs(
+        records,
+        inputs,
+        None if language == QUESTION_LANGUAGE else language,
+        destination,
+        record_refusals=provenance.get("record_refusals", False),
+    )
+    summary = summarize(records)
+    assembled = {
+        **manifest,
+        **provenance,
+        "query_count": len(records),
+        fingerprint_key: digest([(row["id"], row["language"], row["text"]) for row in records]),
+        "summary": summary,
+        "new_work": summarize([]),
+        "new_api_attempts": 0,
+        "cached_requests": sum(row["request_key"] is not None for row in records),
+        "seconds": time.perf_counter() - started,
+        "assembled_from_shards": {"size": size, "fingerprints": fingerprints},
+    }
+    del assembled["shard"]
+    if provenance or language == QUESTION_LANGUAGE:
+        assembled["by_language_and_model"] = generation_breakdown(records, seconds_key=seconds_key)
+    else:
+        assembled.pop("by_language_and_model", None)
+    with new_directory(destination) as temporary:
+        with ParquetSink(temporary / filename, schema) as sink:
+            for row in records:
+                sink.append(row)
+        write_json(temporary / "manifest.json", assembled)
+        loader(temporary, language, inputs, provenance)
+    return destination
+
+
+def output_model(config: Config, language: str, default: GenerationConfig) -> GenerationConfig:
+    assignments = config.query_generation.model_by_language
+    if assignments:
+        if language not in assignments:
+            raise ValidationError(f"No generation model assigned to output language {language}")
+        return replace(default, **asdict(config.query_generation.models[assignments[language]]))
+    return default
+
+
+def planned_generation(
+    route: GenerationConfig, language: str, paid: int, identity: int = 0
+) -> dict:
+    if paid and (not route.model or not route.endpoint):
+        raise ValidationError(f"Configure a generation model and endpoint for {language}")
+    return {
+        "output_language": language,
+        "model": route.model if paid else None,
+        "variants": paid + identity,
+        "identity_variants": identity,
+        "requests_before_cache_or_retries": paid,
+    }
+
+
+def verify_generation_inputs(
+    records: list[dict],
+    inputs: list[dict],
+    target: str | None,
+    artifact: Path,
+    *,
+    record_refusals=False,
+) -> None:
+    expected = {
+        (
+            query["id"],
+            query["question"],
+            query["question_language"],
+            target or query["question_language"],
+        )
+        for query in inputs
+    }
+    observed = {
+        (row["id"], row["original_text"], row["source_language"], row["language"])
+        for row in records
+    }
+    if (
+        observed != expected
+        or len(observed) != len(records)
+        or any(
+            not (
+                record_refusals
+                and row["text"] is None
+                and row.get("request_key")
+                and row.get("attempts", 0) > 0
+            )
+            if row.get("status") == "provider_refused"
+            else not isinstance(row["text"], str) or not row["text"].strip()
+            for row in records
+        )
+    ):
+        raise ValidationError(f"Query variants disagree with the pinned questions: {artifact}")
+
+
+def provider_cost_usd(response: dict | None) -> float | None:
+    usage = response.get("usage") if isinstance(response, dict) else None
+    value = usage.get("cost") if isinstance(usage, dict) else None
+    if type(value) in (int, float) and math.isfinite(value) and value >= 0:
+        return float(value)
+    return None
+
+
+def generation_audit(state: dict, route: GenerationConfig) -> dict:
+    attempts = state["attempts"]
+    response = attempts[-1]["response"]
+    reported = [provider_cost_usd(attempt["response"]) for attempt in attempts]
+    return {
+        "requested_model": route.model,
+        "returned_model": response.get("model") if isinstance(response, dict) else None,
+        "provider_cost_usd": nullable_sum(reported),
+        "api_cost_usd": nullable_sum(
+            cost if cost is not None else estimated_cost(token_usage(attempt["response"]), route)
+            for cost, attempt in zip(reported, attempts, strict=True)
+        ),
+    }
+
+
+def generation_breakdown(records: Iterable[dict], *, seconds_key: str) -> list[dict]:
+    groups = defaultdict(list)
+    for row in records:
+        groups[(row["language"], row["requested_model"], row["returned_model"])].append(row)
+    return [
+        {
+            "output_language": language,
+            "requested_model": requested,
+            "returned_model": returned,
+            "query_count": len(group),
+            "provider_refused_count": sum(row.get("status") == "provider_refused" for row in group),
+            "api_attempts": sum(row["attempts"] for row in group),
+            **{
+                key: nullable_sum(row[key] for row in group)
+                for key in (
+                    "input_tokens",
+                    "cached_input_tokens",
+                    "output_tokens",
+                    "estimated_cost_usd",
+                    "provider_cost_usd",
+                    "api_cost_usd",
+                    seconds_key,
+                )
+            },
+        }
+        for (language, requested, returned), group in groups.items()
+    ]
 
 
 def parse_generated_text(content: str, *, key: str, label: str) -> str:
@@ -219,9 +528,13 @@ class RequestCache:
         client_factory: Callable,
         label: str,
         command: str,
+        retry_transient: bool = False,
+        record_refusals: bool = False,
     ):
         self.root, self.config, self.env_file = root, config, env_file
         self.client_factory, self.label, self.command = client_factory, label, command
+        self.retry_transient = retry_transient
+        self.record_refusals = record_refusals
         self.client = None
         self.cache_hits = 0
         self.new_attempts: list[dict] = []
@@ -342,6 +655,18 @@ class RequestCache:
                 visit(value)
                 return {**value, "attempts": attempts}
 
+            def refusal_outcome(history):
+                if history.get("status") != "failed" or not history["attempts"]:
+                    return None
+                last = history["attempts"][-1]
+                if last["status"] != "failed" or not provider_refused(last.get("response")):
+                    return None
+                if not self.record_refusals:
+                    raise ValidationError(
+                        f"Provider refused {self.label.lower()} for {description}; audit: {self.root / (history['request_key'] + '.json')}; no fallback to the original query"
+                    )
+                return {**history, "status": "provider_refused", "text": None}
+
             for key in sorted({request_key, *compatible_requests}):
                 lock_request(key)
             path = self.root / f"{request_key}.json"
@@ -350,7 +675,9 @@ class RequestCache:
                 if path.exists()
                 else {"request_key": request_key, "payload": payload, "attempts": []}
             )
-            if path.exists() and (compatible_requests or state.get("prior_request_keys")):
+            if path.exists() and (
+                self.record_refusals or compatible_requests or state.get("prior_request_keys")
+            ):
                 state = load_state(request_key, payload)
             if not path.exists():
                 candidates = [
@@ -368,6 +695,10 @@ class RequestCache:
                     if previous["status"] == "success":
                         self.cache_hits += 1
                         return history, False
+                    refused = refusal_outcome(history)
+                    if refused is not None:
+                        self.cache_hits += 1
+                        return refused, False
                     if not retry_failed:
                         raise ValidationError(
                             f"Previous failed/interrupted {self.label.lower()}: {previous['request_key']}. Inspect it, then use {self.command} --retry-failed to retry explicitly."
@@ -378,7 +709,19 @@ class RequestCache:
             if state.get("status") == "success":
                 self.cache_hits += 1
                 return history, False
-            if state["attempts"] and not retry_failed:
+            refused = refusal_outcome(history)
+            if refused is not None:
+                self.cache_hits += 1
+                return refused, False
+
+            def can_retry():
+                return (
+                    self.retry_transient
+                    and len(state["attempts"]) < 3
+                    and state["attempts"][-1].get("retryable") is True
+                )
+
+            if state["attempts"] and not retry_failed and not can_retry():
                 raise ValidationError(
                     f"Previous failed/interrupted {self.label.lower()}: {path}. Inspect it, then use {self.command} --retry-failed to retry explicitly."
                 )
@@ -389,28 +732,45 @@ class RequestCache:
                 write_json(temporary, state)
                 temporary.replace(path)
 
-            attempt = {"status": "pending", "seconds": None, "response": None}
-            state["attempts"].append(attempt)
-            state["status"] = "pending"
-            self.new_attempts.append({"request_key": request_key, "attempt": attempt})
-            save()  # Persist pending before the API call, including requests interrupted by a crash.
-            started = time.perf_counter()
-            try:
-                response = self.client.complete(payload)
-                attempt["response"] = response
-                attempt["seconds"] = time.perf_counter() - started
-                state["text"] = parse_response(response)
-            except (ValidationError, KeyError, IndexError, TypeError, OSError, ValueError) as exc:
-                attempt["status"] = state["status"] = "failed"
-                attempt["seconds"] = time.perf_counter() - started
-                attempt["error_type"] = type(exc).__name__
+            while True:
+                attempt = {"status": "pending", "seconds": None, "response": None}
+                state["attempts"].append(attempt)
+                state["status"] = "pending"
+                self.new_attempts.append({"request_key": request_key, "attempt": attempt})
+                save()  # Persist pending before sending, including requests interrupted by a crash.
+                started = time.perf_counter()
+                try:
+                    response = self.client.complete(payload)
+                    attempt["response"] = response
+                    attempt["seconds"] = time.perf_counter() - started
+                    state["text"] = parse_response(response)
+                except (
+                    ValidationError,
+                    KeyError,
+                    IndexError,
+                    TypeError,
+                    OSError,
+                    ValueError,
+                ) as exc:
+                    attempt["status"] = state["status"] = "failed"
+                    attempt["seconds"] = time.perf_counter() - started
+                    attempt["error_type"] = type(exc).__name__
+                    attempt["retryable"], attempt["http_status"] = retryable_completion_failure(
+                        exc, attempt["response"]
+                    )
+                    save()
+                    refused = refusal_outcome(materialize(state))
+                    if refused is not None:
+                        return refused, True
+                    if can_retry():
+                        time.sleep(5 * 2 ** (len(state["attempts"]) - 1))
+                        continue
+                    raise ValidationError(
+                        f"{self.label} failed for {description}; HTTP status {attempt['http_status']}; audit: {path}; no fallback to the original query"
+                    ) from exc
+                attempt["status"] = state["status"] = "success"
                 save()
-                raise ValidationError(
-                    f"{self.label} failed for {description}; audit: {path}; no fallback to the original query"
-                ) from exc
-            attempt["status"] = state["status"] = "success"
-            save()
-            return materialize(state), True
+                return materialize(state), True
 
 
 def attempt_accounting(state: dict, config: GenerationConfig, *, seconds_key: str) -> dict:

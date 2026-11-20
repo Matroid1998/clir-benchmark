@@ -1,0 +1,35 @@
+{
+  "sampled_at": "2026-11-19T19:59:58-05:00",
+  "recent_rate_window": "2026-11-19 15:32 to 19:53 Toronto",
+  "slurm_limit_hours": 24,
+  "jobs": {
+    "chemistry": {
+      "deadline": "2026-11-20T14:16:54-05:00",
+      "estimated_prepared_editions": 213000,
+      "hours_remaining": 18.28,
+      "projection_unit": "editions",
+      "projected_chunking_hours_remaining": 11.67,
+      "hours_left_for_index_and_validation_at_recent_rate": 6.61,
+      "previous_release_index_build_hours": 0.006
+    },
+    "eurlex": {
+      "deadline": "2026-11-20T14:16:56-05:00",
+      "estimated_prepared_editions": 281000,
+      "hours_remaining": 18.28,
+      "projection_unit": "editions",
+      "projected_chunking_hours_remaining": 2.47,
+      "hours_left_for_index_and_validation_at_recent_rate": 15.81,
+      "previous_release_index_build_hours": 0.37
+    },
+    "un": {
+      "deadline": "2026-11-20T14:17:01-05:00",
+      "estimated_prepared_editions": 34000,
+      "hours_remaining": 18.28,
+      "projection_unit": "chunks",
+      "projected_chunking_hours_remaining": 16.41,
+      "hours_left_for_index_and_validation_at_recent_rate": 1.88,
+      "previous_release_index_build_hours": 6.287
+    }
+  },
+  "assumptions": "Recent throughput continues. EUR-Lex has longer annex texts later in the corpus. Historical index times describe different hardware and, except for UN, different inputs. Publication and validation also take time."
+}

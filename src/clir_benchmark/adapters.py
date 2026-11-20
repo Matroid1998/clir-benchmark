@@ -24,7 +24,7 @@ class DatasetReader:
         self.token = token
         self._files: list[str] | None = None
 
-    def read(self, configuration: str) -> Iterator[dict]:
+    def read(self, configuration: str, *, columns: list[str] | None = None) -> Iterator[dict]:
         pattern = (
             "data/train-*.parquet"
             if configuration == "default"
@@ -57,7 +57,7 @@ class DatasetReader:
                 f"{self.spec.repo_id}@{self.spec.revision}: no {configuration!r} Parquet files ({pattern})"
             )
         for path in paths:
-            yield from rows(path)
+            yield from rows(path, columns)
 
 
 def required_string(row: dict, key: str, label: str, *, allow_empty: bool = False) -> str:

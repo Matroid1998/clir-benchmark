@@ -41,6 +41,8 @@ def encode_records(
     kind: str,
     runtime: RuntimeConfig,
     input_fingerprint: str,
+    *,
+    require_complete_inputs: bool = False,
 ) -> Path:
     if destination.exists():
         manifest = read_json(destination / "manifest.json")
@@ -48,6 +50,7 @@ def encode_records(
             manifest["input_fingerprint"] != input_fingerprint
             or manifest["kind"] != kind
             or manifest["model"] != asdict(encoder.spec)
+            or (require_complete_inputs and manifest["truncation"]["all"]["truncated"])
         ):
             raise ValidationError(f"Embedding cache identity mismatch: {destination}")
         return destination
@@ -77,6 +80,10 @@ def encode_records(
                     raise ValidationError("Input has more rows than declared")
                 vectors[position : position + len(batch)] = normalize(encoded.vectors)
                 for row, audit in zip(batch, encoded.audits, strict=True):
+                    if require_complete_inputs and audit.truncated:
+                        raise ValidationError(
+                            f"Shared chunk {row['id']} exceeds {encoder.spec.alias}'s input limit"
+                        )
                     sink.append(
                         {
                             "id": row["id"],

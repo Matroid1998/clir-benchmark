@@ -1,0 +1,30 @@
+chunks-chemistry	9917878		20f9e7fa0e82c5de
+chunks-eurlex	9917881		20f9e7fa0e82c5de
+chunks-un	9917882		20f9e7fa0e82c5de
+bm25-chemistry	9917912	9917878	20f9e7fa0e82c5de
+dense-chemistry-embeddinggemma	9917915	9917878	20f9e7fa0e82c5de
+dense-chemistry-bge-m3	9917925	9917878	20f9e7fa0e82c5de
+dense-chemistry-qwen3-0.6B	9917938	9917878	20f9e7fa0e82c5de
+dense-chemistry-nomic-v2-moe	9917944	9917878	20f9e7fa0e82c5de
+dense-chemistry-granite-278m	9917948	9917878	20f9e7fa0e82c5de
+dense-chemistry-gte-multilingual-base	9917949	9917878	20f9e7fa0e82c5de
+dense-chemistry-arctic-embed-l-v2	9917950	9917878	20f9e7fa0e82c5de
+dense-chemistry-e5-large-instruct	9917951	9917878	20f9e7fa0e82c5de
+bm25-eurlex	9917952	9917881	20f9e7fa0e82c5de
+dense-eurlex-embeddinggemma	9917954	9917881	20f9e7fa0e82c5de
+dense-eurlex-bge-m3	9917958	9917881	20f9e7fa0e82c5de
+dense-eurlex-qwen3-0.6B	9917961	9917881	20f9e7fa0e82c5de
+dense-eurlex-nomic-v2-moe	9917962	9917881	20f9e7fa0e82c5de
+dense-eurlex-granite-278m	9917964	9917881	20f9e7fa0e82c5de
+dense-eurlex-gte-multilingual-base	9917965	9917881	20f9e7fa0e82c5de
+dense-eurlex-arctic-embed-l-v2	9917966	9917881	20f9e7fa0e82c5de
+dense-eurlex-e5-large-instruct	9917969	9917881	20f9e7fa0e82c5de
+bm25-un	9917981	9917882	20f9e7fa0e82c5de
+dense-un-embeddinggemma	9917984	9917882	20f9e7fa0e82c5de
+dense-un-bge-m3	9917985	9917882	20f9e7fa0e82c5de
+dense-un-qwen3-0.6B	9917986	9917882	20f9e7fa0e82c5de
+dense-un-nomic-v2-moe	9917987	9917882	20f9e7fa0e82c5de
+dense-un-granite-278m	9917988	9917882	20f9e7fa0e82c5de
+dense-un-gte-multilingual-base	9917989	9917882	20f9e7fa0e82c5de
+dense-un-arctic-embed-l-v2	9917990	9917882	20f9e7fa0e82c5de
+dense-un-e5-large-instruct	9917991	9917882	20f9e7fa0e82c5de

@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 from bisect import bisect_right
+from collections.abc import Callable
 from dataclasses import asdict
 from typing import Any
 
-from .config import ChunkingConfig
+from .config import ChunkingConfig, Config, SharedSentenceConfig
 from .errors import ValidationError
 from .types import Chunk, SourceUnit
 from .util import digest
@@ -19,6 +20,14 @@ def load_tokenizer(config: ChunkingConfig, token: str | None = None) -> Any:
     if not tokenizer.is_fast:
         raise ValidationError("Exact source offsets require a fast tokenizer")
     return tokenizer
+
+
+def make_chunker(config: Config, token: str | None = None):
+    if isinstance(config.chunking, SharedSentenceConfig):
+        from .shared_chunks import SharedSentenceChunker
+
+        return SharedSentenceChunker.load(config.chunking, config.model_registry, token)
+    return Chunker(load_tokenizer(config.chunking, token), config.chunking)
 
 
 class Chunker:
@@ -91,41 +100,51 @@ class Chunker:
                 # A heavily shortened window may be smaller than the overlap. Always
                 # advance, while retaining complete coverage of the original string.
                 start_cut = min(end_cut, max(start_cut + 1, next_cut))
-        result = []
-        previous_end = 0
-        text_hash = digest(text)
-        for index, (start, end, count) in enumerate(windows):
-            overlap_end = max(start, previous_end)
-            chunk_id = "c_" + digest(
-                {
-                    "corpus": unit.corpus,
-                    "unit": unit.id,
-                    "source_id": unit.source_id,
-                    "parent_id": unit.parent_id,
-                    "language": unit.language,
-                    "text_hash": text_hash,
-                    "start": start,
-                    "end": end,
-                    "chunking": self.fingerprint,
-                }
+        return source_chunks(
+            unit, windows, self.fingerprint, lambda s: self.count(s, special=False)
+        )
+
+
+def source_chunks(
+    unit: SourceUnit,
+    windows: list[tuple[int, int, int]],
+    fingerprint: str,
+    overlap_count: Callable[[str], int],
+) -> list[Chunk]:
+    chunks = []
+    previous_end = 0
+    text_hash = digest(unit.text)
+    for index, (start, end, count) in enumerate(windows):
+        chunk_id = "c_" + digest(
+            {
+                "corpus": unit.corpus,
+                "unit": unit.id,
+                "source_id": unit.source_id,
+                "parent_id": unit.parent_id,
+                "language": unit.language,
+                "text_hash": text_hash,
+                "start": start,
+                "end": end,
+                "chunking": fingerprint,
+            }
+        )
+        chunks.append(
+            Chunk(
+                id=chunk_id,
+                source_unit_id=unit.id,
+                source_id=unit.source_id,
+                parent_id=unit.parent_id,
+                corpus=unit.corpus,
+                language=unit.language,
+                text=unit.text[start:end],
+                start=start,
+                end=end,
+                token_count=count,
+                index=index,
+                overlap_chars=max(0, previous_end - start),
+                overlap_tokens=overlap_count(unit.text[start:previous_end]),
+                chunking_hash=fingerprint,
             )
-            result.append(
-                Chunk(
-                    id=chunk_id,
-                    source_unit_id=unit.id,
-                    source_id=unit.source_id,
-                    parent_id=unit.parent_id,
-                    corpus=unit.corpus,
-                    language=unit.language,
-                    text=text[start:end],
-                    start=start,
-                    end=end,
-                    token_count=count,
-                    index=index,
-                    overlap_chars=overlap_end - start,
-                    overlap_tokens=self.count(text[start:overlap_end], special=False),
-                    chunking_hash=self.fingerprint,
-                )
-            )
-            previous_end = end
-        return result
+        )
+        previous_end = end
+    return chunks

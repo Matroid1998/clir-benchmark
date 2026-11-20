@@ -4,6 +4,7 @@ import argparse
 import json
 import sys
 from dataclasses import replace
+from pathlib import Path
 
 from . import __version__
 from .adapters import (
@@ -19,6 +20,7 @@ from .comparison import compare_adore, compare_hyde, compare_translations
 from .config import (
     BASELINES,
     CANDIDATE_MODES,
+    QUESTION_LANGUAGE,
     RERANK_BASELINES,
     language_tag,
     load_config,
@@ -26,12 +28,20 @@ from .config import (
 )
 from .encoders import load_registry
 from .errors import ValidationError
-from .hyde import hyde_languages, prepare_hyde
+from .generation import with_refusal_policy
+from .hyde import assemble_hyde, hyde_languages, hyde_plan, load_hyde, prepare_hyde
 from .lexical import prepare_bm25
 from .pipeline import embed, evaluate, prepare_corpus, prepare_relevance, retrieve
 from .rerank_pipeline import compare_rerank, rerank
-from .translation import prepare_translations, translation_languages
+from .translation import (
+    assemble_translations,
+    load_translations,
+    prepare_translations,
+    translation_languages,
+    translation_plan,
+)
 from .util import hf_token, read_json
+from .verified_corpora import prepare_verified_span_map
 
 
 def retrieval_backend(baseline: str) -> str:
@@ -126,6 +136,7 @@ def parser() -> argparse.ArgumentParser:
     for name in (
         "prepare-corpus",
         "prepare-relevance",
+        "map-verified-spans",
         "index-bm25",
         "embed",
         "retrieve",
@@ -140,6 +151,18 @@ def parser() -> argparse.ArgumentParser:
         "compare-rerank",
     ):
         command = sub.add_parser(name)
+        if name == "prepare-corpus":
+            command.add_argument(
+                "--workers",
+                type=int,
+                default=1,
+                help="Chunk in parallel with this many CPU processes. More than one enables resumable batches.",
+            )
+            command.add_argument(
+                "--work-dir",
+                type=Path,
+                help="Existing directory for temporary chunk files and SQLite writes before publishing to output_dir",
+            )
         command.add_argument(
             "--corpus",
             action="append",
@@ -205,6 +228,39 @@ def parser() -> argparse.ArgumentParser:
                 action="store_true",
                 help="Explicitly retry failed/interrupted requests; retains previous attempts for accounting",
             )
+        if name in {"translate", "generate-hyde"}:
+            command.add_argument(
+                "--record-refusals",
+                action="store_true",
+                help="Record provider-declined questions with null text and measured request accounting",
+            )
+            command.add_argument(
+                "--retry-transient",
+                action="store_true",
+                help="Retry eligible network, provider, or malformed completion failures up to three total attempts per request",
+            )
+            command.add_argument(
+                "--shard-index", type=int, help="Zero-based group of sorted query IDs"
+            )
+            command.add_argument(
+                "--shard-size", type=int, help="Maximum number of questions per group"
+            )
+            mode = command.add_mutually_exclusive_group()
+            mode.add_argument(
+                "--assemble-shards",
+                action="store_true",
+                help="Verify all local shards of --shard-size and publish the complete artifact without model calls",
+            )
+            mode.add_argument(
+                "--dry-run",
+                action="store_true",
+                help="Check inputs and count planned requests without sending them",
+            )
+            mode.add_argument(
+                "--verify",
+                action="store_true",
+                help="Check saved variants against the selected questions and report their accounting",
+            )
         if name in {
             "run-adore",
             "compare-adore",
@@ -255,6 +311,77 @@ def parser() -> argparse.ArgumentParser:
     return result
 
 
+def _query_generation(config, args) -> None:
+    config = with_refusal_policy(config, args.record_refusals)
+    translate = args.command == "translate"
+    languages = translation_languages if translate else hyde_languages
+    selected = args.translation_language if translate else args.hyde_language
+    plan = translation_plan if translate else hyde_plan
+    prepare = prepare_translations if translate else prepare_hyde
+    load = load_translations if translate else load_hyde
+    assemble = assemble_translations if translate else assemble_hyde
+    if args.assemble_shards:
+        if (
+            args.shard_index is not None
+            or not args.shard_size
+            or args.shard_size < 1
+            or args.retry_failed
+            or args.retry_transient
+        ):
+            raise ValidationError(
+                "--assemble-shards requires a positive --shard-size without --shard-index or --retry-failed"
+            )
+    elif (args.shard_index is None) != (args.shard_size is None):
+        raise ValidationError("Provide both --shard-index and --shard-size")
+    shard = (args.shard_index, args.shard_size) if args.shard_index is not None else None
+    jobs = []
+    for corpus in dict.fromkeys(args.corpus or config.datasets):
+        if corpus not in config.datasets:
+            raise ValidationError(f"Corpus {corpus} is not configured")
+        jobs.extend(
+            (corpus, value) for value in dict.fromkeys(selected or languages(config, corpus))
+        )
+    if args.assemble_shards:
+        for corpus, value in jobs:
+            print(assemble(config, corpus, value, args.shard_size))
+        return
+    if args.dry_run or config.query_generation.input_mode == "verified-qas" and not args.verify:
+        plans = [plan(config, corpus, value, shard=shard) for corpus, value in jobs]
+        if args.dry_run:
+            print(json.dumps({"command": args.command, "mode": "dry-run", "jobs": plans}, indent=2))
+            return
+    if args.verify:
+        artifacts = []
+        for corpus, value in jobs:
+            path, _, manifest = load(config, corpus, value, shard=shard)
+            artifacts.append(
+                {
+                    "artifact": str(path),
+                    "corpus": corpus,
+                    "variant": value,
+                    "summary": manifest["summary"],
+                    "by_language_and_model": manifest.get("by_language_and_model"),
+                }
+            )
+        print(
+            json.dumps(
+                {"command": args.command, "mode": "verify", "artifacts": artifacts}, indent=2
+            )
+        )
+        return
+    for corpus, value in jobs:
+        print(
+            prepare(
+                config,
+                corpus,
+                value,
+                retry_failed=args.retry_failed,
+                retry_transient=args.retry_transient,
+                shard=shard,
+            )
+        )
+
+
 def main(argv: list[str] | None = None) -> int:
     args = parser().parse_args(argv)
     try:
@@ -290,11 +417,12 @@ def main(argv: list[str] | None = None) -> int:
                     },
                 )
         config = replace(config, generation_cache_reuse=cache_reuse)
+        if args.command in {"translate", "generate-hyde"}:
+            _query_generation(config, args)
+            return 0
         requested_models = getattr(args, "model", None) or config.models
         baselines = tuple(dict.fromkeys(getattr(args, "baseline", None) or config.baselines))
         if args.command == "prepare-subset":
-            from pathlib import Path
-
             from .subset import prepare_subset
 
             print(
@@ -406,7 +534,11 @@ def main(argv: list[str] | None = None) -> int:
         selected_languages = getattr(args, "translation_language", None)
         selected_hyde_languages = getattr(args, "hyde_language", None)
         for language in selected_hyde_languages or ():
-            language_tag(language, "HyDE output language")
+            if (
+                language != QUESTION_LANGUAGE
+                or config.query_generation.hyde_language_policy != QUESTION_LANGUAGE
+            ):
+                language_tag(language, "HyDE output language")
         if (
             args.command in {"retrieve", "evaluate", "rerank", "compare-rerank"}
             and selected_hyde_languages
@@ -514,7 +646,9 @@ def main(argv: list[str] | None = None) -> int:
             if corpus not in config.datasets:
                 raise ValidationError(f"Corpus {corpus} is not configured")
             if args.command == "prepare-corpus":
-                print(prepare_corpus(config, corpus))
+                print(prepare_corpus(config, corpus, work_dir=args.work_dir, workers=args.workers))
+            elif args.command == "map-verified-spans":
+                print(prepare_verified_span_map(config, corpus))
             elif args.command == "prepare-relevance":
                 path = prepare_relevance(config, corpus)
                 print(path)
@@ -542,20 +676,6 @@ def main(argv: list[str] | None = None) -> int:
                             )
                         else:
                             print(compare_adore(config, corpus, alias, baseline=baseline))
-            elif args.command == "translate":
-                for language in dict.fromkeys(
-                    selected_languages or translation_languages(config, corpus)
-                ):
-                    print(
-                        prepare_translations(
-                            config, corpus, language, retry_failed=args.retry_failed
-                        )
-                    )
-            elif args.command == "generate-hyde":
-                for language in dict.fromkeys(
-                    selected_hyde_languages or hyde_languages(config, corpus)
-                ):
-                    print(prepare_hyde(config, corpus, language, retry_failed=args.retry_failed))
             elif args.command == "compare-hyde":
                 for alias in requested_models:
                     print(

@@ -1,0 +1,132 @@
+{
+  "corpora": {
+    "chemistry": {
+      "bm25_dir": "/scratch/matroid/clir-benchmark/runs/narval-20261119-shared-chunk-pilot/artifacts/lexical/chemistry/43dca3d5d888aec30e981511d3599f9642e7a512e2092b94c1f15efdf410c9a4",
+      "chunks": 71,
+      "corpus_dir": "/scratch/matroid/clir-benchmark/runs/narval-20261119-shared-chunk-pilot/artifacts/corpus/chemistry/4a70a0a0b7813d8426b0423cb05c37714d703b8a97915db3b292eb644192a0a9",
+      "editions": 21,
+      "fingerprint": "39d19de25ee34304d75df827f3287c743d0d34e433857b2ff401c9a2cf866785"
+    },
+    "eurlex": {
+      "bm25_dir": "/scratch/matroid/clir-benchmark/runs/narval-20261119-shared-chunk-pilot/artifacts/lexical/eurlex/9336fa27156bde9330b557288c7cf8e39b7d8292f1dc75733a9f45dc2408e637",
+      "chunks": 162,
+      "corpus_dir": "/scratch/matroid/clir-benchmark/runs/narval-20261119-shared-chunk-pilot/artifacts/corpus/eurlex/2abfd989e1337eb5c7a5fa31a416fd9a1a90dc2d389cf89ec2d500456460f8b0",
+      "editions": 40,
+      "fingerprint": "cce92f878b18f0da467dea1fd48b55611d35c9acd18ae60ae21d64a421de11df"
+    },
+    "un": {
+      "bm25_dir": "/scratch/matroid/clir-benchmark/runs/narval-20261119-shared-chunk-pilot/artifacts/lexical/un/e8727f15b1031dc713184ae3f7fac025b653c3843e2b579d407c15891d026208",
+      "chunks": 820,
+      "corpus_dir": "/scratch/matroid/clir-benchmark/runs/narval-20261119-shared-chunk-pilot/artifacts/corpus/un/844f99fa5698fb0292852c6f41a1ba31fa36d90e276afa5124d99cbf73b6e603",
+      "editions": 60,
+      "fingerprint": "cc30849c045712848108f8d66d5aff5556f300faa3a7a124a3845631cab04419"
+    }
+  },
+  "job": "9912721",
+  "policy": {
+    "boundary_policy": "shared-sentences-v1",
+    "budgets": {
+      "arctic-embed-l-v2": {
+        "code_revision": null,
+        "document_prefix": "",
+        "native_limit": 8192,
+        "repo_id": "Snowflake/snowflake-arctic-embed-l-v2.0",
+        "revision": "ac6544c8a46e00af67e330e85a9028c66b8cfd9a",
+        "trust_remote_code": false
+      },
+      "bge-m3": {
+        "code_revision": null,
+        "document_prefix": "",
+        "native_limit": 8192,
+        "repo_id": "BAAI/bge-m3",
+        "revision": "5617a9f61b028005a4858fdac845db406aefb181",
+        "trust_remote_code": false
+      },
+      "e5-large-instruct": {
+        "code_revision": null,
+        "document_prefix": "",
+        "native_limit": 512,
+        "repo_id": "intfloat/multilingual-e5-large-instruct",
+        "revision": "274baa43b0e13e37fafa6428dbc7938e62e5c439",
+        "trust_remote_code": false
+      },
+      "embeddinggemma": {
+        "code_revision": null,
+        "document_prefix": "title: none | text: ",
+        "native_limit": 2048,
+        "repo_id": "google/embeddinggemma-300m",
+        "revision": "57c266a740f537b4dc058e1b0cda161fd15afa75",
+        "trust_remote_code": false
+      },
+      "granite-278m": {
+        "code_revision": null,
+        "document_prefix": "",
+        "native_limit": 512,
+        "repo_id": "ibm-granite/granite-embedding-278m-multilingual",
+        "revision": "a9cb5338491faf32b73dd17b714a31821c021bbf",
+        "trust_remote_code": false
+      },
+      "gte-multilingual-base": {
+        "code_revision": "40ced75c3017eb27626c9d4ea981bde21a2662f4",
+        "document_prefix": "",
+        "native_limit": 8192,
+        "repo_id": "Alibaba-NLP/gte-multilingual-base",
+        "revision": "9bbca17d9273fd0d03d5725c7a4b0f6b45142062",
+        "trust_remote_code": true
+      },
+      "nomic-v2-moe": {
+        "code_revision": "7710840340a098cfb869c4f65e87cf2b1b70caca",
+        "document_prefix": "search_document: ",
+        "native_limit": 512,
+        "repo_id": "nomic-ai/nomic-embed-text-v2-moe",
+        "revision": "1066b6599d099fbb93dfcb64f9c37a7c9e503e85",
+        "trust_remote_code": true
+      },
+      "qwen3-0.6B": {
+        "code_revision": null,
+        "document_prefix": "",
+        "native_limit": 32768,
+        "repo_id": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3",
+        "trust_remote_code": false
+      }
+    },
+    "end_exclusive": true,
+    "icu_version": "73.2",
+    "max_tokens": 512,
+    "max_words": 200,
+    "models": [
+      "arctic-embed-l-v2",
+      "bge-m3",
+      "e5-large-instruct",
+      "embeddinggemma",
+      "granite-278m",
+      "gte-multilingual-base",
+      "nomic-v2-moe",
+      "qwen3-0.6B"
+    ],
+    "offset_unit": "unicode_code_points",
+    "overlap_tokens": "largest token count of the repeated source text without specials",
+    "overlap_words": 64,
+    "token_count": "largest complete prefixed input with specials",
+    "tokenizers": "0.22.2+computecanada",
+    "transformers": "4.57.6+computecanada"
+  },
+  "seconds": 1245.3366044979775,
+  "selected_overlap": 64,
+  "selection_sha256": "39349296980e544f578259a9ac2bdde3392a2cfff7d5d4371a1be0dbd27b9fc4",
+  "support": {
+    "contained": 28,
+    "span_exceeds_budget": 4
+  },
+  "versions": {
+    "clir-benchmark": "0.1.0",
+    "huggingface-hub": "0.36.2+computecanada",
+    "numpy": "2.5.3+computecanada",
+    "pyarrow": "23.0.1",
+    "sentence-transformers": "5.7.0",
+    "tokenizers": "0.22.2+computecanada",
+    "torch": "2.14.1+computecanada",
+    "transformers": "4.57.6+computecanada"
+  }
+}

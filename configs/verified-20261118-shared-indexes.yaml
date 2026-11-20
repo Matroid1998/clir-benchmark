@@ -1,0 +1,52 @@
+# Narval layout: <campaign>/project/configs, <campaign>/inputs, <campaign>/artifacts.
+version: 1
+output_dir: ../../artifacts
+candidate_mode: all
+retrieval_unit: chunk
+baselines: [bm25, dense]
+datasets:
+  chemistry:
+    corpus_format: verified-multilingual-v1
+    qa: &chemistry
+      repo_id: MehdiAstaraki/google-patents-generated-qa-verified-20261118
+      revision: 9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed
+      local_dir: ../../inputs/chemistry
+    corpus: *chemistry
+  eurlex:
+    corpus_format: verified-multilingual-v1
+    qa: &eurlex
+      repo_id: MehdiAstaraki/eurlex-generated-qa-verified-20261118
+      revision: e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede
+      local_dir: ../../inputs/eurlex
+    corpus: *eurlex
+  un:
+    corpus_format: verified-multilingual-v1
+    qa: &un
+      repo_id: MehdiAstaraki/un-generated-qa-verified-20261118
+      revision: 910ee8435bc4e5a41ccd5f913c30ebc1237eb130
+      local_dir: ../../inputs/un
+    corpus: *un
+models: &models
+  - embeddinggemma
+  - bge-m3
+  - qwen3-0.6B
+  - nomic-v2-moe
+  - granite-278m
+  - gte-multilingual-base
+  - arctic-embed-l-v2
+  - e5-large-instruct
+chunking:
+  boundary_policy: shared-sentences-v1
+  models: *models
+  icu_version: '73.2'
+  max_words: 200
+  overlap_words: 30
+  max_tokens: null
+bm25:
+  k1: 1.2
+  b: 0.75
+  analyzer: unicode-words-cjk-v1
+runtime:
+  device: cuda
+  dtype: bfloat16
+  batch_size: 16

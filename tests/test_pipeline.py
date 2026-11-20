@@ -24,7 +24,7 @@ from clir_benchmark.pipeline import (
     prepare_relevance,
     retrieve,
 )
-from clir_benchmark.util import read_json
+from clir_benchmark.util import file_digest, read_json
 
 
 def write_rows(root, configuration, data):
@@ -230,7 +230,7 @@ def test_best_candidate_is_not_replaced_after_filtering(tmp_path, tokenizer):
 
 def test_cli_validation_and_preparation_never_embed(tmp_path, tokenizer, monkeypatch, capsys):
     _, path = fixture_config(tmp_path)
-    monkeypatch.setattr("clir_benchmark.pipeline.load_tokenizer", lambda *args: tokenizer)
+    monkeypatch.setattr("clir_benchmark.chunking.load_tokenizer", lambda *args: tokenizer)
 
     def forbidden(*args, **kwargs):
         pytest.fail("Preparation must not load encoders or run retrieval/evaluation")
@@ -252,6 +252,38 @@ def test_conflicting_duplicate_source_rejected(tmp_path, tokenizer):
     with pytest.raises(ValidationError, match="Conflicting"):
         prepare_corpus(config, "eurlex", chunker=Chunker(tokenizer, config.chunking))
     assert not config.corpus_dir("eurlex").exists()
+
+
+def test_node_local_corpus_publishes_complete_matching_files(tmp_path, tokenizer, monkeypatch):
+    config, _ = fixture_config(tmp_path)
+    chunker = Chunker(tokenizer, config.chunking)
+    original = prepare_corpus(config, "eurlex", chunker=chunker)
+    work_dir = tmp_path / "node-local"
+    work_dir.mkdir()
+    shared = replace(config, output_dir=tmp_path / "shared")
+
+    def fail_copy(source, target, **kwargs):
+        assert source.parent == work_dir
+        assert (source / "lookup.sqlite").is_file()
+        (target / "partial").touch()
+        raise OSError("simulated copy failure")
+
+    with monkeypatch.context() as patch:
+        patch.setattr("clir_benchmark.pipeline.shutil.copytree", fail_copy)
+        with pytest.raises(OSError, match="simulated"):
+            prepare_corpus(shared, "eurlex", chunker=chunker, work_dir=work_dir)
+    assert not shared.corpus_dir("eurlex").exists()
+    assert not list(work_dir.iterdir())
+
+    published = prepare_corpus(shared, "eurlex", chunker=chunker, work_dir=work_dir)
+    assert not list(work_dir.iterdir())
+    assert (
+        read_json(published / "manifest.json")["corpus_fingerprint"]
+        == read_json(original / "manifest.json")["corpus_fingerprint"]
+    )
+    for source in original.iterdir():
+        if source.name != "manifest.json":
+            assert file_digest(published / source.name) == file_digest(source)
 
 
 def test_published_annotation_structs_prepare_and_preserve_provenance(tmp_path, tokenizer):

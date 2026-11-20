@@ -2,12 +2,128 @@
 
 from __future__ import annotations
 
+import time
+from collections import Counter
 from collections.abc import Iterator
+from pathlib import Path
 
 from .adapters import DatasetReader, required_string
-from .config import language_tag
+from .artifacts import CorpusStore
+from .config import Config, language_tag
 from .errors import ValidationError
-from .types import SourceUnit
+from .types import Chunk, SourceUnit
+from .util import digest, hf_token, json_dumps, new_directory, read_json, write_json
+
+
+def map_support(row: dict, unit: SourceUnit, chunks: list[Chunk]) -> dict:
+    """Remap the release's exact source coordinates; keep partial hits distinct from positives."""
+    start, end = row["start"], row["end"]
+    if (
+        row["match_status"] != "exact"
+        or row["source_unit_id"] != unit.id
+        or row["corpus_id"] != unit.source_id
+        or row["language"] != unit.language
+        or type(start) is not int
+        or type(end) is not int
+        or not 0 <= start < end <= len(unit.text)
+        or unit.text[start:end] != row["text"]
+    ):
+        raise ValidationError(f"Evidence offsets do not match {row['query_id']} in {unit.id}")
+    ids, pieces = [], []
+    covered_to = start
+    for chunk in chunks:
+        if chunk.source_unit_id != unit.id or unit.text[chunk.start : chunk.end] != chunk.text:
+            raise ValidationError(f"Chunk source mismatch for {chunk.id}")
+        left, right = max(start, chunk.start), min(end, chunk.end)
+        if left < right:
+            if left > covered_to:
+                raise ValidationError(f"Gap in chunk coverage for {unit.id}")
+            covered_to = max(right, covered_to)
+            pieces.append(
+                {
+                    "chunk_id": chunk.id,
+                    "source_start": left,
+                    "source_end": right,
+                    "chunk_start": left - chunk.start,
+                    "chunk_end": right - chunk.start,
+                }
+            )
+            if left == start and right == end:
+                ids.append(chunk.id)
+    if covered_to != end:
+        raise ValidationError(f"Incomplete source coverage for {row['query_id']}")
+    return {
+        key: row[key]
+        for key in (
+            "query_id",
+            "span_index",
+            "source_unit_id",
+            "language",
+            "corpus_id",
+            "start",
+            "end",
+        )
+    } | {
+        "complete_chunk_ids": ids,
+        "intersections": pieces,
+    }
+
+
+def prepare_verified_span_map(config: Config, corpus: str) -> Path:
+    """Publish known original-edition positives and all boundary intersections."""
+    data = config.datasets[corpus]
+    if data.corpus_format != "verified-multilingual-v1":
+        raise ValidationError("map-verified-spans requires a verified multilingual release")
+    directory = config.corpus_dir(corpus)
+    if not (directory / "manifest.json").is_file():
+        raise ValidationError(f"Prepare the shared corpus before mapping spans for {corpus}")
+    fingerprint = read_json(directory / "manifest.json")["corpus_fingerprint"]
+    identity = {
+        "schema": 1,
+        "corpus_fingerprint": fingerprint,
+        "qa": data.qa.identity(("evidence",)),
+    }
+    dest = config.output_dir / "verified-spans" / corpus / digest(identity)
+    if dest.is_dir():
+        read_json(dest / "manifest.json")
+        return dest
+    reader = DatasetReader(data.qa, hf_token(config.env_file))
+    t0 = time.perf_counter()
+    with new_directory(dest) as temp, CorpusStore(directory / "lookup.sqlite") as store:
+        seen, positives = set(), set()
+        outcomes = Counter()
+        with (temp / "span-map.jsonl").open("w", encoding="utf-8") as out:
+            for row in reader.read("evidence"):
+                unit = store.get_source(row["source_unit_id"])
+                if unit is None:
+                    raise ValidationError(
+                        f"Evidence references missing edition {row['source_unit_id']}"
+                    )
+                key = (row["query_id"], unit.id, row["span_index"])
+                if key in seen:
+                    raise ValidationError(f"Duplicate verified span {key}")
+                seen.add(key)
+                item = map_support(row, unit, store.chunks(unit))
+                complete = item["complete_chunk_ids"]
+                outcomes["contained" if complete else "split_across_chunks"] += 1
+                positives.update((row["query_id"], chunk) for chunk in complete)
+                out.write(json_dumps(item) + "\n")
+        with (temp / "known-chunk-qrels.tsv").open("w", encoding="utf-8") as out:
+            out.write("query_id\tchunk_id\tscore\n")
+            for query, chunk in sorted(positives):
+                out.write(f"{query}\t{chunk}\t1\n")
+        write_json(
+            temp / "manifest.json",
+            {
+                **identity,
+                "corpus": corpus,
+                "spans": len(seen),
+                "query_chunk_positives": len(positives),
+                "outcomes": dict(outcomes),
+                "seconds": time.perf_counter() - t0,
+            },
+        )
+    return dest
 
 
 def iter_verified_units(reader: DatasetReader, corpus: str) -> Iterator[SourceUnit]:

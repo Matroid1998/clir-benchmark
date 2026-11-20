@@ -1,0 +1,54 @@
+{
+  "common_token_cap": 512,
+  "documents": 30,
+  "editions": 121,
+  "includes_short_final_chunks": true,
+  "max_words": 200,
+  "native_limits": {
+    "arctic-embed-l-v2": 8192,
+    "bge-m3": 8192,
+    "e5-large-instruct": 512,
+    "embeddinggemma": 2048,
+    "granite-278m": 512,
+    "gte-multilingual-base": 8192,
+    "nomic-v2-moe": 512,
+    "qwen3-0.6B": 32768
+  },
+  "overlap_words": 50,
+  "policies": {
+    "fixed_windows": {
+      "chunks": 940,
+      "full_word_windows": 821,
+      "max_tokens": {
+        "arctic-embed-l-v2": 468,
+        "bge-m3": 468,
+        "e5-large-instruct": 467,
+        "embeddinggemma": 572,
+        "granite-278m": 467,
+        "gte-multilingual-base": 467,
+        "nomic-v2-moe": 471,
+        "qwen3-0.6B": 625
+      },
+      "over_any_native_limit": 0,
+      "over_common_cap": 48
+    },
+    "sentence_first": {
+      "chunks": 991,
+      "full_word_windows": 76,
+      "max_tokens": {
+        "arctic-embed-l-v2": 465,
+        "bge-m3": 465,
+        "e5-large-instruct": 464,
+        "embeddinggemma": 554,
+        "granite-278m": 464,
+        "gte-multilingual-base": 464,
+        "nomic-v2-moe": 468,
+        "qwen3-0.6B": 603
+      },
+      "over_any_native_limit": 0,
+      "over_common_cap": 24
+    }
+  },
+  "selection_sha256": "39349296980e544f578259a9ac2bdde3392a2cfff7d5d4371a1be0dbd27b9fc4",
+  "slurm_job": "9915888"
+}

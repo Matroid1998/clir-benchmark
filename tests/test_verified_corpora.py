@@ -10,7 +10,7 @@ from clir_benchmark.errors import ValidationError
 from clir_benchmark.lexical import BM25Index, prepare_bm25
 from clir_benchmark.pipeline import prepare_corpus
 from clir_benchmark.util import read_json
-from clir_benchmark.verified_corpora import iter_verified_units
+from clir_benchmark.verified_corpora import iter_verified_units, prepare_verified_span_map
 
 
 def release_reader(directory):
@@ -164,3 +164,63 @@ def test_bm25_indexes_verified_corpus_without_reading_qas(tmp_path, chunker):
     revised_qa = replace(config.datasets["un"].qa, revision="2" * 40)
     updated = replace(config, datasets={"un": replace(config.datasets["un"], qa=revised_qa)})
     assert prepare_bm25(updated, "un") == index
+
+
+def test_release_offset_map_requires_whole_span_for_a_positive(tmp_path, chunker):
+    corpus_dir, qa_dir = tmp_path / "documents", tmp_path / "qa"
+    text = "0123456789abcdefghijklmnop"
+    base = {"repo_id": "fixture/verified", "revision": "a" * 40}
+    write_rows(
+        corpus_dir,
+        "corpus",
+        [
+            {
+                "_id": "d",
+                "parent_document_id": "d",
+                "unit_type": "document",
+                "available_languages": ["en"],
+                "source_unit_ids": {"en": "u"},
+                "text": {"en": text},
+            }
+        ],
+    )
+    span = {
+        "query_id": "q",
+        "corpus_id": "d",
+        "source_unit_id": "u",
+        "language": "en",
+        "match_status": "exact",
+    }
+    write_rows(
+        qa_dir,
+        "evidence",
+        [
+            {**span, "span_index": 0, "start": 0, "end": 3, "text": text[:3]},
+            {**span, "span_index": 1, "start": 0, "end": 20, "text": text[:20]},
+        ],
+    )
+    path = tmp_path / "configs.yaml"
+    path.write_text(
+        yaml.safe_dump(
+            {
+                "version": 1,
+                "output_dir": "artifacts",
+                "chunking": {"max_tokens": 12, "overlap_tokens": 3},
+                "datasets": {
+                    "un": {
+                        "corpus_format": "verified-multilingual-v1",
+                        "qa": {**base, "local_dir": str(qa_dir)},
+                        "corpus": {**base, "local_dir": str(corpus_dir)},
+                    }
+                },
+            }
+        )
+    )
+    config = load_config(path)
+    prepare_corpus(config, "un", chunker=chunker)
+    dest = prepare_verified_span_map(config, "un")
+    assert prepare_verified_span_map(config, "un") == dest
+    manifest = read_json(dest / "manifest.json")
+    assert manifest["outcomes"] == {"contained": 1, "split_across_chunks": 1}
+    assert manifest["spans"] == 2 and manifest["query_chunk_positives"] == 1
+    assert len((dest / "known-chunk-qrels.tsv").read_text().splitlines()) == 2

@@ -1,0 +1,89 @@
+{
+  "documents_per_corpus": 10,
+  "seed": 20261119,
+  "sha256": {
+    "chemistry/data/corpus/sample.parquet": "e9368eb2604e9de63eecf7c38fa12504738f04ac2bafd14fa965017604114299",
+    "chemistry/data/evidence/sample.parquet": "ed91f3dc528716dd19d95461188324e80cda8b75dccc48b2a9d1204012620f31",
+    "eurlex/data/annexes/sample.parquet": "2e74ef29f282e80b6d615784fb254909bbf202b60690242d456c6061ba27dad5",
+    "eurlex/data/corpus/sample.parquet": "2ad894028d124d8eaeea570421927a89fdfd038202be25fd99ef172d4f66794e",
+    "eurlex/data/evidence/sample.parquet": "433cc451e65f0106b513b68ed3616cf2deb6cc9ece4970fa159c9221923e67ca",
+    "un/data/corpus/sample.parquet": "dd94e7ebb1d707c8083fea2bdbcb05ff959be02ed3f1e3c7b3b88f06f057c0ed",
+    "un/data/evidence/sample.parquet": "97482dc667be485e8d987f5d19721329a8731640ccb4a0ad4c89df1d9a54fc1c"
+  },
+  "sources": {
+    "chemistry": {
+      "edition_counts": {
+        "de": 1,
+        "en": 7,
+        "es": 1,
+        "fr": 4,
+        "ja": 2,
+        "ru": 2,
+        "zh": 4
+      },
+      "evidence_rows": 10,
+      "ids": [
+        "EP-0636652-A1",
+        "CN-106465478-B",
+        "ES-1293890-U",
+        "WO-2020107832-A1",
+        "WO-2021107133-A1",
+        "WO-2025259129-A1",
+        "CN-1221534-C",
+        "WO-2023176660-A1",
+        "RU-2729816-C1",
+        "CN-101325986-B"
+      ],
+      "revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed",
+      "source": "MehdiAstaraki/google-patents-generated-qa-verified-20261118"
+    },
+    "eurlex": {
+      "edition_counts": {
+        "de": 10,
+        "en": 10,
+        "es": 10,
+        "fr": 10
+      },
+      "evidence_rows": 10,
+      "ids": [
+        "https://data.europa.eu/eli/reg/2021/91/anx_pos1/oj",
+        "https://data.europa.eu/eli/reg/2017/1001/art_173/oj",
+        "https://data.europa.eu/eli/reg/2019/1896/art_70/oj",
+        "https://data.europa.eu/eli/reg/2021/2085/art_116/oj",
+        "https://data.europa.eu/eli/reg/2018/1046/art_195/oj",
+        "https://data.europa.eu/eli/reg/2021/1060/art_74/oj",
+        "https://data.europa.eu/eli/reg/2019/6/art_115/oj",
+        "https://data.europa.eu/eli/reg/2021/1149/art_13/oj",
+        "https://data.europa.eu/eli/reg/2021/100/art_16/oj",
+        "https://data.europa.eu/eli/reg/2022/612/art_3/oj"
+      ],
+      "revision": "e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede",
+      "source": "MehdiAstaraki/eurlex-generated-qa-verified-20261118"
+    },
+    "un": {
+      "edition_counts": {
+        "ar": 10,
+        "en": 10,
+        "es": 10,
+        "fr": 10,
+        "ru": 10,
+        "zh": 10
+      },
+      "evidence_rows": 12,
+      "ids": [
+        "2005/a/res/60/254",
+        "2003/a/res/58/156",
+        "2004/a/res/58/31",
+        "2011/a/res/62/214",
+        "2012/a/res/66/67",
+        "2004/a/res/59/265",
+        "2005/a/res/60/231",
+        "2004/a/res/59/234",
+        "2005/s/res/1586_2005_",
+        "2012/e/res/2012/26"
+      ],
+      "revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130",
+      "source": "MehdiAstaraki/un-generated-qa-verified-20261118"
+    }
+  }
+}

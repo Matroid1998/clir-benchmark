@@ -18,6 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+shared-chunks = ["PyICU>=2.10,<3"]
 models = [
   "torch>=2.6,<3",
   "sentence-transformers>=5,<6",

@@ -45,6 +45,41 @@ def prepared(tmp_path, tokenizer, *, annotations=True):
     return config, path
 
 
+@pytest.mark.parametrize(
+    ("baseline", "loader", "language_option"),
+    [
+        ("translate-bm25", "load_translations", "translation_language"),
+        ("translate-hybrid", "load_translations", "translation_language"),
+        ("hyde-dense", "load_hyde", "hyde_language"),
+    ],
+)
+@pytest.mark.parametrize(
+    ("status", "text"), [("provider_refused", None), ("provider_refused", "original"), (None, "  ")]
+)
+def test_unavailable_generated_text_blocks_index_use(
+    tmp_path, monkeypatch, baseline, loader, language_option, status, text
+):
+    config, _ = fixture_config(tmp_path)
+    records = [
+        {"id": "q1", "text": "usable"},
+        {"id": "q2", "text": text, "original_text": "original", "status": status},
+    ]
+    monkeypatch.setattr(f"clir_benchmark.pipeline.{loader}", lambda *args: (tmp_path, records, {}))
+    options = {language_option: "fr"}
+    with pytest.raises(ValidationError, match="1 of 2.*q2"):
+        embed(
+            config,
+            "eurlex",
+            "bge-m3",
+            kind="query",
+            **options,
+            encoder_factory=lambda *args: pytest.fail("Loaded an encoder for an incomplete cohort"),
+        )
+    spec = None if baseline == "translate-bm25" else model_spec(config, "bge-m3")
+    with pytest.raises(ValidationError, match="1 of 2.*q2"):
+        run_path(config, "eurlex", spec, baseline=baseline, **options)
+
+
 def test_translate_bm25_improvement_and_cost_comparison(tmp_path, tokenizer):
     config, _ = prepared(tmp_path, tokenizer)
     translator = FixtureTranslator()

@@ -1,0 +1,19 @@
+{
+  "campaign_directory": "/scratch/matroid/clir-benchmark/runs/narval-20261119-verified-query-generation",
+  "config": "project/configs/verified-20261118-query-generation.yaml",
+  "translation_variants": 34000,
+  "same_language_copies": 6000,
+  "hyde_passages": 6000,
+  "planned_api_requests_by_model": {
+    "anthropic/claude-haiku-5.5": 26000,
+    "openai/gpt-5.6-luna": 2000,
+    "qwen/qwen3.8-27b": 6000
+  },
+  "input_fingerprints": {
+    "chemistry": "2c4160b4fae5ddea3ef0ee8fe5bb1e0c1072f4f74074636a3a828567785931c5",
+    "eurlex": "c596e626a653de4444c2b95a2f2799f9398cb9fe2318c25e06e7b2b250c9f7fc",
+    "un": "d69658ca0c8a51f53f7d357e67e3b8d19150e77367d2e8f0da8a1fc26323dc51"
+  },
+  "qa_shard_sha256_verified": true,
+  "model_calls": 0
+}

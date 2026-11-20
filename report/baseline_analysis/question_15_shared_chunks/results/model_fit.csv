@@ -1,0 +1,9 @@
+model,native_limit,windows,over_512,over_native,max_200_word_tokens
+arctic-embed-l-v2,8192,627,0,0,468
+bge-m3,8192,627,0,0,468
+e5-large-instruct,512,627,0,0,467
+embeddinggemma,2048,627,4,0,572
+granite-278m,512,627,0,0,467
+gte-multilingual-base,8192,627,0,0,467
+nomic-v2-moe,512,627,0,0,471
+qwen3-0.6B,32768,627,39,0,625

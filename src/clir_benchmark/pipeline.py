@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import shutil
 import time
 from collections import Counter, defaultdict
 from collections.abc import Callable, Iterator
 from contextlib import ExitStack
 from dataclasses import asdict
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import pyarrow as pa
 
@@ -37,8 +39,9 @@ from .artifacts import (
     rows,
     source_record,
 )
-from .chunking import Chunker, load_tokenizer
-from .config import BASELINES, Config, validate_retrieval_baselines
+from .chunk_batches import checkpointed_chunks
+from .chunking import Chunker, make_chunker
+from .config import BASELINES, Config, SharedSentenceConfig, validate_retrieval_baselines
 from .embedding import (
     embedding_key,
     encode_records,
@@ -91,16 +94,38 @@ def _corpus_units(
             yield legal_unit(row, corpus)
 
 
-def prepare_corpus(config: Config, corpus: str, *, chunker: Chunker | None = None) -> Path:
+def prepare_corpus(
+    config: Config,
+    corpus: str,
+    *,
+    chunker: Chunker | None = None,
+    work_dir: Path | None = None,
+    workers: int = 1,
+) -> Path:
+    if type(workers) is not int or workers < 1:
+        raise ValidationError("prepare-corpus requires at least one worker")
     destination = config.corpus_dir(corpus)
     if destination.exists():
         read_json(destination / "manifest.json")
         return destination
     token = hf_token(config.env_file)
-    chunker = chunker or Chunker(load_tokenizer(config.chunking, token), config.chunking)
+    injected_chunker = chunker
+    if workers > 1 and chunker is None and isinstance(config.chunking, SharedSentenceConfig):
+        from .shared_chunks import shared_identity
+
+        chunk_policy = shared_identity(config.chunking, config.model_registry)
+    else:
+        chunker = chunker or make_chunker(config, token)
+        chunk_policy = chunker.manifest
+    chunking_hash = digest(chunk_policy)
     reader = DatasetReader(config.datasets[corpus].corpus, token)
     started = time.perf_counter()
-    with new_directory(destination) as temporary:
+    with new_directory(destination) as staging, ExitStack() as work:
+        temporary = staging
+        if work_dir is not None:
+            temporary = Path(
+                work.enter_context(TemporaryDirectory(prefix=f"chunks-{corpus}-", dir=work_dir))
+            )
         with (
             CorpusStore(temporary / "lookup.sqlite", create=True) as store,
             ParquetSink(temporary / "sources.parquet", SOURCE_SCHEMA) as source_sink,
@@ -113,13 +138,27 @@ def prepare_corpus(config: Config, corpus: str, *, chunker: Chunker | None = Non
             pairs = []
             duplicate_count = 0
             corpus_format = config.datasets[corpus].corpus_format
-            for unit in _corpus_units(reader, corpus, corpus_format, pair_sink, pairs):
+            units = _corpus_units(reader, corpus, corpus_format, pair_sink, pairs)
+            if workers > 1:
+                checkpoints = (
+                    config.output_dir
+                    / "chunk-checkpoints"
+                    / corpus
+                    / destination.name
+                    / chunking_hash
+                )
+                prepared = checkpointed_chunks(
+                    units, config, injected_chunker, chunking_hash, checkpoints, workers
+                )
+            else:
+                prepared = ((unit, None) for unit in units)
+            for unit, chunks in prepared:
                 if not store.add_source(unit):
                     duplicate_count += 1
                     continue
                 source_sink.append(source_record(unit))
                 language_counts[unit.language] += 1
-                for chunk in chunker.split(unit):
+                for chunk in chunker.split(unit) if chunks is None else chunks:
                     store.add_chunk(chunk)
                     chunk_sink.append(asdict(chunk))
                 if source_sink.count % 1000 == 0:
@@ -137,7 +176,7 @@ def prepare_corpus(config: Config, corpus: str, *, chunker: Chunker | None = Non
                 {
                     "schema": 1,
                     "corpus": corpus,
-                    "chunking": chunker.manifest,
+                    "chunking": chunk_policy,
                     "chunks_hash": content.hexdigest(),
                 }
             )
@@ -145,10 +184,10 @@ def prepare_corpus(config: Config, corpus: str, *, chunker: Chunker | None = Non
                 "schema": 1,
                 "corpus": corpus,
                 "corpus_fingerprint": fingerprint,
-                "config_hash": config.corpus_key(corpus),
-                "source": reader.spec.identity(),
+                "config_hash": destination.name,
+                "source": config.corpus_source_identity(corpus),
                 "corpus_format": corpus_format,
-                "chunking": chunker.manifest,
+                "chunking": chunk_policy,
                 "source_count": source_sink.count,
                 "chunk_count": chunk_sink.count,
                 "languages": dict(sorted(language_counts.items())),
@@ -157,7 +196,11 @@ def prepare_corpus(config: Config, corpus: str, *, chunker: Chunker | None = Non
                 "seconds": time.perf_counter() - started,
                 "versions": versions(),
             }
-        write_json(temporary / "manifest.json", manifest)
+        if work_dir is not None:
+            copy_start = time.perf_counter()
+            shutil.copytree(temporary, staging, dirs_exist_ok=True)
+            manifest["publication_copy_seconds"] = time.perf_counter() - copy_start
+        write_json(staging / "manifest.json", manifest)
     return destination
 
 
@@ -354,6 +397,22 @@ def model_spec(config: Config, alias: str) -> ModelSpec:
     return registry[alias]
 
 
+def _require_query_texts(artifact: Path, records: list[dict]) -> None:
+    """Retrieval requires a usable variant for every query in the comparison cohort."""
+    missing = [
+        row["id"]
+        for row in records
+        if row.get("status") == "provider_refused"
+        or not isinstance(row.get("text"), str)
+        or not row["text"].strip()
+    ]
+    if missing:
+        raise ValidationError(
+            f"{artifact}: {len(missing)} of {len(records)} queries lack usable generated text. "
+            f"Retrieval requires the complete cohort. Affected IDs (first 10): {', '.join(missing[:10])}"
+        )
+
+
 def embedding_path(
     config: Config,
     corpus: str,
@@ -366,7 +425,8 @@ def embedding_path(
     if translation_language is not None and hyde_language is not None:
         raise ValidationError("Choose either translation_language or hyde_language for embedding")
     if kind == "query" and hyde_language is not None:
-        _, _, manifest = load_hyde(config, corpus, hyde_language)
+        path, records, manifest = load_hyde(config, corpus, hyde_language)
+        _require_query_texts(path, records)
         return (
             config.output_dir
             / "embeddings"
@@ -374,7 +434,8 @@ def embedding_path(
             / embedding_key(manifest["passage_fingerprint"], "document", spec, config.runtime)
         )
     if kind == "query" and translation_language is not None:
-        _, _, manifest = load_translations(config, corpus, translation_language)
+        path, records, manifest = load_translations(config, corpus, translation_language)
+        _require_query_texts(path, records)
         return (
             config.output_dir
             / "embeddings"
@@ -416,8 +477,8 @@ def embed(
     result = {}
     encoder: Encoder | None = None
     kinds = ("document", "query") if kind == "both" else (kind,)
-    for input_kind in kinds:
-        destination = embedding_path(
+    destinations = {
+        input_kind: embedding_path(
             config,
             corpus,
             spec,
@@ -425,8 +486,20 @@ def embed(
             translation_language=translation_language,
             hyde_language=hyde_language,
         )
+        for input_kind in kinds
+    }
+    for input_kind, destination in destinations.items():
+        require_complete = (
+            input_kind == "document"
+            and isinstance(config.chunking, SharedSentenceConfig)
+            and alias in config.chunking.models
+        )
         if destination.exists():
-            load_embeddings(destination, ["id"])
+            _, _, cached = load_embeddings(destination, ["id"])
+            if require_complete and cached["truncation"]["all"]["truncated"]:
+                raise ValidationError(
+                    f"Shared document embeddings contain truncated inputs: {destination}"
+                )
             result[input_kind] = destination
             continue
         encoder = encoder or encoder_factory(spec, config.runtime, hf_token(config.env_file))
@@ -466,7 +539,14 @@ def embed(
 
         encoder_kind = "document" if hyde_language is not None else input_kind
         encode_records(
-            destination, factory, count, encoder, encoder_kind, config.runtime, fingerprint
+            destination,
+            factory,
+            count,
+            encoder,
+            encoder_kind,
+            config.runtime,
+            fingerprint,
+            require_complete_inputs=require_complete,
         )
         result[input_kind] = destination
     return result
@@ -508,7 +588,8 @@ def run_path(
             raise ValidationError("hyde-dense requires hyde_language and no translation_language")
         if spec is None:
             raise ValidationError("hyde-dense requires a dense model")
-        path, _, manifest = load_hyde(config, corpus, hyde_language)
+        path, records, manifest = load_hyde(config, corpus, hyde_language)
+        _require_query_texts(path, records)
         identity = {
             "schema": 1,
             "baseline": baseline,
@@ -532,7 +613,8 @@ def run_path(
     if baseline.startswith("translate-"):
         if translation_language is None:
             raise ValidationError(f"{baseline} requires a translation_language")
-        path, _, manifest = load_translations(config, corpus, translation_language)
+        path, records, manifest = load_translations(config, corpus, translation_language)
+        _require_query_texts(path, records)
         identity = {
             "schema": 1,
             "baseline": baseline,

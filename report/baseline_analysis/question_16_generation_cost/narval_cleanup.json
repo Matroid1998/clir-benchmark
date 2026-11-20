@@ -1,0 +1,37 @@
+{
+  "campaign": "November 19, 2026 shared native-limit chunks",
+  "scratch_root": "/scratch/matroid/clir-benchmark/runs",
+  "size_measure": "Allocated bytes reported by du -s -B1 before removal",
+  "removed": [
+    {
+      "run": "narval-20261119-verified-bm25",
+      "paths": {
+        "artifacts/corpus/chemistry/.a39fef6fd77a12fabd81265f373ce3b31bf229bd8b92f44e02cb989bfa5d0bc7-wt0wd22t": 276451328,
+        "artifacts/corpus/eurlex/.1895118bb3be88a39d0acb7c524cf117e6a1275e2528e0c21717fdbce5036f51-wava_yt2": 474455552,
+        "artifacts/corpus/un/.7f26f26357214a48adc829563b182a51d915f7aa7f2f25a646a8289b70937eac-jslgoxga": 1742160384
+      },
+      "verification": "Slurm accounting confirmed jobs 9878730, 9878731 and 9878733 were canceled. Each staging directory contained an unfinished SQLite journal and lacked a publication manifest. The old artifacts tree contained zero files after removal."
+    },
+    {
+      "run": "narval-20261119-shared-chunk-pilot",
+      "paths": {
+        "artifacts/corpus": 2056192,
+        "artifacts/lexical": 1492480,
+        "artifacts/embeddings": 35120128
+      },
+      "backup_relative_to_repository": "artifacts/narval-20261119-shared-chunk-pilot/artifacts",
+      "verification": "Remote-to-local rsync recursive checksum dry-run returned success with zero differences. The remote artifacts directory was empty after removal."
+    },
+    {
+      "run": "fir-20261109-all-questions",
+      "paths": {
+        "artifacts/corpus": 3677400576,
+        "artifacts/lexical": 442376192,
+        "artifacts/embeddings": 49702996480
+      },
+      "backup_relative_to_repository": "artifacts/fir-20261109-all-questions/artifacts",
+      "verification": "Remote-to-local rsync recursive checksum dry-run across all three subtrees exited 0 with zero differences. All three remote paths were confirmed absent after removal. The remaining Fir directories contain comparisons, HyDE products and requests, MTEB, relevance, reports, reranking records, retrieval runs and translation products and requests."
+    }
+  ],
+  "total_allocated_bytes_removed": 56354509312
+}

@@ -1,0 +1,32 @@
+{
+  "chemistry": {
+    "darkbloom_usd": 2.6759701571933174,
+    "double_output_10pct_extra_wafer_usd": 5.566319855469488,
+    "initial_calls": 14000.0,
+    "wafer_usd": 3.1743101921524954
+  },
+  "eurlex": {
+    "darkbloom_usd": 1.562959684577502,
+    "double_output_10pct_extra_wafer_usd": 2.2962526128621037,
+    "initial_calls": 8000.0,
+    "wafer_usd": 1.562959684577502
+  },
+  "hyde": {
+    "darkbloom_usd": 2.001603918182078,
+    "double_output_10pct_extra_wafer_usd": 3.892416717780419,
+    "initial_calls": 6000.0,
+    "wafer_usd": 2.209288553509356
+  },
+  "translate": {
+    "darkbloom_usd": 4.9934095285910844,
+    "double_output_10pct_extra_wafer_usd": 8.756613638313265,
+    "initial_calls": 28000.0,
+    "wafer_usd": 5.539246568679837
+  },
+  "un": {
+    "darkbloom_usd": 2.7560836050023423,
+    "double_output_10pct_extra_wafer_usd": 4.786457887762094,
+    "initial_calls": 12000.0,
+    "wafer_usd": 3.011265245459195
+  }
+}

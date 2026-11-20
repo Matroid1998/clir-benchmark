@@ -28,6 +28,7 @@ RETRIEVAL_BASELINES = (
 RERANK_BASELINES = tuple(f"rerank-{baseline}" for baseline in RETRIEVAL_BASELINES)
 BASELINES = RETRIEVAL_BASELINES + RERANK_BASELINES
 CANDIDATE_MODES = ("best", "all", "best-per-document")
+QUESTION_LANGUAGE = "question-language"
 DOCUMENT_BASELINES = (
     "dense",
     "translate-dense",
@@ -64,15 +65,18 @@ class SourceSpec:
         if not isinstance(self.repo_id, str) or not self.repo_id:
             raise ValidationError("Dataset repo_id must be a nonempty string")
 
-    def identity(self) -> dict:
+    def identity(self, configurations: tuple[str, ...] | None = None) -> dict:
         value = asdict(self)
         if self.local_dir:
             root = Path(self.local_dir)
             if not root.is_dir():
                 raise ValidationError(f"Local dataset directory does not exist: {root}")
-            value["files"] = {
-                str(p.relative_to(root)): file_digest(p) for p in sorted(root.rglob("*.parquet"))
-            }
+            shards = (
+                root.rglob("*.parquet")
+                if configurations is None
+                else (p for name in configurations for p in root.glob(f"data/{name}/*.parquet"))
+            )
+            value["files"] = {str(p.relative_to(root)): file_digest(p) for p in sorted(shards)}
         return value
 
 
@@ -106,6 +110,39 @@ class ChunkingConfig:
             )
         if self.boundary_policy != "source-token-windows-v1" or self.special_tokens != "included":
             raise ValidationError("Unsupported boundary policy or special-token accounting")
+
+
+@dataclass(frozen=True)
+class SharedSentenceConfig:
+    models: tuple[str, ...]
+    icu_version: str
+    boundary_policy: str = "shared-sentences-v1"
+    max_words: int = 200
+    # None uses each encoder's native document limit with no additional shared cap.
+    max_tokens: int | None = 512
+    overlap_words: int = 64
+
+    def __post_init__(self) -> None:
+        if (
+            not isinstance(self.models, (tuple, list))
+            or not self.models
+            or not all(isinstance(m, str) and m for m in self.models)
+            or len(set(self.models)) != len(self.models)
+        ):
+            raise ValidationError("Shared chunking requires distinct tokenizer model aliases")
+        object.__setattr__(self, "models", tuple(sorted(self.models)))
+        if not isinstance(self.icu_version, str) or not self.icu_version:
+            raise ValidationError("Shared chunking requires an explicit ICU version")
+        if (
+            any(type(n) is not int for n in (self.max_words, self.overlap_words))
+            or self.max_words < 1
+            or (
+                self.max_tokens is not None
+                and (type(self.max_tokens) is not int or self.max_tokens < 2)
+            )
+            or not 0 <= self.overlap_words < self.max_words
+        ):
+            raise ValidationError("Invalid shared chunk word, token or overlap limit")
 
 
 @dataclass(frozen=True)
@@ -221,6 +258,8 @@ class GenerationConfig:
             "max_completion_tokens",
             "max_tokens",
             "reasoning_effort",
+            "provider",
+            "usage",
         }
         if not isinstance(self.request_options, dict) or self.request_options.keys() - allowed:
             raise ValidationError(f"{self.section}.request_options allows only {sorted(allowed)}")
@@ -272,6 +311,53 @@ class HyDEConfig(GenerationConfig):
         if len(set(self.output_languages)) != len(self.output_languages):
             raise ValidationError("hyde.output_languages cannot contain duplicates")
         object.__setattr__(self, "output_languages", tuple(self.output_languages))
+
+
+@dataclass(frozen=True)
+class QueryGenerationConfig:
+    input_mode: str = "prepared-relevance"
+    corpus_languages: dict[str, tuple[str, ...]] = field(default_factory=dict)
+    models: dict[str, GenerationConfig] = field(default_factory=dict)
+    model_by_language: dict[str, str] = field(default_factory=dict)
+    hyde_language_policy: str = "configured"
+    record_refusals: bool = False
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.record_refusals, bool):
+            raise ValidationError("query_generation.record_refusals must be a boolean")
+        if self.input_mode not in ("prepared-relevance", "verified-qas"):
+            raise ValidationError(
+                "query_generation.input_mode must be prepared-relevance or verified-qas"
+            )
+        if self.hyde_language_policy not in ("configured", QUESTION_LANGUAGE):
+            raise ValidationError(
+                "query_generation.hyde_language_policy must be configured or question-language"
+            )
+        if not isinstance(self.corpus_languages, dict):
+            raise ValidationError("query_generation.corpus_languages must be a mapping")
+        languages = {}
+        for corpus, values in self.corpus_languages.items():
+            if not isinstance(values, (list, tuple)) or not values:
+                raise ValidationError(f"{corpus}: expected a nonempty list of corpus languages")
+            tags = tuple(language_tag(value, f"{corpus} corpus language") for value in values)
+            if len({tag.casefold() for tag in tags}) != len(tags):
+                raise ValidationError(f"{corpus}: duplicate corpus languages")
+            languages[corpus] = tags
+        object.__setattr__(self, "corpus_languages", languages)
+        if not isinstance(self.models, dict) or not isinstance(self.model_by_language, dict):
+            raise ValidationError("query_generation.models and model_by_language must be mappings")
+        object.__setattr__(
+            self,
+            "models",
+            {
+                name: route if isinstance(route, GenerationConfig) else GenerationConfig(**route)
+                for name, route in self.models.items()
+            },
+        )
+        for language, model in self.model_by_language.items():
+            language_tag(language, "output language for generation model")
+            if not isinstance(model, str) or model not in self.models:
+                raise ValidationError(f"No configured generation model {model!r} for {language}")
 
 
 @dataclass(frozen=True)
@@ -386,7 +472,7 @@ class GenerationCacheReuseConfig:
 class Config:
     output_dir: Path
     datasets: dict[str, DatasetSpec]
-    chunking: ChunkingConfig = field(default_factory=ChunkingConfig)
+    chunking: ChunkingConfig | SharedSentenceConfig = field(default_factory=ChunkingConfig)
     runtime: RuntimeConfig = field(default_factory=RuntimeConfig)
     candidate_mode: str = "best"
     candidate_selection: CandidateSelectionConfig = field(default_factory=CandidateSelectionConfig)
@@ -403,24 +489,42 @@ class Config:
     hybrid: HybridConfig = field(default_factory=HybridConfig)
     translation: TranslationConfig = field(default_factory=TranslationConfig)
     hyde: HyDEConfig = field(default_factory=HyDEConfig)
+    query_generation: QueryGenerationConfig = field(default_factory=QueryGenerationConfig)
     generation_cache_reuse: GenerationCacheReuseConfig = field(
         default_factory=GenerationCacheReuseConfig
     )
     adore: ADOREConfig = field(default_factory=ADOREConfig)
     reranker: RerankerConfig = field(default_factory=RerankerConfig)
 
+    def corpus_source_identity(self, corpus: str) -> dict:
+        data = self.datasets[corpus]
+        if (
+            isinstance(self.chunking, SharedSentenceConfig)
+            and data.corpus_format == "verified-multilingual-v1"
+        ):
+            return data.corpus.identity(
+                ("corpus", "annexes") if corpus == "eurlex" else ("corpus",)
+            )
+        return data.corpus.identity()
+
     def corpus_key(self, corpus: str) -> str:
+        if isinstance(self.chunking, SharedSentenceConfig):
+            from .shared_chunks import shared_identity
+
+            policy = shared_identity(self.chunking, self.model_registry)
+        else:
+            policy = asdict(self.chunking)
         return digest(
             {
                 "schema": 1,
                 "corpus": corpus,
-                "source": self.datasets[corpus].corpus.identity(),
+                "source": self.corpus_source_identity(corpus),
                 **(
                     {"corpus_format": self.datasets[corpus].corpus_format}
                     if self.datasets[corpus].corpus_format != "legacy"
                     else {}
                 ),
-                "chunking": asdict(self.chunking),
+                "chunking": policy,
             }
         )
 
@@ -526,15 +630,24 @@ def load_config(path: str | Path) -> Config:
                 raise ValidationError(f"{name} must be a list")
             raw[name] = tuple(raw[name])
     try:
+        chunk_options = raw.pop("chunking", {})
+        if not isinstance(chunk_options, dict):
+            raise ValidationError("chunking must be a mapping")
+        chunk_type = (
+            SharedSentenceConfig
+            if chunk_options.get("boundary_policy") == "shared-sentences-v1"
+            else ChunkingConfig
+        )
         config = Config(
             datasets=datasets,
-            chunking=ChunkingConfig(**raw.pop("chunking", {})),
+            chunking=chunk_type(**chunk_options),
             runtime=RuntimeConfig(**raw.pop("runtime", {})),
             candidate_selection=CandidateSelectionConfig(**raw.pop("candidate_selection", {})),
             bm25=BM25Config(**raw.pop("bm25", {})),
             hybrid=HybridConfig(**raw.pop("hybrid", {})),
             translation=TranslationConfig(**raw.pop("translation", {})),
             hyde=HyDEConfig(**raw.pop("hyde", {})),
+            query_generation=QueryGenerationConfig(**raw.pop("query_generation", {})),
             generation_cache_reuse=GenerationCacheReuseConfig(
                 **raw.pop("generation_cache_reuse", {})
             ),

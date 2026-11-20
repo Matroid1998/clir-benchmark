@@ -142,9 +142,9 @@ def test_model_resources_do_not_enable_gpu_jobs_when_dense_modes_disabled(tmp_pa
     path, config = plan(
         tmp_path,
         baselines=("bm25",),
-        model_resources_by_alias={"LaBSE": JobResources(gpus="h100:1")},
+        model_resources_by_alias={"gte-multilingual-base": JobResources(gpus="h100:1")},
     )
-    assert "LaBSE" in config.models
+    assert "gte-multilingual-base" in config.models
     jobs = read_json(path)["jobs"]
     assert len(jobs) == 6
     assert all(job["kind"] in {"prepare", "bm25"} for job in jobs)
@@ -720,7 +720,7 @@ def retry_fixture(tmp_path):
         runner=lambda *a, **k: SimpleNamespace(returncode=0, stdout=str(next(counter)), stderr=""),
     )
     original = read_json(submitted)
-    labels = ["clir-score-chemistry-SapBERT", "clir-embed-chemistry-SapBERT"]
+    labels = ["clir-score-chemistry-arctic-embed-l-v2", "clir-embed-chemistry-arctic-embed-l-v2"]
     selected = {job["job_id"]: job for job in original["jobs"] if job["label"] in labels}
     return submitted, original, labels, selected
 

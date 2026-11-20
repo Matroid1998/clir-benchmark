@@ -1,0 +1,801 @@
+{
+  "by_corpus": {
+    "chemistry": {
+      "covered_population": 14000,
+      "known_cost_records": 84,
+      "population": 14000,
+      "projected_usd": 9.752648849666667,
+      "projected_usd_sampling_se": 0.7492746205419353,
+      "projection_sample_complete": true,
+      "provider_reported_usd": 0.057801236,
+      "refusals": 1,
+      "sample": 84,
+      "unknown_cost_attempts": 0,
+      "weighted_mean_usd_per_initial_request": 0.0006966177749761905
+    },
+    "eurlex": {
+      "covered_population": 8000,
+      "known_cost_records": 48,
+      "population": 8000,
+      "projected_usd": 2.5026,
+      "projected_usd_sampling_se": 0.025693303935288486,
+      "projection_sample_complete": true,
+      "provider_reported_usd": 0.0175928,
+      "refusals": 1,
+      "sample": 48,
+      "unknown_cost_attempts": 0,
+      "weighted_mean_usd_per_initial_request": 0.00031282500000000003
+    },
+    "un": {
+      "covered_population": 12000,
+      "known_cost_records": 72,
+      "population": 12000,
+      "projected_usd": 5.872165055333333,
+      "projected_usd_sampling_se": 0.3780797192909806,
+      "projection_sample_complete": true,
+      "provider_reported_usd": 0.040913124,
+      "refusals": 0,
+      "sample": 72,
+      "unknown_cost_attempts": 0,
+      "weighted_mean_usd_per_initial_request": 0.0004893470879444445
+    }
+  },
+  "by_stage": {
+    "hyde": {
+      "covered_population": 6000,
+      "known_cost_records": 102,
+      "population": 6000,
+      "projected_usd": 3.6723964533333335,
+      "projected_usd_sampling_se": 0.12033053338611559,
+      "projection_sample_complete": true,
+      "provider_reported_usd": 0.06449216,
+      "refusals": 1,
+      "sample": 102,
+      "unknown_cost_attempts": 0,
+      "weighted_mean_usd_per_initial_request": 0.0006120660755555556
+    },
+    "translate": {
+      "covered_population": 28000,
+      "known_cost_records": 102,
+      "population": 28000,
+      "projected_usd": 14.455017451666667,
+      "projected_usd_sampling_se": 0.8309858240244125,
+      "projection_sample_complete": true,
+      "provider_reported_usd": 0.051815,
+      "refusals": 1,
+      "sample": 102,
+      "unknown_cost_attempts": 0,
+      "weighted_mean_usd_per_initial_request": 0.0005162506232738095
+    }
+  },
+  "campaign_ledgers_including_sample": {
+    "hyde": {
+      "attempts": 813,
+      "physical_request_keys": 813,
+      "priced_attempts": 805,
+      "provider_refusal_attempts": 39,
+      "provider_reported_usd": 0.575705559,
+      "unpriced_attempts": 8
+    },
+    "scan_finished_utc": "2026-11-20T04:11:21.184148+00:00",
+    "scan_started_utc": "2026-11-20T04:11:21.103718+00:00",
+    "translate": {
+      "attempts": 1782,
+      "physical_request_keys": 1782,
+      "priced_attempts": 1774,
+      "provider_refusal_attempts": 65,
+      "provider_reported_usd": 0.44750475,
+      "unpriced_attempts": 8
+    }
+  },
+  "historical_forecast_usd": {
+    "hyde": {
+      "darkbloom_usd": 2.001603918182078,
+      "wafer_usd": 2.209288553509356
+    },
+    "translate": {
+      "darkbloom_usd": 4.9934095285910844,
+      "wafer_usd": 5.539246568679837
+    }
+  },
+  "lanes": [
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "de",
+      "mean_completion_tokens": 147.33333333333334,
+      "mean_prompt_tokens": 1815.6666666666667,
+      "mean_usd_first_attempt": 0.0002552333333333333,
+      "mean_usd_per_request_including_retries": 0.0002552333333333333,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1714,
+      "projected_usd": 0.43746993333333334,
+      "provider_reported_usd": 0.0015314,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.0005500456757724443
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "en",
+      "mean_completion_tokens": 69.5,
+      "mean_prompt_tokens": 1792,
+      "mean_usd_first_attempt": 0.00021395,
+      "mean_usd_per_request_including_retries": 0.00021395,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1714,
+      "projected_usd": 0.3667103,
+      "provider_reported_usd": 0.0012837,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.0001223773203799999
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "es",
+      "mean_completion_tokens": 100.5,
+      "mean_prompt_tokens": 1793,
+      "mean_usd_first_attempt": 0.00022955,
+      "mean_usd_per_request_including_retries": 0.00022955,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1714,
+      "projected_usd": 0.3934487,
+      "provider_reported_usd": 0.0013773,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.0002869034947799999
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "fr",
+      "mean_completion_tokens": 110.66666666666667,
+      "mean_prompt_tokens": 1793.5,
+      "mean_usd_first_attempt": 0.00023468333333333334,
+      "mean_usd_per_request_including_retries": 0.00023468333333333334,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1714,
+      "projected_usd": 0.40224723333333334,
+      "provider_reported_usd": 0.0014081,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00013970363751244442
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "ja",
+      "mean_completion_tokens": 895.3333333333334,
+      "mean_prompt_tokens": 1060.1666666666667,
+      "mean_usd_first_attempt": 0.00219798,
+      "mean_usd_per_request_including_retries": 0.00219798,
+      "method": "translate",
+      "model": "qwen/qwen3.8-27b",
+      "population": 1715,
+      "projected_usd": 3.7695357,
+      "provider_reported_usd": 0.01318788,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.47298923963464984
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "ru",
+      "mean_completion_tokens": 128.16666666666666,
+      "mean_prompt_tokens": 1824.5,
+      "mean_usd_first_attempt": 0.0002465333333333333,
+      "mean_usd_per_request_including_retries": 0.0002465333333333333,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1715,
+      "projected_usd": 0.42280466666666666,
+      "provider_reported_usd": 0.0014792,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00019608085413777795
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "zh",
+      "mean_completion_tokens": 625.3333333333334,
+      "mean_prompt_tokens": 1062.1666666666667,
+      "mean_usd_first_attempt": 0.0015218516666666666,
+      "mean_usd_per_request_including_retries": 0.0015218516666666666,
+      "method": "translate",
+      "model": "qwen/qwen3.8-27b",
+      "population": 1714,
+      "projected_usd": 2.6084537566666666,
+      "provider_reported_usd": 0.00913111,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.0836375670122183
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "de",
+      "mean_completion_tokens": 526.3333333333334,
+      "mean_prompt_tokens": 2330.5,
+      "mean_usd_first_attempt": 0.0004962166666666667,
+      "mean_usd_per_request_including_retries": 0.0004962166666666667,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 286,
+      "projected_usd": 0.14191796666666667,
+      "provider_reported_usd": 0.0029773,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 1.1223394404444453e-05
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "en",
+      "mean_completion_tokens": 389.8333333333333,
+      "mean_prompt_tokens": 2278.1666666666665,
+      "mean_usd_first_attempt": 0.0004227333333333333,
+      "mean_usd_per_request_including_retries": 0.0004227333333333333,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 286,
+      "projected_usd": 0.12090173333333333,
+      "provider_reported_usd": 0.0025364,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 7.2490907377777824e-06
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "es",
+      "mean_completion_tokens": 385,
+      "mean_prompt_tokens": 2279,
+      "mean_usd_first_attempt": 0.00042040000000000003,
+      "mean_usd_per_request_including_retries": 0.00042040000000000003,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 286,
+      "projected_usd": 0.1202344,
+      "provider_reported_usd": 0.0025224,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 3.6632862933333285e-06
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "fr",
+      "mean_completion_tokens": 400.6666666666667,
+      "mean_prompt_tokens": 2303.3333333333335,
+      "mean_usd_first_attempt": 0.00043066666666666665,
+      "mean_usd_per_request_including_retries": 0.00043066666666666665,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 286,
+      "projected_usd": 0.12317066666666666,
+      "provider_reported_usd": 0.002584,
+      "sample": 6,
+      "status_counts": {
+        "provider_refused": 1,
+        "success": 5
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00020246384380444453
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "ja",
+      "mean_completion_tokens": 660.3333333333334,
+      "mean_prompt_tokens": 1380.8333333333333,
+      "mean_usd_first_attempt": 0.001441583,
+      "mean_usd_per_request_including_retries": 0.001441583,
+      "method": "hyde",
+      "model": "qwen/qwen3.8-27b",
+      "population": 285,
+      "projected_usd": 0.41085115499999997,
+      "provider_reported_usd": 0.008649498,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.002556543674834378
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "ru",
+      "mean_completion_tokens": 413,
+      "mean_prompt_tokens": 2280.5,
+      "mean_usd_first_attempt": 0.00043455,
+      "mean_usd_per_request_including_retries": 0.00043455,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 285,
+      "projected_usd": 0.12384675,
+      "provider_reported_usd": 0.0026073,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 1.09097097975e-05
+    },
+    {
+      "corpus": "chemistry",
+      "known_total_cost_records": 6,
+      "language": "zh",
+      "mean_completion_tokens": 480.3333333333333,
+      "mean_prompt_tokens": 1320.8333333333333,
+      "mean_usd_first_attempt": 0.0010876079999999999,
+      "mean_usd_per_request_including_retries": 0.0010876079999999999,
+      "method": "hyde",
+      "model": "qwen/qwen3.8-27b",
+      "population": 286,
+      "projected_usd": 0.31105588799999995,
+      "provider_reported_usd": 0.006525648,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.000698486358938368
+    },
+    {
+      "corpus": "eurlex",
+      "known_total_cost_records": 6,
+      "language": "de",
+      "mean_completion_tokens": 108.83333333333333,
+      "mean_prompt_tokens": 2187.5,
+      "mean_usd_first_attempt": 0.0002731666666666667,
+      "mean_usd_per_request_including_retries": 0.0002731666666666667,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1500,
+      "projected_usd": 0.40975,
+      "provider_reported_usd": 0.001639,
+      "sample": 6,
+      "status_counts": {
+        "provider_refused": 1,
+        "success": 5
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00029469398999999984
+    },
+    {
+      "corpus": "eurlex",
+      "known_total_cost_records": 6,
+      "language": "en",
+      "mean_completion_tokens": 52.833333333333336,
+      "mean_prompt_tokens": 2149.3333333333335,
+      "mean_usd_first_attempt": 0.00024135,
+      "mean_usd_per_request_including_retries": 0.00024135,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1500,
+      "projected_usd": 0.36202500000000004,
+      "provider_reported_usd": 0.0014481,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 7.303792500000013e-06
+    },
+    {
+      "corpus": "eurlex",
+      "known_total_cost_records": 6,
+      "language": "es",
+      "mean_completion_tokens": 92.5,
+      "mean_prompt_tokens": 2164.3333333333335,
+      "mean_usd_first_attempt": 0.0002626833333333333,
+      "mean_usd_per_request_including_retries": 0.0002626833333333333,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1500,
+      "projected_usd": 0.39402499999999996,
+      "provider_reported_usd": 0.0015761,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 8.45102265e-05
+    },
+    {
+      "corpus": "eurlex",
+      "known_total_cost_records": 6,
+      "language": "fr",
+      "mean_completion_tokens": 87.66666666666667,
+      "mean_prompt_tokens": 2155,
+      "mean_usd_first_attempt": 0.0002593333333333333,
+      "mean_usd_per_request_including_retries": 0.0002593333333333333,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1500,
+      "projected_usd": 0.38899999999999996,
+      "provider_reported_usd": 0.001556,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00011005351799999987
+    },
+    {
+      "corpus": "eurlex",
+      "known_total_cost_records": 6,
+      "language": "de",
+      "mean_completion_tokens": 535.5,
+      "mean_prompt_tokens": 2759.6666666666665,
+      "mean_usd_first_attempt": 0.0005437166666666667,
+      "mean_usd_per_request_including_retries": 0.0005437166666666667,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 500,
+      "projected_usd": 0.27185833333333337,
+      "provider_reported_usd": 0.0032623,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00011399122727777773
+    },
+    {
+      "corpus": "eurlex",
+      "known_total_cost_records": 6,
+      "language": "en",
+      "mean_completion_tokens": 306.8333333333333,
+      "mean_prompt_tokens": 2722.1666666666665,
+      "mean_usd_first_attempt": 0.00042563333333333334,
+      "mean_usd_per_request_including_retries": 0.00042563333333333334,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 500,
+      "projected_usd": 0.21281666666666668,
+      "provider_reported_usd": 0.0025538,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 1.9933997777777783e-05
+    },
+    {
+      "corpus": "eurlex",
+      "known_total_cost_records": 6,
+      "language": "es",
+      "mean_completion_tokens": 373.6666666666667,
+      "mean_prompt_tokens": 2762.8333333333335,
+      "mean_usd_first_attempt": 0.00046311666666666666,
+      "mean_usd_per_request_including_retries": 0.00046311666666666666,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 500,
+      "projected_usd": 0.23155833333333334,
+      "provider_reported_usd": 0.0027787,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 1.6137237277777746e-05
+    },
+    {
+      "corpus": "eurlex",
+      "known_total_cost_records": 6,
+      "language": "fr",
+      "mean_completion_tokens": 373.1666666666667,
+      "mean_prompt_tokens": 2765.5,
+      "mean_usd_first_attempt": 0.00046313333333333333,
+      "mean_usd_per_request_including_retries": 0.00046313333333333333,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 500,
+      "projected_usd": 0.23156666666666667,
+      "provider_reported_usd": 0.0027788,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 1.3521877777777779e-05
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "ar",
+      "mean_completion_tokens": 69,
+      "mean_prompt_tokens": 1216.1666666666667,
+      "mean_usd_first_attempt": 0.00012403166666666667,
+      "mean_usd_per_request_including_retries": 0.00012403166666666667,
+      "method": "translate",
+      "model": "openai/gpt-5.6-luna",
+      "population": 1667,
+      "projected_usd": 0.20676078833333333,
+      "provider_reported_usd": 0.00074419,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00028323564276898605
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "en",
+      "mean_completion_tokens": 112.16666666666667,
+      "mean_prompt_tokens": 2197.8333333333335,
+      "mean_usd_first_attempt": 0.0002758666666666667,
+      "mean_usd_per_request_including_retries": 0.0002758666666666667,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1666,
+      "projected_usd": 0.4595938666666667,
+      "provider_reported_usd": 0.0016552,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 5.69238287644445e-05
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "es",
+      "mean_completion_tokens": 125.33333333333333,
+      "mean_prompt_tokens": 2189.1666666666665,
+      "mean_usd_first_attempt": 0.00028158333333333334,
+      "mean_usd_per_request_including_retries": 0.00028158333333333334,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1667,
+      "projected_usd": 0.4693994166666667,
+      "provider_reported_usd": 0.0016895,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00014636413595527762
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "fr",
+      "mean_completion_tokens": 114.16666666666667,
+      "mean_prompt_tokens": 2169.5,
+      "mean_usd_first_attempt": 0.00027403333333333334,
+      "mean_usd_per_request_including_retries": 0.00027403333333333334,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1666,
+      "projected_usd": 0.45653953333333336,
+      "provider_reported_usd": 0.0016442000000000002,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 8.893979503111115e-05
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "ru",
+      "mean_completion_tokens": 123.16666666666667,
+      "mean_prompt_tokens": 2189.5,
+      "mean_usd_first_attempt": 0.00028053333333333334,
+      "mean_usd_per_request_including_retries": 0.00028053333333333334,
+      "method": "translate",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 1667,
+      "projected_usd": 0.46764906666666667,
+      "provider_reported_usd": 0.0016832,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 7.0925348159111e-05
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "zh",
+      "mean_completion_tokens": 691.8333333333334,
+      "mean_prompt_tokens": 1272.8333333333333,
+      "mean_usd_first_attempt": 0.00146347,
+      "mean_usd_per_request_including_retries": 0.00146347,
+      "method": "translate",
+      "model": "qwen/qwen3.8-27b",
+      "population": 1667,
+      "projected_usd": 2.43960449,
+      "provider_reported_usd": 0.00878082,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.13147257182240205
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "ar",
+      "mean_completion_tokens": 184,
+      "mean_prompt_tokens": 1554.5,
+      "mean_usd_first_attempt": 0.00032675833333333334,
+      "mean_usd_per_request_including_retries": 0.00032675833333333334,
+      "method": "hyde",
+      "model": "openai/gpt-5.6-luna",
+      "population": 333,
+      "projected_usd": 0.108810525,
+      "provider_reported_usd": 0.00196055,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.00030597961963057494
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "en",
+      "mean_completion_tokens": 282.6666666666667,
+      "mean_prompt_tokens": 2739.3333333333335,
+      "mean_usd_first_attempt": 0.00041526666666666666,
+      "mean_usd_per_request_including_retries": 0.00041526666666666666,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 334,
+      "projected_usd": 0.13869906666666668,
+      "provider_reported_usd": 0.0024916,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 1.1409232177777814e-06
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "es",
+      "mean_completion_tokens": 427.5,
+      "mean_prompt_tokens": 2789.3333333333335,
+      "mean_usd_first_attempt": 0.0004926833333333333,
+      "mean_usd_per_request_including_retries": 0.0004926833333333333,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 333,
+      "projected_usd": 0.16406355,
+      "provider_reported_usd": 0.0029561,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 3.250834938750002e-05
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "fr",
+      "mean_completion_tokens": 366.1666666666667,
+      "mean_prompt_tokens": 2807.6666666666665,
+      "mean_usd_first_attempt": 0.00046385,
+      "mean_usd_per_request_including_retries": 0.00046385,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 334,
+      "projected_usd": 0.1549259,
+      "provider_reported_usd": 0.0027831,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 7.08339495733333e-06
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "ru",
+      "mean_completion_tokens": 388.6666666666667,
+      "mean_prompt_tokens": 2774.5,
+      "mean_usd_first_attempt": 0.00047178333333333335,
+      "mean_usd_per_request_including_retries": 0.00047178333333333335,
+      "method": "hyde",
+      "model": "anthropic/claude-haiku-5.5",
+      "population": 333,
+      "projected_usd": 0.15710385000000002,
+      "provider_reported_usd": 0.0028307000000000002,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 1.074241777350001e-05
+    },
+    {
+      "corpus": "un",
+      "known_total_cost_records": 6,
+      "language": "zh",
+      "mean_completion_tokens": 798.6666666666666,
+      "mean_prompt_tokens": 1622.3333333333333,
+      "mean_usd_first_attempt": 0.001948994,
+      "mean_usd_per_request_including_retries": 0.001948994,
+      "method": "hyde",
+      "model": "qwen/qwen3.8-27b",
+      "population": 333,
+      "projected_usd": 0.649015002,
+      "provider_reported_usd": 0.011693964,
+      "sample": 6,
+      "status_counts": {
+        "success": 6
+      },
+      "unknown_cost_attempts": 0,
+      "variance_of_projected_usd": 0.010467858861099036
+    }
+  ],
+  "measured_utc": "2026-11-20T04:11:21.103657+00:00",
+  "methodology": "Six lowest SHA-256 ranks per stage/corpus/output language from the pinned QA cohort. Translation identities excluded. All attempts of a sampled initial request contribute provider-reported USD, including refusals. Missing prices remain unknown. Projection sums each lane's eligible population times its sample mean. Sampling SE uses stratified finite-population variance and excludes provider-price or traffic drift.",
+  "seed": "verified-cost-sample-v1",
+  "total": {
+    "covered_population": 34000,
+    "known_cost_records": 204,
+    "population": 34000,
+    "projected_usd": 18.127413905,
+    "projected_usd_sampling_se": 0.8396528312311695,
+    "projection_sample_complete": true,
+    "provider_reported_usd": 0.11630716,
+    "refusals": 2,
+    "sample": 204,
+    "unknown_cost_attempts": 0,
+    "weighted_mean_usd_per_initial_request": 0.0005331592325
+  }
+}

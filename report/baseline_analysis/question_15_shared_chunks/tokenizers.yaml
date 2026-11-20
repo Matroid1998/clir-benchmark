@@ -1,0 +1,39 @@
+version: 1
+output_dir: results
+retrieval_unit: chunk
+candidate_mode: all
+datasets:
+  chemistry:
+    corpus_format: verified-multilingual-v1
+    qa: &id001
+      repo_id: MehdiAstaraki/google-patents-generated-qa-verified-20261118
+      revision: 9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed
+    corpus: *id001
+  eurlex:
+    corpus_format: verified-multilingual-v1
+    qa: &id002
+      repo_id: MehdiAstaraki/eurlex-generated-qa-verified-20261118
+      revision: e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede
+    corpus: *id002
+  un:
+    corpus_format: verified-multilingual-v1
+    qa: &id003
+      repo_id: MehdiAstaraki/un-generated-qa-verified-20261118
+      revision: 910ee8435bc4e5a41ccd5f913c30ebc1237eb130
+    corpus: *id003
+models: &id004
+- embeddinggemma
+- bge-m3
+- qwen3-0.6B
+- nomic-v2-moe
+- granite-278m
+- gte-multilingual-base
+- arctic-embed-l-v2
+- e5-large-instruct
+chunking:
+  boundary_policy: shared-sentences-v1
+  models: *id004
+  icu_version: '73.2'
+  max_words: 200
+  max_tokens: 512
+  overlap_words: 64

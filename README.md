@@ -234,6 +234,11 @@ From the campaign checkout, run:
 bash scripts/submit_verified_bm25.sh
 ```
 
+The launcher uses `prepare-corpus --work-dir "$SLURM_TMPDIR"` to build the corpus
+on node-local disk. It copies the closed SQLite database and Parquet files to
+shared scratch before publishing the corpus. The BM25 stage can then reuse the
+node-local space for its own build.
+
 The three CPU jobs prepare the chunks and write one SQLite BM25 index per corpus
 under `artifacts/lexical/<corpus>/<fingerprint>/`. Job IDs, validated index
 paths, and logs are under the campaign's `job_status/` and `logs/`. Each index
@@ -291,24 +296,54 @@ layout or `data/train-*.parquet` for BASF. Local file hashes are recorded.
 
 ### Chunking contract
 
-- Default maximum: **512 BGE-M3 tokens including special tokens**. The pinned
-  tokenizer adds two special tokens, leaving 510 nominal content tokens.
-- Default overlap: **64 source content tokens**. Original token offsets determine
-  windows. Cuts avoid splitting overlapping character-offset intervals. Actual
-  overlap after adjustment is recorded in characters and re-tokenized content tokens.
-- Each chunk is exactly `source.text[start:end]`: Unicode code-point offsets,
-  start-inclusive/end-exclusive, with whitespace and markup intact. The union of
-  chunks covers the complete source.
-- Each slice is re-tokenized with special tokens and shortened deterministically
-  until it fits. An unrepresentable safe boundary is an error. Token IDs are never
-  decoded to reconstruct text.
-- Short units remain single chunks. Different units/languages are never combined.
+The 30-document pilot configuration selects `shared-sentences-v1`. [Pilot configuration](report/baseline_analysis/question_15_shared_chunks/tokenizers.yaml)
 
-The supported boundary policy is `source-token-windows-v1`. Token limit and
-overlap are configurable within the 512-token ceiling. The resolved policy is
-recorded in the manifest and referenced by each chunk's `chunking_hash`.
-Chunk IDs and the content-based corpus fingerprint do not depend on questions,
-evidence, candidate selection, or source-row order.
+The [verified release indexing campaign](configs/verified-20261118-shared-indexes.yaml)
+uses at most 200 ICU words per chunk, up to 30 words of overlap, and the eight
+encoders' native token limits (`max_tokens: null`). The saved corpus contains source
+offsets and stable chunk IDs. Each corpus gets one BM25 index and one document
+vector index per selected model. Span mapping records complete and partial snippet
+matches in the annotated edition.
+
+From the staged Narval checkout, submit the chunking jobs first, then queue the
+indexes. The launcher records the Slurm dependencies and job IDs in
+`job_status/submissions.tsv`. Use `bm25` or `dense` in place of `indexes` to
+select just one backend, and repeat `--corpus` or `--model` to select a subset.
+
+```bash
+bash scripts/submit_shared_indexes.sh chunks
+bash scripts/submit_shared_indexes.sh indexes
+```
+
+Install `uv sync --extra shared-chunks` for preparation. The configuration pins
+Narval's ICU 73.2. Set `chunking.icu_version` to the installed ICU version to
+run a different segmentation experiment. The ICU word iterator uses dictionaries
+for Chinese and Japanese. Numbers count as words and punctuation is retained.
+
+- `prepare-corpus` appends whole sentences up to `max_words`. It tests the exact
+  source slice with every tokenizer listed under `chunking.models`. Each complete
+  document input, including its prefix and special tokens, must fit the
+  model's native limit. A numeric `max_tokens` sets an additional ceiling.
+  The pilot limits are 200 words and 512 tokens.
+- An overlong sentence is split at an ICU word boundary. An overlong word can
+  be split at a Unicode code-point boundary. The stored half-open offsets
+  preserve source text, punctuation, whitespace and complete edition coverage.
+- `overlap_words` sets an upper bound of 64 words for the pilot.
+  The chunker prefers complete trailing
+  sentences and can repeat a long sentence's suffix. It drops overlap when
+  needed to preserve the next complete sentence. The resolved policy, model
+  revisions, prefixes, limits and tokenizer versions identify the shared chunks.
+- `index-bm25` and `embed --kind document` read the published `chunks.parquet`.
+  Each selected encoder writes one vector per chunk. Selecting a single
+  retriever via `--model` reuses the same eight-tokenizer chunk boundaries.
+- On a verified release, `map-verified-spans --corpus un` (or another corpus)
+  joins the published evidence offsets to these chunks. `span-map.jsonl` includes
+  every intersection with source and chunk offsets. `known-chunk-qrels.tsv`
+  includes each query/chunk pair that contains a complete original-edition span.
+  Its manifest counts spans that require multiple chunks.
+
+The earlier BGE-only chunk configurations use `source-token-windows-v1`, with a pinned
+BGE-M3 tokenizer, a 512-token ceiling and 64 content tokens of overlap.
 
 ## Candidates and multilingual evidence
 
@@ -445,6 +480,94 @@ for the configured list. Only ready settings are retrieved/scored, with blocked
 settings recorded in manifests.
 
 ### Translate then retrieve
+
+#### Verified November 18 question releases
+
+The [query generation configuration](configs/verified-20261118-query-generation.yaml)
+pins the 6,000 verified questions. It uses the `verified-qas` input mode, which
+reads just the question ID, text, and language from each `qas` table. The QA sources
+can point to local mirrors through `qa.local_dir`. The output directory can point
+to the campaign's shared scratch storage.
+
+```bash
+.venv/bin/clir-benchmark --config configs/verified-20261118-query-generation.yaml translate --dry-run
+.venv/bin/clir-benchmark --config configs/verified-20261118-query-generation.yaml generate-hyde --dry-run
+```
+
+For local execution, the generation launcher divides each corpus and variant into
+groups of 250 sorted question IDs. The following command writes a plan with the
+expected output and LLM request counts.
+
+```bash
+PYTHONPATH=src .venv/bin/python scripts/run_generation_shards.py \
+  --config configs/verified-20261118-query-generation.yaml \
+  --state-dir artifacts/generation-job-logs --workers 4 --plan
+```
+
+Use `--run` in place of `--plan` to start paid calls. Use `--stage translate` or
+`--stage generate-hyde` to select either stage independently. Each worker writes
+an append-only log and keeps completed responses across restarts. After all
+workers finish, the launcher checks every shard against its pinned questions
+and writes the canonical full-cohort artifacts, including the original API
+costs and durations. Use `--assemble` to repeat this check offline from local
+QA mirrors. A `verified.json` receipt lists each canonical artifact and manifest
+checksum. To work on one group, the generation CLI accepts `--shard-size 250
+--shard-index 0` with the desired corpus and language. Shard indices start at zero.
+
+The November 18 campaign supervisor runs one stage locally with eight workers
+and transfers its verified data to the Narval campaign. For example,
+`bash scripts/run_verified_generation_stage.sh translate --retry-transient`
+runs translation. Select `generate-hyde` to run HyDE. The optional retry flag
+allows up to three total attempts for a request after transient HTTP, transport,
+or malformed-response failures. HTTP authorization and payment failures stop
+the worker. The retry history survives restarts and contributes to per-query
+cost and request time. The supervisor checks the transferred data and request
+ledgers by SHA-256 before publishing manifests. Use `--transfer-only` to resume
+verification and transfer after a connection interruption.
+
+Add `--record-refusals` to preserve a provider's content filter or explicit
+refusal as a terminal outcome for that question. Its variant has status
+`provider_refused`, null text, and the original request key, cost, and latency.
+Each method reports `provider_refused_count` for its full cohort and by output
+language and model. This policy can also be set with
+`query_generation.record_refusals: true`. Use the same policy for generation,
+verification, transfer, and locating the published artifact. Cached successful
+calls and provider refusals carry over from an interrupted strict run.
+
+These commands list planned languages, models, and request counts. To make the
+paid calls, run the corresponding command without `--dry-run`, with
+`OPENROUTER_API_KEY` in the environment or the configured env file. Repeat
+`--corpus` to select a subset. Translation also accepts repeated
+`--translation-language` options from the selected corpus's language set. Use
+`--verify` to check existing outputs against the pinned questions and print
+their cost and latency summaries. A failed request keeps its history and can
+be retried explicitly with `--retry-failed`.
+
+Translation writes one variant per corpus language and preserves the original
+verbatim for matching languages. HyDE writes one passage per question, in its
+original language, in a `question-language` artifact. Arabic routes to GPT-5.6
+Luna, German, English, Spanish, French, and Russian route to Claude Haiku 5.5,
+and Japanese and Chinese route to Qwen3.8 27B. The model follows the output
+language in each method.
+
+Each artifact contains its QA revision, prompt, original questions, generated
+text, and request references. Manifests report cost and client-measured API
+request time by output language and model. Invocation records show the requests
+made by that invocation. `provider_cost_usd` comes from the completion response,
+`estimated_cost_usd` uses configured token rates, and `api_cost_usd` prefers the
+provider's figure per attempt. Qwen pricing varies by provider, so its cost
+comes from the completion response when available.
+[OpenRouter Luna pricing](https://openrouter.ai/openai/gpt-5.6-luna) ·
+[Haiku pricing](https://openrouter.ai/anthropic/claude-haiku-5.5) ·
+[Qwen pricing](https://openrouter.ai/qwen/qwen3.8-27b)
+
+For the later hybrid evaluation, run each translated language separately
+using the same completed chunks, eligible questions, qrels, corpus pool,
+dense model, BM25 settings, and fusion parameters as the original-query hybrid
+control. The HyDE artifact carries the original question and its generated
+passage for the later choice of BM25 input.
+
+#### Prepared relevance workflow
 
 The `translate-dense`, `translate-bm25`, and `translate-hybrid` baselines run each
 translated query language **separately**, using the same query IDs, eligible
@@ -1066,12 +1189,12 @@ truncation/support-exposure audit explicitly for its **dense component**.
 
 ### Dense encoders
 
-[`models.yaml`](src/clir_benchmark/models.yaml) pins all nine checkpoints, full
-dimensions, input limits, pooling descriptions, and exact prefixes. Published
-SentenceTransformer module pipelines are retained, including LaBSE's dense layer
-and EmbeddingGemma's projections. SapBERT uses an explicit CLS adapter. BGE-M3
-uses dense embeddings only. Prefixes are applied once, with no added source
-titles or QA evidence.
+The active eight encoders are EmbeddingGemma, BGE-M3, Qwen3-Embedding-0.6B,
+Nomic Embed Text v2 MoE, Granite Embedding 278M Multilingual, GTE Multilingual
+Base, Snowflake Arctic Embed L v2.0 and multilingual E5 Large Instruct. The
+registry also supports the historical LaBSE and SapBERT runs and the MiniLM
+smoke test. Each entry pins the checkpoint, dimensions, input limit, pooling
+and prefixes. [Model registry](src/clir_benchmark/models.yaml)
 
 Inputs are right-truncated with each model's tokenizer, counting prompts and
 special tokens. Benchmark chunks/qrels never change to accommodate an encoder.
@@ -1081,7 +1204,7 @@ complete source support survive. Partial Unicode token coverage is conservative.
 
 Default inference uses float32, full dimensions, and L2 normalization. Configure
 device and batch sizes in YAML. EmbeddingGemma rejects float16; use float32 or
-bfloat16. Custom model code is explicitly enabled for the pinned Nomic entry.
+bfloat16. The Nomic and GTE entries each pin their external implementation revision.
 
 Exact cosine retrieval uses float32 matrix multiplication over disk-backed
 document blocks, searching the entire target-language corpus including

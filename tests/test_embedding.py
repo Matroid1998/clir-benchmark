@@ -16,7 +16,10 @@ from clir_benchmark.util import json_dumps
 
 def test_all_models_are_pinned_and_prompts_are_explicit():
     registry = load_registry()
-    assert len(registry) == 9
+    assert registry["gte-multilingual-base"].max_length == 8192
+    assert len(registry["gte-multilingual-base"].code_revision) == 40
+    assert registry["arctic-embed-l-v2"].query_prefix == "query: "
+    assert registry["arctic-embed-l-v2"].document_prefix == ""
     assert all(len(spec.revision) == 40 for spec in registry.values())
     assert registry["SapBERT"].backend == "transformers_cls"
     assert registry["LaBSE"].max_length == 256
