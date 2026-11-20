@@ -19,10 +19,19 @@ def reciprocal_rank_fusion(
     config = config or HybridConfig()
     if isinstance(k, bool) or not isinstance(k, int) or k < 1:
         raise ValidationError("Fusion k must be a positive integer")
+    return fuse_chunk_ids(
+        [chunk_id for chunk_id, _ in dense], [chunk_id for chunk_id, _ in bm25], config, k
+    )
+
+
+def fuse_chunk_ids(
+    dense: list[str], bm25: list[str], config: HybridConfig, k: int = 100
+) -> list[tuple[str, float]]:
+    """Combine ranked IDs. RRF depends only on the positions of the candidates."""
     scores: dict[str, float] = {}
     for ranking, weight in ((dense, config.dense_weight), (bm25, config.bm25_weight)):
         seen = set()
-        for rank, (chunk_id, _) in enumerate(ranking[: config.candidate_k], 1):
+        for rank, chunk_id in enumerate(ranking[: config.candidate_k], 1):
             if chunk_id in seen:
                 raise ValidationError(f"Duplicate chunk ID in fusion branch: {chunk_id}")
             seen.add(chunk_id)
@@ -173,7 +182,18 @@ def _search(
             block_ids = ids[start:stop][mask]
             scores = queries @ vectors.T
             for index, score_row in enumerate(scores):
-                order = np.lexsort((block_ids, -score_row))[:k]
+                if len(score_row) <= k:
+                    order = np.lexsort((block_ids, -score_row))
+                else:
+                    # Partition by score, then resolve all ties at the cutoff by chunk ID.
+                    threshold = np.partition(score_row, len(score_row) - k)[-k]
+                    above = np.flatnonzero(score_row > threshold)
+                    tied = np.flatnonzero(score_row == threshold)
+                    take = k - len(above)
+                    if len(tied) > take:
+                        tied = tied[np.argsort(block_ids[tied])[:take]]
+                    order = np.concatenate((above, tied))
+                    # The merged candidates below are sorted exactly once.
                 candidates = np.concatenate((best_ids[index], block_ids[order]))
                 candidate_scores = np.concatenate((best_scores[index], score_row[order]))
                 keep = np.lexsort((candidates, -candidate_scores))[:k]

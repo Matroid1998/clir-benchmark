@@ -120,6 +120,38 @@ def test_hybrid_reuses_dense_embeddings_and_fuses_each_language_pool(
     assert "hybrid,bge-m3" in (report_path / "settings.csv").read_text()
 
 
+def test_hybrid_fuses_saved_candidates_without_running_search_twice(
+    tmp_path, tokenizer, monkeypatch
+):
+    original, _ = prepare_fixture(tmp_path, tokenizer)
+    prepare_bm25(original, "eurlex")
+    embed(original, "eurlex", "bge-m3", encoder_factory=FixtureEncoder)
+    direct = retrieve(original, "eurlex", "bge-m3", baseline="hybrid")
+    config = replace(original, cache_hybrid_candidates=True)
+    with pytest.raises(ValidationError, match="Prepare the dense candidate run"):
+        retrieve(config, "eurlex", "bge-m3", baseline="hybrid")
+    dense = retrieve(config, "eurlex", "bge-m3")
+    bm25 = retrieve(config, "eurlex", baseline="bm25")
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Cached fusion must only read the two component candidate lists")
+
+    monkeypatch.setattr(DenseIndex, "search", forbidden)
+    monkeypatch.setattr(BM25Index, "search", forbidden)
+    monkeypatch.setattr("clir_benchmark.pipeline.load_embeddings", forbidden)
+    hybrid = retrieve(config, "eurlex", "bge-m3", baseline="hybrid")
+    assert list(rows(hybrid / "run.parquet")) == list(rows(direct / "run.parquet"))
+    assert hybrid != direct
+    manifest = read_json(hybrid / "manifest.json")
+    assert manifest["component_runs"] == {"dense": str(dense), "bm25": str(bm25)}
+    assert manifest["candidate_depth"] == config.hybrid.candidate_k
+    for row in rows(hybrid / "timings.parquet"):
+        assert row["retrieval_seconds_amortized"] == sum(
+            row[f"{name}_seconds_amortized"] for name in ("dense", "bm25", "fusion")
+        )
+    assert evaluate(config, "eurlex", "bge-m3", baseline="hybrid").is_dir()
+
+
 def test_index_and_run_cache_dependencies_are_separate(tmp_path, tokenizer):
     config, _ = prepare_fixture(tmp_path, tokenizer)
     original_index = prepare_bm25(config, "eurlex")

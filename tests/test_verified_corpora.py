@@ -224,3 +224,112 @@ def test_release_offset_map_requires_whole_span_for_a_positive(tmp_path, chunker
     assert manifest["outcomes"] == {"contained": 1, "split_across_chunks": 1}
     assert manifest["spans"] == 2 and manifest["query_chunk_positives"] == 1
     assert len((dest / "known-chunk-qrels.tsv").read_text().splitlines()) == 2
+
+
+@pytest.mark.parametrize("bad", [None, "offset", "corpus_id", "language"])
+def test_verified_relevance_chunk_overlaps_and_available_language_cohort(tmp_path, chunker, bad):
+    from clir_benchmark.artifacts import rows
+    from clir_benchmark.pipeline import prepare_relevance
+
+    source, qa = tmp_path / "documents", tmp_path / "qa"
+    en = "ABCDEFGHIJabcdefghij1234567890"
+    fr = "xxxx😀BONJOURabc😀BONJOUR321"
+    write_rows(
+        source,
+        "corpus",
+        [
+            {
+                "_id": "d",
+                "parent_document_id": "d",
+                "unit_type": "document",
+                "available_languages": ["en", "fr", "es"],
+                "source_unit_ids": {"en": "d.en", "fr": "d.fr", "es": "d.es"},
+                "text": {"en": en, "fr": fr, "es": "unrelated short answer"},
+            }
+        ],
+    )
+    original = {
+        "anchor_id": "one",
+        "source_unit_id": "d.en",
+        "language": "en",
+        "corpus_id": "d",
+        "config": "corpus",
+        "match_status": "exact",
+        "is_original": True,
+        "start": 2,
+        "end": 17,
+        "text": en[2:17],
+        "occurrence_starts": [],
+    }
+    target = {
+        **original,
+        "source_unit_id": "d.fr",
+        "language": "fr",
+        "is_original": False,
+        "start": None,
+        "end": None,
+        "occurrence_starts": [4, 15],
+        "text": "😀BONJOUR",
+    }
+    if bad == "offset":
+        target["occurrence_starts"] = [4, 16]
+    elif bad:
+        target[bad] = "incorrect"
+    write_rows(
+        qa,
+        "qas",
+        [
+            {
+                "_id": "q",
+                "question": "question only",
+                "answer": "short answer",
+                "question_language": "en",
+                "source_unit_id": "d.en",
+                "evidence_all_languages": {"en": [original], "fr": [target], "es": []},
+            }
+        ],
+    )
+    base = {"repo_id": "fixture/verified", "revision": "c" * 40}
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(
+        yaml.safe_dump(
+            {
+                "version": 1,
+                "output_dir": "out",
+                "candidate_mode": "all",
+                "datasets": {
+                    "un": {
+                        "corpus_format": "verified-multilingual-v1",
+                        "qa": {**base, "local_dir": str(qa)},
+                        "corpus": {**base, "local_dir": str(source)},
+                    }
+                },
+            }
+        )
+    )
+    cfg = load_config(config_path)
+    directory = prepare_corpus(cfg, "un", chunker=chunker)
+    if bad:
+        with pytest.raises(ValidationError, match="quotation mismatch|edition or anchor mismatch"):
+            prepare_relevance(cfg, "un", work_dir=tmp_path)
+        assert not list(tmp_path.glob("clir-qrels-*"))
+        assert not cfg.relevance_dir("un").exists()
+        return
+    destination = prepare_relevance(cfg, "un", work_dir=tmp_path)
+    assert not list(tmp_path.glob("clir-qrels-*"))
+    all_chunks = list(rows(directory / "chunks.parquet"))
+    expected = {
+        c["id"]
+        for c in all_chunks
+        if any(
+            c["language"] == lang and a < c["end"] and c["start"] < b
+            for lang, a, b in [("en", 2, 17), ("fr", 4, 12), ("fr", 15, 23)]
+        )
+    }
+    qrels = list(rows(destination / "qrels.parquet"))
+    assert {r["chunk_id"] for r in qrels if r["setting_id"] == "un__en__mixed"} == expected
+    assert {r["required_source_id"] for r in qrels} == {"d.en"}
+    assert len({r["chunk_id"] for r in qrels if r["setting_id"] == "un__en__fr"}) >= 2
+    assert read_json(destination / "settings.json")["un__en__es"]["counts"] == {"dropped": 1}
+    assert read_json(destination / "manifest.json")["selected_query_count"] == 1
+    assert prepare_relevance(cfg, "un") == destination

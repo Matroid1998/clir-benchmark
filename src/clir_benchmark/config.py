@@ -38,6 +38,8 @@ DOCUMENT_BASELINES = (
     "rerank-hyde-dense",
 )
 
+VERIFIED_OVERLAP_POLICY = "verified-multilingual-positive-character-overlap-v1"
+
 QWEN3_RERANKER_REVISION = "e61197ed45024b0ed8a2d74b80b4d909f1255473"
 
 
@@ -487,6 +489,7 @@ class Config:
     baselines: tuple[str, ...] = ("dense",)
     bm25: BM25Config = field(default_factory=BM25Config)
     hybrid: HybridConfig = field(default_factory=HybridConfig)
+    cache_hybrid_candidates: bool = False
     translation: TranslationConfig = field(default_factory=TranslationConfig)
     hyde: HyDEConfig = field(default_factory=HyDEConfig)
     query_generation: QueryGenerationConfig = field(default_factory=QueryGenerationConfig)
@@ -537,6 +540,12 @@ class Config:
                 "schema": 2,
                 "corpus_key": self.corpus_key(corpus),
                 "qa": self.datasets[corpus].qa.identity(),
+                **(
+                    {"relevance_basis": VERIFIED_OVERLAP_POLICY}
+                    if self.datasets[corpus].corpus_format == "verified-multilingual-v1"
+                    and self.retrieval_unit == "chunk"
+                    else {}
+                ),
                 "candidate_mode": self.candidate_mode,
                 **(
                     {"candidate_selection": asdict(self.candidate_selection)}
@@ -657,6 +666,10 @@ def load_config(path: str | Path) -> Config:
         )
     except (TypeError, KeyError) as exc:
         raise ValidationError(f"Invalid configuration: {exc}") from exc
+    if not isinstance(config.cache_hybrid_candidates, bool):
+        raise ValidationError("cache_hybrid_candidates must be true or false")
+    if config.cache_hybrid_candidates and config.retrieval_unit != "chunk":
+        raise ValidationError("cache_hybrid_candidates requires chunk retrieval")
     if config.candidate_mode not in CANDIDATE_MODES:
         raise ValidationError("candidate_mode must be best, all, or best-per-document")
     if config.retrieval_unit not in {"chunk", "document"}:

@@ -379,21 +379,40 @@ DOCUMENT_RANKING_DETAILS_SCHEMA = pa.schema(
 )
 
 
-def _ranking_details(config: Config, corpus: str, run_dir: Path, destination: Path) -> None:
+def _ranked_chunk_rows(config: Config, corpus: str, run_file: Path):
+    corpus_dir = config.corpus_dir(corpus)
     document_mode = config.retrieval_unit == "document"
-    result_id = "document_id" if document_mode else "chunk_id"
-    queries = {row["id"]: row for row in rows(config.relevance_dir(corpus) / "queries.parquet")}
-    qrels = defaultdict(set)
-    for row in rows(config.relevance_dir(corpus) / "qrels.parquet"):
-        qrels[(row["setting_id"], row["query_id"], row[result_id])].add(row["required_source_id"])
-    with (
-        CorpusStore(config.corpus_dir(corpus) / "lookup.sqlite") as store,
-        ParquetSink(
-            destination,
-            DOCUMENT_RANKING_DETAILS_SCHEMA if document_mode else RANKING_DETAILS_SCHEMA,
-        ) as sink,
-    ):
-        for row in rows(run_dir / "run.parquet"):
+    if config.cache_hybrid_candidates and not document_mode:
+        # Repeated top-100 hits otherwise require two random SQLite reads per hit,
+        # including the full source text. Chunks already store the exact source slice.
+        wanted = {row["chunk_id"] for row in rows(run_file, ["chunk_id"])}
+        columns = [
+            "id",
+            "source_unit_id",
+            "source_id",
+            "parent_id",
+            "language",
+            "text",
+            "start",
+            "end",
+        ]
+        details = {}
+        for batch in pq.ParquetFile(corpus_dir / "chunks.parquet").iter_batches(
+            columns=columns, batch_size=1024
+        ):
+            keep = [chunk_id in wanted for chunk_id in batch.column(0).to_pylist()]
+            if any(keep):
+                for chunk in batch.filter(pa.array(keep)).to_pylist():
+                    details[chunk["id"]] = chunk
+        for row in rows(run_file):
+            chunk_id = row["chunk_id"]
+            if chunk_id not in details:
+                raise ValidationError(f"Result refers to unknown chunk {chunk_id}")
+            yield row, details[chunk_id]
+        return
+
+    with CorpusStore(corpus_dir / "lookup.sqlite") as store:
+        for row in rows(run_file):
             chunk_id = row["winning_chunk_id"] if document_mode else row["chunk_id"]
             chunk = store.chunk(chunk_id)
             if chunk is None:
@@ -403,8 +422,36 @@ def _ranking_details(config: Config, corpus: str, run_dir: Path, destination: Pa
                 raise ValidationError(f"Result refers to unknown source {chunk['source_unit_id']}")
             if document_mode and source.id != row["document_id"]:
                 raise ValidationError("Winning chunk does not belong to the ranked document")
+            yield (
+                row,
+                {
+                    **chunk,
+                    "source_unit_id": source.id,
+                    "source_id": source.source_id,
+                    "parent_id": source.parent_id,
+                    "language": source.language,
+                    "text": source.text[chunk["start"] : chunk["end"]],
+                },
+            )
+
+
+def _ranking_details(config: Config, corpus: str, run_dir: Path, destination: Path) -> None:
+    document_mode = config.retrieval_unit == "document"
+    result_id = "document_id" if document_mode else "chunk_id"
+    relevance_dir = config.relevance_dir(corpus)
+    queries = {
+        row["id"]: row
+        for row in rows(relevance_dir / "queries.parquet", ["id", "question", "question_language"])
+    }
+    qrels = defaultdict(set)
+    for row in rows(relevance_dir / "qrels.parquet"):
+        qrels[(row["setting_id"], row["query_id"], row[result_id])].add(row["required_source_id"])
+    with ParquetSink(
+        destination, DOCUMENT_RANKING_DETAILS_SCHEMA if document_mode else RANKING_DETAILS_SCHEMA
+    ) as sink:
+        for row, chunk in _ranked_chunk_rows(config, corpus, run_dir / "run.parquet"):
             query = queries[row["query_id"]]
-            required = qrels[(row["setting_id"], row["query_id"], row[result_id])]
+            required = qrels.get((row["setting_id"], row["query_id"], row[result_id]), ())
             sink.append(
                 {
                     **row,
@@ -412,11 +459,11 @@ def _ranking_details(config: Config, corpus: str, run_dir: Path, destination: Pa
                     "query_language": query["question_language"],
                     "relevance": int(bool(required)),
                     "required_source_ids": sorted(required),
-                    "source_unit_id": source.id,
-                    "source_id": source.source_id,
-                    "parent_id": source.parent_id,
-                    "document_language": source.language,
-                    "text": source.text[chunk["start"] : chunk["end"]],
+                    "source_unit_id": chunk["source_unit_id"],
+                    "source_id": chunk["source_id"],
+                    "parent_id": chunk["parent_id"],
+                    "document_language": chunk["language"],
+                    "text": chunk["text"],
                     "start": chunk["start"],
                     "end": chunk["end"],
                 }

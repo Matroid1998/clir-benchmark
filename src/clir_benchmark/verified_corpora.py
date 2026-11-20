@@ -3,15 +3,16 @@
 from __future__ import annotations
 
 import time
-from collections import Counter
+from collections import Counter, defaultdict
 from collections.abc import Iterator
+from functools import lru_cache
 from pathlib import Path
 
 from .adapters import DatasetReader, required_string
 from .artifacts import CorpusStore
 from .config import Config, language_tag
 from .errors import ValidationError
-from .types import Chunk, SourceUnit
+from .types import Chunk, Judgment, Match, Query, Setting, SourceUnit
 from .util import digest, hf_token, json_dumps, new_directory, read_json, write_json
 
 
@@ -213,3 +214,145 @@ def iter_verified_units(reader: DatasetReader, corpus: str) -> Iterator[SourceUn
                     title=title or "",
                     metadata={**metadata, **edition_metadata},
                 )
+
+
+def verified_query_from_row(row: dict, corpus: str) -> Query:
+    query_id = required_string(row, "_id", corpus)
+    label = f"{corpus} QA {query_id}"
+    language = language_tag(required_string(row, "question_language", label), label)
+    evidence = row.get("evidence_all_languages")
+    if not isinstance(evidence, dict) or not any(evidence.values()):
+        raise ValidationError(f"{label}: multilingual supporting spans are missing")
+    return Query(
+        id=query_id,
+        corpus=corpus,
+        question=required_string(row, "question", label),
+        question_language=language,
+        context_language=language_tag(row.get("context_language") or language, label),
+        source_unit_id=required_string(row, "source_unit_id", label),
+        answer=row.get("answer") or "",
+        evidence=row.get("evidence") or "",
+        evidence_all_languages=evidence,
+        evidence_alignment_status=row.get("evidence_alignment_status") or {},
+        evidence_alignment_eligibility=row.get("evidence_alignment_eligibility"),
+        evidence_alignment_contract=row.get("evidence_alignment_contract"),
+        involved_source_unit_ids=(),
+        generator_model_id=row.get("generator_model_id") or "",
+        persona=row.get("persona") or row.get("mode") or "",
+        # Published QAs are the frozen candidates; legacy generation-task files are not required.
+        task_id=query_id,
+        is_best=row.get("is_best"),
+        candidate_rank=row.get("candidate_rank"),
+        total_score=row.get("total_score"),
+    )
+
+
+def verified_overlap_matches(queries: list[Query], store: CorpusStore) -> dict:
+    """Validate source quotations once and label all positive-length chunk intersections."""
+
+    @lru_cache(maxsize=24)
+    def edition(unit_id):
+        unit = store.get_source(unit_id)
+        if unit is None:
+            raise ValidationError(f"Missing supporting edition {unit_id}")
+        bounds = list(
+            store.db.execute(
+                "SELECT id,start,end FROM chunks WHERE source_unit_id=? ORDER BY start", (unit_id,)
+            )
+        )
+        return unit, bounds
+
+    result = {}
+    for query in queries:
+        snippets = [
+            (language, s)
+            for language, entries in query.evidence_all_languages.items()
+            for s in entries or []
+        ]
+        anchors = {s["anchor_id"]: s for _, s in snippets if s.get("is_original") is True}
+        by_language = defaultdict(list)
+        for language, snippet in snippets:
+            unit_id = required_string(snippet, "source_unit_id", query.id)
+            text = required_string(snippet, "text", query.id)
+            unit, chunks = edition(unit_id)
+            anchor = anchors.get(snippet.get("anchor_id"))
+            if (
+                not anchor
+                or snippet.get("match_status") != "exact"
+                or unit.corpus != query.corpus
+                or unit.language != language
+                or snippet.get("language") != language
+                or snippet.get("corpus_id") != unit.source_id
+                or snippet.get("config") != unit.metadata.get("configuration")
+                or (anchor["config"], anchor["corpus_id"])
+                != (snippet["config"], snippet["corpus_id"])
+            ):
+                raise ValidationError(
+                    f"{query.id}: evidence edition or anchor mismatch in {unit_id}"
+                )
+            start, end = snippet.get("start"), snippet.get("end")
+            if start is None and end is None:
+                starts = snippet.get("occurrence_starts")
+                if not isinstance(starts, list) or not starts:
+                    raise ValidationError(f"{query.id}: missing occurrence positions for {unit_id}")
+            elif type(start) is int and type(end) is int and end == start + len(text):
+                starts = [start]
+            else:
+                raise ValidationError(f"{query.id}: invalid evidence range in {unit_id}")
+            for pos in starts:
+                if type(pos) is not int or pos < 0 or unit.text[pos : pos + len(text)] != text:
+                    raise ValidationError(f"{query.id}: quotation mismatch in {unit_id} at {pos}")
+                stop = pos + len(text)
+                covered = pos
+                for chunk_id, chunk_start, chunk_end in chunks:
+                    if chunk_start >= stop:
+                        break
+                    left, right = max(pos, chunk_start), min(stop, chunk_end)
+                    if left >= right:
+                        continue
+                    if left > covered:
+                        raise ValidationError(f"{query.id}: gap in chunk coverage in {unit_id}")
+                    covered = max(covered, right)
+                    by_language[language].append(
+                        Match(
+                            query.id,
+                            chunk_id,
+                            anchor["source_unit_id"],
+                            unit_id,
+                            "evidence_all_languages",
+                            unit.text[left:right],
+                            left,
+                            right,
+                            {
+                                "anchor_id": snippet["anchor_id"],
+                                "snippet_start": pos,
+                                "snippet_end": stop,
+                                "is_original": snippet["is_original"],
+                                "validation_status": snippet.get("validation_status"),
+                            },
+                        )
+                    )
+                if covered != stop:
+                    raise ValidationError(f"{query.id}: incomplete chunk coverage in {unit_id}")
+        result[query.id] = by_language
+    return result
+
+
+def verified_overlap_judgment(query: Query, setting: Setting, by_language: dict) -> Judgment:
+    matches = [match for lang in setting.target_languages for match in by_language.get(lang, ())]
+    if not matches:
+        return Judgment(
+            query.id,
+            "dropped",
+            "no_evidence_in_target_languages",
+            {"target_languages": setting.target_languages},
+            [],
+        )
+    return Judgment(
+        query.id,
+        "eligible",
+        "verified_chunk_overlap",
+        {},
+        sorted({match.required_source_id for match in matches}),
+        matches,
+    )

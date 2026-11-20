@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import os
 import shutil
 import time
 from collections import Counter, defaultdict
@@ -41,7 +42,13 @@ from .artifacts import (
 )
 from .chunk_batches import checkpointed_chunks
 from .chunking import Chunker, make_chunker
-from .config import BASELINES, Config, SharedSentenceConfig, validate_retrieval_baselines
+from .config import (
+    BASELINES,
+    VERIFIED_OVERLAP_POLICY,
+    Config,
+    SharedSentenceConfig,
+    validate_retrieval_baselines,
+)
 from .embedding import (
     embedding_key,
     encode_records,
@@ -55,7 +62,7 @@ from .lexical import BM25Index, bm25_path, bm25_scoring
 from .metrics import aggregate, score_query
 from .relevance import build_settings, judge, judge_documents
 from .results import export_result
-from .retrieval import DenseIndex, reciprocal_rank_fusion
+from .retrieval import DenseIndex, fuse_chunk_ids, reciprocal_rank_fusion
 from .translation import load_translations, translation_summary
 from .types import SourceUnit
 from .util import (
@@ -67,7 +74,12 @@ from .util import (
     versions,
     write_json,
 )
-from .verified_corpora import iter_verified_units
+from .verified_corpora import (
+    iter_verified_units,
+    verified_overlap_judgment,
+    verified_overlap_matches,
+    verified_query_from_row,
+)
 
 
 def _corpus_units(
@@ -204,7 +216,7 @@ def prepare_corpus(
     return destination
 
 
-def prepare_relevance(config: Config, corpus: str) -> Path:
+def prepare_relevance(config: Config, corpus: str, *, work_dir: Path | None = None) -> Path:
     destination = config.relevance_dir(corpus)
     if destination.exists():
         read_json(destination / "manifest.json")
@@ -213,13 +225,24 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
     token = hf_token(config.env_file)
     reader = DatasetReader(config.datasets[corpus].qa, token)
     started = time.perf_counter()
-    with CorpusStore(corpus_dir / "lookup.sqlite") as store:
-        if corpus == "chemistry":
+    with ExitStack() as stack:
+        database = corpus_dir / "lookup.sqlite"
+        if work_dir is not None:
+            local = Path(stack.enter_context(TemporaryDirectory(dir=work_dir, prefix="clir-qrels-")))
+            shutil.copyfile(database, local / "lookup.sqlite")
+            database = local / "lookup.sqlite"
+        store = stack.enter_context(CorpusStore(database))
+        verified = (
+            config.datasets[corpus].corpus_format == "verified-multilingual-v1"
+            and config.retrieval_unit == "chunk"
+        )
+        if corpus == "chemistry" and not verified:
             verify_chemistry_provenance(reader, store, config.datasets[corpus].corpus)
         raw_queries = reader.read("qas")
         if config.candidate_mode == "best-per-document":
             raw_queries = list(raw_queries)
-        queries = [query_from_row(row, corpus) for row in raw_queries]
+        parse_query = verified_query_from_row if verified else query_from_row
+        queries = [parse_query(row, corpus) for row in raw_queries]
         queries = apply_evidence_overlay(queries, config.evidence_file)
         source_ids = None
         if config.candidate_mode == "best-per-document":
@@ -240,7 +263,8 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
         result_id = "document_id" if document_mode else "chunk_id"
         associations = defaultdict(set)
         known_query_ids = {query.id for query in queries}
-        raw_associations = reader.read("source_qrels")
+        verified_matches = verified_overlap_matches(selected, store) if verified else {}
+        raw_associations = () if verified else reader.read("source_qrels")
         if config.candidate_mode == "best-per-document":
             raw_associations = list(raw_associations)
         for row in raw_associations:
@@ -289,7 +313,11 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
                     for query in selected:
                         if query.question_language != setting.query_language:
                             continue
-                        judgment = judge_query(query, setting, store, associations[query.id])
+                        judgment = (
+                            verified_overlap_judgment(query, setting, verified_matches[query.id])
+                            if verified
+                            else judge_query(query, setting, store, associations[query.id])
+                        )
                         judgments.append(judgment)
                         counts[judgment.status] += 1
                         reasons[judgment.reason] += 1
@@ -377,6 +405,7 @@ def prepare_relevance(config: Config, corpus: str) -> Path:
                     "alignment_eligibility": dict(
                         Counter(q.evidence_alignment_eligibility or "unspecified" for q in selected)
                     ),
+                    **({"relevance_basis": VERIFIED_OVERLAP_POLICY} if verified else {}),
                     "blocked_settings": [
                         name for name, value in status.items() if value["status"] == "blocked"
                     ],
@@ -646,6 +675,11 @@ def run_path(
             "bm25": bm25_scoring(config.bm25),
             "top_k": 100,
         }
+        if config.cache_hybrid_candidates:
+            identity["candidate_cache"] = {
+                "depth": config.hybrid.candidate_k,
+                "batch_size": config.runtime.query_batch_size,
+            }
         if baseline == "hybrid":
             identity["dense"] = str(run_path(config, corpus, spec))
             identity["fusion"] = {"method": "rrf", **asdict(config.hybrid)}
@@ -661,6 +695,8 @@ def run_path(
         "query_batch_size": config.runtime.query_batch_size,
         "corpus_block_size": config.runtime.corpus_block_size,
     }
+    if config.cache_hybrid_candidates:
+        identity["candidate_cache"] = {"depth": config.hybrid.candidate_k}
     return config.output_dir / "runs" / corpus / digest(identity)
 
 
@@ -730,12 +766,26 @@ def retrieve(
         _, translated, translation_manifest = load_translations(
             config, corpus, translation_language
         )
+    cache_candidates = config.cache_hybrid_candidates and baseline in {"bm25", "dense", "hybrid"}
+    fuse_cached = cache_candidates and baseline == "hybrid"
+    component_paths = {}
+    components = {}
     with ExitStack() as resources:
+        if fuse_cached:
+            for name, component_spec in (("dense", spec), ("bm25", None)):
+                path = run_path(config, corpus, component_spec, baseline=name)
+                if not (path / "candidates.parquet").is_file():
+                    raise ValidationError(
+                        f"Prepare the {name} candidate run before hybrid retrieval: {path}"
+                    )
+                component_paths[name] = str(path)
+                components[name] = rows(path / "candidates.parquet")
+
         index = None
         lexical = None
         query_index = {}
         query_texts = {}
-        if spec is not None:
+        if spec is not None and not fuse_cached:
             documents, doc_rows, _ = load_embeddings(
                 embedding_path(config, corpus, spec, "document"),
                 ["id", "language", "source_unit_id"] if document_mode else ["id", "language"],
@@ -763,8 +813,22 @@ def retrieve(
             )
             del doc_rows
             query_index = {row["id"]: index for index, row in enumerate(query_rows)}
+        lexical_manifest = None
         if backend in {"bm25", "hybrid"}:
-            lexical = resources.enter_context(BM25Index(bm25_path(config, corpus), config.bm25))
+            path = bm25_path(config, corpus)
+            if not (path / "manifest.json").is_file() or not (path / "index.sqlite").is_file():
+                raise ValidationError(f"BM25 index is not prepared: {path}. Run index-bm25 first.")
+            lexical_manifest = read_json(path / "manifest.json")
+        if backend in {"bm25", "hybrid"} and not fuse_cached:
+            local = os.environ.get("SLURM_TMPDIR")
+            if cache_candidates and local:
+                copy = Path(
+                    resources.enter_context(TemporaryDirectory(dir=local, prefix="bm25-search-"))
+                )
+                shutil.copyfile(path / "index.sqlite", copy / "index.sqlite")
+                shutil.copyfile(path / "manifest.json", copy / "manifest.json")
+                path = copy
+            lexical = resources.enter_context(BM25Index(path, config.bm25))
             query_texts = {
                 row["id"]: row["question"]
                 for row in rows(relevance_dir / "queries.parquet", ["id", "question"])
@@ -778,7 +842,7 @@ def retrieve(
             tag = f"hyde-{hyde_language}-{tag}"
         if document_mode:
             tag = f"document-{tag}"
-        candidate_k = config.hybrid.candidate_k if backend == "hybrid" else 100
+        candidate_k = config.hybrid.candidate_k if backend == "hybrid" or cache_candidates else 100
         temporary = resources.enter_context(new_directory(destination))
         timing_schema = pa.schema(
             [
@@ -787,12 +851,35 @@ def retrieve(
                 ("retrieval_seconds_amortized", pa.float64()),
             ]
         )
+        if fuse_cached:
+            timing_schema = pa.schema(
+                [
+                    *timing_schema,
+                    ("dense_seconds_amortized", pa.float64()),
+                    ("bm25_seconds_amortized", pa.float64()),
+                    ("fusion_seconds_amortized", pa.float64()),
+                ]
+            )
         with (
+            ExitStack() as writers,
             ParquetSink(
                 temporary / "run.parquet", DOCUMENT_RUN_SCHEMA if document_mode else RUN_SCHEMA
             ) as sink,
             ParquetSink(temporary / "timings.parquet", timing_schema) as timing_sink,
         ):
+            candidates = None
+            if cache_candidates and not fuse_cached:
+                schema = pa.schema(
+                    [
+                        ("setting_id", pa.string()),
+                        ("query_id", pa.string()),
+                        ("chunk_ids", pa.list_(pa.string())),
+                        ("seconds", pa.float64()),
+                    ]
+                )
+                candidates = writers.enter_context(
+                    ParquetSink(temporary / "candidates.parquet", schema, batch_size=16)
+                )
             for setting_id, info in settings.items():
                 if info["status"] != "ready":
                     continue
@@ -807,6 +894,19 @@ def retrieve(
                     for start in range(0, len(ids), config.runtime.query_batch_size):
                         batch_ids = ids[start : start + config.runtime.query_batch_size]
                         languages = tuple(info["target_languages"])
+                        cached = {}
+                        for name, stream in components.items():
+                            cached[name] = []
+                            for query_id in batch_ids:
+                                record = next(stream, None)
+                                if record is None or (record["setting_id"], record["query_id"]) != (
+                                    setting_id,
+                                    query_id,
+                                ):
+                                    raise ValidationError(
+                                        f"{name} candidate cohort differs at {setting_id}/{query_id}"
+                                    )
+                                cached[name].append(record)
                         batch_started = time.perf_counter()
                         dense_results = (
                             (index.search_documents if document_mode else index.search)(
@@ -829,26 +929,55 @@ def retrieve(
                             else ([] for _ in batch_ids)
                         )
                         batch_rankings = []
-                        for query_id, dense_ranking, lexical_ranking in zip(
-                            batch_ids, dense_results, lexical_results, strict=True
-                        ):
-                            ranking = (
-                                reciprocal_rank_fusion(
-                                    dense_ranking, lexical_ranking, config.hybrid
+                        if fuse_cached:
+                            for query_id, dense_row, bm25_row in zip(
+                                batch_ids, cached["dense"], cached["bm25"], strict=True
+                            ):
+                                ranking = fuse_chunk_ids(
+                                    dense_row["chunk_ids"], bm25_row["chunk_ids"], config.hybrid
                                 )
-                                if backend == "hybrid"
-                                else lexical_ranking
-                                if backend == "bm25"
-                                else dense_ranking
-                            )
-                            batch_rankings.append((query_id, ranking))
+                                batch_rankings.append((query_id, ranking))
+                        else:
+                            for query_id, dense_ranking, lexical_ranking in zip(
+                                batch_ids, dense_results, lexical_results, strict=True
+                            ):
+                                ranking = (
+                                    reciprocal_rank_fusion(
+                                        dense_ranking, lexical_ranking, config.hybrid
+                                    )
+                                    if backend == "hybrid"
+                                    else lexical_ranking
+                                    if backend == "bm25"
+                                    else dense_ranking
+                                )
+                                batch_rankings.append((query_id, ranking))
                         batch_seconds = time.perf_counter() - batch_started
-                        for query_id, ranking in batch_rankings:
+                        for position, (query_id, ranking) in enumerate(batch_rankings):
+                            seconds = batch_seconds / len(batch_ids)
+                            component_times = {}
+                            if fuse_cached:
+                                component_times = {
+                                    f"{name}_seconds_amortized": cached[name][position]["seconds"]
+                                    for name in components
+                                }
+                                component_times["fusion_seconds_amortized"] = seconds
+                                seconds = sum(component_times.values())
+                            if candidates is not None:
+                                candidates.append(
+                                    {
+                                        "setting_id": setting_id,
+                                        "query_id": query_id,
+                                        "chunk_ids": [item[0] for item in ranking],
+                                        "seconds": seconds,
+                                    }
+                                )
+                                ranking = ranking[:100]
                             timing_sink.append(
                                 {
                                     "setting_id": setting_id,
                                     "query_id": query_id,
-                                    "retrieval_seconds_amortized": batch_seconds / len(batch_ids),
+                                    "retrieval_seconds_amortized": seconds,
+                                    **component_times,
                                 }
                             )
                             for rank, item in enumerate(ranking, 1):
@@ -873,6 +1002,8 @@ def retrieve(
                                 handle.write(
                                     f"{query_id}\tQ0\t{result_id}\t{rank}\t{score:.17g}\t{tag}\n"
                                 )
+            if any(next(stream, None) is not None for stream in components.values()):
+                raise ValidationError("Unexpected trailing hybrid candidates")
         write_json(
             temporary / "manifest.json",
             {
@@ -901,7 +1032,16 @@ def retrieve(
                     if hyde_manifest is not None
                     else {}
                 ),
-                "timing_contract": "search and fusion wall time per batch divided by batch size; excludes model/index loading and result serialization",
+                "timing_contract": (
+                    "sum of cached component search wall times and current fusion wall time, each amortized per batch; excludes artifact I/O; reconstructed serial total"
+                    if fuse_cached
+                    else "search and fusion wall time per batch divided by batch size; excludes model/index loading and result serialization"
+                ),
+                **(
+                    {"candidate_depth": candidate_k, "component_runs": component_paths}
+                    if cache_candidates
+                    else {}
+                ),
                 "run_name": tag,
                 "model": asdict(spec) if spec is not None else None,
                 "relevance_hash": config.relevance_key(corpus),
@@ -918,12 +1058,12 @@ def retrieve(
                 else "bm25_float64"
                 if backend == "bm25"
                 else "cosine_float32",
-                "bm25": bm25_scoring(config.bm25) if lexical is not None else None,
+                "bm25": bm25_scoring(config.bm25) if lexical_manifest is not None else None,
                 "lexical_index": {
                     "path": str(bm25_path(config, corpus)),
-                    "manifest": lexical.manifest,
+                    "manifest": lexical_manifest,
                 }
-                if lexical is not None
+                if lexical_manifest is not None
                 else None,
                 "fusion": {"method": "rrf", **asdict(config.hybrid)}
                 if backend == "hybrid"

@@ -1,0 +1,186 @@
+{
+  "google-patents": {
+    "repo": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+    "baseline_revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed",
+    "updated_revision": "2d6a4966a3373d48ef0a30fe9687ac5de9700e87",
+    "old_questions": 2000,
+    "new_questions": 1775,
+    "removed_ids": 225,
+    "added_ids": 0,
+    "changed_retained_question_language_or_answer": 0,
+    "final_filter": {
+      "criterion": "Keep a question when it has at least one verbatim snippet in every available language of its supporting source documents.",
+      "input_questions": 1848,
+      "language_availability": "A language counts when the patent publication contains an abstract in that language.",
+      "parent_manifest_sha256": "e84ed44f202d53799a24c39b35d9b6663141e4d439353b0fef28bcb0ecac2cbc",
+      "parent_revision": "f3245ab637b3ce065d162b1b2dc10372f688946a",
+      "removed_questions": 73,
+      "retained_questions": 1775
+    },
+    "alignment": {
+      "base_manifest_sha256": "e5e05c26be5e8d9d8af61ea4dd54ebf4a1f9a2fac594d7285aacfc1fd743765e",
+      "base_repo_id": "MehdiAstaraki/google-patents-generated-qa-verified-20261118",
+      "base_revision": "9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed",
+      "contract": "verified_qa_multilingual_evidence_terra_v1",
+      "counts_scope": "retained questions",
+      "languages": [
+        "de",
+        "en",
+        "es",
+        "fr",
+        "ja",
+        "ru",
+        "zh"
+      ],
+      "model": "gpt-6.1-terra",
+      "prompt_sha256": "d97f1c01b0846031afac204b7f560ccc94fc2fa1a4e9e360b9b68e135d4cdc06",
+      "provider": "openai",
+      "question_coverage": {
+        "all_targets_matched": 1775,
+        "no_target_matched": 0,
+        "some_targets_matched": 0
+      },
+      "questions": 1775,
+      "reasoning_effort": "medium",
+      "request_groups": 1902,
+      "source_spans": 1775,
+      "target_lookups": 1902,
+      "target_statuses": {
+        "matched": 1902
+      }
+    },
+    "identical_corpus_parquet": true,
+    "corpus_files_compared": 5,
+    "validated_snippets": {
+      "aligned": 1902,
+      "original": 1775,
+      "ambiguous_offsets": 12
+    },
+    "questions_missing_required_languages": 0,
+    "questions_by_number_of_evidence_languages": {
+      "2": 1648,
+      "3": 127
+    }
+  },
+  "eurlex": {
+    "repo": "MehdiAstaraki/eurlex-generated-qa-verified-20261118",
+    "baseline_revision": "e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede",
+    "updated_revision": "4fe4f78a146692a98ed9e8c4dae7c7ed7629ddf0",
+    "old_questions": 2000,
+    "new_questions": 1826,
+    "removed_ids": 174,
+    "added_ids": 0,
+    "changed_retained_question_language_or_answer": 0,
+    "final_filter": {
+      "criterion": "Keep a question when it has at least one verbatim snippet in every available language of its supporting source documents.",
+      "input_questions": 1977,
+      "language_availability": "A language counts when a supporting source has text in that language.",
+      "parent_manifest_sha256": "4c548917d713b7ac562014cd19d135bd5912684a2aacda076cde5187d19533c3",
+      "parent_revision": "95c749fe4bc47e5f5332a6da2fa2de0f4fcd1abd",
+      "removed_questions": 151,
+      "retained_questions": 1826
+    },
+    "alignment": {
+      "base_manifest_sha256": "08cf07205a625ab1727a6a34c0798163e3acc0f0a11b24ea07cfb2183e177315",
+      "base_repo_id": "MehdiAstaraki/eurlex-generated-qa-verified-20261118",
+      "base_revision": "e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede",
+      "contract": "verified_qa_multilingual_evidence_terra_v1",
+      "counts_scope": "retained questions",
+      "languages": [
+        "de",
+        "en",
+        "es",
+        "fr"
+      ],
+      "model": "gpt-6.1-terra",
+      "prompt_sha256": "d97f1c01b0846031afac204b7f560ccc94fc2fa1a4e9e360b9b68e135d4cdc06",
+      "provider": "openai",
+      "question_coverage": {
+        "all_targets_matched": 1808,
+        "no_target_matched": 0,
+        "some_targets_matched": 18
+      },
+      "questions": 1826,
+      "reasoning_effort": "medium",
+      "request_groups": 5541,
+      "source_spans": 1848,
+      "target_lookups": 5544,
+      "target_statuses": {
+        "matched": 5495,
+        "not_found": 49
+      }
+    },
+    "identical_corpus_parquet": true,
+    "corpus_files_compared": 5,
+    "validated_snippets": {
+      "original": 1848,
+      "aligned": 5495,
+      "ambiguous_offsets": 23
+    },
+    "questions_missing_required_languages": 0,
+    "questions_by_number_of_evidence_languages": {
+      "4": 1826
+    }
+  },
+  "un": {
+    "repo": "MehdiAstaraki/un-generated-qa-verified-20261118",
+    "baseline_revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130",
+    "updated_revision": "c3c9415b0636748bb007f8734ab07d27b48faa74",
+    "old_questions": 2000,
+    "new_questions": 1698,
+    "removed_ids": 302,
+    "added_ids": 0,
+    "changed_retained_question_language_or_answer": 0,
+    "final_filter": {
+      "criterion": "Keep a question when it has at least one verbatim snippet in every available language of its supporting source documents.",
+      "input_questions": 1991,
+      "language_availability": "A language counts when a supporting source has text in that language.",
+      "parent_manifest_sha256": "91f42dfdb5eb800ec1a9029a509a6f1af5f570a187c2b64a26a42787a044af3a",
+      "parent_revision": "4cb726de6979f98565254458a8d18b25432aced2",
+      "removed_questions": 293,
+      "retained_questions": 1698
+    },
+    "alignment": {
+      "base_manifest_sha256": "5532e77c78339524b6a3f4196b87886e3ad15e8a45da7067b16c7672a648eccc",
+      "base_repo_id": "MehdiAstaraki/un-generated-qa-verified-20261118",
+      "base_revision": "910ee8435bc4e5a41ccd5f913c30ebc1237eb130",
+      "contract": "verified_qa_multilingual_evidence_terra_v1",
+      "counts_scope": "retained questions",
+      "languages": [
+        "ar",
+        "en",
+        "es",
+        "fr",
+        "ru",
+        "zh"
+      ],
+      "model": "gpt-6.1-terra",
+      "prompt_sha256": "d97f1c01b0846031afac204b7f560ccc94fc2fa1a4e9e360b9b68e135d4cdc06",
+      "provider": "openai",
+      "question_coverage": {
+        "all_targets_matched": 1698,
+        "no_target_matched": 0,
+        "some_targets_matched": 0
+      },
+      "questions": 1698,
+      "reasoning_effort": "medium",
+      "request_groups": 8140,
+      "source_spans": 1698,
+      "target_lookups": 8490,
+      "target_statuses": {
+        "matched": 8490
+      }
+    },
+    "identical_corpus_parquet": true,
+    "corpus_files_compared": 10,
+    "validated_snippets": {
+      "original": 1698,
+      "aligned": 8490,
+      "ambiguous_offsets": 6
+    },
+    "questions_missing_required_languages": 0,
+    "questions_by_number_of_evidence_languages": {
+      "6": 1698
+    }
+  }
+}

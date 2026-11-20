@@ -1,0 +1,62 @@
+{
+  "chemistry": {
+    "monolingual": {
+      "query_setting_pairs": 1775,
+      "more_than_ten_relevant_chunks": 0,
+      "max_relevant_chunks": 7,
+      "mean_highest_possible_recall_at_10": 1.0
+    },
+    "cross_language": {
+      "query_setting_pairs": 1902,
+      "more_than_ten_relevant_chunks": 0,
+      "max_relevant_chunks": 7,
+      "mean_highest_possible_recall_at_10": 1.0
+    },
+    "mixed": {
+      "query_setting_pairs": 1775,
+      "more_than_ten_relevant_chunks": 3,
+      "max_relevant_chunks": 14,
+      "mean_highest_possible_recall_at_10": 0.9996512407780014
+    }
+  },
+  "eurlex": {
+    "monolingual": {
+      "query_setting_pairs": 1826,
+      "more_than_ten_relevant_chunks": 0,
+      "max_relevant_chunks": 3,
+      "mean_highest_possible_recall_at_10": 1.0
+    },
+    "cross_language": {
+      "query_setting_pairs": 5478,
+      "more_than_ten_relevant_chunks": 0,
+      "max_relevant_chunks": 4,
+      "mean_highest_possible_recall_at_10": 1.0
+    },
+    "mixed": {
+      "query_setting_pairs": 1826,
+      "more_than_ten_relevant_chunks": 3,
+      "max_relevant_chunks": 14,
+      "mean_highest_possible_recall_at_10": 0.9997024698558105
+    }
+  },
+  "un": {
+    "monolingual": {
+      "query_setting_pairs": 1698,
+      "more_than_ten_relevant_chunks": 0,
+      "max_relevant_chunks": 2,
+      "mean_highest_possible_recall_at_10": 1.0
+    },
+    "cross_language": {
+      "query_setting_pairs": 8490,
+      "more_than_ten_relevant_chunks": 5,
+      "max_relevant_chunks": 18,
+      "mean_highest_possible_recall_at_10": 0.9998958965390061
+    },
+    "mixed": {
+      "query_setting_pairs": 1698,
+      "more_than_ten_relevant_chunks": 77,
+      "max_relevant_chunks": 51,
+      "mean_highest_possible_recall_at_10": 0.9859072904044531
+    }
+  }
+}

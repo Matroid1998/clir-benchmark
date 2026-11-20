@@ -1,0 +1,78 @@
+prepare-chemistry	9963284		c1554a35b219406c
+prepare-eurlex	9963285		c1554a35b219406c
+prepare-un	9963286		c1554a35b219406c
+bm25-chemistry	9963535		c1554a35b219406c
+embed-chemistry-embeddinggemma	9963537		c1554a35b219406c
+dense-chemistry-embeddinggemma	9963540	9963537	c1554a35b219406c
+hybrid-chemistry-embeddinggemma	9963544	9963535:9963540	c1554a35b219406c
+embed-chemistry-bge-m3	9963548		c1554a35b219406c
+dense-chemistry-bge-m3	9963555	9963548	c1554a35b219406c
+hybrid-chemistry-bge-m3	9963568	9963535:9963555	c1554a35b219406c
+embed-chemistry-qwen3-0.6B	9963573		c1554a35b219406c
+dense-chemistry-qwen3-0.6B	9963578	9963573	c1554a35b219406c
+hybrid-chemistry-qwen3-0.6B	9963584	9963535:9963578	c1554a35b219406c
+embed-chemistry-nomic-v2-moe	9963587		c1554a35b219406c
+dense-chemistry-nomic-v2-moe	9963589	9963587	c1554a35b219406c
+hybrid-chemistry-nomic-v2-moe	9963590	9963535:9963589	c1554a35b219406c
+embed-chemistry-granite-278m	9963591		c1554a35b219406c
+dense-chemistry-granite-278m	9963592	9963591	c1554a35b219406c
+hybrid-chemistry-granite-278m	9963597	9963535:9963592	c1554a35b219406c
+embed-chemistry-gte-multilingual-base	9963600		c1554a35b219406c
+dense-chemistry-gte-multilingual-base	9963601	9963600	c1554a35b219406c
+hybrid-chemistry-gte-multilingual-base	9963602	9963535:9963601	c1554a35b219406c
+embed-chemistry-arctic-embed-l-v2	9963603		c1554a35b219406c
+dense-chemistry-arctic-embed-l-v2	9963604	9963603	c1554a35b219406c
+hybrid-chemistry-arctic-embed-l-v2	9963605	9963535:9963604	c1554a35b219406c
+embed-chemistry-e5-large-instruct	9963606		c1554a35b219406c
+dense-chemistry-e5-large-instruct	9963608	9963606	c1554a35b219406c
+hybrid-chemistry-e5-large-instruct	9963609	9963535:9963608	c1554a35b219406c
+bm25-eurlex	9963617		c1554a35b219406c
+embed-eurlex-embeddinggemma	9963618		c1554a35b219406c
+dense-eurlex-embeddinggemma	9963620	9963618	c1554a35b219406c
+hybrid-eurlex-embeddinggemma	9963621	9963617:9963620	c1554a35b219406c
+embed-eurlex-bge-m3	9963626		c1554a35b219406c
+dense-eurlex-bge-m3	9963627	9963626	c1554a35b219406c
+hybrid-eurlex-bge-m3	9963632	9963617:9963627	c1554a35b219406c
+embed-eurlex-qwen3-0.6B	9963633		c1554a35b219406c
+dense-eurlex-qwen3-0.6B	9963646	9963633	c1554a35b219406c
+hybrid-eurlex-qwen3-0.6B	9963647	9963617:9963646	c1554a35b219406c
+embed-eurlex-nomic-v2-moe	9963648		c1554a35b219406c
+dense-eurlex-nomic-v2-moe	9963649	9963648	c1554a35b219406c
+hybrid-eurlex-nomic-v2-moe	9963653	9963617:9963649	c1554a35b219406c
+embed-eurlex-granite-278m	9963654		c1554a35b219406c
+dense-eurlex-granite-278m	9963658	9963654	c1554a35b219406c
+hybrid-eurlex-granite-278m	9963659	9963617:9963658	c1554a35b219406c
+embed-eurlex-gte-multilingual-base	9963660		c1554a35b219406c
+dense-eurlex-gte-multilingual-base	9963661	9963660	c1554a35b219406c
+hybrid-eurlex-gte-multilingual-base	9963662	9963617:9963661	c1554a35b219406c
+embed-eurlex-arctic-embed-l-v2	9963664		c1554a35b219406c
+dense-eurlex-arctic-embed-l-v2	9963665	9963664	c1554a35b219406c
+hybrid-eurlex-arctic-embed-l-v2	9963666	9963617:9963665	c1554a35b219406c
+embed-eurlex-e5-large-instruct	9963669		c1554a35b219406c
+dense-eurlex-e5-large-instruct	9963670	9963669	c1554a35b219406c
+hybrid-eurlex-e5-large-instruct	9963671	9963617:9963670	c1554a35b219406c
+bm25-un	9963672		c1554a35b219406c
+embed-un-embeddinggemma	9963674		c1554a35b219406c
+dense-un-embeddinggemma	9963675	9963674	c1554a35b219406c
+hybrid-un-embeddinggemma	9963676	9963672:9963675	c1554a35b219406c
+embed-un-bge-m3	9963677		c1554a35b219406c
+dense-un-bge-m3	9963678	9963677	c1554a35b219406c
+hybrid-un-bge-m3	9963679	9963672:9963678	c1554a35b219406c
+embed-un-qwen3-0.6B	9963682		c1554a35b219406c
+dense-un-qwen3-0.6B	9963683	9963682	c1554a35b219406c
+hybrid-un-qwen3-0.6B	9963684	9963672:9963683	c1554a35b219406c
+embed-un-nomic-v2-moe	9963685		c1554a35b219406c
+dense-un-nomic-v2-moe	9963688	9963685	c1554a35b219406c
+hybrid-un-nomic-v2-moe	9963690	9963672:9963688	c1554a35b219406c
+embed-un-granite-278m	9963691		c1554a35b219406c
+dense-un-granite-278m	9963696	9963691	c1554a35b219406c
+hybrid-un-granite-278m	9963698	9963672:9963696	c1554a35b219406c
+embed-un-gte-multilingual-base	9963702		c1554a35b219406c
+dense-un-gte-multilingual-base	9963705	9963702	c1554a35b219406c
+hybrid-un-gte-multilingual-base	9963707	9963672:9963705	c1554a35b219406c
+embed-un-arctic-embed-l-v2	9963708		c1554a35b219406c
+dense-un-arctic-embed-l-v2	9963709	9963708	c1554a35b219406c
+hybrid-un-arctic-embed-l-v2	9963714	9963672:9963709	c1554a35b219406c
+embed-un-e5-large-instruct	9963715		c1554a35b219406c
+dense-un-e5-large-instruct	9963717	9963715	c1554a35b219406c
+hybrid-un-e5-large-instruct	9963718	9963672:9963717	c1554a35b219406c

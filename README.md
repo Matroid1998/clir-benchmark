@@ -1181,6 +1181,16 @@ identities. Changing them does not change chunks, QAs, qrels, or embedding cache
 changing BM25 scores also reuses the lexical index. Evidence and candidate
 selection never enter its index key.
 
+For an original-query comparison across multiple dense models, set the top-level
+`cache_hybrid_candidates: true` with chunk retrieval. Run `retrieve --baseline bm25`
+once per corpus, then `retrieve --baseline dense --model MODEL` and
+`retrieve --baseline hybrid --model MODEL` for each selected model. The component
+runs save their full `candidate_k` rankings and expose their top 100 for evaluation.
+Hybrid reads those saved rankings and records the two measured component search
+times plus its measured fusion time, all amortized over the corresponding batches.
+The sum estimates serial search latency. With the default value `false`, each
+baseline can run its search independently.
+
 Each baseline produces the same Parquet/TREC runs and JSON/CSV metrics in separate
 run/report directories, labeled with baseline and dense model (if applicable).
 All eligibility and multi-source metrics apply unchanged. BM25 consumes full

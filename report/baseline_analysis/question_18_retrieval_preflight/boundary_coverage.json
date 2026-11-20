@@ -1,0 +1,26 @@
+{
+  "google-patents": {
+    "questions": 1775,
+    "snippets": 3677,
+    "contained": 2707,
+    "split_only": 970,
+    "question_language_pairs": 3677,
+    "pairs_without_a_containing_chunk": 970
+  },
+  "eurlex": {
+    "questions": 1826,
+    "snippets": 7343,
+    "contained": 7194,
+    "split_only": 149,
+    "question_language_pairs": 7304,
+    "pairs_without_a_containing_chunk": 145
+  },
+  "un": {
+    "questions": 1698,
+    "snippets": 10188,
+    "contained": 9943,
+    "split_only": 245,
+    "question_language_pairs": 10188,
+    "pairs_without_a_containing_chunk": 245
+  }
+}

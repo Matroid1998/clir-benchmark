@@ -41,7 +41,7 @@ from .translation import (
     translation_plan,
 )
 from .util import hf_token, read_json
-from .verified_corpora import prepare_verified_span_map
+from .verified_corpora import prepare_verified_span_map, verified_query_from_row
 
 
 def retrieval_backend(baseline: str) -> str:
@@ -162,6 +162,12 @@ def parser() -> argparse.ArgumentParser:
                 "--work-dir",
                 type=Path,
                 help="Existing directory for temporary chunk files and SQLite writes before publishing to output_dir",
+            )
+        if name == "prepare-relevance":
+            command.add_argument(
+                "--work-dir",
+                type=Path,
+                help="Existing directory to stage the immutable corpus lookup database for evidence mapping",
             )
         command.add_argument(
             "--corpus",
@@ -599,7 +605,13 @@ def main(argv: list[str] | None = None) -> int:
                 counts = {}
                 for corpus, dataset in config.datasets.items():
                     reader = DatasetReader(dataset.qa, hf_token(config.env_file))
-                    queries = [query_from_row(row, corpus) for row in reader.read("qas")]
+                    parse_query = (
+                        verified_query_from_row
+                        if dataset.corpus_format == "verified-multilingual-v1"
+                        and config.retrieval_unit == "chunk"
+                        else query_from_row
+                    )
+                    queries = [parse_query(row, corpus) for row in reader.read("qas")]
                     queries = apply_evidence_overlay(queries, config.evidence_file)
                     selected, selection_audit = select_candidates(
                         queries,
@@ -650,7 +662,7 @@ def main(argv: list[str] | None = None) -> int:
             elif args.command == "map-verified-spans":
                 print(prepare_verified_span_map(config, corpus))
             elif args.command == "prepare-relevance":
-                path = prepare_relevance(config, corpus)
+                path = prepare_relevance(config, corpus, work_dir=args.work_dir)
                 print(path)
                 missing = read_json(path / "manifest.json")["blocked_settings"]
                 if missing:
