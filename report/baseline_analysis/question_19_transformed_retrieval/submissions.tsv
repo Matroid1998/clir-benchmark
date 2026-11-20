@@ -1,0 +1,25 @@
+hyde-chemistry-bm25	9980032	1	
+hyde-chemistry-embed	9980034	8	
+hyde-chemistry-dense	9980044	8	aftercorr:9980034
+hyde-chemistry-hybrid	9980047	8	aftercorr:9980044,afterok:9980032
+hyde-eurlex-bm25	9980050	1	
+hyde-eurlex-embed	9980066	8	
+hyde-eurlex-dense	9980069	8	aftercorr:9980066
+hyde-eurlex-hybrid	9980086	8	aftercorr:9980069,afterok:9980050
+hyde-un-bm25	9980088	1	
+hyde-un-embed	9980091	8	
+hyde-un-dense	9980093	8	aftercorr:9980091
+hyde-un-hybrid	9980097	8	aftercorr:9980093,afterok:9980088
+translate-check	9980127	0	
+translate-chemistry-bm25	9980129	7	afterok:9980127
+translate-chemistry-embed	9980131	56	afterok:9980127
+translate-chemistry-dense	9980134	56	aftercorr:9980131
+translate-chemistry-hybrid	9980137	56	aftercorr:9980134,afterok:9980129
+translate-eurlex-bm25	9980139	4	afterok:9980127
+translate-eurlex-embed	9980141	32	afterok:9980127
+translate-eurlex-dense	9980144	32	aftercorr:9980141
+translate-eurlex-hybrid	9980146	32	aftercorr:9980144,afterok:9980139
+translate-un-bm25	9980148	6	afterok:9980127
+translate-un-embed	9980190	48	afterok:9980127
+translate-un-dense	9980192	48	aftercorr:9980190
+translate-un-hybrid	9980194	48	aftercorr:9980192,afterok:9980148

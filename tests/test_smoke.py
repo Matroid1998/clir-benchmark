@@ -87,7 +87,7 @@ def test_smoke_schedules_every_baseline_language_and_shared_stage_once(
     status = read_json(destination / "status.json")
     assert status["status"] == "success"
     assert set(status["selected_baselines"]) == set(BASELINES)
-    assert len(status["baselines"]) == 28  # Four language-sensitive modes, plus their rerankers.
+    assert len(status["baselines"]) == 32  # Includes both languages for HyDE BM25 and hybrid.
     assert all(row["status"] == "success" for row in status["baselines"])
     assert {row["baseline"] for row in status["baselines"]} == set(BASELINES)
     embeddings = [kwargs for name, _, kwargs in calls if name == "embed"]

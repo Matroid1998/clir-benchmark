@@ -1,0 +1,17 @@
+{
+  "lanes": {
+    "chemistry/question-language": {
+      "refusals": 94,
+      "rows": 1775
+    },
+    "eurlex/question-language": {
+      "refusals": 12,
+      "rows": 1826
+    },
+    "un/question-language": {
+      "refusals": 1,
+      "rows": 1698
+    }
+  },
+  "receipt": "generate-hyde-789f77edf02516e3850dae5c6f76964e3b2e12c0def7241e40ecc4921d57372d.sha256"
+}

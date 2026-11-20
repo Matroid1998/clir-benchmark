@@ -223,8 +223,13 @@ def _dependencies(config: Config, corpus: str, run_dir: Path, report: dict) -> l
     pending: list[Path] = []
 
     def add(path: Path) -> None:
-        path = path.resolve()
+        path = Path(os.path.abspath(path))
         if not path.is_relative_to(root) or not path.exists():
+            return
+        resolved = path.resolve()
+        if not any(
+            resolved.is_relative_to(allowed) for allowed in (root, *config.read_only_artifact_roots)
+        ):
             return
         relative = path.relative_to(root)
         if not relative.parts or relative.parts[0] not in {
@@ -291,7 +296,7 @@ def _dependencies(config: Config, corpus: str, run_dir: Path, report: dict) -> l
         output_language = manifest.get("output_language") or manifest.get("hyde_language")
         if translation_language:
             add(translation_path(config, corpus, translation_language))
-        if output_language and baseline.removeprefix("rerank-") == "hyde-dense":
+        if output_language and baseline.removeprefix("rerank-").startswith("hyde-"):
             add(hyde_path(config, corpus, output_language))
         if model:
             spec = ModelSpec(**model)
@@ -525,7 +530,7 @@ def export_result(config: Config, corpus: str, run_dir: Path, report_dir: Path) 
     root = config.output_dir.resolve()
     inventory = [
         {
-            "path": str(path.resolve().relative_to(root)),
+            "path": str(path.relative_to(root)),
             "bytes": path.stat().st_size,
             "sha256": file_digest(path),
         }

@@ -228,7 +228,9 @@ def prepare_relevance(config: Config, corpus: str, *, work_dir: Path | None = No
     with ExitStack() as stack:
         database = corpus_dir / "lookup.sqlite"
         if work_dir is not None:
-            local = Path(stack.enter_context(TemporaryDirectory(dir=work_dir, prefix="clir-qrels-")))
+            local = Path(
+                stack.enter_context(TemporaryDirectory(dir=work_dir, prefix="clir-qrels-"))
+            )
             shutil.copyfile(database, local / "lookup.sqlite")
             database = local / "lookup.sqlite"
         store = stack.enter_context(CorpusStore(database))
@@ -426,14 +428,19 @@ def model_spec(config: Config, alias: str) -> ModelSpec:
     return registry[alias]
 
 
-def _require_query_texts(artifact: Path, records: list[dict]) -> None:
-    """Retrieval requires a usable variant for every query in the comparison cohort."""
+def _require_query_texts(
+    artifact: Path, records: list[dict], *, score_refusals: bool = False
+) -> None:
+    """Reject unusable text unless it is an explicitly recorded, scoreable refusal."""
     missing = [
         row["id"]
         for row in records
-        if row.get("status") == "provider_refused"
-        or not isinstance(row.get("text"), str)
-        or not row["text"].strip()
+        if (
+            row.get("status") == "provider_refused"
+            or not isinstance(row.get("text"), str)
+            or not row["text"].strip()
+        )
+        and not (score_refusals and row.get("status") == "provider_refused" and row["text"] is None)
     ]
     if missing:
         raise ValidationError(
@@ -455,7 +462,7 @@ def embedding_path(
         raise ValidationError("Choose either translation_language or hyde_language for embedding")
     if kind == "query" and hyde_language is not None:
         path, records, manifest = load_hyde(config, corpus, hyde_language)
-        _require_query_texts(path, records)
+        _require_query_texts(path, records, score_refusals=config.score_generation_refusals)
         return (
             config.output_dir
             / "embeddings"
@@ -464,7 +471,7 @@ def embedding_path(
         )
     if kind == "query" and translation_language is not None:
         path, records, manifest = load_translations(config, corpus, translation_language)
-        _require_query_texts(path, records)
+        _require_query_texts(path, records, score_refusals=config.score_generation_refusals)
         return (
             config.output_dir
             / "embeddings"
@@ -541,13 +548,15 @@ def embed(
                 return rows(directory / "chunks.parquet")
         elif hyde_language is not None:
             _, passages, manifest = load_hyde(config, corpus, hyde_language)
-            count, fingerprint = manifest["query_count"], manifest["passage_fingerprint"]
+            passages = [row for row in passages if row["text"] is not None]
+            count, fingerprint = len(passages), manifest["passage_fingerprint"]
 
             def factory(records=passages):
                 return iter(records)
         elif translation_language is not None:
             _, translated, manifest = load_translations(config, corpus, translation_language)
-            count, fingerprint = manifest["query_count"], manifest["query_fingerprint"]
+            translated = [row for row in translated if row["text"] is not None]
+            count, fingerprint = len(translated), manifest["query_fingerprint"]
 
             def factory(records=translated):
                 return iter(records)
@@ -612,13 +621,13 @@ def run_path(
                 "ADORE preserves the original query language; no language overrides"
             )
         return adore_run_path(config, corpus, spec, baseline=baseline)
-    if baseline == "hyde-dense":
+    if baseline.startswith("hyde-"):
         if hyde_language is None or translation_language is not None:
-            raise ValidationError("hyde-dense requires hyde_language and no translation_language")
-        if spec is None:
-            raise ValidationError("hyde-dense requires a dense model")
+            raise ValidationError(f"{baseline} requires hyde_language and no translation_language")
+        if spec is None and baseline != "hyde-bm25":
+            raise ValidationError(f"{baseline} requires a dense model")
         path, records, manifest = load_hyde(config, corpus, hyde_language)
-        _require_query_texts(path, records)
+        _require_query_texts(path, records, score_refusals=config.score_generation_refusals)
         identity = {
             "schema": 1,
             "baseline": baseline,
@@ -626,24 +635,35 @@ def run_path(
             "relevance": config.relevance_key(corpus),
             "passages": str(path),
             "passage_fingerprint": manifest["passage_fingerprint"],
-            "documents": str(embedding_path(config, corpus, spec, "document")),
-            "queries": str(
-                embedding_path(config, corpus, spec, "query", hyde_language=hyde_language)
-            ),
-            "encoder_kind": "document",
-            "retrieval": "exact_cosine",
             "top_k": 100,
             "query_batch_size": config.runtime.query_batch_size,
-            "corpus_block_size": config.runtime.corpus_block_size,
         }
+        if spec is not None:
+            identity.update(
+                documents=str(embedding_path(config, corpus, spec, "document")),
+                queries=str(
+                    embedding_path(config, corpus, spec, "query", hyde_language=hyde_language)
+                ),
+                encoder_kind="document",
+                retrieval="exact_cosine",
+                corpus_block_size=config.runtime.corpus_block_size,
+            )
+        if baseline in {"hyde-bm25", "hyde-hybrid"}:
+            identity.update(index=str(bm25_path(config, corpus)), bm25=bm25_scoring(config.bm25))
+        if baseline == "hyde-hybrid":
+            identity["fusion"] = {"method": "rrf", **asdict(config.hybrid)}
+        if config.cache_hybrid_candidates:
+            identity["candidate_depth"] = config.hybrid.candidate_k
+        if config.score_generation_refusals:
+            identity["refused_query_policy"] = "empty_ranking"
         return config.output_dir / "runs" / corpus / digest(identity)
     if hyde_language is not None:
-        raise ValidationError("hyde_language requires the hyde-dense baseline")
+        raise ValidationError("hyde_language requires a hyde-* baseline")
     if baseline.startswith("translate-"):
         if translation_language is None:
             raise ValidationError(f"{baseline} requires a translation_language")
         path, records, manifest = load_translations(config, corpus, translation_language)
-        _require_query_texts(path, records)
+        _require_query_texts(path, records, score_refusals=config.score_generation_refusals)
         identity = {
             "schema": 1,
             "baseline": baseline,
@@ -661,6 +681,8 @@ def run_path(
             if spec
             else None,
         }
+        if config.score_generation_refusals:
+            identity["refused_query_policy"] = "empty_ranking"
         return config.output_dir / "runs" / corpus / digest(identity)
     if translation_language is not None:
         raise ValidationError("translation_language requires a translate-* baseline")
@@ -704,7 +726,13 @@ def retrieval_spec(config: Config, alias: str | None, baseline: str) -> ModelSpe
     validate_retrieval_baselines(config, (baseline,))
     if baseline not in BASELINES:
         raise ValidationError(f"Unknown retrieval baseline: {baseline}")
-    if baseline.removeprefix("rerank-").removeprefix("translate-").removeprefix("adore-") == "bm25":
+    if (
+        baseline.removeprefix("rerank-")
+        .removeprefix("translate-")
+        .removeprefix("hyde-")
+        .removeprefix("adore-")
+        == "bm25"
+    ):
         if alias is not None:
             raise ValidationError("BM25 does not use a dense model; omit the model alias")
         return None
@@ -756,24 +784,35 @@ def retrieve(
         )
     started = time.perf_counter()
     document_mode = config.retrieval_unit == "document"
-    backend = baseline.removeprefix("translate-")
+    backend = baseline.removeprefix("translate-").removeprefix("hyde-")
     translated = None
     translation_manifest = None
     hyde_manifest = None
+    passages = None
     if hyde_language is not None:
-        _, _, hyde_manifest = load_hyde(config, corpus, hyde_language)
+        _, passages, hyde_manifest = load_hyde(config, corpus, hyde_language)
     if translation_language is not None:
         _, translated, translation_manifest = load_translations(
             config, corpus, translation_language
         )
-    cache_candidates = config.cache_hybrid_candidates and baseline in {"bm25", "dense", "hybrid"}
-    fuse_cached = cache_candidates and baseline == "hybrid"
+    generated = translated if translated is not None else passages
+    refused = {row["id"] for row in generated or () if row.get("status") == "provider_refused"}
+    cache_candidates = config.cache_hybrid_candidates
+    fuse_cached = cache_candidates and backend == "hybrid"
+    prefix = baseline.removesuffix(backend)
     component_paths = {}
     components = {}
     with ExitStack() as resources:
         if fuse_cached:
             for name, component_spec in (("dense", spec), ("bm25", None)):
-                path = run_path(config, corpus, component_spec, baseline=name)
+                path = run_path(
+                    config,
+                    corpus,
+                    component_spec,
+                    baseline=prefix + name,
+                    translation_language=translation_language,
+                    hyde_language=hyde_language,
+                )
                 if not (path / "candidates.parquet").is_file():
                     raise ValidationError(
                         f"Prepare the {name} candidate run before hybrid retrieval: {path}"
@@ -833,8 +872,10 @@ def retrieve(
                 row["id"]: row["question"]
                 for row in rows(relevance_dir / "queries.parquet", ["id", "question"])
             }
-            if translated is not None:
-                query_texts = {row["id"]: row["text"] for row in translated}
+            if generated is not None:
+                query_texts = {
+                    row["id"]: row["text"] for row in generated if row["id"] not in refused
+                }
         tag = "bm25" if backend == "bm25" else f"hybrid-{alias}" if backend == "hybrid" else alias
         if translation_language is not None:
             tag = f"translate-{translation_language}-{tag}"
@@ -884,15 +925,16 @@ def retrieve(
                 if info["status"] != "ready":
                     continue
                 ids = sorted(eligible[setting_id])
-                if index is not None and set(ids) - query_index.keys():
+                if index is not None and set(ids) - refused - query_index.keys():
                     raise ValidationError(f"Missing query embeddings for {setting_id}")
-                if lexical is not None and set(ids) - query_texts.keys():
+                if lexical is not None and set(ids) - refused - query_texts.keys():
                     raise ValidationError(f"Missing query text for {setting_id}")
                 with (temporary / f"{setting_id}.trec").open("w", encoding="utf-8") as handle:
                     # Select queries in bounded batches; never copy the entire
                     # query matrix just to filter a language setting.
                     for start in range(0, len(ids), config.runtime.query_batch_size):
                         batch_ids = ids[start : start + config.runtime.query_batch_size]
+                        search_ids = [query_id for query_id in batch_ids if query_id not in refused]
                         languages = tuple(info["target_languages"])
                         cached = {}
                         for name, stream in components.items():
@@ -910,25 +952,25 @@ def retrieve(
                         batch_started = time.perf_counter()
                         dense_results = (
                             (index.search_documents if document_mode else index.search)(
-                                query_vectors[[query_index[query_id] for query_id in batch_ids]],
+                                query_vectors[[query_index[query_id] for query_id in search_ids]],
                                 languages,
                                 k=candidate_k,
                                 query_batch_size=config.runtime.query_batch_size,
                                 corpus_block_size=config.runtime.corpus_block_size,
                             )
                             if index is not None
-                            else ([] for _ in batch_ids)
+                            else ([] for _ in search_ids)
                         )
                         lexical_results = (
                             lexical.search(
-                                (query_texts[query_id] for query_id in batch_ids),
+                                (query_texts[query_id] for query_id in search_ids),
                                 languages,
                                 k=candidate_k,
                             )
                             if lexical is not None
-                            else ([] for _ in batch_ids)
+                            else ([] for _ in search_ids)
                         )
-                        batch_rankings = []
+                        batch_rankings = {}
                         if fuse_cached:
                             for query_id, dense_row, bm25_row in zip(
                                 batch_ids, cached["dense"], cached["bm25"], strict=True
@@ -936,10 +978,14 @@ def retrieve(
                                 ranking = fuse_chunk_ids(
                                     dense_row["chunk_ids"], bm25_row["chunk_ids"], config.hybrid
                                 )
-                                batch_rankings.append((query_id, ranking))
+                                if query_id in refused and ranking:
+                                    raise ValidationError(
+                                        f"Refused query has cached candidates: {query_id}"
+                                    )
+                                batch_rankings[query_id] = ranking
                         else:
                             for query_id, dense_ranking, lexical_ranking in zip(
-                                batch_ids, dense_results, lexical_results, strict=True
+                                search_ids, dense_results, lexical_results, strict=True
                             ):
                                 ranking = (
                                     reciprocal_rank_fusion(
@@ -950,10 +996,13 @@ def retrieve(
                                     if backend == "bm25"
                                     else dense_ranking
                                 )
-                                batch_rankings.append((query_id, ranking))
+                                batch_rankings[query_id] = ranking
                         batch_seconds = time.perf_counter() - batch_started
-                        for position, (query_id, ranking) in enumerate(batch_rankings):
-                            seconds = batch_seconds / len(batch_ids)
+                        for position, query_id in enumerate(batch_ids):
+                            ranking = batch_rankings.get(query_id, [])
+                            seconds = (
+                                None if query_id in refused else batch_seconds / len(search_ids)
+                            )
                             component_times = {}
                             if fuse_cached:
                                 component_times = {
@@ -961,7 +1010,8 @@ def retrieve(
                                     for name in components
                                 }
                                 component_times["fusion_seconds_amortized"] = seconds
-                                seconds = sum(component_times.values())
+                                if query_id not in refused:
+                                    seconds = sum(component_times.values())
                             if candidates is not None:
                                 candidates.append(
                                     {
@@ -1023,11 +1073,23 @@ def retrieve(
                 "translation_language": translation_language,
                 "translation": translation_manifest,
                 **(
+                    {"refused_query_policy": "empty_ranking", "refused_query_count": len(refused)}
+                    if generated is not None and config.score_generation_refusals
+                    else {}
+                ),
+                **(
                     {
                         "output_language": hyde_language,
                         "hyde": hyde_manifest,
-                        "search_vector_source": "hypothetical_document",
-                        "search_encoder_kind": "document",
+                        **(
+                            {
+                                "search_vector_source": "hypothetical_document",
+                                "search_encoder_kind": "document",
+                            }
+                            if spec is not None
+                            else {}
+                        ),
+                        **({"bm25_input": "hypothetical_document"} if backend != "dense" else {}),
                     }
                     if hyde_manifest is not None
                     else {}
@@ -1195,12 +1257,35 @@ def evaluate(
                 "translation_cost_usd": translated[query.id]["estimated_cost_usd"]
                 if translated
                 else 0.0,
+                **(
+                    {
+                        "translation_request_key": translated[query.id]["request_key"],
+                        "translation_attempts": translated[query.id]["attempts"],
+                        "translation_requested_model": translated[query.id].get("requested_model"),
+                        "translation_returned_model": translated[query.id].get("returned_model"),
+                        "translation_api_cost_usd": translated[query.id].get("api_cost_usd"),
+                        **{
+                            f"translation_{name}": translated[query.id][name]
+                            for name in ("input_tokens", "cached_input_tokens", "output_tokens")
+                        },
+                    }
+                    if translated
+                    else {}
+                ),
                 "retrieval_seconds_amortized": timings.get(key),
-                "query_encoding_seconds_amortized": query_encoding_seconds,
+                "query_encoding_seconds_amortized": None
+                if (translated or hypothetical).get(query.id, {}).get("status")
+                == "provider_refused"
+                else query_encoding_seconds,
                 **(
                     {
                         "output_language": hyde_language,
-                        "generation_model": hyde_manifest["configuration"]["model"],
+                        "generation_model": hypothetical[query.id].get(
+                            "requested_model", hyde_manifest["configuration"]["model"]
+                        ),
+                        "generation_returned_model": hypothetical[query.id].get("returned_model"),
+                        "generation_api_cost_usd": hypothetical[query.id].get("api_cost_usd"),
+                        "generation_status": hypothetical[query.id].get("status", "generated"),
                         "generation_seconds": hypothetical[query.id]["generation_seconds"],
                         "generation_cost_usd": hypothetical[query.id]["estimated_cost_usd"],
                         "generation_attempts": hypothetical[query.id]["attempts"],
@@ -1249,7 +1334,7 @@ def evaluate(
         truncation = {
             "applicable": True,
             "scope": "dense_component"
-            if baseline.removeprefix("translate-") == "hybrid"
+            if baseline.removeprefix("translate-").removeprefix("hyde-") == "hybrid"
             else "dense",
             "documents": document_manifest["truncation"],
             "queries": query_manifest["truncation"],

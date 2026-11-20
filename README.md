@@ -1199,6 +1199,23 @@ times plus its measured fusion time, all amortized over the corresponding batche
 The sum estimates serial search latency. With the default value `false`, each
 baseline can run its search independently.
 
+The [November 20 transformed-query configuration](configs/verified-20261120-transformed-retrieval.yaml)
+uses previously saved generation artifacts. Select `translate-dense`,
+`translate-hybrid`, `hyde-dense`, or `hyde-hybrid` with `--baseline`.
+Pass one `--translation-language` per translated language and use
+`--hyde-language question-language` for the native-language HyDE configuration.
+Run query embedding with the same language option before dense retrieval.
+BM25 and dense use the same generated text within each hybrid. The cached
+hybrid requires the corresponding dense candidates and the `translate-bm25`
+or `hyde-bm25` candidates. The Narval launcher schedules those dependencies
+and waits for the generation transfer's verified receipt.
+
+Use the same model's original dense or hybrid report as the control. The
+campaign opts into `score_generation_refusals: true`. A recorded refusal
+preserves its query ID, generation outcome and request accounting, and scores
+an empty ranking on the original eligibility and judgments. Its retrieval and
+encoding times are unknown because no query was searched or encoded.
+
 Each baseline produces the same Parquet/TREC runs and JSON/CSV metrics in separate
 run/report directories, labeled with baseline and dense model (if applicable).
 All eligibility and multi-source metrics apply unchanged. BM25 consumes full

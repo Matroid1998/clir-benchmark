@@ -5,7 +5,7 @@ import pytest
 from test_rerank_pipeline import FixtureReranker, parent_fixture
 
 from clir_benchmark.artifacts import rows
-from clir_benchmark.config import RETRIEVAL_BASELINES
+from clir_benchmark.config import RERANK_BASELINES
 from clir_benchmark.errors import ValidationError
 from clir_benchmark.pipeline import evaluate
 from clir_benchmark.rerank_pipeline import rerank
@@ -48,7 +48,7 @@ def test_parallel_model_exports_share_one_input_snapshot(tmp_path, monkeypatch):
         assert (directory / "manifest.json").is_file()
 
 
-@pytest.mark.parametrize("baseline", RETRIEVAL_BASELINES)
+@pytest.mark.parametrize("baseline", [mode.removeprefix("rerank-") for mode in RERANK_BASELINES])
 def test_all_twenty_baselines_export_metrics_and_complete_analysis(
     tmp_path, tokenizer, monkeypatch, baseline
 ):

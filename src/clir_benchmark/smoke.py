@@ -59,7 +59,12 @@ def _safe_error(value: str) -> str:
 
 
 def _backend(baseline):
-    return baseline.removeprefix("rerank-").removeprefix("translate-").removeprefix("adore-")
+    return (
+        baseline.removeprefix("rerank-")
+        .removeprefix("translate-")
+        .removeprefix("hyde-")
+        .removeprefix("adore-")
+    )
 
 
 def run_smoke(
@@ -286,7 +291,7 @@ def run_smoke(
             if not values and stages.get("prepare-corpus", {}).get("status") == "success":
                 values = default_translation_languages(config, corpus)
             return tuple(dict.fromkeys(values)) or (None,)
-        if parent == "hyde-dense":
+        if parent.startswith("hyde-"):
             values = hyde_languages or config.hyde.output_languages or config.target_languages
             if not values and stages.get("prepare-corpus", {}).get("status") == "success":
                 values = default_hyde_languages(config, corpus)
@@ -304,7 +309,7 @@ def run_smoke(
             {"translation_language": language}
             if parent.startswith("translate-")
             else {"hyde_language": language}
-            if parent == "hyde-dense"
+            if parent.startswith("hyde-")
             else {}
         )
         record = {
@@ -335,7 +340,7 @@ def run_smoke(
                     expected=lambda: translation_path(config, corpus, language),
                 )
                 dependencies.append(generation_key)
-            elif parent == "hyde-dense":
+            elif parent.startswith("hyde-"):
                 generation_key = f"generate-hyde:{language}"
                 stage(
                     generation_key,
@@ -371,7 +376,7 @@ def run_smoke(
                 )
                 dependencies.append("embed:document")
                 if not parent.startswith("adore-"):
-                    query_key = f"embed:query:{'translation' if parent.startswith('translate-') else 'hyde' if parent == 'hyde-dense' else 'original'}:{language or 'original'}"
+                    query_key = f"embed:query:{'translation' if parent.startswith('translate-') else 'hyde' if parent.startswith('hyde-') else 'original'}:{language or 'original'}"
                     stage(
                         query_key,
                         lambda: encode("query", kwargs),
@@ -381,6 +386,24 @@ def run_smoke(
                         ),
                     )
                     dependencies.append(query_key)
+            if (
+                config.cache_hybrid_candidates
+                and _backend(parent) == "hybrid"
+                and not parent.startswith("adore-")
+            ):
+                prefix = parent.removesuffix("hybrid")
+                prerequisites = tuple(dependencies)
+                for name, component_model in (("bm25", None), ("dense", model)):
+                    component = prefix + name
+                    component_key = f"run:{component}:{language or 'original'}"
+                    stage(
+                        component_key,
+                        lambda mode=component, alias=component_model: retrieve(
+                            config, corpus, alias, baseline=mode, **kwargs
+                        ),
+                        dependencies=prerequisites,
+                    )
+                    dependencies.append(component_key)
         run_key = f"run:{key}"
         if baseline.startswith("rerank-"):
 

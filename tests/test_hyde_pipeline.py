@@ -163,6 +163,66 @@ def prepare_comparison(config):
         evaluate(config, "eurlex", "bge-m3", baseline=baseline, **kwargs)
 
 
+@pytest.mark.parametrize("refused", [False, True])
+def test_hyde_hybrid_reuses_components_and_preserves_refused_questions(
+    tmp_path, tokenizer, monkeypatch, refused
+):
+    from clir_benchmark.hyde import load_hyde
+    from clir_benchmark.lexical import prepare_bm25
+
+    config, _ = fixture_hyde(tmp_path, tokenizer)
+    shared = tmp_path / "shared"
+    shared.mkdir()
+    corpus_dir = config.output_dir / "corpus"
+    corpus_dir.rename(shared / "corpus")
+    corpus_dir.symlink_to(shared / "corpus", target_is_directory=True)
+    config = replace(
+        config,
+        cache_hybrid_candidates=True,
+        score_generation_refusals=True,
+        read_only_artifact_roots=(shared,),
+    )
+    corpus, alias, language = "eurlex", "bge-m3", "fr"
+    prepare_bm25(config, corpus)
+    prepare_hyde(config, corpus, language, generator_factory=FixtureGenerator("preuve").factory)
+    if refused:
+        location, records, manifest = load_hyde(config, corpus, language)
+        records[0].update(text=None, status="provider_refused")
+        monkeypatch.setattr(
+            "clir_benchmark.pipeline.load_hyde", lambda *args: (location, records, manifest)
+        )
+    embed(config, corpus, alias, encoder_factory=FixtureEncoder, hyde_language=language)
+    for mode, model in (("hyde-dense", alias), ("hyde-bm25", None)):
+        retrieve(config, corpus, model, baseline=mode, hyde_language=language)
+    direct = retrieve(
+        replace(config, cache_hybrid_candidates=False),
+        corpus,
+        alias,
+        baseline="hyde-hybrid",
+        hyde_language=language,
+    )
+
+    def forbidden(*args, **kwargs):
+        pytest.fail("Cached HyDE fusion ran a search backend")
+
+    monkeypatch.setattr("clir_benchmark.pipeline.DenseIndex.search", forbidden)
+    monkeypatch.setattr("clir_benchmark.pipeline.BM25Index.search", forbidden)
+    variant = retrieve(config, corpus, alias, baseline="hyde-hybrid", hyde_language=language)
+    assert list(rows(variant / "run.parquet")) == list(rows(direct / "run.parquet"))
+    report = evaluate(config, corpus, alias, baseline="hyde-hybrid", hyde_language=language)
+    inventory = read_json(report / "analysis_manifest.json")["files"]
+    assert any(
+        r["path"].startswith("corpus/") and r["path"].endswith("/chunks.parquet") for r in inventory
+    )
+    queries = read_json(report / "per_query.json")
+    assert queries
+    if refused:
+        assert not list(rows(variant / "run.parquet"))
+        assert {q["generation_status"] for q in queries} == {"provider_refused"}
+        assert [q["metrics"]["Recall@10"] for q in queries] == [0.0] * len(queries)
+        assert all(q["retrieval_seconds_amortized"] is None for q in queries)
+
+
 def test_comparison_subtracts_both_controls_without_double_counting(
     tmp_path, tokenizer, monkeypatch
 ):

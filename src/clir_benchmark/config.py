@@ -10,6 +10,7 @@ from urllib.parse import urlsplit
 import yaml
 
 from .errors import ValidationError
+from .fingerprints import cached_file_digest
 from .util import digest, file_digest
 
 BGE_REVISION = "5617a9f61b028005a4858fdac845db406aefb181"
@@ -21,11 +22,17 @@ RETRIEVAL_BASELINES = (
     "translate-bm25",
     "translate-hybrid",
     "hyde-dense",
+    "hyde-bm25",
+    "hyde-hybrid",
     "adore-bm25",
     "adore-dense",
     "adore-hybrid",
 )
-RERANK_BASELINES = tuple(f"rerank-{baseline}" for baseline in RETRIEVAL_BASELINES)
+RERANK_BASELINES = tuple(
+    f"rerank-{baseline}"
+    for baseline in RETRIEVAL_BASELINES
+    if baseline not in {"hyde-bm25", "hyde-hybrid"}
+)
 BASELINES = RETRIEVAL_BASELINES + RERANK_BASELINES
 CANDIDATE_MODES = ("best", "all", "best-per-document")
 QUESTION_LANGUAGE = "question-language"
@@ -78,7 +85,9 @@ class SourceSpec:
                 if configurations is None
                 else (p for name in configurations for p in root.glob(f"data/{name}/*.parquet"))
             )
-            value["files"] = {str(p.relative_to(root)): file_digest(p) for p in sorted(shards)}
+            value["files"] = {
+                str(p.relative_to(root)): cached_file_digest(p) for p in sorted(shards)
+            }
         return value
 
 
@@ -490,6 +499,8 @@ class Config:
     bm25: BM25Config = field(default_factory=BM25Config)
     hybrid: HybridConfig = field(default_factory=HybridConfig)
     cache_hybrid_candidates: bool = False
+    score_generation_refusals: bool = False
+    read_only_artifact_roots: tuple[Path, ...] = ()
     translation: TranslationConfig = field(default_factory=TranslationConfig)
     hyde: HyDEConfig = field(default_factory=HyDEConfig)
     query_generation: QueryGenerationConfig = field(default_factory=QueryGenerationConfig)
@@ -633,6 +644,11 @@ def load_config(path: str | Path) -> Config:
         if name in raw:
             raw[name] = resolved(raw[name])
     raw["output_dir"] = resolved(raw.get("output_dir", "artifacts"))
+    if "read_only_artifact_roots" in raw:
+        roots = raw["read_only_artifact_roots"]
+        if not isinstance(roots, list) or any(not isinstance(root, str) for root in roots):
+            raise ValidationError("read_only_artifact_roots must be a list of paths")
+        raw["read_only_artifact_roots"] = tuple(resolved(root) for root in roots)
     for name in ("settings", "query_languages", "target_languages", "models", "baselines"):
         if name in raw:
             if not isinstance(raw[name], list):
@@ -668,6 +684,8 @@ def load_config(path: str | Path) -> Config:
         raise ValidationError(f"Invalid configuration: {exc}") from exc
     if not isinstance(config.cache_hybrid_candidates, bool):
         raise ValidationError("cache_hybrid_candidates must be true or false")
+    if not isinstance(config.score_generation_refusals, bool):
+        raise ValidationError("score_generation_refusals must be true or false")
     if config.cache_hybrid_candidates and config.retrieval_unit != "chunk":
         raise ValidationError("cache_hybrid_candidates requires chunk retrieval")
     if config.candidate_mode not in CANDIDATE_MODES:

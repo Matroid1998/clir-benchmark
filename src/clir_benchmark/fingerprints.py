@@ -1,8 +1,7 @@
-"""Process-local file fingerprints for repeated result exports.
+"""Process-local file fingerprints for artifact identities and result exports.
 
 The cache retains digests, never file contents, and invalidates on filesystem
-identity or metadata changes. It does not replace the uncached hashing used by
-other benchmark stages.
+identity or metadata changes.
 """
 
 from __future__ import annotations

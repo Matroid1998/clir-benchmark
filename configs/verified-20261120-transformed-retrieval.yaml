@@ -1,0 +1,145 @@
+# Narval configuration for retrieval with saved translation and HyDE artifacts.
+version: 1
+output_dir: ../../artifacts
+candidate_mode: all
+retrieval_unit: chunk
+baselines:
+- translate-dense
+- translate-hybrid
+- hyde-dense
+- hyde-hybrid
+settings:
+- pairwise
+- mixed
+datasets:
+  chemistry:
+    corpus_format: verified-multilingual-v1
+    qa:
+      repo_id: MehdiAstaraki/google-patents-generated-qa-verified-20261118
+      revision: 2d6a4966a3373d48ef0a30fe9687ac5de9700e87
+      local_dir: ../../../narval-20261120-verified-retrieval/inputs/chemistry
+    corpus:
+      repo_id: MehdiAstaraki/google-patents-generated-qa-verified-20261118
+      revision: 9459adf9bfdc4f1f14ad6072de856b9e4a0d30ed
+      local_dir: ../../../narval-20261119-shared-indexes/inputs/chemistry
+  eurlex:
+    corpus_format: verified-multilingual-v1
+    qa:
+      repo_id: MehdiAstaraki/eurlex-generated-qa-verified-20261118
+      revision: 4fe4f78a146692a98ed9e8c4dae7c7ed7629ddf0
+      local_dir: ../../../narval-20261120-verified-retrieval/inputs/eurlex
+    corpus:
+      repo_id: MehdiAstaraki/eurlex-generated-qa-verified-20261118
+      revision: e1e4e3fd1a9f8c15adf1dbbb239ba4ddc0317ede
+      local_dir: ../../../narval-20261119-shared-indexes/inputs/eurlex
+  un:
+    corpus_format: verified-multilingual-v1
+    qa:
+      repo_id: MehdiAstaraki/un-generated-qa-verified-20261118
+      revision: c3c9415b0636748bb007f8734ab07d27b48faa74
+      local_dir: ../../../narval-20261120-verified-retrieval/inputs/un
+    corpus:
+      repo_id: MehdiAstaraki/un-generated-qa-verified-20261118
+      revision: 910ee8435bc4e5a41ccd5f913c30ebc1237eb130
+      local_dir: ../../../narval-20261119-shared-indexes/inputs/un
+models: &id001
+- embeddinggemma
+- bge-m3
+- qwen3-0.6B
+- nomic-v2-moe
+- granite-278m
+- gte-multilingual-base
+- arctic-embed-l-v2
+- e5-large-instruct
+chunking:
+  boundary_policy: shared-sentences-v1
+  models: *id001
+  icu_version: '73.2'
+  max_words: 200
+  overlap_words: 30
+  max_tokens: null
+bm25:
+  k1: 1.2
+  b: 0.75
+  analyzer: unicode-words-cjk-v1
+cache_hybrid_candidates: true
+hybrid:
+  candidate_k: 1000
+  rank_constant: 60
+  dense_weight: 1.0
+  bm25_weight: 1.0
+runtime:
+  device: cuda
+  dtype: bfloat16
+  batch_size: 16
+score_generation_refusals: true
+generation_cache_reuse:
+  translation_max_completion_tokens:
+  - 8192
+  hyde_max_completion_tokens:
+  - 8192
+query_generation:
+  input_mode: verified-qas
+  hyde_language_policy: question-language
+  record_refusals: true
+  corpus_languages:
+    chemistry:
+    - de
+    - en
+    - es
+    - fr
+    - ja
+    - ru
+    - zh
+    eurlex:
+    - de
+    - en
+    - es
+    - fr
+    un:
+    - ar
+    - en
+    - es
+    - fr
+    - ru
+    - zh
+  model_by_language:
+    ar: luna
+    de: haiku
+    en: haiku
+    es: haiku
+    fr: haiku
+    ja: qwen
+    ru: haiku
+    zh: qwen
+  models:
+    luna:
+      model: openai/gpt-5.6-luna
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_key_env: OPENROUTER_API_KEY
+      request_options: &id002
+        reasoning_effort: low
+        max_tokens: 16384
+        provider:
+          require_parameters: true
+        usage:
+          include: true
+      input_usd_per_million: 0.2
+      cached_input_usd_per_million: 0.02
+      output_usd_per_million: 1.2
+    haiku:
+      model: anthropic/claude-haiku-5.5
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_key_env: OPENROUTER_API_KEY
+      request_options: *id002
+      input_usd_per_million: 0.1
+      cached_input_usd_per_million: 0.01
+      output_usd_per_million: 0.5
+    qwen:
+      model: qwen/qwen3.8-27b
+      endpoint: https://openrouter.ai/api/v1/chat/completions
+      api_key_env: OPENROUTER_API_KEY
+      request_options: *id002
+read_only_artifact_roots:
+- ../../../narval-20261119-shared-indexes/artifacts
+- ../../../narval-20261119-verified-query-generation/artifacts

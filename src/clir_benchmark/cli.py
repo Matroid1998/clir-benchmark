@@ -45,7 +45,12 @@ from .verified_corpora import prepare_verified_span_map, verified_query_from_row
 
 
 def retrieval_backend(baseline: str) -> str:
-    return baseline.removeprefix("rerank-").removeprefix("translate-").removeprefix("adore-")
+    return (
+        baseline.removeprefix("rerank-")
+        .removeprefix("translate-")
+        .removeprefix("hyde-")
+        .removeprefix("adore-")
+    )
 
 
 def _selection_arguments(command: argparse.ArgumentParser) -> None:
@@ -472,7 +477,7 @@ def main(argv: list[str] | None = None) -> int:
                 dict.fromkeys(
                     value.removeprefix("translate-")
                     for value in baselines
-                    if value != "hyde-dense" and not value.startswith(("adore-", "rerank-"))
+                    if not value.startswith(("hyde-", "adore-", "rerank-"))
                 )
             ) or ("dense",)
         if args.command in {
@@ -548,9 +553,9 @@ def main(argv: list[str] | None = None) -> int:
         if (
             args.command in {"retrieve", "evaluate", "rerank", "compare-rerank"}
             and selected_hyde_languages
-            and not any(value.removeprefix("rerank-") == "hyde-dense" for value in baselines)
+            and not any(value.removeprefix("rerank-").startswith("hyde-") for value in baselines)
         ):
-            raise ValidationError("--hyde-language requires the hyde-dense baseline")
+            raise ValidationError("--hyde-language requires a hyde-* baseline")
         if args.command == "embed" and selected_hyde_languages:
             if selected_languages:
                 raise ValidationError(
@@ -754,7 +759,7 @@ def main(argv: list[str] | None = None) -> int:
                             "compare-rerank": compare_rerank,
                         }[args.command]
                         parent_baseline = baseline.removeprefix("rerank-")
-                        if parent_baseline == "hyde-dense":
+                        if parent_baseline.startswith("hyde-"):
                             for language in dict.fromkeys(
                                 selected_hyde_languages or hyde_languages(config, corpus)
                             ):
