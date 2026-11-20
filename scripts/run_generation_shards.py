@@ -99,11 +99,12 @@ def run_shard(options, config_hash, directory, lane, index):
             file=handle,
         )
     if result.returncode:
-        raise RuntimeError(f"Generation worker exited {result.returncode}. See {log}")
+        return log
 
 
 def run_workers(options, config_hash, directory, plan):
     work = iter((lane, i) for lane in plan["lanes"] for i in range(lane["num_shards"]))
+    failed = []
     with ThreadPoolExecutor(max_workers=options.workers) as pool:
         active = set()
         while True:
@@ -113,7 +114,13 @@ def run_workers(options, config_hash, directory, plan):
                 break
             done, active = wait(active, return_when=FIRST_COMPLETED)
             for future in done:
-                future.result()
+                if log := future.result():
+                    print(f"Generation shard failed. See {log}", file=sys.stderr, flush=True)
+                    failed.append(log.name)
+    if failed:
+        write_json(directory / "failed_shards.json", sorted(failed))
+        raise RuntimeError(f"{len(failed)} shards failed. See {directory / 'failed_shards.json'}")
+    (directory / "failed_shards.json").unlink(missing_ok=True)
 
 
 def main():

@@ -514,6 +514,14 @@ QA mirrors. A `verified.json` receipt lists each canonical artifact and manifest
 checksum. To work on one group, the generation CLI accepts `--shard-size 250
 --shard-index 0` with the desired corpus and language. Shard indices start at zero.
 
+For the November 20 cohort, use [the updated generation configuration](configs/verified-20261120-query-generation.yaml).
+It selects 5,299 questions, requests translation into each corpus language and
+generates HyDE in the original question language. New requests have a 16,384-token
+completion limit. Compatible 8,192-token successes retain their original request
+history, timing and costs. Refusals remain recorded as terminal outcomes. The
+runner saves failed shard names and lets the remaining shards finish. Use
+`--retry-failed` to resume after addressing an outstanding failure.
+
 The November 18 campaign supervisor runs one stage locally with eight workers
 and transfers its verified data to the Narval campaign. For example,
 `bash scripts/run_verified_generation_stage.sh translate --retry-transient`

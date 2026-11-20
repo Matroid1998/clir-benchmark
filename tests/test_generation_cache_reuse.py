@@ -82,15 +82,18 @@ def complete(cache, value, *, budgets=(), retry=False, candidates=None):
     )
 
 
-def test_reuse_preserves_original_request_and_makes_no_alias_or_api_call(tmp_path):
+@pytest.mark.parametrize("option", ["max_completion_tokens", "max_tokens"])
+def test_reuse_preserves_original_request_and_makes_no_alias_or_api_call(tmp_path, option):
     client = Client()
     cache = make_cache(tmp_path, client)
-    original, _ = complete(cache, payload(2048))
+    current = payload()
+    current[option] = current.pop("max_completion_tokens")
+    original, _ = complete(cache, {**current, option: 2048})
     before = (tmp_path / f"{original['request_key']}.json").read_bytes()
-    result, is_new = complete(cache, payload(), budgets=(2048,))
+    result, is_new = complete(cache, current, budgets=(2048,))
     assert not is_new
     assert result == original
-    assert result["payload"]["max_completion_tokens"] == 2048
+    assert result["payload"][option] == 2048
     assert len(client.calls) == 1
     assert len(list(tmp_path.glob("*.json"))) == 1
     assert (tmp_path / f"{original['request_key']}.json").read_bytes() == before

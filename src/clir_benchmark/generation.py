@@ -484,17 +484,25 @@ def response_text(response: dict, *, label: str) -> str:
     return message.get("content")
 
 
+def _completion_budget_option(payload: dict) -> str | None:
+    keys = payload.keys() & {"max_completion_tokens", "max_tokens"}
+    return next(iter(keys)) if len(keys) == 1 else None
+
+
 def _lower_completion_budget(payload: dict, candidate: dict) -> bool:
-    current = payload.get("max_completion_tokens")
-    previous = candidate.get("max_completion_tokens")
+    option = _completion_budget_option(payload)
+    if option is None or option != _completion_budget_option(candidate):
+        return False
+    current = payload[option]
+    previous = candidate[option]
     return (
         isinstance(current, int)
         and not isinstance(current, bool)
         and isinstance(previous, int)
         and not isinstance(previous, bool)
         and 0 < previous < current
-        and {key: value for key, value in payload.items() if key != "max_completion_tokens"}
-        == {key: value for key, value in candidate.items() if key != "max_completion_tokens"}
+        and {key: value for key, value in payload.items() if key != option}
+        == {key: value for key, value in candidate.items() if key != option}
     )
 
 
@@ -503,8 +511,11 @@ def completion_budget_candidates(
 ) -> dict[str, dict]:
     """Construct explicitly selected historical requests; never change a live payload."""
     candidates = {}
+    option = _completion_budget_option(payload)
+    if budgets and option is None:
+        raise ValidationError("Cache reuse requires exactly one explicit completion budget")
     for budget in budgets:
-        candidate = {**payload, "max_completion_tokens": budget}
+        candidate = {**payload, option: budget}
         if not _lower_completion_budget(payload, candidate):
             raise ValidationError(
                 "Reusable completion budgets must be positive integers below the current limit"

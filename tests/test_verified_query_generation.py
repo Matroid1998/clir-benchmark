@@ -387,6 +387,44 @@ def test_local_shard_launcher_stage_selection(verified, mock_completions, monkey
     assert len(mock_completions) == 4
 
 
+def test_local_shard_launcher_continues_after_a_failed_worker(verified, monkeypatch, tmp_path):
+    args, _, _ = verified
+    script = Path(__file__).resolve().parents[1] / "scripts/run_generation_shards.py"
+    state = tmp_path / "jobs"
+    seen = []
+
+    def fake_worker(command, *, stdout, stderr):
+        index = int(command[command.index("--shard-index") + 1])
+        seen.append(index)
+        return subprocess.CompletedProcess(command, 2 if index == 0 else 0)
+
+    monkeypatch.setattr(subprocess, "run", fake_worker)
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            str(script),
+            *args,
+            "--state-dir",
+            str(state),
+            "--workers",
+            "1",
+            "--shard-size",
+            "2",
+            "--stage",
+            "generate-hyde",
+            "--run",
+        ],
+    )
+    with pytest.raises(RuntimeError, match="1 shards failed"):
+        runpy.run_path(str(script), run_name="__main__")
+    assert seen == [0, 1]
+    assert read_json(next(state.glob("*/failed_shards.json"))) == [
+        "generate-hyde-un-question-language-0000.log",
+    ]
+    assert not list(state.glob("*/verified.json"))
+
+
 @pytest.mark.skipif(not shutil.which("rsync"), reason="Local rsync needed for transfer fixture")
 @pytest.mark.parametrize("policy_flags", [[], ["--record-refusals"]])
 def test_stage_supervisor_publishes_only_verified_files(
