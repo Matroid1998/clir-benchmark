@@ -14,7 +14,7 @@ from clir_benchmark.errors import ValidationError
 from clir_benchmark.fingerprints import cached_file_digest
 from clir_benchmark.hyde import hyde_languages, hyde_path, load_hyde
 from clir_benchmark.lexical import bm25_path
-from clir_benchmark.pipeline import embed, embedding_path, evaluate, model_spec, retrieve
+from clir_benchmark.pipeline import embed, embedding_path, evaluate, model_spec, retrieve, run_path
 from clir_benchmark.translation import load_translations, translation_languages, translation_path
 from clir_benchmark.util import read_json, write_json
 
@@ -143,7 +143,32 @@ def run_job(config, stage, method, corpus, ledger):
         raise ValueError(f"No verified Narval transfer arrived for {method}")
 
     verified = read_json(STATE / f"verified-{method}.json")
-    language, alias = read_json(ledger)[int(os.environ["SLURM_ARRAY_TASK_ID"])]
+    index = int(os.environ["SLURM_ARRAY_TASK_ID"])
+    slot = read_json(ledger)[index]
+    if stage.startswith("stacked-"):
+        stage = stage.removeprefix("stacked-")
+        failures = []
+        status_file = STATE / f"{ledger.stem}-{os.environ['SLURM_ARRAY_JOB_ID']}_{index}.json"
+        status = {}
+        for language, alias in slot:
+            key = f"{language}/{alias}"
+            try:
+                print(f"{method}-{stage} {corpus}/{key}", flush=True)
+                run_lane(config, stage, method, corpus, language, alias, verified)
+                status[key] = "completed"
+            except (OSError, RuntimeError, ValueError) as exc:
+                print(f"{method}-{stage} {corpus}/{key} failed: {exc}", flush=True)
+                status[key] = str(exc)
+                failures.append(key)
+            write_json(status_file, status)
+        if failures:
+            raise ValueError(f"Failed lanes: {', '.join(failures)}. See {status_file}")
+        return
+    language, alias = slot
+    run_lane(config, stage, method, corpus, language, alias, verified)
+
+
+def run_lane(config, stage, method, corpus, language, alias, verified):
     if f"{corpus}/{language}" not in verified["lanes"]:
         raise ValueError(f"Unverified generation lane {corpus}/{language}")
     options = {"hyde_language" if method == "hyde" else "translation_language": language}
@@ -151,6 +176,12 @@ def run_job(config, stage, method, corpus, ledger):
         print(embed(config, corpus, alias, kind="query", **options))
         return
     baseline = f"{method}-{stage}"
+    if stage != "bm25":
+        ranking = run_path(config, corpus, model_spec(config, alias), baseline=baseline, **options)
+        report = config.output_dir / "reports" / corpus / ranking.name
+        if (report / "analysis_manifest.json").is_file():
+            print(report)
+            return
     print(retrieve(config, corpus, alias, baseline=baseline, **options))
     if stage != "bm25":
         for attempt in range(3):
@@ -164,7 +195,36 @@ def run_job(config, stage, method, corpus, ledger):
                 time.sleep(10)
 
 
-def submit(config, methods):
+def retire_pending_arrays(arrays):
+    """Remove queued tasks while retaining running tasks and their artifacts."""
+    if not arrays:
+        return
+    job_ids = ",".join(sorted(arrays))
+    check_pending = [
+        "squeue",
+        "--noheader",
+        "--array",
+        f"--jobs={job_ids}",
+        "--states=PENDING",
+        "--format=%i",
+    ]
+    for _ in range(3):
+        queue = subprocess.check_output(check_pending, text=True).split()
+        if not queue:
+            return
+        if any(
+            not task.partition("_")[2].isdigit() or task.partition("_")[0] not in arrays
+            for task in queue
+        ):
+            raise ValueError(f"Cannot identify individual pending tasks: {queue}")
+        print(f"Retiring {len(queue)} pending fine-grained translation tasks", flush=True)
+        subprocess.run(["scancel", "--quiet", "--state=PENDING", *queue], check=False)
+        time.sleep(2)
+    if subprocess.check_output(check_pending, text=True).strip():
+        raise ValueError("Some fine-grained tasks are still pending after cancellation")
+
+
+def submit(config, methods, *, retry_cancelled=False, stack_translation=False):
     from collections import defaultdict
 
     receipts = {}
@@ -176,8 +236,18 @@ def submit(config, methods):
 
     def job(kind, method, corpus, tasks=(), dependency=""):
         key = "-".join(filter(None, (method, corpus, kind)))
-        if key in receipts:
-            return receipts[key]
+        previous = receipts.get(key)
+        if previous is not None:
+            if not retry_cancelled:
+                return previous
+            accounting = subprocess.check_output(
+                ["sacct", "-XnP", "-j", previous, "-o", "State%40"], text=True
+            )
+            states = {line.strip().split()[0] for line in accounting.splitlines() if line.strip()}
+            if not states:
+                raise ValueError(f"No Slurm accounting for previous job {previous} ({key})")
+            if states != {"CANCELLED"}:
+                return previous
         task_path = STATE / f"{key}.json"
         if tasks:
             write_json(task_path, tasks)
@@ -195,10 +265,20 @@ def submit(config, methods):
             "bm25": [cpu, "--cpus-per-task=1", "--mem=32G", "--tmp=160G", "--time=7-00:00:00"],
             "hybrid": [cpu, "--cpus-per-task=2", "--mem=24G", "--time=12:00:00"],
         }
-        spec = resources[kind]
+        stage = kind.removeprefix("stacked-")
+        spec = resources[stage]
+        if kind != stage:
+            spec = [item for item in spec if not item.startswith("--time=")]
+            spec.append(
+                {
+                    "embed": "--time=1-00:00:00",
+                    "dense": "--time=3-00:00:00",
+                    "hybrid": "--time=2-00:00:00",
+                }[stage]
+            )
         pattern = "%j"
         if tasks:
-            limit = {"embed": 8, "dense": 12, "bm25": 8, "hybrid": 12}[kind]
+            limit = {"embed": 8, "dense": 12, "bm25": 8, "hybrid": 12}[stage]
             spec.append(f"--array=0-{len(tasks) - 1}%{limit}")
             pattern = "%A_%a"
         if dependency:
@@ -234,10 +314,62 @@ def submit(config, methods):
     for method in methods:
         verified = verify_generation(config, method)
         if verified is None:
+            if retry_cancelled or stack_translation:
+                raise ValueError(f"Verified transfer receipt required before retrying {method}")
             gate = f"afterok:{job('check', method, '')}"
         else:
-            write_json(STATE / f"verified-{method}.json", verified)
+            temporary = STATE / f".verified-{method}.tmp"
+            write_json(temporary, verified)
+            temporary.replace(STATE / f"verified-{method}.json")
             gate = ""
+        if stack_translation:
+            originals = {
+                (corpus, stage): receipts[f"{method}-{corpus}-{stage}"]
+                for corpus in config.datasets
+                for stage in ("embed", "dense", "hybrid")
+                if f"{method}-{corpus}-{stage}" in receipts
+            }
+            retire_pending_arrays(set(originals.values()))
+            for corpus in config.datasets:
+                lane_languages = languages(config, method, corpus)
+                lexical = job("bm25", method, corpus, [(lang, None) for lang in lane_languages])
+
+                def tasks(size, target_languages=lane_languages):
+                    return [
+                        [
+                            (lang, model)
+                            for model in config.models[i : i + size]
+                            for lang in target_languages
+                        ]
+                        for i in range(0, len(config.models), size)
+                    ]
+
+                def after(*parents):
+                    return "afterany:" + ":".join(filter(None, parents)) if any(parents) else ""
+
+                encoding = job(
+                    "stacked-embed",
+                    method,
+                    corpus,
+                    tasks(4),
+                    after(originals.get((corpus, "embed"))),
+                )
+                dense = job(
+                    "stacked-dense",
+                    method,
+                    corpus,
+                    tasks(2),
+                    after(encoding, originals.get((corpus, "dense"))),
+                )
+                job(
+                    "stacked-hybrid",
+                    method,
+                    corpus,
+                    tasks(2),
+                    after(dense, lexical, originals.get((corpus, "hybrid"))),
+                )
+                total[method] += 2 * len(lane_languages) * len(config.models)
+            continue
         for corpus in config.datasets:
             lane_languages = languages(config, method, corpus)
             tasks = [(lang, model) for lang in lane_languages for model in config.models]
@@ -254,9 +386,21 @@ def main():
     parser.add_argument("action", choices=("preflight", "submit", "worker"))
     parser.add_argument("worker_args", nargs="*")
     parser.add_argument("--method", action="append", choices=METHODS)
+    parser.add_argument("--stack-translation", action="store_true")
+    parser.add_argument(
+        "--retry-cancelled",
+        action="store_true",
+        help="Resubmit arrays whose prior attempt was wholly cancelled",
+    )
     args = parser.parse_args()
+    if args.retry_cancelled and args.action != "submit":
+        parser.error("--retry-cancelled requires submit")
     config = load_config(CONFIG)
     methods = args.method or METHODS
+    if args.stack_translation and (args.action != "submit" or methods != ["translate"]):
+        parser.error("--stack-translation requires submit --method translate")
+    if args.stack_translation and args.retry_cancelled:
+        parser.error("Use one of --stack-translation and --retry-cancelled")
     if args.action == "worker":
         kind, method, corpus, ledger = args.worker_args
         run_job(config, kind, method, corpus, Path(ledger))
@@ -278,7 +422,12 @@ def main():
                 )
             )
             return
-        submit(config, methods)
+        submit(
+            config,
+            methods,
+            retry_cancelled=args.retry_cancelled,
+            stack_translation=args.stack_translation,
+        )
 
 
 if __name__ == "__main__":

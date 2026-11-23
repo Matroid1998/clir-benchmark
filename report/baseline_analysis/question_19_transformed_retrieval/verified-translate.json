@@ -1,0 +1,73 @@
+{
+  "lanes": {
+    "chemistry/de": {
+      "refusals": 60,
+      "rows": 1775
+    },
+    "chemistry/en": {
+      "refusals": 47,
+      "rows": 1775
+    },
+    "chemistry/es": {
+      "refusals": 51,
+      "rows": 1775
+    },
+    "chemistry/fr": {
+      "refusals": 54,
+      "rows": 1775
+    },
+    "chemistry/ja": {
+      "refusals": 0,
+      "rows": 1775
+    },
+    "chemistry/ru": {
+      "refusals": 58,
+      "rows": 1775
+    },
+    "chemistry/zh": {
+      "refusals": 0,
+      "rows": 1775
+    },
+    "eurlex/de": {
+      "refusals": 13,
+      "rows": 1826
+    },
+    "eurlex/en": {
+      "refusals": 11,
+      "rows": 1826
+    },
+    "eurlex/es": {
+      "refusals": 9,
+      "rows": 1826
+    },
+    "eurlex/fr": {
+      "refusals": 9,
+      "rows": 1826
+    },
+    "un/ar": {
+      "refusals": 0,
+      "rows": 1698
+    },
+    "un/en": {
+      "refusals": 0,
+      "rows": 1698
+    },
+    "un/es": {
+      "refusals": 1,
+      "rows": 1698
+    },
+    "un/fr": {
+      "refusals": 1,
+      "rows": 1698
+    },
+    "un/ru": {
+      "refusals": 2,
+      "rows": 1698
+    },
+    "un/zh": {
+      "refusals": 0,
+      "rows": 1698
+    }
+  },
+  "receipt": "translate-491f5019905a44415dab540b7969a549398f87a10e3a2cefda6b7c7eab6c84e6.sha256"
+}
