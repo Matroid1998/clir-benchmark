@@ -164,6 +164,19 @@ def rows(path: Path, columns: list[str] | None = None) -> Iterator[dict]:
         yield from batch.to_pylist()
 
 
+def selected_chunks(corpus_dir: Path, wanted: set[str], columns: list[str]) -> dict:
+    """Read the exact stored passages in one sequential scan of the chunk corpus."""
+    details = {}
+    for batch in pq.ParquetFile(corpus_dir / "chunks.parquet").iter_batches(
+        columns=columns, batch_size=1024
+    ):
+        keep = [key in wanted for key in batch.column("id").to_pylist()]
+        if any(keep):
+            for chunk in batch.filter(pa.array(keep)).to_pylist():
+                details[chunk["id"]] = chunk
+    return details
+
+
 def source_record(unit: SourceUnit) -> dict:
     row = asdict(unit)
     row["metadata_json"] = json_dumps(row.pop("metadata"))

@@ -1,0 +1,20 @@
+{
+  "verified_at": "2026-11-24T20:02:44.423959+00:00",
+  "method": "SHA-256 against published Narval analysis manifests, once per distinct local file",
+  "verified_files": 51382,
+  "verified_bytes": 260341358774,
+  "published_reports": {
+    "hybrid": 20,
+    "dense": 21,
+    "bm25": 3,
+    "translate-hybrid": 136,
+    "translate-dense": 136,
+    "hyde-dense": 24,
+    "hyde-hybrid": 24
+  },
+  "remote_only_indexes": 27,
+  "generation_receipt_files": {
+    "translation": 26082,
+    "hyde": 6128
+  }
+}

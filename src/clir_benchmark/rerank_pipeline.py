@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import logging
 import math
 import time
 import uuid
@@ -12,12 +13,19 @@ from pathlib import Path
 
 import pyarrow as pa
 
-from .artifacts import DOCUMENT_RUN_SCHEMA, RUN_SCHEMA, CorpusStore, ParquetSink, rows
+from .artifacts import (
+    DOCUMENT_RUN_SCHEMA,
+    RUN_SCHEMA,
+    CorpusStore,
+    ParquetSink,
+    rows,
+    selected_chunks,
+)
 from .config import RERANK_BASELINES, Config
 from .errors import ValidationError
 from .generation import nullable_sum
 from .metrics import aggregate, score_query
-from .rerank_cache import SQLitePairCache
+from .rerank_cache import QueryPairCache, SQLitePairCache
 from .reranking import Qwen3Reranker, scoring_identity
 from .results import export_result
 from .util import (
@@ -271,6 +279,9 @@ def rerank(
     result_id = "document_id" if document_mode else "chunk_id"
     chunk_id = "winning_chunk_id" if document_mode else "chunk_id"
     pair_cache = SQLitePairCache(config.output_dir / "reranking_cache") if document_mode else None
+    compact = not document_mode and config.compact_chunk_rerank_cache
+    if compact:
+        pair_cache = QueryPairCache(config.output_dir / "reranking_chunk_cache")
     model = None
     used = {}
     try:
@@ -294,6 +305,23 @@ def rerank(
             )
         }
         score_identity = _score_identity(config)
+        keys = sorted(eligible)
+        passages = None
+        legacy_pairs = config.output_dir / "reranking_pairs"
+        check_legacy = not compact or legacy_pairs.is_dir()
+        if compact:
+            # Keep a question's settings together. Different parents start at different
+            # questions so concurrent workers can share completed score fragments.
+            order = {qid: digest([destination.name, qid]) for qid in queries}
+            keys.sort(key=lambda key: (order[key[1]], key[0]))
+            wanted = {
+                row["chunk_id"]
+                for ranking in rankings.values()
+                for row in ranking[: config.reranker.candidate_k]
+            }
+            passages = selected_chunks(
+                config.corpus_dir(corpus), wanted, ["id", "language", "text"]
+            )
         traces = []
         with (
             CorpusStore(config.corpus_dir(corpus) / "lookup.sqlite") as store,
@@ -315,13 +343,35 @@ def rerank(
                             handles[setting_id] = (temporary / f"{setting_id}.trec").open(
                                 "w", encoding="utf-8"
                             )
-                    for key in sorted(eligible):
+                    for index, key in enumerate(keys):
                         setting_id, query_id = key
                         query = queries[query_id]
                         selected = rankings[key][: config.reranker.candidate_k]
+                        if compact:
+                            pair_cache.activate(
+                                {
+                                    "scoring": score_identity,
+                                    "query": query["question"],
+                                    "query_language": query["question_language"],
+                                }
+                            )
+                            if index % 100 == 0:
+                                logging.getLogger(__name__).info(
+                                    "%s %s %s: %d/%d query-settings, %d new scores",
+                                    corpus,
+                                    baseline,
+                                    alias,
+                                    index,
+                                    len(keys),
+                                    invocation["new_pairs"],
+                                )
                         pair_keys, missing = [], {}
                         for candidate in selected:
-                            chunk = store.chunk(candidate[chunk_id])
+                            chunk = (
+                                passages.get(candidate[chunk_id])
+                                if passages is not None
+                                else store.chunk(candidate[chunk_id])
+                            )
                             if (
                                 chunk is None
                                 or chunk["language"] not in settings[setting_id]["target_languages"]
@@ -329,14 +379,17 @@ def rerank(
                                 raise ValidationError(
                                     "Parent candidate does not belong to the configured corpus/language pool"
                                 )
-                            source = store.get_source(chunk["source_unit_id"])
-                            if source is None:
-                                raise ValidationError(f"Missing source for chunk {chunk['id']}")
-                            if document_mode and source.id != candidate["document_id"]:
-                                raise ValidationError(
-                                    "Winning chunk does not belong to the ranked document"
-                                )
-                            document = source.text[chunk["start"] : chunk["end"]]
+                            if passages is not None:
+                                document = chunk["text"]
+                            else:
+                                source = store.get_source(chunk["source_unit_id"])
+                                if source is None:
+                                    raise ValidationError(f"Missing source for chunk {chunk['id']}")
+                                if document_mode and source.id != candidate["document_id"]:
+                                    raise ValidationError(
+                                        "Winning chunk does not belong to the ranked document"
+                                    )
+                                document = source.text[chunk["start"] : chunk["end"]]
                             identity = {
                                 "scoring": score_identity,
                                 "query": query["question"],
@@ -349,8 +402,8 @@ def rerank(
                             if pair_key in used:
                                 invocation["cached_pairs"] += 1
                                 continue
-                            path = config.output_dir / "reranking_pairs" / pair_key
-                            if path.exists():
+                            path = legacy_pairs / pair_key
+                            if check_legacy and path.exists():
                                 used[pair_key] = _pair_result(path, identity)
                                 invocation["cached_pairs"] += 1
                             else:
@@ -482,6 +535,8 @@ def rerank(
                 finally:
                     for handle in handles.values():
                         handle.close()
+            if compact:
+                pair_cache.close()
             write_json(temporary / "traces.json", traces)
             if pair_cache:
                 with ParquetSink(
@@ -546,9 +601,10 @@ def rerank(
         if pair_cache:
             pair_cache.close()
         invocation["seconds"] = time.perf_counter() - started
-        write_json(
-            config.output_dir / "reranking_invocations" / f"{uuid.uuid4().hex}.json", invocation
-        )
+        receipt = config.output_dir / "reranking_invocations" / f"{uuid.uuid4().hex}.json"
+        staging = receipt.with_suffix(".tmp")
+        write_json(staging, invocation)
+        staging.replace(receipt)
 
 
 def _parent_components(row, baseline):
@@ -688,9 +744,8 @@ def evaluate_rerank(
         if set(candidates) != set(reranked) or len(candidates) != len(reranked):
             raise ValidationError(f"Reranked candidate set differs from parent for {key}")
         required = set(eligible[key]["required_source_ids"])
-        full_parent_metrics = score_query(
-            [row[result_id] for row in parent_rankings[key]], qrels[key], required
-        )
+        full_parent = [row[result_id] for row in parent_rankings[key]]
+        full_parent_metrics = score_query(full_parent, qrels[key], required)
         if original["metrics"] != full_parent_metrics:
             raise ValidationError(f"Parent evaluation report is stale: metrics differ for {key}")
         parent_seconds, parent_cost = _parent_components(original, base)
@@ -705,6 +760,16 @@ def evaluate_rerank(
                 "reranker_revision": config.reranker.revision,
                 "reranking_query_policy": "original_question",
                 "candidate_count": len(candidates),
+                # Historical parent reports did not include cutoff 50. Score both orders
+                # directly on the same observed chunk judgments for the matched comparison.
+                "matched_recall_at_50": {
+                    name: sum(item in qrels[key] for item in ranking[:50]) / len(qrels[key])
+                    for name, ranking in (
+                        ("reranked_metrics", reranked),
+                        ("control_metrics", candidates),
+                        ("full_parent_metrics", full_parent),
+                    )
+                },
                 "reranking_seconds_amortized": trace["reranking_seconds_amortized"],
                 "parent_component_seconds": parent_seconds,
                 "component_seconds": nullable_sum(
@@ -823,6 +888,15 @@ def compare_rerank(
                 "added_component_seconds": record["reranking_seconds_amortized"],
             }
         )
+        if "matched_recall_at_50" in record:
+            extra = record["matched_recall_at_50"]
+            for name, value in extra.items():
+                row[name] = {**row[name], "Recall@50": value}
+            for name, control in (
+                ("metric_deltas", "control_metrics"),
+                ("full_parent_metric_deltas", "full_parent_metrics"),
+            ):
+                row[name] = {**row[name], "Recall@50": extra["reranked_metrics"] - extra[control]}
         comparisons.append(row)
         grouped[row["setting_id"]].append(row)
     summaries = []

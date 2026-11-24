@@ -1,0 +1,7 @@
+{
+  "checked_utc": "2026-11-24T20:03:21.035050+00:00",
+  "inventory": "narval_files.tsv.gz",
+  "scope": "downloaded source result, reporting, supporting metadata and experiment directories",
+  "files_matching_relative_path_and_byte_size": 23136,
+  "bytes": 263267230907
+}

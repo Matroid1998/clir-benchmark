@@ -499,6 +499,7 @@ class Config:
     bm25: BM25Config = field(default_factory=BM25Config)
     hybrid: HybridConfig = field(default_factory=HybridConfig)
     cache_hybrid_candidates: bool = False
+    compact_chunk_rerank_cache: bool = False
     score_generation_refusals: bool = False
     read_only_artifact_roots: tuple[Path, ...] = ()
     translation: TranslationConfig = field(default_factory=TranslationConfig)
@@ -684,6 +685,8 @@ def load_config(path: str | Path) -> Config:
         raise ValidationError(f"Invalid configuration: {exc}") from exc
     if not isinstance(config.cache_hybrid_candidates, bool):
         raise ValidationError("cache_hybrid_candidates must be true or false")
+    if not isinstance(config.compact_chunk_rerank_cache, bool):
+        raise ValidationError("compact_chunk_rerank_cache must be true or false")
     if not isinstance(config.score_generation_refusals, bool):
         raise ValidationError("score_generation_refusals must be true or false")
     if config.cache_hybrid_candidates and config.retrieval_unit != "chunk":

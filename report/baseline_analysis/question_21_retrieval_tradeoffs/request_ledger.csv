@@ -1,0 +1,5 @@
+method,scope,request_keys,attempts,non_success_attempts,known_attempt_usd,missing_attempt_costs
+translate,retained,24619.0,24632.0,330.0,12.492220135999952,8.0
+translate,outside_retained_cohort,1142.0,1142.0,23.0,0.5873673330000007,0.0
+hyde,retained,5301.0,5309.0,117.0,3.2754178959999942,6.0
+hyde,outside_retained_cohort,672.0,672.0,10.0,0.40933532,0.0

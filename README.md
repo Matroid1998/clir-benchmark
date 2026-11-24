@@ -1106,6 +1106,27 @@ encoding, and retrieval overheads and add reranking time. These component sums
 are not measured end-to-end latency. Local compute prices and total monetary
 costs remain unknown (`null`); existing parent API-cost accounting is preserved.
 
+The verified Narval chunk campaign uses
+`configs/verified-20261124-rerank.yaml`. Its `compact_chunk_rerank_cache: true`
+setting checkpoints completed query scores in Parquet under
+`reranking_chunk_cache/`. Workers share identical scores across parents and
+settings. Every finished ranking also contains its own immutable pair-score file.
+The shared checkpoint directory needs filesystem support for cross-node flock.
+
+From the deployed campaign project, run these commands to check the inputs and
+submit the jobs:
+
+```bash
+bash scripts/submit_verified_rerank.sh check
+bash scripts/submit_verified_rerank.sh submit
+```
+
+The configuration enables `rerank-bm25`, `rerank-dense` and `rerank-hybrid`.
+Select a subset with repeated `--baseline` options on an initial submission.
+The campaign records job IDs and result paths under `job_status/`, Slurm logs
+under `logs/`, and the matched recall, cost and latency table under `report/`.
+The final PDF uses the original report's cross-language direction weighting.
+
 ### BM25 and hybrid retrieval
 
 After `prepare-corpus` and `prepare-relevance`, run BM25 without an embedding

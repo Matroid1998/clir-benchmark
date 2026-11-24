@@ -1,0 +1,3 @@
+method,query_variants,distinct_questions,identity,refusals,attempts,extra_attempts,known_attempt_usd,missing_attempt_costs,variants_missing_full_cost,mean_known_variant_usd,mean_known_generation_s,p50_known_generation_s,p95_known_generation_s,mean_known_paid_generation_s,unknown_generation_durations,known_input_tokens,known_cached_input_tokens,known_output_tokens,variants_missing_tokens
+hyde,5299,5299,0,107,5309,10,3.275417896,6,6,0.000617618336671075,3.2205813616202428,2.6647828620007203,5.432121683799778,3.2205813616202428,6,12616382,1312210,2273969,6
+translate,29917,5299,5299,316,24632,14,12.492220136,8,8,0.0004175645215821325,1.5051980545968138,1.12518052500036,4.417982612401101,1.8292957584289353,8,44686436,5187800,5246695,8

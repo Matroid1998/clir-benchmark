@@ -1,0 +1,4 @@
+stage,alias,model,input_usd_per_million,cached_input_usd_per_million,output_usd_per_million
+translation and HyDE,luna,openai/gpt-5.6-luna,0.2,0.02,1.2
+translation and HyDE,haiku,anthropic/claude-haiku-5.5,0.1,0.01,0.5
+translation and HyDE,qwen,qwen/qwen3.8-27b,,,

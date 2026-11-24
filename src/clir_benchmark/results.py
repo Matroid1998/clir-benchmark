@@ -18,7 +18,7 @@ from pathlib import Path
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from .artifacts import CorpusStore, ParquetSink, rows
+from .artifacts import CorpusStore, ParquetSink, rows, selected_chunks
 from .config import Config
 from .encoders import ModelSpec
 from .errors import ValidationError
@@ -401,14 +401,7 @@ def _ranked_chunk_rows(config: Config, corpus: str, run_file: Path):
             "start",
             "end",
         ]
-        details = {}
-        for batch in pq.ParquetFile(corpus_dir / "chunks.parquet").iter_batches(
-            columns=columns, batch_size=1024
-        ):
-            keep = [chunk_id in wanted for chunk_id in batch.column(0).to_pylist()]
-            if any(keep):
-                for chunk in batch.filter(pa.array(keep)).to_pylist():
-                    details[chunk["id"]] = chunk
+        details = selected_chunks(corpus_dir, wanted, columns)
         for row in rows(run_file):
             chunk_id = row["chunk_id"]
             if chunk_id not in details:

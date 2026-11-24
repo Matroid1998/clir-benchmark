@@ -364,10 +364,12 @@ def test_cached_runs_and_offline_comparisons_never_load_model(tmp_path, tokenize
     assert any(row["new_pairs"] == 0 for row in invocations)
 
 
+@pytest.mark.parametrize("compact", [False, True])
 def test_smaller_candidate_budget_uses_same_prefix_control_and_reuses_pair_scores(
-    tmp_path, tokenizer
+    tmp_path, tokenizer, compact
 ):
     config, _, alias, _, parent = parent_fixture(tmp_path, tokenizer, "dense")
+    config = replace(config, compact_chunk_rerank_cache=compact)
     model = FixtureReranker()
     complete = rerank(
         config, "eurlex", alias, baseline="rerank-dense", reranker_factory=model.factory
@@ -388,6 +390,16 @@ def test_smaller_candidate_budget_uses_same_prefix_control_and_reuses_pair_score
     )
     assert all("full_parent_metric_deltas" in row for row in records)
     assert any(row["full_parent_metric_deltas"]["Recall@100"] < 0 for row in records)
+    assert all(
+        row["reranked_metrics"]["Recall@50"] == row["control_metrics"]["Recall@50"]
+        for row in records
+    )
+    assert any(row["full_parent_metric_deltas"]["Recall@50"] < 0 for row in records)
+    settings = read_json(comparison / "report.json")["settings"]
+    assert all(
+        "reranked_metrics.Recall@50" in row and "full_parent_metrics.Recall@50" in row
+        for row in settings
+    )
     assert restricted.corpus_key("eurlex") == config.corpus_key("eurlex")
     assert restricted.relevance_key("eurlex") == config.relevance_key("eurlex")
 
@@ -426,10 +438,22 @@ def test_configuration_changes_partition_reranked_runs_without_changing_parent(t
         assert run_path(updated, "eurlex", spec, baseline="dense") == parent
 
 
-def test_pair_scores_reuse_across_distinct_retrievers_and_parent_fingerprints(tmp_path, tokenizer):
+@pytest.mark.parametrize("compact", [False, True])
+def test_pair_scores_reuse_across_distinct_retrievers_and_parent_fingerprints(
+    tmp_path, tokenizer, compact
+):
     config, _, alias, _, _ = parent_fixture(tmp_path, tokenizer, "dense")
+    config = replace(config, compact_chunk_rerank_cache=compact)
     model = FixtureReranker()
     dense = rerank(config, "eurlex", alias, baseline="rerank-dense", reranker_factory=model.factory)
+    if compact:
+        assert (dense / "pair_scores.parquet").is_file()
+        assert not (config.output_dir / "reranking_pairs").exists()
+        fragments = list((config.output_dir / "reranking_chunk_cache").glob("*/*.parquet"))
+        assert len(fragments) == 1
+        assert set(row["score_key"] for row in rows(fragments[0])) == {
+            row["score_key"] for row in rows(dense / "pair_scores.parquet")
+        }
     prepare_bm25(config, "eurlex")
     parent = retrieve(config, "eurlex", baseline="bm25")
     lexical = rerank(config, "eurlex", baseline="rerank-bm25", reranker_factory=forbidden)
