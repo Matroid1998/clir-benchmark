@@ -1,0 +1,304 @@
+corpus,setting_id,question_language,document_language,regime,eligible_questions,baseline,recall_at_10_percent,models
+chemistry,chemistry__de__de,de,de,monolingual,229,bm25,79.62154294,
+chemistry,chemistry__de__de,de,de,monolingual,229,dense,77.22889374,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__de,de,de,monolingual,229,hybrid,83.74272198,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__en,de,en,cross_language,151,bm25,0.00000000,
+chemistry,chemistry__de__en,de,en,cross_language,151,dense,53.66445916,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__en,de,en,cross_language,151,hybrid,42.68211921,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__es,de,es,cross_language,0,bm25,,
+chemistry,chemistry__de__es,de,es,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__es,de,es,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__fr,de,fr,cross_language,150,bm25,2.66666667,
+chemistry,chemistry__de__fr,de,fr,cross_language,150,dense,58.86111111,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__fr,de,fr,cross_language,150,hybrid,51.45833333,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__ja,de,ja,cross_language,0,bm25,,
+chemistry,chemistry__de__ja,de,ja,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__ja,de,ja,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__ru,de,ru,cross_language,0,bm25,,
+chemistry,chemistry__de__ru,de,ru,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__ru,de,ru,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__zh,de,zh,cross_language,0,bm25,,
+chemistry,chemistry__de__zh,de,zh,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__de__zh,de,zh,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__de,en,de,cross_language,0,bm25,,
+chemistry,chemistry__en__de,en,de,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__de,en,de,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__en,en,en,monolingual,274,bm25,72.69464720,
+chemistry,chemistry__en__en,en,en,monolingual,274,dense,68.94616788,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__en,en,en,monolingual,274,hybrid,75.31782238,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__es,en,es,cross_language,53,bm25,2.83018868,
+chemistry,chemistry__en__es,en,es,cross_language,53,dense,69.96855346,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__es,en,es,cross_language,53,hybrid,64.15094340,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__fr,en,fr,cross_language,111,bm25,1.27627628,
+chemistry,chemistry__en__fr,en,fr,cross_language,111,dense,62.08708709,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__fr,en,fr,cross_language,111,hybrid,58.41591592,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__ja,en,ja,cross_language,0,bm25,,
+chemistry,chemistry__en__ja,en,ja,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__ja,en,ja,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__ru,en,ru,cross_language,32,bm25,3.12500000,
+chemistry,chemistry__en__ru,en,ru,cross_language,32,dense,72.13541667,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__ru,en,ru,cross_language,32,hybrid,63.20312500,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__zh,en,zh,cross_language,78,bm25,2.56410256,
+chemistry,chemistry__en__zh,en,zh,cross_language,78,dense,40.94551282,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__en__zh,en,zh,cross_language,78,hybrid,29.88782051,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__de,es,de,cross_language,0,bm25,,
+chemistry,chemistry__es__de,es,de,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__de,es,de,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__en,es,en,cross_language,126,bm25,7.93650794,
+chemistry,chemistry__es__en,es,en,cross_language,126,dense,68.29365079,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__en,es,en,cross_language,126,hybrid,64.72222222,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__es,es,es,monolingual,261,bm25,91.89016603,
+chemistry,chemistry__es__es,es,es,monolingual,261,dense,87.06896552,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__es,es,es,monolingual,261,hybrid,91.82630907,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__fr,es,fr,cross_language,135,bm25,16.29629630,
+chemistry,chemistry__es__fr,es,fr,cross_language,135,dense,86.57407407,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__fr,es,fr,cross_language,135,hybrid,82.87037037,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__ja,es,ja,cross_language,0,bm25,,
+chemistry,chemistry__es__ja,es,ja,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__ja,es,ja,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__ru,es,ru,cross_language,0,bm25,,
+chemistry,chemistry__es__ru,es,ru,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__ru,es,ru,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__zh,es,zh,cross_language,0,bm25,,
+chemistry,chemistry__es__zh,es,zh,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__es__zh,es,zh,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__de,fr,de,cross_language,0,bm25,,
+chemistry,chemistry__fr__de,fr,de,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__de,fr,de,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__en,fr,en,cross_language,62,bm25,0.00000000,
+chemistry,chemistry__fr__en,fr,en,cross_language,62,dense,53.93145161,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__en,fr,en,cross_language,62,hybrid,44.55645161,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__es,fr,es,cross_language,29,bm25,17.24137931,
+chemistry,chemistry__fr__es,fr,es,cross_language,29,dense,90.94827586,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__es,fr,es,cross_language,29,hybrid,87.06896552,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__fr,fr,fr,monolingual,267,bm25,92.69662921,
+chemistry,chemistry__fr__fr,fr,fr,monolingual,267,dense,86.49344569,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__fr,fr,fr,monolingual,267,hybrid,91.62765293,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__ja,fr,ja,cross_language,0,bm25,,
+chemistry,chemistry__fr__ja,fr,ja,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__ja,fr,ja,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__ru,fr,ru,cross_language,42,bm25,4.76190476,
+chemistry,chemistry__fr__ru,fr,ru,cross_language,42,dense,80.35714286,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__ru,fr,ru,cross_language,42,hybrid,75.00000000,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__zh,fr,zh,cross_language,134,bm25,13.80597015,
+chemistry,chemistry__fr__zh,fr,zh,cross_language,134,dense,61.84701493,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__fr__zh,fr,zh,cross_language,134,hybrid,56.25000000,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__de,ja,de,cross_language,0,bm25,,
+chemistry,chemistry__ja__de,ja,de,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__de,ja,de,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__en,ja,en,cross_language,121,bm25,13.63636364,
+chemistry,chemistry__ja__en,ja,en,cross_language,121,dense,61.36363636,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__en,ja,en,cross_language,121,hybrid,62.79269972,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__es,ja,es,cross_language,0,bm25,,
+chemistry,chemistry__ja__es,ja,es,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__es,ja,es,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__fr,ja,fr,cross_language,186,bm25,9.76702509,
+chemistry,chemistry__ja__fr,ja,fr,cross_language,186,dense,52.49775986,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__fr,ja,fr,cross_language,186,hybrid,50.76164875,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__ja,ja,ja,monolingual,252,bm25,78.93518519,
+chemistry,chemistry__ja__ja,ja,ja,monolingual,252,dense,82.22552910,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__ja,ja,ja,monolingual,252,hybrid,84.10218254,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__ru,ja,ru,cross_language,0,bm25,,
+chemistry,chemistry__ja__ru,ja,ru,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__ru,ja,ru,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__zh,ja,zh,cross_language,0,bm25,,
+chemistry,chemistry__ja__zh,ja,zh,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ja__zh,ja,zh,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__de,ru,de,cross_language,0,bm25,,
+chemistry,chemistry__ru__de,ru,de,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__de,ru,de,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__en,ru,en,cross_language,128,bm25,7.81250000,
+chemistry,chemistry__ru__en,ru,en,cross_language,128,dense,60.67475818,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__en,ru,en,cross_language,128,hybrid,59.06343006,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__es,ru,es,cross_language,0,bm25,,
+chemistry,chemistry__ru__es,ru,es,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__es,ru,es,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__fr,ru,fr,cross_language,91,bm25,8.60805861,
+chemistry,chemistry__ru__fr,ru,fr,cross_language,91,dense,69.64285714,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__fr,ru,fr,cross_language,91,hybrid,67.62820513,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__ja,ru,ja,cross_language,0,bm25,,
+chemistry,chemistry__ru__ja,ru,ja,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__ja,ru,ja,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__ru,ru,ru,monolingual,219,bm25,89.56294847,
+chemistry,chemistry__ru__ru,ru,ru,monolingual,219,dense,89.80892585,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__ru,ru,ru,monolingual,219,hybrid,93.27435312,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__zh,ru,zh,cross_language,0,bm25,,
+chemistry,chemistry__ru__zh,ru,zh,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__ru__zh,ru,zh,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__de,zh,de,cross_language,0,bm25,,
+chemistry,chemistry__zh__de,zh,de,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__de,zh,de,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__en,zh,en,cross_language,102,bm25,8.98692810,
+chemistry,chemistry__zh__en,zh,en,cross_language,102,dense,39.99183007,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__en,zh,en,cross_language,102,hybrid,39.09313725,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__es,zh,es,cross_language,0,bm25,,
+chemistry,chemistry__zh__es,zh,es,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__es,zh,es,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__fr,zh,fr,cross_language,171,bm25,12.28070175,
+chemistry,chemistry__zh__fr,zh,fr,cross_language,171,dense,58.45516569,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__fr,zh,fr,cross_language,171,hybrid,60.42884990,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__ja,zh,ja,cross_language,0,bm25,,
+chemistry,chemistry__zh__ja,zh,ja,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__ja,zh,ja,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__ru,zh,ru,cross_language,0,bm25,,
+chemistry,chemistry__zh__ru,zh,ru,cross_language,0,dense,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__ru,zh,ru,cross_language,0,hybrid,,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__zh,zh,zh,monolingual,273,bm25,79.76190476,
+chemistry,chemistry__zh__zh,zh,zh,monolingual,273,dense,81.93681319,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+chemistry,chemistry__zh__zh,zh,zh,monolingual,273,hybrid,84.41697192,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__de__de,de,de,monolingual,449,bm25,86.11729770,
+eurlex,eurlex__de__de,de,de,monolingual,449,dense,76.93949517,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__de__de,de,de,monolingual,449,hybrid,89.24461767,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__de__en,de,en,cross_language,449,bm25,1.11358575,
+eurlex,eurlex__de__en,de,en,cross_language,449,dense,60.43058649,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__de__en,de,en,cross_language,449,hybrid,52.18077209,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__de__es,de,es,cross_language,449,bm25,0.00000000,
+eurlex,eurlex__de__es,de,es,cross_language,449,dense,55.11321455,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__de__es,de,es,cross_language,449,hybrid,45.37861915,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__de__fr,de,fr,cross_language,449,bm25,0.22271715,
+eurlex,eurlex__de__fr,de,fr,cross_language,449,dense,53.75835189,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__de__fr,de,fr,cross_language,449,hybrid,45.64309577,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__en__de,en,de,cross_language,453,bm25,0.00000000,
+eurlex,eurlex__en__de,en,de,cross_language,453,dense,63.57615894,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__en__de,en,de,cross_language,453,hybrid,52.98013245,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__en__en,en,en,monolingual,453,bm25,89.44076527,
+eurlex,eurlex__en__en,en,en,monolingual,453,dense,82.28476821,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__en__en,en,en,monolingual,453,hybrid,90.13061074,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__en__es,en,es,cross_language,453,bm25,0.00000000,
+eurlex,eurlex__en__es,en,es,cross_language,453,dense,67.17255335,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__en__es,en,es,cross_language,453,hybrid,54.34142752,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__en__fr,en,fr,cross_language,453,bm25,0.22075055,
+eurlex,eurlex__en__fr,en,fr,cross_language,453,dense,67.66004415,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__en__fr,en,fr,cross_language,453,hybrid,58.38852097,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__es__de,es,de,cross_language,471,bm25,0.00000000,
+eurlex,eurlex__es__de,es,de,cross_language,471,dense,53.68895966,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__es__de,es,de,cross_language,471,hybrid,45.43524416,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__es__en,es,en,cross_language,471,bm25,0.21231423,
+eurlex,eurlex__es__en,es,en,cross_language,471,dense,64.49044586,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__es__en,es,en,cross_language,471,hybrid,54.74168436,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__es__es,es,es,monolingual,471,bm25,82.30714791,
+eurlex,eurlex__es__es,es,es,monolingual,471,dense,74.03573956,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__es__es,es,es,monolingual,471,hybrid,83.25371550,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__es__fr,es,fr,cross_language,471,bm25,1.59235669,
+eurlex,eurlex__es__fr,es,fr,cross_language,471,dense,61.85421090,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__es__fr,es,fr,cross_language,471,hybrid,52.86624204,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__fr__de,fr,de,cross_language,453,bm25,0.00000000,
+eurlex,eurlex__fr__de,fr,de,cross_language,453,dense,56.53973510,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__fr__de,fr,de,cross_language,453,hybrid,43.57064018,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__fr__en,fr,en,cross_language,453,bm25,0.22075055,
+eurlex,eurlex__fr__en,fr,en,cross_language,453,dense,67.21854305,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__fr__en,fr,en,cross_language,453,hybrid,52.29028698,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__fr__es,fr,es,cross_language,453,bm25,0.22075055,
+eurlex,eurlex__fr__es,fr,es,cross_language,453,dense,62.63796909,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__fr__es,fr,es,cross_language,453,hybrid,47.98565121,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__fr__fr,fr,fr,monolingual,453,bm25,84.21633554,
+eurlex,eurlex__fr__fr,fr,fr,monolingual,453,dense,76.13134658,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+eurlex,eurlex__fr__fr,fr,fr,monolingual,453,hybrid,86.50662252,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__ar,ar,ar,monolingual,292,bm25,67.46575342,
+un,un__ar__ar,ar,ar,monolingual,292,dense,45.11986301,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__ar,ar,ar,monolingual,292,hybrid,62.20034247,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__en,ar,en,cross_language,292,bm25,1.02739726,
+un,un__ar__en,ar,en,cross_language,292,dense,37.85102740,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__en,ar,en,cross_language,292,hybrid,37.03767123,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__es,ar,es,cross_language,292,bm25,0.68493151,
+un,un__ar__es,ar,es,cross_language,292,dense,30.82905251,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__es,ar,es,cross_language,292,hybrid,29.54480594,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__fr,ar,fr,cross_language,292,bm25,0.34246575,
+un,un__ar__fr,ar,fr,cross_language,292,dense,32.26883562,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__fr,ar,fr,cross_language,292,hybrid,30.88184932,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__ru,ar,ru,cross_language,292,bm25,0.68493151,
+un,un__ar__ru,ar,ru,cross_language,292,dense,29.89726027,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__ru,ar,ru,cross_language,292,hybrid,28.78424658,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__zh,ar,zh,cross_language,292,bm25,1.02739726,
+un,un__ar__zh,ar,zh,cross_language,292,dense,28.46960616,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ar__zh,ar,zh,cross_language,292,hybrid,28.12714041,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__ar,en,ar,cross_language,292,bm25,0.00000000,
+un,un__en__ar,en,ar,cross_language,292,dense,29.83019406,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__ar,en,ar,cross_language,292,hybrid,22.12471461,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__en,en,en,monolingual,292,bm25,73.28767123,
+un,un__en__en,en,en,monolingual,292,dense,57.44863014,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__en,en,en,monolingual,292,hybrid,71.19006849,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__es,en,es,cross_language,292,bm25,0.00000000,
+un,un__en__es,en,es,cross_language,292,dense,43.84988584,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__es,en,es,cross_language,292,hybrid,34.58904110,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__fr,en,fr,cross_language,292,bm25,0.00000000,
+un,un__en__fr,en,fr,cross_language,292,dense,41.51072244,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__fr,en,fr,cross_language,292,hybrid,35.97113503,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__ru,en,ru,cross_language,292,bm25,0.00000000,
+un,un__en__ru,en,ru,cross_language,292,dense,35.64783105,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__ru,en,ru,cross_language,292,hybrid,27.05764840,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__zh,en,zh,cross_language,292,bm25,0.00000000,
+un,un__en__zh,en,zh,cross_language,292,dense,38.05936073,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__en__zh,en,zh,cross_language,292,hybrid,28.49885845,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__ar,es,ar,cross_language,270,bm25,0.00000000,
+un,un__es__ar,es,ar,cross_language,270,dense,27.74691358,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__ar,es,ar,cross_language,270,hybrid,19.29012346,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__en,es,en,cross_language,270,bm25,0.74074074,
+un,un__es__en,es,en,cross_language,270,dense,46.96141975,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__en,es,en,cross_language,270,hybrid,37.24151235,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__es,es,es,monolingual,270,bm25,69.62962963,
+un,un__es__es,es,es,monolingual,270,dense,50.55555556,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__es,es,es,monolingual,270,hybrid,68.70370370,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__fr,es,fr,cross_language,270,bm25,0.92592593,
+un,un__es__fr,es,fr,cross_language,270,dense,42.01940035,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__fr,es,fr,cross_language,270,hybrid,33.60339506,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__ru,es,ru,cross_language,270,bm25,0.00000000,
+un,un__es__ru,es,ru,cross_language,270,dense,29.98842593,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__ru,es,ru,cross_language,270,hybrid,22.81250000,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__zh,es,zh,cross_language,270,bm25,0.00000000,
+un,un__es__zh,es,zh,cross_language,270,dense,28.58641975,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__es__zh,es,zh,cross_language,270,hybrid,21.08333333,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__ar,fr,ar,cross_language,279,bm25,0.00000000,
+un,un__fr__ar,fr,ar,cross_language,279,dense,29.70216761,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__ar,fr,ar,cross_language,279,hybrid,21.31123059,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__en,fr,en,cross_language,279,bm25,0.53763441,
+un,un__fr__en,fr,en,cross_language,279,dense,46.78912784,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__en,fr,en,cross_language,279,hybrid,40.91995221,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__es,fr,es,cross_language,279,bm25,0.80645161,
+un,un__fr__es,fr,es,cross_language,279,dense,43.22729988,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__es,fr,es,cross_language,279,hybrid,36.29032258,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__fr,fr,fr,monolingual,279,bm25,66.84587814,
+un,un__fr__fr,fr,fr,monolingual,279,dense,49.95519713,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__fr,fr,fr,monolingual,279,hybrid,64.47132616,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__ru,fr,ru,cross_language,279,bm25,0.00000000,
+un,un__fr__ru,fr,ru,cross_language,279,dense,32.49701314,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__ru,fr,ru,cross_language,279,hybrid,23.44683393,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__zh,fr,zh,cross_language,279,bm25,0.00000000,
+un,un__fr__zh,fr,zh,cross_language,279,dense,29.37574671,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__fr__zh,fr,zh,cross_language,279,hybrid,21.10215054,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__ar,ru,ar,cross_language,272,bm25,1.28676471,
+un,un__ru__ar,ru,ar,cross_language,272,dense,27.60723039,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__ar,ru,ar,cross_language,272,hybrid,24.77328431,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__en,ru,en,cross_language,272,bm25,1.28676471,
+un,un__ru__en,ru,en,cross_language,272,dense,41.97573821,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__en,ru,en,cross_language,272,hybrid,37.31581174,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__es,ru,es,cross_language,272,bm25,1.65441176,
+un,un__ru__es,ru,es,cross_language,272,dense,33.01954683,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__es,ru,es,cross_language,272,hybrid,29.07496048,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__fr,ru,fr,cross_language,272,bm25,0.36764706,
+un,un__ru__fr,ru,fr,cross_language,272,dense,34.11874125,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__fr,ru,fr,cross_language,272,hybrid,29.04674370,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__ru,ru,ru,monolingual,272,bm25,66.72794118,
+un,un__ru__ru,ru,ru,monolingual,272,dense,48.11580882,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__ru,ru,ru,monolingual,272,hybrid,65.90073529,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__zh,ru,zh,cross_language,272,bm25,1.28676471,
+un,un__ru__zh,ru,zh,cross_language,272,dense,35.06842320,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__ru__zh,ru,zh,cross_language,272,hybrid,31.20812908,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__ar,zh,ar,cross_language,293,bm25,2.04778157,
+un,un__zh__ar,zh,ar,cross_language,293,dense,24.59775719,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__ar,zh,ar,cross_language,293,hybrid,22.52153421,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__en,zh,en,cross_language,293,bm25,2.38907850,
+un,un__zh__en,zh,en,cross_language,293,dense,40.60011377,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__en,zh,en,cross_language,293,hybrid,36.76407850,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__es,zh,es,cross_language,293,bm25,2.21843003,
+un,un__zh__es,zh,es,cross_language,293,dense,32.38869066,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__es,zh,es,cross_language,293,hybrid,29.79974661,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__fr,zh,fr,cross_language,293,bm25,1.70648464,
+un,un__zh__fr,zh,fr,cross_language,293,dense,27.95221843,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__fr,zh,fr,cross_language,293,hybrid,26.13196815,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__ru,zh,ru,cross_language,293,bm25,2.38907850,
+un,un__zh__ru,zh,ru,cross_language,293,dense,29.47952218,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__ru,zh,ru,cross_language,293,hybrid,29.19510808,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__zh,zh,zh,monolingual,293,bm25,63.99317406,
+un,un__zh__zh,zh,zh,monolingual,293,dense,49.53071672,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
+un,un__zh__zh,zh,zh,monolingual,293,hybrid,68.17406143,bge-m3 | e5-large-instruct | gte-multilingual-base | qwen3-0.6B
