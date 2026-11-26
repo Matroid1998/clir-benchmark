@@ -1,5 +1,6 @@
-"""Plot Recall@10 by language pair from published November 20 evaluations."""
+"""Plot Recall@10 or Recall@50 by language pair from saved November 20 evaluations."""
 
+import argparse
 import json
 from pathlib import Path
 
@@ -19,6 +20,7 @@ ROOT = HERE.parents[2]
 CAMPAIGN = "narval-20261119-shared-indexes"
 SHARED = ROOT / "artifacts" / CAMPAIGN / "artifacts"
 CATALOG = HERE.parent / "question_20_local_results" / "retrieval_settings.csv"
+RESCORED = HERE.parent / "question_21_retrieval_tradeoffs" / "by_setting.csv"
 CORPORA = {"chemistry": "Chemistry patents", "eurlex": "EUR-Lex", "un": "UN"}
 BASELINES = {"bm25": "BM25", "dense": "Dense", "hybrid": "Hybrid"}
 MODELS = ("bge-m3", "e5-large-instruct", "gte-multilingual-base", "qwen3-0.6B")
@@ -32,7 +34,7 @@ LANGUAGES = {
     "ru": "Russian",
     "es": "Spanish",
 }
-RECALL = "Recall@10"
+RECALL_10 = "Recall@10"
 PAIRWISE_REGIMES = ("monolingual", "cross_language")
 PAIR_KEYS = ["question_language", "document_language"]
 QUERY_KEYS = ["setting_id", "query_id"]
@@ -44,7 +46,37 @@ COLORS = LinearSegmentedColormap.from_list(
 ).with_extremes(bad="white")
 
 
-def corpus_scores(catalog, corpus):
+def with_recall50(catalog):
+    """Match top-100 rescoring by run and setting, and cross-check published recall."""
+    rescored = pd.read_csv(RESCORED, keep_default_na=False)
+    rescored = rescored.loc[
+        rescored.method.eq("original") & rescored.run_id.isin(catalog.run_id)
+    ].rename(columns={"retriever": "baseline", "queries": "query_count"})
+    rescored["model"] = rescored.model.replace("BM25", "")
+    keys = [
+        "run_id", "setting_id", "corpus", "baseline", "model", "report_status",
+        "regime", "query_language", "target_languages", "query_count",
+    ]
+    catalog = catalog.merge(
+        rescored[keys + ["qrels_hash", "recall10", "recall50"]],
+        on=keys,
+        how="left",
+        validate="one_to_one",
+    )
+    pd.testing.assert_series_equal(
+        catalog.recall10, catalog[RECALL_10], check_names=False, atol=1e-12, rtol=0
+    )
+    recall50 = catalog.recall50
+    if not (
+        recall50.between(0, 1)
+        & recall50.ge(pd.to_numeric(catalog["Recall@20"]) - 1e-12)
+        & recall50.le(pd.to_numeric(catalog["Recall@100"]) + 1e-12)
+    ).all():
+        raise ValueError("Recall@50 is missing or outside the published recall bounds")
+    return catalog.rename(columns={"recall50": "Recall@50"})
+
+
+def corpus_scores(catalog, corpus, cutoff):
     """Check the published means and verify that the runs scored identical query IDs."""
     (qrels_path,) = (SHARED / "relevance" / corpus).glob("*/qrels.parquet")
     settings = json.loads(qrels_path.with_name("settings.json").read_text())
@@ -87,38 +119,41 @@ def corpus_scores(catalog, corpus):
             raise ValueError(f"Published report mismatch in {directory}")
         if run["relevance_hash"] != qrels_path.parent.name:
             raise ValueError(f"Relevance artifact mismatch in {directory}")
+        if cutoff == 50 and not rows.qrels_hash.eq(qrels_path.parent.name).all():
+            raise ValueError(f"Recall@50 relevance artifact mismatch in {directory}")
         fingerprints.add(run["corpus_fingerprint"])
 
-        columns = QUERY_KEYS + ["regime", RECALL]
+        columns = QUERY_KEYS + ["regime", RECALL_10]
         per_query = pd.read_csv(directory / "per_query.csv", usecols=columns)
         pairwise = per_query.loc[per_query.regime.isin(PAIRWISE_REGIMES)].set_index(QUERY_KEYS)
         if (
             not pairwise.index.sort_values().equals(eligible)
-            or not pairwise[RECALL].between(0, 1).all()
+            or not pairwise[RECALL_10].between(0, 1).all()
         ):
             raise ValueError(f"Query cohort or Recall@10 mismatch in {directory}")
         per_setting = rows.set_index("setting_id").sort_index()
         pd.testing.assert_series_equal(per_setting.query_count, expected, check_names=False)
         pd.testing.assert_series_equal(
-            pairwise.groupby("setting_id")[RECALL].mean(),
-            per_setting[RECALL],
+            pairwise.groupby("setting_id")[RECALL_10].mean(),
+            per_setting[RECALL_10],
             atol=1e-12,
             rtol=0,
         )
     if len(fingerprints) != 1:
         raise ValueError(f"Runs used different chunk corpora for {corpus}")
 
+    recall_column = f"recall_at_{cutoff}_percent"
     means = (
         catalog.loc[catalog.corpus.eq(corpus)]
-        .groupby(["baseline", "setting_id"])[RECALL]
+        .groupby(["baseline", "setting_id"])[f"Recall@{cutoff}"]
         .mean()
         .mul(100)
-        .rename("recall_at_10_percent")
+        .rename(recall_column)
     )
     scores = pairs.reset_index().merge(pd.DataFrame({"baseline": list(BASELINES)}), how="cross")
     scores = scores.join(means, on=["baseline", "setting_id"], validate="one_to_one")
-    if not scores.recall_at_10_percent.notna().equals(scores.eligible_questions.gt(0)):
-        raise ValueError(f"Missing or unexpected Recall@10 values for {corpus}")
+    if not scores[recall_column].notna().equals(scores.eligible_questions.gt(0)):
+        raise ValueError(f"Missing or unexpected Recall@{cutoff} values for {corpus}")
     scores.insert(0, "corpus", corpus)
     scores["models"] = scores.baseline.map(
         {"bm25": "", "dense": " | ".join(MODELS), "hybrid": " | ".join(MODELS)}
@@ -126,7 +161,7 @@ def corpus_scores(catalog, corpus):
     return scores.sort_values(PAIR_KEYS + ["baseline"])
 
 
-def render(corpus, scores):
+def render(corpus, scores, cutoff):
     languages = sorted(scores.question_language.unique(), key=list(LANGUAGES).index)
     labels = [LANGUAGES[code] for code in languages]
     positions = np.arange(len(labels))
@@ -135,7 +170,7 @@ def render(corpus, scores):
     fig.text(
         0.055,
         0.927,
-        f"{CORPORA[corpus]}  ·  Recall@10 by language pair",
+        f"{CORPORA[corpus]}  ·  Recall@{cutoff} by language pair",
         fontsize=24,
         fontweight="bold",
         color=INK,
@@ -151,7 +186,7 @@ def render(corpus, scores):
     for ax, (baseline, label) in zip(axes, BASELINES.items(), strict=True):
         matrix = (
             scores.loc[scores.baseline.eq(baseline)]
-            .pivot(index=PAIR_KEYS[0], columns=PAIR_KEYS[1], values="recall_at_10_percent")
+            .pivot(index=PAIR_KEYS[0], columns=PAIR_KEYS[1], values=f"recall_at_{cutoff}_percent")
             .reindex(index=languages, columns=languages)
             .to_numpy()
         )
@@ -217,7 +252,7 @@ def render(corpus, scores):
     )
     bar.ax.tick_params(labelsize=9, length=0, colors=MUTED)
     bar.outline.set_visible(False)
-    note = "Outlined diagonal cells show same-language Recall@10."
+    note = f"Outlined diagonal cells show same-language Recall@{cutoff}."
     if scores.eligible_questions.eq(0).any():
         note += " Gray cells with a dash had no eligible questions."
     fig.text(0.055, 0.087, note, fontsize=10, color=MUTED)
@@ -232,6 +267,12 @@ def render(corpus, scores):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--cutoff", type=int, choices=(10, 50), default=10,
+        help="Rank cutoff. Use 50 to read the saved top-100 rescoring table (default: 10).",
+    )
+    cutoff = parser.parse_args().cutoff
     catalog = pd.read_csv(CATALOG, keep_default_na=False)
     catalog = catalog.loc[
         catalog.campaign.eq(CAMPAIGN)
@@ -239,13 +280,19 @@ def main():
         & catalog.regime.isin(PAIRWISE_REGIMES)
         & (catalog.baseline.eq("bm25") | catalog.model.isin(MODELS))
     ].copy()
-    catalog[RECALL] = pd.to_numeric(catalog[RECALL])
-    scores = pd.concat([corpus_scores(catalog, corpus) for corpus in CORPORA], ignore_index=True)
-    scores.to_csv(HERE / "recall_by_language_pair.csv", index=False, float_format="%.8f")
-    with PdfPages(HERE / "cross_language_recall_at_10.pdf") as pdf:
+    catalog[RECALL_10] = pd.to_numeric(catalog[RECALL_10])
+    if cutoff == 50:
+        catalog = with_recall50(catalog)
+    scores = pd.concat(
+        [corpus_scores(catalog, corpus, cutoff) for corpus in CORPORA], ignore_index=True
+    )
+    suffix = "" if cutoff == 10 else f"_recall_at_{cutoff}"
+    table = "recall_by_language_pair.csv" if cutoff == 10 else f"recall_by_language_pair_at_{cutoff}.csv"
+    scores.to_csv(HERE / table, index=False, float_format="%.8f")
+    with PdfPages(HERE / f"cross_language_recall_at_{cutoff}.pdf") as pdf:
         for corpus in CORPORA:
-            fig = render(corpus, scores.loc[scores.corpus.eq(corpus)])
-            fig.savefig(HERE / f"{corpus}.png", dpi=170)
+            fig = render(corpus, scores.loc[scores.corpus.eq(corpus)], cutoff)
+            fig.savefig(HERE / f"{corpus}{suffix}.png", dpi=170)
             pdf.savefig(fig)
             plt.close(fig)
 
